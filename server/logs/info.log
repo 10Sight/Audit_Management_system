@@ -1,0 +1,780 @@
+[24 Aug, 2025 - 20:24:58:2458] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:27:43:2743] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:29:16:2916] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:29:39:2939] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:30:15:3015] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:38:17:3817] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:39:09:399] [31merror[39m: [31mRegister Error: 400[39m
+[24 Aug, 2025 - 20:39:42:3942] [31merror[39m: [31mRegister Error: 400[39m
+[24 Aug, 2025 - 20:40:22:4022] [31merror[39m: [31mRegister Error: 400[39m
+[24 Aug, 2025 - 20:43:03:433] [34minfo[39m: [34mNew employee registered: John Doe (EMP123)[39m
+[24 Aug, 2025 - 20:43:53:4353] [31merror[39m: [31mRegister Error: 400[39m
+[24 Aug, 2025 - 20:46:00:460] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:46:24:4624] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:48:12:4812] [31merror[39m: [31mRegister Error: 400[39m
+[24 Aug, 2025 - 20:48:50:4850] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:49:36:4936] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:49:44:4944] [34minfo[39m: [34mEmployee logged in: John Doe (EMP123)[39m
+[24 Aug, 2025 - 20:51:09:519] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:51:39:5139] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:51:56:5156] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:52:33:5233] [34minfo[39m: [34mEmployee logged out[39m
+[24 Aug, 2025 - 20:52:35:5235] [34minfo[39m: [34mEmployee logged out[39m
+[24 Aug, 2025 - 20:52:37:5237] [34minfo[39m: [34mEmployee logged out[39m
+[24 Aug, 2025 - 20:52:42:5242] [34minfo[39m: [34mEmployee logged out[39m
+[24 Aug, 2025 - 20:53:27:5327] [34minfo[39m: [34mEmployee logged in: John Doe (EMP123)[39m
+[24 Aug, 2025 - 20:53:43:5343] [31merror[39m: [31mLogin Error: 401[39m
+[24 Aug, 2025 - 20:53:59:5359] [34minfo[39m: [34mEmployee logged out[39m
+[24 Aug, 2025 - 20:54:07:547] [34minfo[39m: [34mEmployee logged out[39m
+[24 Aug, 2025 - 20:54:16:5416] [34minfo[39m: [34mEmployee logged in: John Doe (EMP123)[39m
+[24 Aug, 2025 - 20:54:35:5435] [34minfo[39m: [34mEmployee logged out[39m
+[24 Aug, 2025 - 20:58:52:5852] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 20:59:55:5955] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:07:09:79] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:07:34:734] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:08:47:847] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:10:16:1016] [31merror[39m: [31mMongoDB Connection Failed: [39m
+[24 Aug, 2025 - 21:11:14:1114] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:13:47:1347] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:15:39:1539] [34minfo[39m: [34mNew employee registered: John Doe (EMP001)[39m
+[24 Aug, 2025 - 21:16:00:160] [31merror[39m: [31mRegister Error: 400[39m
+[24 Aug, 2025 - 21:16:15:1615] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 21:19:09:199] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 21:20:41:2041] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 21:22:55:2255] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:28:12:2812] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 21:33:12:3312] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:34:24:3424] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:34:57:3457] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:35:07:357] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:35:29:3529] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:36:02:362] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:36:28:3628] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:36:52:3652] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:37:09:379] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:47:07:477] [34minfo[39m: [34mEmployee logged in: John Doe (EMP123)[39m
+[24 Aug, 2025 - 21:48:29:4829] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 21:52:55:5255] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 21:57:09:579] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 21:58:50:5850] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 22:02:39:239] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:03:01:31] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:04:39:439] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:05:43:543] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:06:40:640] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 22:09:36:936] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:10:27:1027] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:10:41:1041] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 22:10:47:1047] [34minfo[39m: [34mEmployee logged out[39m
+[24 Aug, 2025 - 22:11:33:1133] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:13:16:1316] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:14:19:1419] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 22:15:56:1556] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:18:58:1858] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:18:59:1859] [34minfo[39m: [34mEmployee logged out[39m
+[24 Aug, 2025 - 22:23:56:2356] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 22:24:42:2442] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[24 Aug, 2025 - 22:25:48:2548] [34minfo[39m: [34mEmployee logged out[39m
+[24 Aug, 2025 - 22:26:04:264] [34minfo[39m: [34mEmployee logged in: John Doe (EMP123)[39m
+[24 Aug, 2025 - 22:27:12:2712] [34minfo[39m: [34mEmployee logged out[39m
+[24 Aug, 2025 - 22:27:24:2724] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 22:28:14:2814] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:28:53:2853] [31merror[39m: [31mDelete Employee Error: 404[39m
+[24 Aug, 2025 - 22:29:23:2923] [31merror[39m: [31mDelete Employee Error: 404[39m
+[24 Aug, 2025 - 22:30:26:3026] [31merror[39m: [31mDelete Employee Error: 404[39m
+[24 Aug, 2025 - 22:31:40:3140] [31merror[39m: [31mDelete Employee Error: 404[39m
+[24 Aug, 2025 - 22:32:50:3250] [31merror[39m: [31mDelete Employee Error: 404[39m
+[24 Aug, 2025 - 22:34:17:3417] [31merror[39m: [31mDelete Employee Error: 404[39m
+[24 Aug, 2025 - 22:35:00:350] [31merror[39m: [31mDelete Employee Error: 404[39m
+[24 Aug, 2025 - 22:35:07:357] [31merror[39m: [31mDelete Employee Error: 404[39m
+[24 Aug, 2025 - 22:36:25:3625] [31merror[39m: [31mDelete Employee Error: 404[39m
+[24 Aug, 2025 - 22:39:27:3927] [31merror[39m: [31mDelete Employee Error: 404[39m
+[24 Aug, 2025 - 22:40:08:408] [34minfo[39m: [34mEmployee deleted: John Doe (EMP123) by John Doe (EMP001)[39m
+[24 Aug, 2025 - 22:42:13:4213] [31merror[39m: [31mLogin Error: 401[39m
+[24 Aug, 2025 - 22:51:51:5151] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:52:15:5215] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:52:34:5234] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:52:36:5236] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:52:42:5242] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:53:18:5318] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:55:21:5521] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:57:15:5715] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:58:12:5812] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 22:59:33:5933] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 23:00:54:054] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 23:01:14:114] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 23:02:34:234] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 23:32:16:3216] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 23:33:06:336] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 23:35:09:359] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 23:35:58:3558] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 23:37:08:378] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 23:37:59:3759] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 23:38:49:3849] [34minfo[39m: [34mMongoDB Connected[39m
+[24 Aug, 2025 - 23:40:39:4039] [31merror[39m: [31mLogin Error: 401[39m
+[24 Aug, 2025 - 23:40:46:4046] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[24 Aug, 2025 - 23:57:50:5750] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 00:10:23:1023] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 00:13:51:1351] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 00:14:30:1430] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 00:14:58:1458] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 00:17:33:1733] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 00:17:41:1741] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 00:21:00:210] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 00:40:20:4020] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 00:40:26:4026] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 07:12:58:1258] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 07:14:27:1427] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 07:15:24:1524] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 07:24:13:2413] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 08:38:34:3834] [34minfo[39m: [34mNew employee registered: Jatin Kumar Nagar (EMP002)[39m
+[25 Aug, 2025 - 08:40:17:4017] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 08:40:30:4030] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 08:40:41:4041] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 08:40:42:4042] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 08:40:44:4044] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 08:40:45:4045] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 08:40:46:4046] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 08:40:47:4047] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 08:40:47:4047] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 08:43:35:4335] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 08:43:35:4335] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 08:43:42:4342] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 08:43:42:4342] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 08:43:43:4343] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 08:43:43:4343] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 08:44:52:4452] [31merror[39m: [31mRegister Error: 409[39m
+[25 Aug, 2025 - 08:44:53:4453] [31merror[39m: [31mRegister Error: 409[39m
+[25 Aug, 2025 - 08:45:04:454] [31merror[39m: [31mRegister Error: 409[39m
+[25 Aug, 2025 - 08:45:26:4526] [31merror[39m: [31mRegister Error: 409[39m
+[25 Aug, 2025 - 08:51:40:5140] [34minfo[39m: [34mNew employee registered: Mnav Gupta (EMP003)[39m
+[25 Aug, 2025 - 08:51:43:5143] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 08:51:43:5143] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:00:31:031] [31merror[39m: [31mRegister Error: 400[39m
+[25 Aug, 2025 - 09:00:31:031] [31merror[39m: [31mRegister Error: 400[39m
+[25 Aug, 2025 - 09:00:32:032] [31merror[39m: [31mRegister Error: 400[39m
+[25 Aug, 2025 - 09:00:33:033] [31merror[39m: [31mRegister Error: 400[39m
+[25 Aug, 2025 - 09:01:03:13] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 09:01:05:15] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 09:01:14:114] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 09:01:15:115] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[25 Aug, 2025 - 09:01:54:154] [34minfo[39m: [34mNew employee registered: jksdfj (EMP005)[39m
+[25 Aug, 2025 - 09:01:59:159] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:01:59:159] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:05:07:57] [34minfo[39m: [34mNew employee registered: ksdfj (EMP008)[39m
+[25 Aug, 2025 - 09:05:16:516] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:05:16:516] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:05:42:542] [31merror[39m: [31mRegister Error: Employee validation failed: department: `sdlfk` is not a valid enum value for path `department`., phoneNumber: Phone number must be 10 digits, password: Password must be at least 6 characters[39m
+[25 Aug, 2025 - 09:05:43:543] [31merror[39m: [31mRegister Error: Employee validation failed: department: `sdlfk` is not a valid enum value for path `department`., phoneNumber: Phone number must be 10 digits, password: Password must be at least 6 characters[39m
+[25 Aug, 2025 - 09:05:56:556] [31merror[39m: [31mRegister Error: Employee validation failed: department: `sdlfk` is not a valid enum value for path `department`., phoneNumber: Phone number must be 10 digits, password: Password must be at least 6 characters[39m
+[25 Aug, 2025 - 09:06:00:60] [31merror[39m: [31mRegister Error: Employee validation failed: department: `sdlfk` is not a valid enum value for path `department`., phoneNumber: Phone number must be 10 digits, password: Password must be at least 6 characters[39m
+[25 Aug, 2025 - 09:06:11:611] [31merror[39m: [31mRegister Error: Employee validation failed: department: `sdlfk` is not a valid enum value for path `department`., password: Password must be at least 6 characters[39m
+[25 Aug, 2025 - 09:06:26:626] [31merror[39m: [31mRegister Error: Employee validation failed: password: Password must be at least 6 characters[39m
+[25 Aug, 2025 - 09:06:43:643] [31merror[39m: [31mRegister Error: Employee validation failed: password: Password must be at least 6 characters[39m
+[25 Aug, 2025 - 09:06:59:659] [34minfo[39m: [34mNew employee registered: sdf (EMP006)[39m
+[25 Aug, 2025 - 09:07:02:72] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:07:02:72] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:12:39:1239] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:12:40:1240] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:17:31:1731] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:17:31:1731] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:20:27:2027] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:20:27:2027] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:21:33:2133] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:21:33:2133] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:28:49:2849] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:28:49:2849] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:28:49:2849] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:28:50:2850] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:28:54:2854] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:28:54:2854] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:31:35:3135] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 09:32:30:3230] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 09:32:45:3245] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 09:32:55:3255] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:32:55:3255] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:34:29:3429] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:34:29:3429] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:34:31:3431] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:34:31:3431] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:34:34:3434] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:34:34:3434] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:34:36:3436] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:34:36:3436] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:34:38:3438] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:34:38:3438] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:38:00:380] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:38:00:380] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:38:04:384] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:38:04:384] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:38:18:3818] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:38:18:3818] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:38:37:3837] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:38:37:3837] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:39:42:3942] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:39:52:3952] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:39:52:3952] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:39:56:3956] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:39:56:3956] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:39:57:3957] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:39:57:3957] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:40:40:4040] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:40:40:4040] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:40:43:4043] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:40:43:4043] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:40:45:4045] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:40:45:4045] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:41:12:4112] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 09:41:16:4116] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:41:16:4116] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:41:17:4117] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:41:18:4118] [31merror[39m: [31mGet Single Employee Error: 404[39m
+[25 Aug, 2025 - 09:44:39:4439] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 09:44:44:4444] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 09:45:55:4555] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 09:47:22:4722] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:47:22:4722] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:47:38:4738] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:47:38:4738] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:48:06:486] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:48:06:486] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:48:07:487] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:48:08:488] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:48:56:4856] [31merror[39m: [31mGet Single Employee Error: mongoose is not defined[39m
+[25 Aug, 2025 - 09:48:56:4856] [31merror[39m: [31mGet Single Employee Error: mongoose is not defined[39m
+[25 Aug, 2025 - 09:48:59:4859] [31merror[39m: [31mGet Single Employee Error: mongoose is not defined[39m
+[25 Aug, 2025 - 09:48:59:4859] [31merror[39m: [31mGet Single Employee Error: mongoose is not defined[39m
+[25 Aug, 2025 - 09:53:40:5340] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 09:53:53:5353] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 09:53:55:5355] [31merror[39m: [31mGet Single Employee Error: 400[39m
+[25 Aug, 2025 - 09:53:55:5355] [31merror[39m: [31mGet Single Employee Error: 400[39m
+[25 Aug, 2025 - 09:53:57:5357] [31merror[39m: [31mGet Single Employee Error: 400[39m
+[25 Aug, 2025 - 09:53:57:5357] [31merror[39m: [31mGet Single Employee Error: 400[39m
+[25 Aug, 2025 - 09:54:02:542] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:54:02:542] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:54:03:543] [31merror[39m: [31mGet Single Employee Error: 400[39m
+[25 Aug, 2025 - 09:54:03:543] [31merror[39m: [31mGet Single Employee Error: 400[39m
+[25 Aug, 2025 - 09:58:45:5845] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 09:59:32:5932] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 09:59:32:5932] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 10:02:06:26] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 10:02:53:253] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 10:08:12:812] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 10:08:38:838] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 10:09:42:942] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 10:09:42:942] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 10:09:44:944] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 10:09:44:944] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 10:10:28:1028] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 10:10:57:1057] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 10:13:20:1320] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 10:15:26:1526] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 10:15:26:1526] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 10:16:21:1621] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 10:16:21:1621] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 10:16:42:1642] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 10:16:42:1642] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 11:10:09:109] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 11:10:13:1013] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 11:10:31:1031] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 11:10:41:1041] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 11:10:42:1042] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 11:11:17:1117] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 11:11:17:1117] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 11:11:48:1148] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 11:11:48:1148] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 11:12:51:1251] [34minfo[39m: [34mNew employee registered: Manav Gupta (EMP0050)[39m
+[25 Aug, 2025 - 11:12:54:1254] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 11:12:54:1254] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 11:14:20:1420] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 11:14:26:1426] [34minfo[39m: [34mEmployee logged in: Mnav Gupta (EMP003)[39m
+[25 Aug, 2025 - 14:29:26:2926] [34minfo[39m: [34mEmployee logged in: Manav Gupta (EMP0050)[39m
+[25 Aug, 2025 - 14:29:51:2951] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:30:11:3011] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:34:33:3433] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:34:50:3450] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:36:28:3628] [34minfo[39m: [34mEmployee logged in: Manav Gupta (EMP0050)[39m
+[25 Aug, 2025 - 14:39:06:396] [34minfo[39m: [34mEmployee logged in: Manav Gupta (EMP0050)[39m
+[25 Aug, 2025 - 14:39:18:3918] [34minfo[39m: [34mEmployee logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:45:37:4537] [31merror[39m: [31mLogin Error: 400[39m
+[25 Aug, 2025 - 14:47:24:4724] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 14:47:38:4738] [34minfo[39m: [34madmin logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:48:01:481] [34minfo[39m: [34madmin logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:49:47:4947] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 14:50:52:5052] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 14:50:54:5054] [34minfo[39m: [34madmin logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:51:11:5111] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 14:51:50:5150] [34minfo[39m: [34madmin logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:52:18:5218] [34minfo[39m: [34madmin logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:54:59:5459] [34minfo[39m: [34madmin logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:55:15:5515] [34minfo[39m: [34madmin logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:56:53:5653] [34minfo[39m: [34madmin logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 14:57:20:5720] [34minfo[39m: [34madmin logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:01:36:136] [34minfo[39m: [34madmin logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:01:39:139] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:01:39:139] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:02:02:22] [34minfo[39m: [34madmin logged in: John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:02:05:25] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:02:05:25] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:02:08:28] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:02:08:28] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:02:12:212] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:02:12:212] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:02:38:238] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 15:02:54:254] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 15:06:30:630] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 15:11:09:119] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 15:11:18:1118] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:11:18:1118] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:11:39:1139] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:11:39:1139] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:12:05:125] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 15:12:07:127] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 15:12:19:1219] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:12:19:1219] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:13:53:1353] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:13:53:1353] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:21:11:2111] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 15:21:22:2122] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 15:21:48:2148] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 15:22:09:229] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 15:22:12:2212] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 15:22:50:2250] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:22:50:2250] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:24:44:2444] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:24:44:2444] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:41:58:4158] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:41:58:4158] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:45:53:4553] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:45:53:4553] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:46:49:4649] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:46:49:4649] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:47:32:4732] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:47:32:4732] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:48:48:4848] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 15:49:04:494] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:49:04:494] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:49:23:4923] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 15:51:04:514] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 15:52:02:522] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 15:52:24:5224] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:52:24:5224] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:54:00:540] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:54:00:540] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:54:25:5425] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:54:25:5425] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:55:31:5531] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:55:31:5531] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:56:43:5643] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 15:56:43:5643] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 16:02:10:210] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 16:02:34:234] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 16:02:34:234] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 16:06:57:657] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 16:06:57:657] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 16:09:57:957] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 16:09:57:957] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 16:12:35:1235] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 16:12:36:1236] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 16:20:28:2028] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 16:20:28:2028] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 16:54:21:5421] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 16:54:21:5421] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:09:56:956] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:09:56:956] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:11:37:1137] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:11:38:1138] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:17:34:1734] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:17:34:1734] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:17:58:1758] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:17:58:1758] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:18:34:1834] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:18:34:1834] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:28:11:2811] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:28:11:2811] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:28:35:2835] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:28:36:2836] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:21:3121] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:21:3121] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:23:3123] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:23:3123] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:27:3127] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:28:3128] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:32:3132] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:32:3132] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:37:3137] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:37:3137] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:42:3142] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:43:3143] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:48:3148] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:31:48:3148] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:32:51:3251] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:32:51:3251] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:33:15:3315] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:33:15:3315] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:38:57:3857] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:38:57:3857] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:43:46:4346] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:43:46:4346] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:43:54:4354] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:43:54:4354] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:43:56:4356] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:43:56:4356] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:45:54:4554] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:45:54:4554] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:48:56:4856] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:48:56:4856] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:49:31:4931] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:49:31:4931] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 17:59:32:5932] [31merror[39m: [31mRegister Error: 400[39m
+[25 Aug, 2025 - 17:59:58:5958] [31merror[39m: [31mLogin Error: 400[39m
+[25 Aug, 2025 - 18:00:26:026] [34minfo[39m: [34mEmployee logged out[39m
+[25 Aug, 2025 - 18:00:34:034] [31merror[39m: [31mLogin Error: 400[39m
+[25 Aug, 2025 - 18:01:23:123] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:03:04:34] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:03:04:34] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:03:16:316] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:03:17:317] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:07:35:735] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:07:35:735] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:09:54:954] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:09:54:954] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:10:05:105] [31merror[39m: [31mLogin Error: 401[39m
+[25 Aug, 2025 - 18:11:59:1159] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:11:59:1159] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:12:16:1216] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:12:16:1216] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:12:48:1248] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:12:48:1248] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:16:48:1648] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:16:48:1648] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:16:55:1655] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:16:55:1655] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:17:01:171] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:17:01:171] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:24:11:2411] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:24:11:2411] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:32:15:3215] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:32:15:3215] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:33:29:3329] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 18:33:34:3334] [31merror[39m: [31mDelete Employee Error: 400[39m
+[25 Aug, 2025 - 18:33:41:3341] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:33:41:3341] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:33:43:3343] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:33:43:3343] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:33:49:3349] [31merror[39m: [31mDelete Employee Error: 400[39m
+[25 Aug, 2025 - 18:36:25:3625] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 18:36:30:3630] [34minfo[39m: [34mEmployee deleted: jksdfj (EMP005) by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:36:32:3632] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:36:32:3632] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:39:05:395] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:39:05:395] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:40:24:4024] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:40:25:4025] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:40:28:4028] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:40:28:4028] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:40:34:4034] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:40:34:4034] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:41:19:4119] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 18:43:25:4325] [34minfo[39m: [34mEmployee logged out[39m
+[25 Aug, 2025 - 18:43:51:4351] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:43:51:4351] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:44:05:445] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:44:05:445] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:08:488] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:09:489] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:11:4811] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:11:4811] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:13:4813] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:13:4813] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:15:4815] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:15:4815] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:17:4817] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:17:4817] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:19:4819] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:19:4819] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:21:4821] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:21:4821] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:23:4823] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:23:4823] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:24:4824] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:24:4824] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:26:4826] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:26:4826] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:29:4829] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:29:4829] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:32:4832] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:32:4832] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:34:4834] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 18:48:34:4834] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 19:00:28:028] [34minfo[39m: [34mEmployee deleted: Manav Gupta (EMP0050) by John Doe (EMP001)[39m
+[25 Aug, 2025 - 19:00:30:030] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 19:00:30:030] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 19:10:13:1013] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 19:10:56:1056] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 19:37:58:3758] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 19:39:49:3949] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 19:39:53:3953] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 19:40:38:4038] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 19:40:42:4042] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 19:41:48:4148] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 19:43:43:4343] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 19:50:32:5032] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 19:50:48:5048] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 19:53:26:5326] [34minfo[39m: [34mInspection created by 68ab33a1e25c71913ee5edb9: 68ac71dede00df805aeaafdd[39m
+[25 Aug, 2025 - 20:01:31:131] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 20:24:10:2410] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:24:10:2410] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:45:28:4528] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:45:28:4528] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:45:31:4531] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:45:31:4531] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:45:58:4558] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:45:58:4558] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:46:02:462] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:46:02:462] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:46:19:4619] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:46:19:4619] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:49:29:4929] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:49:30:4930] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:49:32:4932] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:49:33:4933] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:49:35:4935] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:49:35:4935] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:49:37:4937] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:49:37:4937] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 20:59:46:5946] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 21:00:07:07] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 21:14:49:1449] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 21:15:08:158] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 21:15:18:1518] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 21:15:56:1556] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 21:16:35:1635] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 21:17:48:1748] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 21:27:33:2733] [34minfo[39m: [34mEmployee logged out[39m
+[25 Aug, 2025 - 21:48:45:4845] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 21:48:48:4848] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 22:26:04:264] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 22:26:07:267] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 22:57:48:5748] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 23:00:18:018] [34minfo[39m: [34mMachine created: Machine A[39m
+[25 Aug, 2025 - 23:01:07:17] [34minfo[39m: [34mLine created: Line 1[39m
+[25 Aug, 2025 - 23:01:24:124] [34minfo[39m: [34mProcess created: Welding[39m
+[25 Aug, 2025 - 23:02:15:215] [34minfo[39m: [34mQuestion created: Is the machine calibrated?[39m
+[25 Aug, 2025 - 23:02:51:251] [34minfo[39m: [34mAudit created by 68ab33a1e25c71913ee5edb9[39m
+[25 Aug, 2025 - 23:07:59:759] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 23:08:00:80] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 23:12:10:1210] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 23:12:10:1210] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 23:13:02:132] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 23:13:02:132] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 23:13:05:135] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 23:13:05:135] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 23:13:55:1355] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 23:13:55:1355] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 23:13:58:1358] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 23:13:58:1358] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[25 Aug, 2025 - 23:35:10:3510] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 23:37:05:375] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 23:39:12:3912] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 23:41:34:4134] [34minfo[39m: [34mAudit created by 68ab33a1e25c71913ee5edb9[39m
+[25 Aug, 2025 - 23:43:52:4352] [34minfo[39m: [34mAudit created by 68ab33a1e25c71913ee5edb9[39m
+[25 Aug, 2025 - 23:47:36:4736] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 23:50:21:5021] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 23:53:28:5328] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 23:55:07:557] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 23:55:18:5518] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 23:58:11:5811] [34minfo[39m: [34mMongoDB Connected[39m
+[25 Aug, 2025 - 23:58:45:5845] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 00:00:09:09] [34minfo[39m: [34mAudit created by 68ab33a1e25c71913ee5edb9[39m
+[26 Aug, 2025 - 00:07:27:727] [34minfo[39m: [34mAudit created by 68ab33a1e25c71913ee5edb9[39m
+[26 Aug, 2025 - 00:32:17:3217] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 00:43:35:4335] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 00:43:35:4335] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 00:43:43:4343] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 00:43:43:4343] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 00:58:46:5846] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 00:58:46:5846] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 00:58:56:5856] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 00:58:56:5856] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 01:01:02:12] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 01:01:02:12] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 01:14:14:1414] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 01:15:49:1549] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 01:16:15:1615] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 01:21:31:2131] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 01:22:51:2251] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 01:23:56:2356] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 01:25:01:251] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 01:32:31:3231] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 01:36:04:364] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 01:36:27:3627] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 01:51:21:5121] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 01:52:42:5242] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 07:59:31:5931] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 07:59:56:5956] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 07:59:56:5956] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 08:24:49:2449] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 08:26:08:268] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 08:27:58:2758] [34minfo[39m: [34mLine created: Line 2[39m
+[26 Aug, 2025 - 08:28:05:285] [34minfo[39m: [34mMachine created: Machine B[39m
+[26 Aug, 2025 - 08:28:16:2816] [34minfo[39m: [34mProcess created: Welding 2[39m
+[26 Aug, 2025 - 08:28:35:2835] [34minfo[39m: [34mLine created: asd[39m
+[26 Aug, 2025 - 08:28:49:2849] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 08:28:49:2849] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 08:29:04:294] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 08:39:19:3919] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[26 Aug, 2025 - 08:42:08:428] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 08:57:38:5738] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 08:57:39:5739] [34minfo[39m: [34mCreated 2 questions by user 68ab33a1e25c71913ee5edb9[39m
+[26 Aug, 2025 - 08:57:50:5750] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 09:04:20:420] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 09:07:06:76] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[26 Aug, 2025 - 09:08:00:80] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 09:21:07:217] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 09:23:13:2313] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 09:28:16:2816] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 09:29:00:290] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 09:32:28:3228] [34minfo[39m: [34mMachine deleted: 68ac9daa71bccace9b8152fa[39m
+[26 Aug, 2025 - 09:32:47:3247] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:32:47:3247] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:34:26:3426] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:34:27:3427] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:34:31:3431] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:34:31:3431] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:44:16:4416] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:44:16:4416] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:44:22:4422] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:44:22:4422] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:50:43:5043] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:50:43:5043] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:50:49:5049] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:50:50:5050] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:50:55:5055] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:50:55:5055] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:51:00:510] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:51:00:510] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:53:30:5330] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:53:30:5330] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:53:48:5348] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:53:48:5348] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:54:41:5441] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:54:41:5441] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:54:46:5446] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:54:46:5446] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:54:51:5451] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:54:52:5452] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:54:57:5457] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:54:57:5457] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:55:15:5515] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:55:15:5515] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:55:28:5528] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:55:28:5528] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:56:36:5636] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:56:37:5637] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:56:46:5646] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:56:46:5646] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:56:55:5655] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:56:55:5655] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:01:581] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:02:582] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:04:584] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:04:584] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:10:5810] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:10:5810] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:13:5813] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:13:5813] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:20:5820] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:20:5820] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:30:5830] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:30:5830] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:58:5858] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:58:58:5858] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:59:05:595] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:59:05:595] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:59:08:598] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 09:59:08:598] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:01:17:117] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:01:17:117] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:01:22:122] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:01:22:122] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:01:28:128] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:01:28:128] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:01:31:131] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:01:31:131] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:02:03:23] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:02:03:23] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:04:00:40] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:04:00:40] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:04:52:452] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:04:52:452] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:04:55:455] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:04:55:455] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:05:21:521] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:05:21:521] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:05:28:528] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:05:28:528] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:15:36:1536] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 10:16:19:1619] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:16:20:1620] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:16:26:1626] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:16:28:1628] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:16:40:1640] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:16:42:1642] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:16:57:1657] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:16:57:1657] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:18:06:186] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:18:07:187] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:20:26:2026] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 10:22:16:2216] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[26 Aug, 2025 - 10:22:23:2223] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 10:24:00:240] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:24:00:240] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:24:03:243] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:24:03:243] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:24:07:247] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:24:07:247] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:24:10:2410] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:24:11:2411] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:24:16:2416] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:24:17:2417] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:24:22:2422] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:24:22:2422] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:36:24:3624] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 10:39:16:3916] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 10:40:11:4011] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 10:41:09:419] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 10:41:31:4131] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 10:42:59:4259] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 10:43:32:4332] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[26 Aug, 2025 - 10:43:35:4335] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 10:46:37:4637] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 10:50:57:5057] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 10:52:06:526] [34minfo[39m: [34mMongoDB Connected[39m
+[26 Aug, 2025 - 10:52:07:527] [34minfo[39m: [34mQuestion deleted: 68ac9e1f71bccace9b815305 by user 68ab33a1e25c71913ee5edb9[39m
+[26 Aug, 2025 - 10:52:52:5252] [34minfo[39m: [34mQuestion deleted: 68ad25ffdcc5a549db500d52 by user 68ab33a1e25c71913ee5edb9[39m
+[26 Aug, 2025 - 10:52:57:5257] [34minfo[39m: [34mQuestion deleted: 68ad25fedcc5a549db500d50 by user 68ab33a1e25c71913ee5edb9[39m
+[26 Aug, 2025 - 10:53:01:531] [34minfo[39m: [34mQuestion deleted: 68acc60f59124b8a73bb07a5 by user 68ab33a1e25c71913ee5edb9[39m
+[26 Aug, 2025 - 10:53:05:535] [34minfo[39m: [34mQuestion deleted: 68acc60f59124b8a73bb07a3 by user 68ab33a1e25c71913ee5edb9[39m
+[26 Aug, 2025 - 10:53:10:5310] [34minfo[39m: [34mQuestion deleted: 68acc002b1c5a53393ed177d by user 68ab33a1e25c71913ee5edb9[39m
+[26 Aug, 2025 - 10:54:44:5444] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 10:56:58:5658] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[26 Aug, 2025 - 10:57:20:5720] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 10:58:02:582] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:58:02:582] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:58:18:5818] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:58:18:5818] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:58:21:5821] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 10:58:21:5821] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 11:02:09:29] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 11:02:09:29] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 11:02:15:215] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 11:02:15:215] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 11:02:17:217] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 11:02:18:218] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 11:03:09:39] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 11:03:09:39] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 11:03:25:325] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 11:03:25:325] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 11:03:28:328] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 11:03:29:329] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
