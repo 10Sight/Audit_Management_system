@@ -32,7 +32,6 @@ export default function EditEmployeePage() {
         setLoading(false);
       }
     };
-
     if (id) fetchEmployee();
   }, [id]);
 
@@ -44,7 +43,6 @@ export default function EditEmployeePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
-
     try {
       await axios.put(
         `http://localhost:5000/api/v1/auth/employee/${id}`,
@@ -64,14 +62,14 @@ export default function EditEmployeePage() {
   if (error) return <div className="text-red-500 p-6 text-center">{error}</div>;
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <div className="bg-neutral-900 rounded-2xl shadow-lg p-8 space-y-6 border border-neutral-800">
-        <h1 className="text-2xl font-bold text-white mb-4">Edit Employee</h1>
+    <div className="p-4 sm:p-6 md:p-8 max-w-3xl mx-auto">
+      <div className="bg-neutral-900 rounded-2xl shadow-lg p-6 sm:p-8 space-y-6 border border-neutral-800">
+        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4">Edit Profile</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Full Name */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Full Name</label>
+            <label className="block text-sm sm:text-base text-gray-400 mb-1">Full Name</label>
             <input
               type="text"
               name="fullName"
@@ -84,7 +82,7 @@ export default function EditEmployeePage() {
 
           {/* Email */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Email</label>
+            <label className="block text-sm sm:text-base text-gray-400 mb-1">Email</label>
             <input
               type="email"
               name="emailId"
@@ -97,7 +95,7 @@ export default function EditEmployeePage() {
 
           {/* Phone */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Phone Number</label>
+            <label className="block text-sm sm:text-base text-gray-400 mb-1">Phone Number</label>
             <input
               type="text"
               name="phoneNumber"
@@ -109,7 +107,7 @@ export default function EditEmployeePage() {
 
           {/* Department */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Department</label>
+            <label className="block text-sm sm:text-base text-gray-400 mb-1">Department</label>
             <input
               type="text"
               name="department"
@@ -121,7 +119,7 @@ export default function EditEmployeePage() {
 
           {/* Role */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Role</label>
+            <label className="block text-sm sm:text-base text-gray-400 mb-1">Role</label>
             <select
               name="role"
               value={employee.role}
@@ -138,7 +136,7 @@ export default function EditEmployeePage() {
 
           {/* Employee ID */}
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Employee ID</label>
+            <label className="block text-sm sm:text-base text-gray-400 mb-1">Employee ID</label>
             <input
               type="text"
               name="employeeId"
@@ -149,19 +147,19 @@ export default function EditEmployeePage() {
             />
           </div>
 
-          {/* Submit */}
-          <div className="flex justify-end gap-3">
+          {/* Submit Buttons */}
+          <div className="flex flex-col sm:flex-row justify-end gap-3 mt-2">
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-700 text-white"
+              className="w-full sm:w-auto px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-700 text-white"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full sm:w-auto px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white"
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>

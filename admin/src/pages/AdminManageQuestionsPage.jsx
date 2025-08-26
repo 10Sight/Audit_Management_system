@@ -1,3 +1,4 @@
+// AdminManageQuestionsPage.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
@@ -82,16 +83,17 @@ export default function AdminManageQuestionsPage() {
     }
   };
 
-  if (!currentUser || currentUser.role !== "admin") return <div>Access Denied</div>;
+  if (!currentUser || currentUser.role !== "admin")
+    return <div className="text-center p-6 text-red-500">Access Denied</div>;
 
   return (
-    <div className="p-6 max-w-6xl mx-auto text-white">
-      <ToastContainer />
-      <h1 className="text-3xl font-bold mb-6">Manage Questions</h1>
+    <div className="p-4 sm:p-6 md:p-8 max-w-6xl mx-auto text-white">
+      <ToastContainer position="top-right" autoClose={3000} />
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6">Manage Questions</h1>
 
       {/* Filters */}
-      <div className="bg-neutral-900 p-4 rounded-lg flex flex-wrap gap-4 mb-6 items-center">
-        <div className="flex flex-wrap gap-2 w-full md:w-auto">
+      <div className="bg-neutral-900 p-4 sm:p-6 rounded-lg flex flex-col sm:flex-row flex-wrap gap-4 mb-6 items-start sm:items-center">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           <select
             value={selectedLine}
             onChange={(e) => setSelectedLine(e.target.value)}
@@ -100,7 +102,9 @@ export default function AdminManageQuestionsPage() {
           >
             <option value="">-- All Lines --</option>
             {lines.map((line) => (
-              <option key={line._id} value={line._id}>{line.name}</option>
+              <option key={line._id} value={line._id}>
+                {line.name}
+              </option>
             ))}
           </select>
 
@@ -112,7 +116,9 @@ export default function AdminManageQuestionsPage() {
           >
             <option value="">-- All Machines --</option>
             {machines.map((machine) => (
-              <option key={machine._id} value={machine._id}>{machine.name}</option>
+              <option key={machine._id} value={machine._id}>
+                {machine.name}
+              </option>
             ))}
           </select>
 
@@ -124,30 +130,34 @@ export default function AdminManageQuestionsPage() {
           >
             <option value="">-- All Processes --</option>
             {processes.map((process) => (
-              <option key={process._id} value={process._id}>{process.name}</option>
+              <option key={process._id} value={process._id}>
+                {process.name}
+              </option>
             ))}
           </select>
         </div>
 
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={includeGlobal}
-            onChange={() => setIncludeGlobal(!includeGlobal)}
-            className="accent-green-500"
-          />
-          Include Global
-        </label>
+        <div className="flex gap-4 flex-wrap">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={includeGlobal}
+              onChange={() => setIncludeGlobal(!includeGlobal)}
+              className="accent-green-500"
+            />
+            Include Global
+          </label>
 
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={fetchAll}
-            onChange={() => setFetchAll(!fetchAll)}
-            className="accent-blue-500"
-          />
-          Fetch All Questions
-        </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={fetchAll}
+              onChange={() => setFetchAll(!fetchAll)}
+              className="accent-blue-500"
+            />
+            Fetch All Questions
+          </label>
+        </div>
       </div>
 
       {/* Questions List */}
@@ -156,12 +166,14 @@ export default function AdminManageQuestionsPage() {
       ) : questions.length === 0 ? (
         <div className="text-gray-400 text-center p-4">No questions found.</div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {questions.map((q) => (
             <div
               key={q._id}
-              className={`p-4 rounded-md border flex flex-col justify-between ${
-                q.isGlobal ? "border-yellow-500 bg-neutral-700" : "bg-neutral-800 border-neutral-700"
+              className={`p-4 rounded-md border flex flex-col justify-between h-full ${
+                q.isGlobal
+                  ? "border-yellow-500 bg-neutral-700"
+                  : "bg-neutral-800 border-neutral-700"
               }`}
             >
               <div>
@@ -173,7 +185,7 @@ export default function AdminManageQuestionsPage() {
               </div>
               <button
                 onClick={() => handleDelete(q._id)}
-                className="mt-2 px-3 py-1 bg-red-600 rounded-md hover:bg-red-700 transition self-start"
+                className="mt-2 px-3 py-1 bg-red-600 rounded-md hover:bg-red-700 transition self-start text-sm"
               >
                 Delete
               </button>

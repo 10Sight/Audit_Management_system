@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../context/AuthContext";
+import { FiPlus, FiTrash2 } from "react-icons/fi";
 
 export default function AdminCreateTemplatePage() {
   const navigate = useNavigate();
@@ -64,7 +65,6 @@ export default function AdminCreateTemplatePage() {
 
     try {
       setLoading(true);
-      // ✅ embed line/machine/process into each question
       const payload = questions.map((q) => ({
         questionText: q.questionText,
         isGlobal: q.isGlobal,
@@ -94,22 +94,38 @@ export default function AdminCreateTemplatePage() {
       <h1 className="text-3xl font-bold mb-6">Create Inspection Template</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Select Options */}
         <div className="space-y-4">
-          <select value={selectedLine} onChange={(e) => setSelectedLine(e.target.value)} className="p-2 bg-neutral-800 border border-neutral-700 rounded-md w-full" required>
+          <select
+            value={selectedLine}
+            onChange={(e) => setSelectedLine(e.target.value)}
+            className="p-2 bg-neutral-800 border border-neutral-700 rounded-md w-full"
+            required
+          >
             <option value="">-- Select Line --</option>
             {lines.map((line) => (
               <option key={line._id} value={line._id}>{line.name}</option>
             ))}
           </select>
 
-          <select value={selectedMachine} onChange={(e) => setSelectedMachine(e.target.value)} className="p-2 bg-neutral-800 border border-neutral-700 rounded-md w-full" required>
+          <select
+            value={selectedMachine}
+            onChange={(e) => setSelectedMachine(e.target.value)}
+            className="p-2 bg-neutral-800 border border-neutral-700 rounded-md w-full"
+            required
+          >
             <option value="">-- Select Machine --</option>
             {machines.map((machine) => (
               <option key={machine._id} value={machine._id}>{machine.name}</option>
             ))}
           </select>
 
-          <select value={selectedProcess} onChange={(e) => setSelectedProcess(e.target.value)} className="p-2 bg-neutral-800 border border-neutral-700 rounded-md w-full" required>
+          <select
+            value={selectedProcess}
+            onChange={(e) => setSelectedProcess(e.target.value)}
+            className="p-2 bg-neutral-800 border border-neutral-700 rounded-md w-full"
+            required
+          >
             <option value="">-- Select Process --</option>
             {processes.map((process) => (
               <option key={process._id} value={process._id}>{process.name}</option>
@@ -117,6 +133,7 @@ export default function AdminCreateTemplatePage() {
           </select>
         </div>
 
+        {/* Questions Section */}
         <div className="space-y-4">
           <h2 className="font-semibold text-lg">Questions</h2>
           {questions.map((q, idx) => (
@@ -132,17 +149,39 @@ export default function AdminCreateTemplatePage() {
 
               <div className="flex justify-between items-center">
                 <label className="flex items-center gap-1">
-                  <input type="checkbox" checked={q.isGlobal} onChange={() => handleGlobalToggle(idx)} className="accent-green-500" />
+                  <input
+                    type="checkbox"
+                    checked={q.isGlobal}
+                    onChange={() => handleGlobalToggle(idx)}
+                    className="accent-green-500"
+                  />
                   Global
                 </label>
-                <button type="button" onClick={() => removeQuestion(idx)} className="px-3 py-1 bg-red-600 rounded-md">Remove</button>
+                <button
+                  type="button"
+                  onClick={() => removeQuestion(idx)}
+                  className="px-3 py-1 bg-red-600 rounded-md flex items-center gap-1"
+                >
+                  <FiTrash2 /> Remove
+                </button>
               </div>
             </div>
           ))}
-          <button type="button" onClick={addQuestion} className="px-4 py-2 bg-green-600 rounded-md mt-2">➕ Add Question</button>
+
+          <button
+            type="button"
+            onClick={addQuestion}
+            className="px-4 py-2 bg-green-600 rounded-md mt-2 flex items-center gap-2"
+          >
+            <FiPlus /> Add Question
+          </button>
         </div>
 
-        <button type="submit" disabled={loading} className="px-6 py-2 bg-blue-600 rounded-md mt-4">
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-6 py-2 bg-blue-600 rounded-md mt-4"
+        >
           {loading ? "Creating..." : "Create Template"}
         </button>
       </form>

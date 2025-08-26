@@ -1105,3 +1105,55 @@
 [26 Aug, 2025 - 21:17:41:1741] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
 [26 Aug, 2025 - 21:18:04:184] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
 [26 Aug, 2025 - 21:18:04:184] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:24:37:2437] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:24:37:2437] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:25:30:2530] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:25:30:2530] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:26:58:2658] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:26:58:2658] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:29:06:296] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:29:06:296] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:30:32:3032] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:30:32:3032] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:31:00:310] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:31:00:310] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:31:08:318] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:31:08:318] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:31:18:3118] [31merror[39m: [31mUpdate Employee Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[26 Aug, 2025 - 21:31:32:3132] [34minfo[39m: [34mEmployee updated: Jatin Kumar Nagar (EMP002) by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:33:27:3327] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:33:27:3327] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:34:21:3421] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:34:21:3421] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:37:00:370] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:37:00:370] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:42:05:425] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:42:05:425] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:42:07:427] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:42:07:427] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:42:40:4240] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:42:40:4240] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:25:4825] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:25:4825] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:28:4828] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:28:4828] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:30:4830] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:30:4830] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:32:4832] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:32:4832] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:38:4838] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:38:4838] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:55:4855] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:55:4855] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:58:4858] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:48:58:4858] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:49:03:493] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 21:50:03:503] [34minfo[39m: [34mEmployee logged out[39m
+[26 Aug, 2025 - 21:50:34:5034] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:50:34:5034] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:52:15:5215] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:52:15:5215] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:54:07:547] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:54:07:547] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:57:20:5720] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m
+[26 Aug, 2025 - 21:57:20:5720] [34minfo[39m: [34mEmployees fetched by John Doe (EMP001)[39m

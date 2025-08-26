@@ -36,7 +36,6 @@ export default function AdminDashboard() {
     withCredentials: true,
   });
 
-  // Function to get timeframe key
   const getTimeframeKey = (date, timeframe) => {
     const d = new Date(date);
     if (timeframe === "daily") return format(d, "yyyy-MM-dd");
@@ -46,7 +45,6 @@ export default function AdminDashboard() {
     return format(d, "yyyy-MM-dd");
   };
 
-  // Fetch audits and dropdown data
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -72,23 +70,18 @@ export default function AdminDashboard() {
         console.error("Error fetching data:", err);
       }
     };
-
     fetchData();
   }, []);
 
-  // Line Chart (Trend) data
   useEffect(() => {
     const countsByPeriod = {};
-
     audits.forEach((audit) => {
       if (selectedLine && audit.line?._id !== selectedLine) return;
       if (selectedMachine && audit.machine?._id !== selectedMachine) return;
       if (selectedProcess && audit.process?._id !== selectedProcess) return;
 
       const key = getTimeframeKey(audit.date, timeframe);
-
       if (!countsByPeriod[key]) countsByPeriod[key] = { Yes: 0, No: 0 };
-
       audit.answers?.forEach((ans) => {
         countsByPeriod[key][ans.answer] = (countsByPeriod[key][ans.answer] || 0) + 1;
       });
@@ -101,7 +94,6 @@ export default function AdminDashboard() {
     );
   }, [audits, timeframe, selectedLine, selectedMachine, selectedProcess]);
 
-  // Bar Chart data
   useEffect(() => {
     const counts = {};
     audits.forEach((audit) => {
@@ -119,7 +111,6 @@ export default function AdminDashboard() {
     setBarData(Object.keys(counts).map((k) => ({ name: k, ...counts[k] })));
   }, [audits, selectedLine, selectedMachine, selectedProcess]);
 
-  // Summary counts
   const totalEmployees = useMemo(
     () => employees.filter((emp) => emp.role === "employee").length,
     [employees]
@@ -147,35 +138,32 @@ export default function AdminDashboard() {
   }, [audits, selectedLine, selectedMachine, selectedProcess, lines, machines, processes]);
 
   return (
-    <div className="p-6 bg-neutral-900 min-h-screen text-white space-y-6">
-      <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
+    <div className="p-4 sm:p-6 bg-neutral-900 min-h-screen text-white space-y-6">
+      <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center sm:text-left">
+        Admin Dashboard
+      </h1>
 
       {/* Number Boxes */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
-        <div className="bg-neutral-800 p-4 rounded-md text-center">
-          <p className="text-gray-400 text-sm">Total Employees</p>
-          <p className="text-2xl font-bold">{totalEmployees}</p>
-        </div>
-        <div className="bg-neutral-800 p-4 rounded-md text-center">
-          <p className="text-gray-400 text-sm">Filtered Auditors</p>
-          <p className="text-2xl font-bold">{filteredCounts.filteredEmployees}</p>
-        </div>
-        <div className="bg-neutral-800 p-4 rounded-md text-center">
-          <p className="text-gray-400 text-sm">Lines</p>
-          <p className="text-2xl font-bold">{filteredCounts.lines}</p>
-        </div>
-        <div className="bg-neutral-800 p-4 rounded-md text-center">
-          <p className="text-gray-400 text-sm">Machines</p>
-          <p className="text-2xl font-bold">{filteredCounts.machines}</p>
-        </div>
-        <div className="bg-neutral-800 p-4 rounded-md text-center">
-          <p className="text-gray-400 text-sm">Processes</p>
-          <p className="text-2xl font-bold">{filteredCounts.processes}</p>
-        </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {[
+          { label: "Total Employees", value: totalEmployees },
+          { label: "Filtered Auditors", value: filteredCounts.filteredEmployees },
+          { label: "Lines", value: filteredCounts.lines },
+          { label: "Machines", value: filteredCounts.machines },
+          { label: "Processes", value: filteredCounts.processes },
+        ].map((box) => (
+          <div
+            key={box.label}
+            className="bg-neutral-800 p-4 rounded-md text-center sm:text-left flex flex-col justify-center"
+          >
+            <p className="text-gray-400 text-sm">{box.label}</p>
+            <p className="text-2xl sm:text-3xl font-bold">{box.value}</p>
+          </div>
+        ))}
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 bg-neutral-800 p-4 rounded-md">
+      <div className="flex flex-wrap gap-4 bg-neutral-800 p-4 rounded-md justify-start">
         {["Answer Type", "Line", "Machine", "Process", "Timeframe"].map((label, idx) => {
           const valueMap = {
             "Answer Type": answerType,
@@ -200,10 +188,10 @@ export default function AdminDashboard() {
           };
 
           return (
-            <div key={idx} className="flex flex-col">
-              <label className="mb-1 text-gray-300">{label}</label>
+            <div key={idx} className="flex flex-col w-full sm:w-40">
+              <label className="mb-1 text-gray-300 text-sm">{label}</label>
               <select
-                className="p-2 rounded bg-neutral-700 text-white"
+                className="p-2 rounded bg-neutral-700 text-white w-full"
                 value={valueMap[label]}
                 onChange={(e) => setValueMap[label](e.target.value)}
               >
@@ -224,35 +212,43 @@ export default function AdminDashboard() {
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Line Chart */}
-        <div className="bg-neutral-800 p-4 rounded-md">
-          <h2 className="text-xl font-bold mb-2">Trend Over Time ({answerType})</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={lineData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip formatter={(value, name) => [`${value} audits`, name]} />
-              <Legend />
-              <Line type="monotone" dataKey="Yes" stroke="#00C49F" />
-              <Line type="monotone" dataKey="No" stroke="#FF8042" />
-            </LineChart>
-          </ResponsiveContainer>
+        <div className="bg-neutral-800 p-4 rounded-md w-full">
+          <h2 className="text-lg sm:text-xl font-bold mb-2 text-center md:text-left">
+            Trend Over Time ({answerType})
+          </h2>
+          <div className="w-full h-64 sm:h-80 md:h-96">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={lineData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip formatter={(value, name) => [`${value} audits`, name]} />
+                <Legend />
+                <Line type="monotone" dataKey="Yes" stroke="#00C49F" />
+                <Line type="monotone" dataKey="No" stroke="#FF8042" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         {/* Bar Chart */}
-        <div className="bg-neutral-800 p-4 rounded-md">
-          <h2 className="text-xl font-bold mb-2">Bar Chart (Yes/No per Line)</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={barData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="Yes" fill="#00C49F" />
-              <Bar dataKey="No" fill="#FF8042" />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="bg-neutral-800 p-4 rounded-md w-full">
+          <h2 className="text-lg sm:text-xl font-bold mb-2 text-center md:text-left">
+            Bar Chart (Yes/No per Line)
+          </h2>
+          <div className="w-full h-64 sm:h-80 md:h-96">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={barData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="Yes" fill="#00C49F" />
+                <Bar dataKey="No" fill="#FF8042" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
     </div>
