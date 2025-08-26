@@ -23,6 +23,7 @@ import EmployeeDashboard from "@/pages/EmployeeDashboard";
 import SettingsPage from "@/pages/SettingsPage";
 import AdminEditAuditPage from "@/pages/AdminAuditPage";
 import EditEmployeePage from "@/pages/EditEmployeePage";
+import EmployeeAuditResult from "@/pages/EmployeeAuditResult";
 
 export default function AppRoutes() {
   return (
@@ -67,6 +68,7 @@ export default function AppRoutes() {
         <Route path="inspections" element={<EmployeeFillInspectionPage />} />
         <Route path="dashboard" element={<EmployeeDashboard />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="results/:auditId" element={<EmployeeAuditResult />} />
       </Route>
 
       {/* Catch-all */}

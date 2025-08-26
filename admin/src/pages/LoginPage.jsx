@@ -19,10 +19,10 @@ export default function LoginPage() {
 
   const loginFields = [
     {
-      label: "Employee ID",
+      label: "Username",
       type: "text",
       name: "employeeId",
-      placeholder: "Enter your Employee ID",
+      placeholder: "Enter your Username",
       icon: <User className="text-gray-400" size={20} />,
     },
     {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Trash2 } from "lucide-react"; // icon for delete
 
 export default function DepartmentPage() {
   const [lines, setLines] = useState([]);
@@ -103,88 +104,53 @@ export default function DepartmentPage() {
   };
 
   const renderList = (items, type) => (
-    <ul className="mt-4 divide-y divide-gray-700 border border-gray-700 rounded">
+    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
       {items.map((item) => (
-        <li
+        <div
           key={item._id}
-          className="flex justify-between items-center px-4 py-2 hover:bg-gray-800 transition"
+          className="flex justify-between items-center p-4 bg-neutral-900 border border-gray-700 rounded shadow hover:shadow-lg transition"
         >
-          <span>{item.name}</span>
+          <span className="text-gray-200 font-medium">{item.name}</span>
           <button
             onClick={() => deleteItem(type, item._id)}
-            className="text-red-500 hover:text-red-700 font-semibold"
+            className="text-red-500 hover:text-red-400"
           >
-            Delete
+            <Trash2 size={18} />
           </button>
-        </li>
+        </div>
       ))}
-    </ul>
+    </div>
+  );
+
+  const renderSection = (title, inputValue, setInputValue, addFunc, items, type) => (
+    <div className="mb-10">
+      <h2 className="text-2xl font-semibold mb-3">{title}</h2>
+      <div className="flex flex-col sm:flex-row gap-2 mb-3">
+        <input
+          className="flex-1 p-3 rounded-lg bg-neutral-800 border border-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder={`Enter ${title.toLowerCase().slice(0, -1)} name`}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
+        <button
+          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg font-semibold transition"
+          onClick={addFunc}
+        >
+          Add
+        </button>
+      </div>
+      {renderList(items, type)}
+    </div>
   );
 
   return (
-    <div className="p-6 max-w-4xl mx-auto text-white">
+    <div className="p-6 max-w-6xl mx-auto text-white">
       <ToastContainer position="top-right" autoClose={3000} />
-      <h1 className="text-3xl font-bold mb-8">Department Management</h1>
+      <h1 className="text-4xl font-bold mb-10 text-center">Department Management</h1>
 
-      {/* Lines */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-2">Lines</h2>
-        <div className="flex gap-2 mb-2">
-          <input
-            className="flex-1 p-2 rounded bg-neutral-800 border border-gray-700"
-            placeholder="Enter line name"
-            value={lineName}
-            onChange={(e) => setLineName(e.target.value)}
-          />
-          <button
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
-            onClick={addLine}
-          >
-            Add
-          </button>
-        </div>
-        {renderList(lines, "lines")}
-      </div>
-
-      {/* Machines */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-2">Machines</h2>
-        <div className="flex gap-2 mb-2">
-          <input
-            className="flex-1 p-2 rounded bg-neutral-800 border border-gray-700"
-            placeholder="Enter machine name"
-            value={machineName}
-            onChange={(e) => setMachineName(e.target.value)}
-          />
-          <button
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
-            onClick={addMachine}
-          >
-            Add
-          </button>
-        </div>
-        {renderList(machines, "machines")}
-      </div>
-
-      {/* Processes */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-2">Processes</h2>
-        <div className="flex gap-2 mb-2">
-          <input
-            className="flex-1 p-2 rounded bg-neutral-800 border border-gray-700"
-            placeholder="Enter process name"
-            value={processName}
-            onChange={(e) => setProcessName(e.target.value)}
-          />
-          <button
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
-            onClick={addProcess}
-          >
-            Add
-          </button>
-        </div>
-        {renderList(processes, "processes")}
-      </div>
+      {renderSection("Lines", lineName, setLineName, addLine, lines, "lines")}
+      {renderSection("Machines", machineName, setMachineName, addMachine, machines, "machines")}
+      {renderSection("Processes", processName, setProcessName, addProcess, processes, "processes")}
     </div>
   );
 }

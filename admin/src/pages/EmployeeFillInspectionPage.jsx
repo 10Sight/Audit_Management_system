@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { FiCheckCircle, FiHome, FiBarChart2 } from "react-icons/fi";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function EmployeeFillInspectionPage() {
@@ -25,6 +26,10 @@ export default function EmployeeFillInspectionPage() {
 
   // Questions
   const [questions, setQuestions] = useState([]);
+
+  // Modal state
+  const [showModal, setShowModal] = useState(false);
+  const [submittedAuditId, setSubmittedAuditId] = useState(null); // New state
 
   const baseURL = "http://localhost:5000/api";
 
@@ -112,12 +117,13 @@ export default function EmployeeFillInspectionPage() {
         })),
       };
 
-      await axios.post(`${baseURL}/audits`, payload, { withCredentials: true });
+      const res = await axios.post(`${baseURL}/audits`, payload, { withCredentials: true });
 
-      toast.success("Inspection submitted!");
-      
-      // Navigate to employee dashboard after success
-      navigate("/employee/dashboard");
+      // Store the audit ID returned from backend
+      setSubmittedAuditId(res.data?.data?._id);
+
+      // Show modal after success
+      setShowModal(true);
     } catch (err) {
       console.error("Error submitting inspection:", err);
       toast.error(err.response?.data?.message || "Failed to submit inspection");
@@ -129,7 +135,7 @@ export default function EmployeeFillInspectionPage() {
   return (
     <div className="p-6 max-w-4xl mx-auto text-white">
       <ToastContainer />
-      <h1 className="text-3xl font-bold mb-6">Part and Quality audit performance</h1>
+      <h1 className="text-3xl font-bold mb-6">Part and Quality Audit Performance</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Selection Fields */}
@@ -265,6 +271,47 @@ export default function EmployeeFillInspectionPage() {
           Submit Audit
         </button>
       </form>
+
+      {/* Animated Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 animate-fadeIn">
+          <div className="bg-neutral-900 p-6 rounded-xl max-w-sm w-full text-center space-y-4 transform transition-all duration-300 scale-100 animate-scaleIn">
+            <FiCheckCircle className="mx-auto text-green-500 text-5xl" />
+            <h2 className="text-2xl font-bold">Audit Submitted!</h2>
+            <p className="text-gray-300">Choose an option to proceed:</p>
+            <div className="flex justify-center gap-4 mt-4">
+              <button
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 rounded-md hover:bg-blue-700 transition"
+                onClick={() => navigate("/employee/dashboard")}
+              >
+                <FiHome /> Back to Home
+              </button>
+              <button
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 rounded-md hover:bg-green-700 transition"
+                onClick={() => navigate(`/employee/results/${submittedAuditId}`)}
+              >
+                <FiBarChart2 /> Show Results
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Tailwind animation classes */}
+      <style>
+        {`
+          @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+          }
+          @keyframes scaleIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+          }
+          .animate-fadeIn { animation: fadeIn 0.3s ease-out; }
+          .animate-scaleIn { animation: scaleIn 0.3s ease-out; }
+        `}
+      </style>
     </div>
   );
 }
