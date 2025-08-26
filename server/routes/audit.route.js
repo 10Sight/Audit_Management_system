@@ -13,10 +13,11 @@ const router = express.Router();
 router.post("/", verifyJWT, authorizeRoles("employee", "manager", "admin"), createAudit);
 
 // Admin (or manager) can view all audits
-router.get("/", verifyJWT, authorizeRoles("admin", "manager"), getAudits);
+router.get("/", verifyJWT, authorizeRoles("admin", "employee"), getAudits);
 
 // Any logged-in user can view their own audit (extra logic can be added)
 router.get("/:id", verifyJWT, getAuditById);
 router.delete("/:id", verifyJWT, authorizeRoles("admin"), deleteAudit);
+router.put("/:id", verifyJWT, authorizeRoles("admin"));
 
 export default router;

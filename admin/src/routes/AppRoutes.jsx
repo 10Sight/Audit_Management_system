@@ -19,6 +19,9 @@ import AuditsPage from "@/pages/AuditPage";
 import DepartmentPage from "@/pages/DepartmentPage";
 import AuditDetailPage from "@/pages/AuditDetailPage";
 import AdminManageQuestionsPage from "@/pages/AdminManageQuestionsPage";
+import EmployeeDashboard from "@/pages/EmployeeDashboard";
+import SettingsPage from "@/pages/SettingsPage";
+import AdminEditAuditPage from "@/pages/AdminAuditPage";
 
 export default function AppRoutes() {
   return (
@@ -45,6 +48,8 @@ export default function AppRoutes() {
         <Route path="audits/:id" element={<AuditDetailPage />} />
         <Route path="audits/create" element={<AdminCreateTemplatePage />} />
         <Route path="departments" element={<DepartmentPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+        <Route path="audits/edit/:id" element={<AdminEditAuditPage />} />
       </Route>
 
       {/* Employee Routes */}
@@ -58,6 +63,8 @@ export default function AppRoutes() {
       >
         <Route index element={<EmployeeFillInspectionPage />} />
         <Route path="inspections" element={<EmployeeFillInspectionPage />} />
+        <Route path="dashboard" element={<EmployeeDashboard />} />
+        <Route path="settings" element={<SettingsPage />} />
       </Route>
 
       {/* Catch-all */}

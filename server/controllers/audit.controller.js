@@ -45,17 +45,30 @@ export const createAudit = asyncHandler(async (req, res) => {
 
 
 // 📄 Get All Audits (admin)
+// 📄 Get Audits (admin = all, employee = only own)
 export const getAudits = asyncHandler(async (req, res) => {
-  const audits = await Audit.find({})
-    .populate("line", "name")            // line object with only name
-    .populate("machine", "name")         // machine object with only name
-    .populate("process", "name")         // process object with only name
-    .populate("auditor", "fullName emailId") // auditor with fullName and emailId
-    .populate("answers.question", "questionText") // populate question text
-    .populate("createdBy", "fullName employeeId"); // if you track who created the audit
+  let query = {};
 
-  return res.json(new ApiResponse(200, audits, "Audits fetched"));
+  // ✅ If role is employee → restrict to their own audits
+  if (req.user.role === "employee") {
+    query = { auditor: req.user._id };
+  } 
+  // ✅ If query param `auditor` is provided (optional for admin)
+  else if (req.query.auditor) {
+    query = { auditor: req.query.auditor };
+  }
+
+  const audits = await Audit.find(query)
+    .populate("line", "name")
+    .populate("machine", "name")
+    .populate("process", "name")
+    .populate("auditor", "fullName emailId")
+    .populate("answers.question", "questionText")
+    .populate("createdBy", "fullName employeeId");
+
+  return res.json(new ApiResponse(200, audits, "Audits fetched successfully"));
 });
+
 // 📄 Get Audit By ID
 // 📄 Get Audit By ID
 export const getAuditById = asyncHandler(async (req, res) => {
@@ -73,6 +86,51 @@ export const getAuditById = asyncHandler(async (req, res) => {
 
   return res.json(new ApiResponse(200, audit, "Audit fetched"));
 });
+
+// 📄 Update Audit By ID
+export const updateAudit = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { line, machine, process, lineLeader, shiftIncharge, answers } = req.body;
+
+  // ✅ Find audit
+  const audit = await Audit.findById(id);
+  if (!audit) throw new ApiError(404, "Audit not found");
+
+  // ✅ Only allow employees to update their own audits (optional)
+  if (req.user.role === "employee" && audit.auditor.toString() !== req.user._id) {
+    throw new ApiError(403, "You are not authorized to update this audit");
+  }
+
+  // ✅ Validate required fields
+  if (!line || !machine || !process || !lineLeader || !shiftIncharge) {
+    throw new ApiError(400, "All required fields must be filled");
+  }
+
+  // ✅ Validate answers
+  if (!answers || !Array.isArray(answers) || answers.length === 0) {
+    throw new ApiError(400, "Answers are required");
+  }
+
+  answers.forEach((ans) => {
+    if (ans.answer === "No" && !ans.remark) {
+      throw new ApiError(400, `Remark required for question ${ans.question}`);
+    }
+  });
+
+  // ✅ Update audit fields
+  audit.line = line;
+  audit.machine = machine;
+  audit.process = process;
+  audit.lineLeader = lineLeader;
+  audit.shiftIncharge = shiftIncharge;
+  audit.answers = answers;
+
+  await audit.save();
+
+  logger.info(`Audit ${id} updated by ${req.user._id}`);
+  return res.json(new ApiResponse(200, audit, "Audit updated successfully"));
+});
+
 
 // 📄 Delete Audit By ID
 export const deleteAudit = asyncHandler(async (req, res) => {

@@ -9,7 +9,7 @@ router.post("/login", loginEmployee);
 router.post("/logout", verifyJWT, logoutEmployee);
 router.get("/get-employee", verifyJWT, authorizeRoles("admin"), getEmployees);
 router.delete("/employee/:id", verifyJWT, authorizeRoles("admin"), deleteEmployee);
-router.get("/employee/:id", verifyJWT, authorizeRoles("admin"), getSingleEmployee);
+router.get("/employee/:id", verifyJWT, getSingleEmployee);
 router.get("/me", verifyJWT, getCurrentUser);
 
 export default router;

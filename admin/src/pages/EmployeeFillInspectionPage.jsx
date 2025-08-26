@@ -3,10 +3,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function EmployeeFillInspectionPage() {
   const { user: currentUser } = useAuth();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
   // Dropdown data
@@ -113,12 +115,9 @@ export default function EmployeeFillInspectionPage() {
       await axios.post(`${baseURL}/audits`, payload, { withCredentials: true });
 
       toast.success("Inspection submitted!");
-      setQuestions((prev) => prev.map((q) => ({ ...q, answer: "", remark: "" })));
-      setLineLeader("");
-      setShiftIncharge("");
-      setLine("");
-      setMachine("");
-      setProcess("");
+      
+      // Navigate to employee dashboard after success
+      navigate("/employee/dashboard");
     } catch (err) {
       console.error("Error submitting inspection:", err);
       toast.error(err.response?.data?.message || "Failed to submit inspection");
