@@ -129,7 +129,7 @@ export default function EmployeeFillInspectionPage() {
   return (
     <div className="p-6 max-w-4xl mx-auto text-white">
       <ToastContainer />
-      <h1 className="text-3xl font-bold mb-6">Employee Audit Form</h1>
+      <h1 className="text-3xl font-bold mb-6">Part and Quality audit performance</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Selection Fields */}

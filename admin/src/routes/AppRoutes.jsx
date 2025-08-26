@@ -22,6 +22,7 @@ import AdminManageQuestionsPage from "@/pages/AdminManageQuestionsPage";
 import EmployeeDashboard from "@/pages/EmployeeDashboard";
 import SettingsPage from "@/pages/SettingsPage";
 import AdminEditAuditPage from "@/pages/AdminAuditPage";
+import EditEmployeePage from "@/pages/EditEmployeePage";
 
 export default function AppRoutes() {
   return (
@@ -50,6 +51,7 @@ export default function AppRoutes() {
         <Route path="departments" element={<DepartmentPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="audits/edit/:id" element={<AdminEditAuditPage />} />
+        <Route path="employee/edit/:id" element={<EditEmployeePage />} />
       </Route>
 
       {/* Employee Routes */}

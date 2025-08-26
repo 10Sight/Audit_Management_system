@@ -96,40 +96,39 @@ export const updateAudit = asyncHandler(async (req, res) => {
   const audit = await Audit.findById(id);
   if (!audit) throw new ApiError(404, "Audit not found");
 
-  // ✅ Only allow employees to update their own audits (optional)
+  // ✅ Authorization check (optional)
   if (req.user.role === "employee" && audit.auditor.toString() !== req.user._id) {
     throw new ApiError(403, "You are not authorized to update this audit");
   }
 
-  // ✅ Validate required fields
-  if (!line || !machine || !process || !lineLeader || !shiftIncharge) {
-    throw new ApiError(400, "All required fields must be filled");
-  }
+  // ✅ Update only provided fields
+  if (line) audit.line = line;
+  if (machine) audit.machine = machine;
+  if (process) audit.process = process;
+  if (lineLeader) audit.lineLeader = lineLeader;
+  if (shiftIncharge) audit.shiftIncharge = shiftIncharge;
 
-  // ✅ Validate answers
-  if (!answers || !Array.isArray(answers) || answers.length === 0) {
-    throw new ApiError(400, "Answers are required");
-  }
-
-  answers.forEach((ans) => {
-    if (ans.answer === "No" && !ans.remark) {
-      throw new ApiError(400, `Remark required for question ${ans.question}`);
+  // ✅ Handle answers (optional but validated)
+  if (answers) {
+    if (!Array.isArray(answers) || answers.length === 0) {
+      throw new ApiError(400, "Answers must be a non-empty array");
     }
-  });
 
-  // ✅ Update audit fields
-  audit.line = line;
-  audit.machine = machine;
-  audit.process = process;
-  audit.lineLeader = lineLeader;
-  audit.shiftIncharge = shiftIncharge;
-  audit.answers = answers;
+    answers.forEach((ans) => {
+      if (ans.answer === "No" && !ans.remark) {
+        throw new ApiError(400, `Remark required for question ${ans.question}`);
+      }
+    });
+
+    audit.answers = answers;
+  }
 
   await audit.save();
 
   logger.info(`Audit ${id} updated by ${req.user._id}`);
   return res.json(new ApiResponse(200, audit, "Audit updated successfully"));
 });
+
 
 
 // 📄 Delete Audit By ID

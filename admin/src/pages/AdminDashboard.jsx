@@ -1,9 +1,19 @@
+// AdminDashboard.jsx
 import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import {
-  PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, LineChart, Line
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  BarChart,
+  Bar,
 } from "recharts";
+import { startOfWeek, startOfMonth, startOfYear, format } from "date-fns";
 
 export default function AdminDashboard() {
   const [audits, setAudits] = useState([]);
@@ -16,18 +26,25 @@ export default function AdminDashboard() {
   const [selectedLine, setSelectedLine] = useState("");
   const [selectedMachine, setSelectedMachine] = useState("");
   const [selectedProcess, setSelectedProcess] = useState("");
-  const [pieCategory, setPieCategory] = useState("Line"); // Toggle Pie chart category
+  const [timeframe, setTimeframe] = useState("daily");
 
-  const [pieData, setPieData] = useState([]);
-  const [barData, setBarData] = useState([]);
   const [lineData, setLineData] = useState([]);
-
-  const COLORS = ["#0088FE", "#00C49F", "#FF8042", "#FFBB28", "#A28EFF"];
+  const [barData, setBarData] = useState([]);
 
   const api = axios.create({
     baseURL: "http://localhost:5000/api",
     withCredentials: true,
   });
+
+  // Function to get timeframe key
+  const getTimeframeKey = (date, timeframe) => {
+    const d = new Date(date);
+    if (timeframe === "daily") return format(d, "yyyy-MM-dd");
+    if (timeframe === "weekly") return format(startOfWeek(d, { weekStartsOn: 1 }), "yyyy-MM-dd");
+    if (timeframe === "monthly") return format(startOfMonth(d), "yyyy-MM");
+    if (timeframe === "yearly") return format(startOfYear(d), "yyyy");
+    return format(d, "yyyy-MM-dd");
+  };
 
   // Fetch audits and dropdown data
   useEffect(() => {
@@ -39,9 +56,7 @@ export default function AdminDashboard() {
             api.get("/lines"),
             api.get("/machines"),
             api.get("/processes"),
-            axios.get("http://localhost:5000/api/v1/auth/get-employee", {
-              withCredentials: true,
-            }),
+            axios.get("http://localhost:5000/api/v1/auth/get-employee", { withCredentials: true }),
           ]);
 
         setAudits(auditsRes.data.data || []);
@@ -61,27 +76,30 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
-  // Pie Chart data based on toggle category
+  // Line Chart (Trend) data
   useEffect(() => {
-    const counts = {};
+    const countsByPeriod = {};
+
     audits.forEach((audit) => {
+      if (selectedLine && audit.line?._id !== selectedLine) return;
+      if (selectedMachine && audit.machine?._id !== selectedMachine) return;
+      if (selectedProcess && audit.process?._id !== selectedProcess) return;
+
+      const key = getTimeframeKey(audit.date, timeframe);
+
+      if (!countsByPeriod[key]) countsByPeriod[key] = { Yes: 0, No: 0 };
+
       audit.answers?.forEach((ans) => {
-        if (ans.answer !== answerType) return;
-        if (selectedLine && audit.line?._id !== selectedLine) return;
-        if (selectedMachine && audit.machine?._id !== selectedMachine) return;
-        if (selectedProcess && audit.process?._id !== selectedProcess) return;
-
-        let key = "N/A";
-        if (pieCategory === "Line") key = audit.line?.name || "N/A";
-        else if (pieCategory === "Machine") key = audit.machine?.name || "N/A";
-        else if (pieCategory === "Process") key = audit.process?.name || "N/A";
-
-        counts[key] = (counts[key] || 0) + 1;
+        countsByPeriod[key][ans.answer] = (countsByPeriod[key][ans.answer] || 0) + 1;
       });
     });
 
-    setPieData(Object.keys(counts).map((key) => ({ name: key, value: counts[key] })));
-  }, [audits, answerType, selectedLine, selectedMachine, selectedProcess, pieCategory]);
+    setLineData(
+      Object.keys(countsByPeriod)
+        .sort((a, b) => new Date(a) - new Date(b))
+        .map((period) => ({ date: period, ...countsByPeriod[period] }))
+    );
+  }, [audits, timeframe, selectedLine, selectedMachine, selectedProcess]);
 
   // Bar Chart data
   useEffect(() => {
@@ -101,30 +119,11 @@ export default function AdminDashboard() {
     setBarData(Object.keys(counts).map((k) => ({ name: k, ...counts[k] })));
   }, [audits, selectedLine, selectedMachine, selectedProcess]);
 
-  // Line Chart data (trend over time)
-  useEffect(() => {
-    const countsByDate = {};
-    audits.forEach((audit) => {
-      audit.answers?.forEach((ans) => {
-        if (ans.answer !== answerType) return;
-        if (selectedLine && audit.line?._id !== selectedLine) return;
-        if (selectedMachine && audit.machine?._id !== selectedMachine) return;
-        if (selectedProcess && audit.process?._id !== selectedProcess) return;
-
-        const date = new Date(audit.date).toLocaleDateString();
-        countsByDate[date] = (countsByDate[date] || 0) + 1;
-      });
-    });
-
-    setLineData(
-      Object.keys(countsByDate)
-        .sort((a, b) => new Date(a) - new Date(b))
-        .map((date) => ({ date, value: countsByDate[date] }))
-    );
-  }, [audits, answerType, selectedLine, selectedMachine, selectedProcess]);
-
   // Summary counts
-  const totalEmployees = useMemo(() => employees.filter((emp) => emp.role === "employee").length, [employees]);
+  const totalEmployees = useMemo(
+    () => employees.filter((emp) => emp.role === "employee").length,
+    [employees]
+  );
 
   const filteredCounts = useMemo(() => {
     const filteredAudits = audits.filter((audit) => {
@@ -177,10 +176,28 @@ export default function AdminDashboard() {
 
       {/* Filters */}
       <div className="flex flex-wrap gap-4 bg-neutral-800 p-4 rounded-md">
-        {["Answer Type", "Line", "Machine", "Process", "Pie Category"].map((label, idx) => {
-          const valueMap = { "Answer Type": answerType, Line: selectedLine, Machine: selectedMachine, Process: selectedProcess, "Pie Category": pieCategory };
-          const setValueMap = { "Answer Type": setAnswerType, Line: setSelectedLine, Machine: setSelectedMachine, Process: setSelectedProcess, "Pie Category": setPieCategory };
-          const optionsMap = { "Answer Type": ["Yes", "No"], Line: lines, Machine: machines, Process: processes, "Pie Category": ["Line", "Machine", "Process"] };
+        {["Answer Type", "Line", "Machine", "Process", "Timeframe"].map((label, idx) => {
+          const valueMap = {
+            "Answer Type": answerType,
+            Line: selectedLine,
+            Machine: selectedMachine,
+            Process: selectedProcess,
+            Timeframe: timeframe,
+          };
+          const setValueMap = {
+            "Answer Type": setAnswerType,
+            Line: setSelectedLine,
+            Machine: setSelectedMachine,
+            Process: setSelectedProcess,
+            Timeframe: setTimeframe,
+          };
+          const optionsMap = {
+            "Answer Type": ["Yes", "No"],
+            Line: lines,
+            Machine: machines,
+            Process: processes,
+            Timeframe: ["daily", "weekly", "monthly", "yearly"],
+          };
 
           return (
             <div key={idx} className="flex flex-col">
@@ -204,29 +221,21 @@ export default function AdminDashboard() {
         })}
       </div>
 
-      {/* Charts in 2 columns */}
+      {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Pie Chart */}
+        {/* Line Chart */}
         <div className="bg-neutral-800 p-4 rounded-md">
-          <h2 className="text-xl font-bold mb-2">Pie Chart ({pieCategory})</h2>
+          <h2 className="text-xl font-bold mb-2">Trend Over Time ({answerType})</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={pieData}
-                dataKey="value"
-                nameKey="name"
-                cx="50%"
-                cy="50%"
-                outerRadius={100}
-                label
-              >
-                {pieData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
+            <LineChart data={lineData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip formatter={(value, name) => [`${value} audits`, name]} />
               <Legend />
-            </PieChart>
+              <Line type="monotone" dataKey="Yes" stroke="#00C49F" />
+              <Line type="monotone" dataKey="No" stroke="#FF8042" />
+            </LineChart>
           </ResponsiveContainer>
         </div>
 
@@ -240,24 +249,9 @@ export default function AdminDashboard() {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="Yes" fill="#0088FE" />
+              <Bar dataKey="Yes" fill="#00C49F" />
               <Bar dataKey="No" fill="#FF8042" />
             </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Line Chart */}
-        <div className="bg-neutral-800 p-4 rounded-md col-span-1 md:col-span-2">
-          <h2 className="text-xl font-bold mb-2">Trend Over Time ({answerType})</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={lineData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line type="monotone" dataKey="value" stroke="#00C49F" />
-            </LineChart>
           </ResponsiveContainer>
         </div>
       </div>

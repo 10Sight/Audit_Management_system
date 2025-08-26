@@ -78,7 +78,7 @@ export default function LoginPage() {
       // Navigate based on role
       if (role === "admin") navigate("/admin/dashboard", { replace: true });
       else if (role === "employee")
-        navigate("/employee/dashboard", { replace: true });
+        navigate("/employee/inspections", { replace: true });
       else throw new Error("Invalid role received from server");
     } catch (err) {
       setError(err.message);

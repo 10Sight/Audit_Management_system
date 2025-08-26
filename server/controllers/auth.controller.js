@@ -124,6 +124,47 @@ export const getSingleEmployee = async (req, res, next) => {
   }
 };
 
+// ================== UPDATE EMPLOYEE ==================
+export const updateEmployee = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) throw new ApiError(400, "Employee ID is required");
+
+    const { fullName, emailId, department, phoneNumber, role } = req.body;
+
+    // ✅ Check if employee exists
+    const employee = await Employee.findById(id);
+    if (!employee) throw new ApiError(404, "Employee not found");
+
+    // ✅ Optional: only admin can edit
+    if (req.user.role !== "admin") {
+      throw new ApiError(403, "Only admin can update employees");
+    }
+
+    // ✅ Update allowed fields
+    if (fullName) employee.fullName = fullName;
+    if (emailId) employee.emailId = emailId;
+    if (department) employee.department = department;
+    if (phoneNumber) employee.phoneNumber = phoneNumber;
+    if (role) employee.role = role;
+
+    await employee.save();
+
+    logger.info(
+      `Employee updated: ${employee.fullName} (${employee.employeeId}) by ${req.user.fullName} (${req.user.employeeId})`
+    );
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { employee }, "Employee updated successfully"));
+  } catch (error) {
+    logger.error(`Update Employee Error: ${error.message}`);
+    next(error);
+  }
+};
+
+
 // ================== DELETE EMPLOYEE ==================
 export const deleteEmployee = async (req, res, next) => {
   try {

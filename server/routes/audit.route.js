@@ -4,6 +4,7 @@ import {
   getAudits,
   getAuditById,
   deleteAudit,
+  updateAudit,
 } from "../controllers/audit.controller.js";
 import { verifyJWT, authorizeRoles } from "../middlewares/auth.middleware.js";
 
@@ -18,6 +19,6 @@ router.get("/", verifyJWT, authorizeRoles("admin", "employee"), getAudits);
 // Any logged-in user can view their own audit (extra logic can be added)
 router.get("/:id", verifyJWT, getAuditById);
 router.delete("/:id", verifyJWT, authorizeRoles("admin"), deleteAudit);
-router.put("/:id", verifyJWT, authorizeRoles("admin"));
+router.put("/:id", verifyJWT, authorizeRoles("admin"), updateAudit);
 
 export default router;
