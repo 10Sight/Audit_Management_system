@@ -46,7 +46,7 @@ const DynamicForm = ({ fields, onSubmit }) => {
     <form onSubmit={handleSubmit} className="space-y-4 w-full">
       {fields.map((field, idx) => (
         <div key={idx} className="flex flex-col">
-          <label className="mb-1 font-medium text-gray-300">{field.label}</label>
+          <label className="mb-1 font-medium text-gray-700">{field.label}</label>
 
           {/* Text / Email / Number */}
           {["text", "email", "number"].includes(field.type) && (
@@ -58,7 +58,8 @@ const DynamicForm = ({ fields, onSubmit }) => {
               onChange={(e) => handleChange(e, field)}
               disabled={field.disabled}
               required={field.required}
-              className="p-3 rounded-lg bg-black text-white border border-gray-700 focus:outline-none focus:border-white transition"
+              className="p-3 rounded-lg bg-gray-50 text-gray-900 border border-gray-300 
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             />
           )}
 
@@ -73,12 +74,13 @@ const DynamicForm = ({ fields, onSubmit }) => {
                 onChange={(e) => handleChange(e, field)}
                 disabled={field.disabled}
                 required={field.required}
-                className="p-3 rounded-lg bg-black text-white border border-gray-700 focus:outline-none focus:border-white transition w-full"
+                className="p-3 rounded-lg bg-gray-50 text-gray-900 border border-gray-300 
+                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition w-full"
               />
               <button
                 type="button"
                 onClick={() => togglePassword(field.name)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 text-sm"
               >
                 {showPassword[field.name] ? "Hide" : "Show"}
               </button>
@@ -94,7 +96,8 @@ const DynamicForm = ({ fields, onSubmit }) => {
               onChange={(e) => handleChange(e, field)}
               disabled={field.disabled}
               required={field.required}
-              className="p-3 rounded-lg bg-black text-white border border-gray-700 focus:outline-none focus:border-white transition"
+              className="p-3 rounded-lg bg-gray-50 text-gray-900 border border-gray-300 
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             />
           )}
 
@@ -106,11 +109,12 @@ const DynamicForm = ({ fields, onSubmit }) => {
               onChange={(e) => handleChange(e, field)}
               disabled={field.disabled}
               required={field.required}
-              className="p-3 rounded-lg bg-black text-white border border-gray-700 focus:outline-none focus:border-white transition"
+              className="p-3 rounded-lg bg-gray-50 text-gray-900 border border-gray-300 
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             >
               <option value="">Select {field.label}</option>
               {field.options?.map((opt, i) => (
-                <option key={i} value={opt} className="bg-black text-white">
+                <option key={i} value={opt} className="bg-white text-gray-900">
                   {opt}
                 </option>
               ))}
@@ -121,7 +125,7 @@ const DynamicForm = ({ fields, onSubmit }) => {
           {field.type === "radio" && (
             <div className="flex gap-4">
               {field.options?.map((opt, i) => (
-                <label key={i} className="flex items-center gap-2 text-gray-300">
+                <label key={i} className="flex items-center gap-2 text-gray-700">
                   <input
                     type="radio"
                     name={field.name}
@@ -130,7 +134,7 @@ const DynamicForm = ({ fields, onSubmit }) => {
                     onChange={(e) => handleChange(e, field)}
                     disabled={field.disabled}
                     required={field.required}
-                    className="accent-white"
+                    className="accent-blue-600"
                   />
                   {opt}
                 </label>
@@ -142,7 +146,7 @@ const DynamicForm = ({ fields, onSubmit }) => {
           {field.type === "checkbox" && (
             <div className="flex gap-4 flex-wrap">
               {field.options?.map((opt, i) => (
-                <label key={i} className="flex items-center gap-2 text-gray-300">
+                <label key={i} className="flex items-center gap-2 text-gray-700">
                   <input
                     type="checkbox"
                     name={field.name}
@@ -150,7 +154,7 @@ const DynamicForm = ({ fields, onSubmit }) => {
                     checked={formData[field.name].includes(opt)}
                     onChange={(e) => handleChange(e, field)}
                     disabled={field.disabled}
-                    className="accent-white"
+                    className="accent-blue-600"
                   />
                   {opt}
                 </label>
@@ -162,7 +166,8 @@ const DynamicForm = ({ fields, onSubmit }) => {
 
       <button
         type="submit"
-        className="w-full bg-white text-black px-4 py-3 mt-4 rounded-lg hover:bg-gray-200 transition font-medium shadow-md"
+        className="w-full bg-blue-600 text-white px-4 py-3 mt-4 rounded-lg 
+        hover:bg-blue-700 transition font-medium shadow-md"
       >
         Submit
       </button>

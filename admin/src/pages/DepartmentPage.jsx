@@ -108,12 +108,12 @@ export default function DepartmentPage() {
       {items.map((item) => (
         <div
           key={item._id}
-          className="flex justify-between items-center p-4 bg-neutral-900 border border-gray-700 rounded shadow hover:shadow-lg transition"
+          className="flex justify-between items-center p-4 bg-gray-100 border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition"
         >
-          <span className="text-gray-200 font-medium">{item.name}</span>
+          <span className="text-gray-800 font-medium">{item.name}</span>
           <button
             onClick={() => deleteItem(type, item._id)}
-            className="text-red-500 hover:text-red-400"
+            className="text-red-600 hover:text-red-500"
           >
             <Trash2 size={18} />
           </button>
@@ -124,10 +124,10 @@ export default function DepartmentPage() {
 
   const renderSection = (title, inputValue, setInputValue, addFunc, items, type) => (
     <div className="mb-10">
-      <h2 className="text-2xl font-semibold mb-3">{title}</h2>
+      <h2 className="text-2xl font-semibold mb-3 text-gray-800">{title}</h2>
       <div className="flex flex-col sm:flex-row gap-2 mb-3">
         <input
-          className="flex-1 p-3 rounded-lg bg-neutral-800 border border-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 p-3 rounded-lg bg-white border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder={`Enter ${title.toLowerCase().slice(0, -1)} name`}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -144,7 +144,7 @@ export default function DepartmentPage() {
   );
 
   return (
-    <div className="p-6 max-w-6xl mx-auto text-white">
+    <div className="p-6 max-w-6xl mx-auto text-gray-900">
       <ToastContainer position="top-right" autoClose={3000} />
       <h1 className="text-4xl font-bold mb-10 text-center">Department Management</h1>
 

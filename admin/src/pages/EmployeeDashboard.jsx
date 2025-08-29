@@ -59,7 +59,7 @@ export default function EmployeeDashboard() {
     XLSX.writeFile(workbook, `Audits_${currentUser?.fullName || "user"}.xlsx`);
   };
 
-  if (loading) return <div className="p-6 text-white">Loading dashboard...</div>;
+  if (loading) return <div className="p-6 text-gray-800">Loading dashboard...</div>;
 
   // Pagination logic
   const indexOfLastAudit = currentPage * auditsPerPage;
@@ -68,25 +68,30 @@ export default function EmployeeDashboard() {
   const totalPages = Math.ceil(audits.length / auditsPerPage);
 
   return (
-    <div className="p-4 sm:p-6 max-w-6xl mx-auto text-white">
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto text-gray-900">
       <ToastContainer />
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center sm:text-left">Employee Dashboard</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center sm:text-left">
+        Employee Dashboard
+      </h1>
 
       <button
-        className="mb-4 px-4 py-2 bg-white text-black rounded hover:bg-gray-200 transition w-full sm:w-auto"
+        className="mb-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition w-full sm:w-auto"
         onClick={downloadExcel}
       >
         Download Excel
       </button>
 
       {audits.length === 0 ? (
-        <p className="text-gray-400 text-center mt-4">No audits filled yet.</p>
+        <p className="text-gray-600 text-center mt-4">No audits filled yet.</p>
       ) : (
         <>
           {/* Mobile card view */}
           <div className="grid gap-4 sm:hidden">
             {currentAudits.map((audit) => (
-              <div key={audit._id} className="bg-neutral-900 p-4 rounded-lg shadow border border-neutral-700 space-y-2">
+              <div
+                key={audit._id}
+                className="bg-gray-100 p-4 rounded-lg shadow border border-gray-300 space-y-2"
+              >
                 <p><strong>Date:</strong> {new Date(audit.date).toLocaleDateString()}</p>
                 <p><strong>Line:</strong> {audit.line?.name || "N/A"}</p>
                 <p><strong>Machine:</strong> {audit.machine?.name || "N/A"}</p>
@@ -94,13 +99,13 @@ export default function EmployeeDashboard() {
                 <p>
                   <strong>Status:</strong>{" "}
                   {audit.answers.every((a) => a.answer === "Yes") ? (
-                    <span className="text-green-400 font-semibold">Completed</span>
+                    <span className="text-green-600 font-semibold">Completed</span>
                   ) : (
-                    <span className="text-red-400 font-semibold">Issues Found</span>
+                    <span className="text-red-600 font-semibold">Issues Found</span>
                   )}
                 </p>
                 <button
-                  className="w-full px-2 py-1 bg-blue-600 rounded hover:bg-blue-700"
+                  className="w-full px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700"
                   onClick={() => setSelectedAudit(audit)}
                 >
                   View
@@ -111,8 +116,8 @@ export default function EmployeeDashboard() {
 
           {/* Desktop table view */}
           <div className="hidden sm:block overflow-x-auto rounded-lg shadow-md">
-            <table className="min-w-full border border-neutral-700 divide-y divide-neutral-700 table-auto">
-              <thead className="bg-neutral-900">
+            <table className="min-w-full border border-gray-300 divide-y divide-gray-300 table-auto">
+              <thead className="bg-gray-200">
                 <tr>
                   <th className="px-3 py-2 text-left text-sm">Date</th>
                   <th className="px-3 py-2 text-left text-sm">Line</th>
@@ -122,23 +127,23 @@ export default function EmployeeDashboard() {
                   <th className="px-3 py-2 text-left text-sm">Action</th>
                 </tr>
               </thead>
-              <tbody className="bg-neutral-950 divide-y divide-neutral-700">
+              <tbody className="bg-white divide-y divide-gray-200">
                 {currentAudits.map((audit) => (
-                  <tr key={audit._id} className="hover:bg-neutral-900 transition">
+                  <tr key={audit._id} className="hover:bg-gray-100 transition">
                     <td className="px-3 py-2 text-sm">{new Date(audit.date).toLocaleDateString()}</td>
                     <td className="px-3 py-2 text-sm">{audit.line?.name || "N/A"}</td>
                     <td className="px-3 py-2 text-sm">{audit.machine?.name || "N/A"}</td>
                     <td className="px-3 py-2 text-sm">{audit.process?.name || "N/A"}</td>
                     <td className="px-3 py-2 text-sm">
                       {audit.answers.every((a) => a.answer === "Yes") ? (
-                        <span className="text-green-400 font-semibold">Completed</span>
+                        <span className="text-green-600 font-semibold">Completed</span>
                       ) : (
-                        <span className="text-red-400 font-semibold">Issues Found</span>
+                        <span className="text-red-600 font-semibold">Issues Found</span>
                       )}
                     </td>
                     <td className="px-3 py-2 text-sm">
                       <button
-                        className="px-2 py-1 bg-blue-600 rounded hover:bg-blue-700 w-full sm:w-auto"
+                        className="px-2 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 w-full sm:w-auto"
                         onClick={() => setSelectedAudit(audit)}
                       >
                         View
@@ -154,7 +159,7 @@ export default function EmployeeDashboard() {
           <div className="flex flex-wrap justify-center sm:justify-end gap-2 mt-4">
             <button
               disabled={currentPage === 1}
-              className={`px-3 py-1 rounded ${currentPage === 1 ? "bg-gray-600" : "bg-blue-600 hover:bg-blue-700"}`}
+              className={`px-3 py-1 rounded ${currentPage === 1 ? "bg-gray-400 text-white" : "bg-blue-600 text-white hover:bg-blue-700"}`}
               onClick={() => setCurrentPage((prev) => prev - 1)}
             >
               Previous
@@ -163,7 +168,7 @@ export default function EmployeeDashboard() {
             {Array.from({ length: totalPages }, (_, idx) => (
               <button
                 key={idx}
-                className={`px-3 py-1 rounded ${currentPage === idx + 1 ? "bg-green-600" : "bg-blue-600 hover:bg-blue-700"}`}
+                className={`px-3 py-1 rounded ${currentPage === idx + 1 ? "bg-green-600 text-white" : "bg-blue-600 text-white hover:bg-blue-700"}`}
                 onClick={() => setCurrentPage(idx + 1)}
               >
                 {idx + 1}
@@ -172,7 +177,7 @@ export default function EmployeeDashboard() {
 
             <button
               disabled={currentPage === totalPages}
-              className={`px-3 py-1 rounded ${currentPage === totalPages ? "bg-gray-600" : "bg-blue-600 hover:bg-blue-700"}`}
+              className={`px-3 py-1 rounded ${currentPage === totalPages ? "bg-gray-400 text-white" : "bg-blue-600 text-white hover:bg-blue-700"}`}
               onClick={() => setCurrentPage((prev) => prev + 1)}
             >
               Next
@@ -183,9 +188,11 @@ export default function EmployeeDashboard() {
 
       {/* Modal */}
       {selectedAudit && (
-        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
-          <div className="bg-neutral-900 p-4 sm:p-6 rounded-xl max-w-2xl w-full text-white space-y-4">
-            <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-4 text-center sm:text-left">Audit Details</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
+          <div className="bg-white p-4 sm:p-6 rounded-xl max-w-2xl w-full text-gray-900 space-y-4 shadow-lg">
+            <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-4 text-center sm:text-left">
+              Audit Details
+            </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
               <p><strong>Date:</strong> {new Date(selectedAudit.date).toLocaleDateString()}</p>
               <p><strong>Line:</strong> {selectedAudit.line?.name || "N/A"}</p>
@@ -198,7 +205,10 @@ export default function EmployeeDashboard() {
             <h3 className="text-lg sm:text-xl font-semibold mt-4">Answers</h3>
             <div className="space-y-2 max-h-80 sm:max-h-96 overflow-y-auto">
               {selectedAudit.answers.map((a, idx) => (
-                <div key={idx} className="bg-neutral-950 p-2 sm:p-3 rounded-md border border-neutral-700 break-words">
+                <div
+                  key={idx}
+                  className="bg-gray-100 p-2 sm:p-3 rounded-md border border-gray-300 break-words"
+                >
                   <p><strong>Question:</strong> {a.question?.questionText || "N/A"}</p>
                   <p><strong>Answer:</strong> {a.answer}</p>
                   {a.answer === "No" && <p><strong>Remark:</strong> {a.remark}</p>}
@@ -208,7 +218,7 @@ export default function EmployeeDashboard() {
 
             <div className="mt-4 flex justify-center sm:justify-end gap-4 flex-col sm:flex-row">
               <button
-                className="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700 w-full sm:w-auto"
+                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 w-full sm:w-auto"
                 onClick={() => setSelectedAudit(null)}
               >
                 Close

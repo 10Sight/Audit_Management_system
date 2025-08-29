@@ -87,17 +87,17 @@ export default function AdminManageQuestionsPage() {
     return <div className="text-center p-6 text-red-500">Access Denied</div>;
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 max-w-6xl mx-auto text-white">
+    <div className="p-4 sm:p-6 md:p-8 max-w-6xl mx-auto text-gray-900">
       <ToastContainer position="top-right" autoClose={3000} />
       <h1 className="text-2xl sm:text-3xl font-bold mb-6">Manage Questions</h1>
 
       {/* Filters */}
-      <div className="bg-neutral-900 p-4 sm:p-6 rounded-lg flex flex-col sm:flex-row flex-wrap gap-4 mb-6 items-start sm:items-center">
+      <div className="bg-gray-100 p-4 sm:p-6 rounded-lg flex flex-col sm:flex-row flex-wrap gap-4 mb-6 items-start sm:items-center shadow">
         <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           <select
             value={selectedLine}
             onChange={(e) => setSelectedLine(e.target.value)}
-            className="p-2 bg-neutral-800 border border-neutral-700 rounded-md min-w-[150px]"
+            className="p-2 bg-white border border-gray-300 rounded-md min-w-[150px]"
             disabled={fetchAll}
           >
             <option value="">-- All Lines --</option>
@@ -111,7 +111,7 @@ export default function AdminManageQuestionsPage() {
           <select
             value={selectedMachine}
             onChange={(e) => setSelectedMachine(e.target.value)}
-            className="p-2 bg-neutral-800 border border-neutral-700 rounded-md min-w-[150px]"
+            className="p-2 bg-white border border-gray-300 rounded-md min-w-[150px]"
             disabled={fetchAll}
           >
             <option value="">-- All Machines --</option>
@@ -125,7 +125,7 @@ export default function AdminManageQuestionsPage() {
           <select
             value={selectedProcess}
             onChange={(e) => setSelectedProcess(e.target.value)}
-            className="p-2 bg-neutral-800 border border-neutral-700 rounded-md min-w-[150px]"
+            className="p-2 bg-white border border-gray-300 rounded-md min-w-[150px]"
             disabled={fetchAll}
           >
             <option value="">-- All Processes --</option>
@@ -138,22 +138,22 @@ export default function AdminManageQuestionsPage() {
         </div>
 
         <div className="flex gap-4 flex-wrap">
-          <label className="flex items-center gap-2">
+          <label className="flex items-center gap-2 text-gray-700">
             <input
               type="checkbox"
               checked={includeGlobal}
               onChange={() => setIncludeGlobal(!includeGlobal)}
-              className="accent-green-500"
+              className="accent-green-600"
             />
             Include Global
           </label>
 
-          <label className="flex items-center gap-2">
+          <label className="flex items-center gap-2 text-gray-700">
             <input
               type="checkbox"
               checked={fetchAll}
               onChange={() => setFetchAll(!fetchAll)}
-              className="accent-blue-500"
+              className="accent-blue-600"
             />
             Fetch All Questions
           </label>
@@ -162,30 +162,30 @@ export default function AdminManageQuestionsPage() {
 
       {/* Questions List */}
       {loading ? (
-        <div className="text-center p-4">Loading...</div>
+        <div className="text-center p-4 text-gray-600">Loading...</div>
       ) : questions.length === 0 ? (
-        <div className="text-gray-400 text-center p-4">No questions found.</div>
+        <div className="text-gray-500 text-center p-4">No questions found.</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {questions.map((q) => (
             <div
               key={q._id}
-              className={`p-4 rounded-md border flex flex-col justify-between h-full ${
+              className={`p-4 rounded-md border flex flex-col justify-between h-full shadow ${
                 q.isGlobal
-                  ? "border-yellow-500 bg-neutral-700"
-                  : "bg-neutral-800 border-neutral-700"
+                  ? "border-yellow-400 bg-yellow-50"
+                  : "bg-white border-gray-300"
               }`}
             >
               <div>
-                <p className="font-semibold mb-1">{q.questionText}</p>
-                <p className="text-sm text-gray-400">
-                  Line: {q.lines?.[0]?.name || "-"}, Machine: {q.machines?.[0]?.name || "-"}, Process: {q.processes?.[0]?.name || "-"}{" "}
-                  {q.isGlobal && "(Global)"}
+                <p className="font-semibold mb-1 text-gray-900">{q.questionText}</p>
+                <p className="text-sm text-gray-600">
+                  Line: {q.lines?.[0]?.name || "-"}, Machine: {q.machines?.[0]?.name || "-"}, Process:{" "}
+                  {q.processes?.[0]?.name || "-"} {q.isGlobal && "(Global)"}
                 </p>
               </div>
               <button
                 onClick={() => handleDelete(q._id)}
-                className="mt-2 px-3 py-1 bg-red-600 rounded-md hover:bg-red-700 transition self-start text-sm"
+                className="mt-3 px-3 py-1 bg-red-600 rounded-md hover:bg-red-700 transition self-start text-sm text-white"
               >
                 Delete
               </button>

@@ -56,25 +56,23 @@ export default function EmployeesPage() {
   };
 
   if (loading)
-    return <div className="p-6 text-white text-center">Loading employees...</div>;
+    return <div className="p-6 text-gray-800 text-center">Loading employees...</div>;
 
   return (
-    <div className="p-4 sm:p-6 text-white min-h-screen space-y-6">
+    <div className="p-4 sm:p-6 bg-gray-100 min-h-screen space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
-        <h1 className="text-xl sm:text-2xl font-bold text-center sm:text-left">
-          Employees
-        </h1>
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Employees</h1>
         <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
           <button
             onClick={downloadExcel}
-            className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center justify-center gap-2"
+            className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition flex items-center justify-center gap-2"
           >
             <FiDownload /> Download Excel
           </button>
           <button
             onClick={() => navigate("/admin/add-employee")}
-            className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition flex items-center justify-center gap-2"
+            className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow transition flex items-center justify-center gap-2"
           >
             <FiPlus /> Add Employee
           </button>
@@ -82,9 +80,9 @@ export default function EmployeesPage() {
       </div>
 
       {/* Table (Desktop) */}
-      <div className="hidden sm:block overflow-x-auto border border-neutral-800 rounded-lg">
+      <div className="hidden sm:block overflow-x-auto border border-gray-300 rounded-lg bg-white shadow">
         <table className="min-w-full text-sm">
-          <thead className="bg-neutral-900 text-gray-300">
+          <thead className="bg-gray-200 text-gray-700">
             <tr>
               <th className="px-3 sm:px-4 py-2 text-left">Full Name</th>
               <th className="px-3 sm:px-4 py-2 text-left">Email</th>
@@ -100,7 +98,7 @@ export default function EmployeesPage() {
               employees.map((emp) => (
                 <tr
                   key={emp._id}
-                  className="border-t border-neutral-800 hover:bg-neutral-900/50 cursor-pointer transition"
+                  className="border-t border-gray-200 hover:bg-gray-50 cursor-pointer transition"
                   onClick={() => navigate(`/admin/employee/${emp._id}`)}
                 >
                   <td className="px-3 sm:px-4 py-2">{emp.fullName}</td>
@@ -116,7 +114,7 @@ export default function EmployeesPage() {
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="text-center px-4 py-6 text-gray-400">
+                <td colSpan="7" className="text-center px-4 py-6 text-gray-500">
                   No employees found
                 </td>
               </tr>
@@ -131,30 +129,30 @@ export default function EmployeesPage() {
           employees.map((emp) => (
             <div
               key={emp._id}
-              className="border border-neutral-800 rounded-lg p-4 bg-neutral-900 cursor-pointer hover:bg-neutral-800 transition"
+              className="border border-gray-300 rounded-lg p-4 bg-white shadow cursor-pointer hover:bg-gray-50 transition"
               onClick={() => navigate(`/admin/employee/${emp._id}`)}
             >
-              <p className="font-semibold text-lg truncate">{emp.fullName}</p>
-              <p className="text-gray-400 text-sm truncate">{emp.emailId}</p>
-              <p className="mt-2 text-sm">
+              <p className="font-semibold text-lg text-gray-900 truncate">{emp.fullName}</p>
+              <p className="text-gray-500 text-sm truncate">{emp.emailId}</p>
+              <p className="mt-2 text-sm text-gray-700">
                 <span className="font-medium">ID:</span> {emp.employeeId}
               </p>
-              <p className="text-sm">
+              <p className="text-sm text-gray-700">
                 <span className="font-medium">Dept:</span> {emp.department}
               </p>
-              <p className="text-sm">
+              <p className="text-sm text-gray-700">
                 <span className="font-medium">Phone:</span> {emp.phoneNumber}
               </p>
-              <p className="text-sm">
+              <p className="text-sm text-gray-700">
                 <span className="font-medium">Role:</span> {emp.role}
               </p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-500">
                 {new Date(emp.createdAt).toLocaleDateString()}
               </p>
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-400">No employees found</p>
+          <p className="text-center text-gray-500">No employees found</p>
         )}
       </div>
 
@@ -163,19 +161,19 @@ export default function EmployeesPage() {
         <button
           disabled={page === 1}
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          className="w-full sm:w-auto bg-neutral-800 hover:bg-neutral-700 disabled:opacity-50 px-4 py-2 rounded-lg flex items-center gap-2 justify-center"
+          className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 disabled:opacity-50 px-4 py-2 rounded-lg flex items-center gap-2 justify-center text-gray-700"
         >
           <FiArrowLeft /> Prev
         </button>
 
-        <span className="text-gray-400 text-sm sm:text-base">
+        <span className="text-gray-600 text-sm sm:text-base">
           Page {page} of {Math.ceil(total / limit) || 1}
         </span>
 
         <button
           disabled={page >= Math.ceil(total / limit)}
           onClick={() => setPage((prev) => prev + 1)}
-          className="w-full sm:w-auto bg-neutral-800 hover:bg-neutral-700 disabled:opacity-50 px-4 py-2 rounded-lg flex items-center gap-2 justify-center"
+          className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 disabled:opacity-50 px-4 py-2 rounded-lg flex items-center gap-2 justify-center text-gray-700"
         >
           Next <FiArrowRight />
         </button>

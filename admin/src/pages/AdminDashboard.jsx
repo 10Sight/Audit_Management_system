@@ -12,8 +12,16 @@ import {
   Legend,
   BarChart,
   Bar,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 import { startOfWeek, startOfMonth, startOfYear, format } from "date-fns";
+
+// react-icons
+import { FaChartLine, FaChartBar, FaChartPie, FaUsers } from "react-icons/fa";
+import { MdPrecisionManufacturing } from "react-icons/md";
+import { FaCogs } from "react-icons/fa";
 
 export default function AdminDashboard() {
   const [audits, setAudits] = useState([]);
@@ -30,6 +38,9 @@ export default function AdminDashboard() {
 
   const [lineData, setLineData] = useState([]);
   const [barData, setBarData] = useState([]);
+  const [pieData, setPieData] = useState([]);
+
+  const COLORS = ["#00C49F", "#FF8042"];
 
   const api = axios.create({
     baseURL: "http://localhost:5000/api",
@@ -39,7 +50,8 @@ export default function AdminDashboard() {
   const getTimeframeKey = (date, timeframe) => {
     const d = new Date(date);
     if (timeframe === "daily") return format(d, "yyyy-MM-dd");
-    if (timeframe === "weekly") return format(startOfWeek(d, { weekStartsOn: 1 }), "yyyy-MM-dd");
+    if (timeframe === "weekly")
+      return format(startOfWeek(d, { weekStartsOn: 1 }), "yyyy-MM-dd");
     if (timeframe === "monthly") return format(startOfMonth(d), "yyyy-MM");
     if (timeframe === "yearly") return format(startOfYear(d), "yyyy");
     return format(d, "yyyy-MM-dd");
@@ -54,7 +66,9 @@ export default function AdminDashboard() {
             api.get("/lines"),
             api.get("/machines"),
             api.get("/processes"),
-            axios.get("http://localhost:5000/api/v1/auth/get-employee", { withCredentials: true }),
+            axios.get("http://localhost:5000/api/v1/auth/get-employee", {
+              withCredentials: true,
+            }),
           ]);
 
         setAudits(auditsRes.data.data || []);
@@ -73,6 +87,7 @@ export default function AdminDashboard() {
     fetchData();
   }, []);
 
+  // Line Chart Data
   useEffect(() => {
     const countsByPeriod = {};
     audits.forEach((audit) => {
@@ -83,7 +98,8 @@ export default function AdminDashboard() {
       const key = getTimeframeKey(audit.date, timeframe);
       if (!countsByPeriod[key]) countsByPeriod[key] = { Yes: 0, No: 0 };
       audit.answers?.forEach((ans) => {
-        countsByPeriod[key][ans.answer] = (countsByPeriod[key][ans.answer] || 0) + 1;
+        countsByPeriod[key][ans.answer] =
+          (countsByPeriod[key][ans.answer] || 0) + 1;
       });
     });
 
@@ -94,6 +110,7 @@ export default function AdminDashboard() {
     );
   }, [audits, timeframe, selectedLine, selectedMachine, selectedProcess]);
 
+  // Bar Chart Data
   useEffect(() => {
     const counts = {};
     audits.forEach((audit) => {
@@ -104,11 +121,34 @@ export default function AdminDashboard() {
 
         const lineName = audit.line?.name || "N/A";
         if (!counts[lineName]) counts[lineName] = { Yes: 0, No: 0 };
-        counts[lineName][ans.answer] = (counts[lineName][ans.answer] || 0) + 1;
+        counts[lineName][ans.answer] =
+          (counts[lineName][ans.answer] || 0) + 1;
       });
     });
 
     setBarData(Object.keys(counts).map((k) => ({ name: k, ...counts[k] })));
+  }, [audits, selectedLine, selectedMachine, selectedProcess]);
+
+  // Pie Chart Data
+  useEffect(() => {
+    let yesCount = 0;
+    let noCount = 0;
+
+    audits.forEach((audit) => {
+      if (selectedLine && audit.line?._id !== selectedLine) return;
+      if (selectedMachine && audit.machine?._id !== selectedMachine) return;
+      if (selectedProcess && audit.process?._id !== selectedProcess) return;
+
+      audit.answers?.forEach((ans) => {
+        if (ans.answer === "Yes") yesCount++;
+        if (ans.answer === "No") noCount++;
+      });
+    });
+
+    setPieData([
+      { name: "Yes", value: yesCount },
+      { name: "No", value: noCount },
+    ]);
   }, [audits, selectedLine, selectedMachine, selectedProcess]);
 
   const totalEmployees = useMemo(
@@ -138,32 +178,34 @@ export default function AdminDashboard() {
   }, [audits, selectedLine, selectedMachine, selectedProcess, lines, machines, processes]);
 
   return (
-    <div className="p-4 sm:p-6 bg-neutral-900 min-h-screen text-white space-y-6">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center sm:text-left">
-        Admin Dashboard
+    <div className="p-6 bg-gray-100 min-h-screen text-gray-900 space-y-6">
+      <h1 className="text-3xl font-bold mb-4 flex items-center gap-2">
+        <FaChartLine className="text-blue-600" /> Admin Dashboard
       </h1>
 
       {/* Number Boxes */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {[
-          { label: "Total Employees", value: totalEmployees },
-          { label: "Filtered Auditors", value: filteredCounts.filteredEmployees },
-          { label: "Lines", value: filteredCounts.lines },
-          { label: "Machines", value: filteredCounts.machines },
-          { label: "Processes", value: filteredCounts.processes },
+          { label: "Total Employees", value: totalEmployees, icon: <FaUsers /> },
+          { label: "Filtered Auditors", value: filteredCounts.filteredEmployees, icon: <FaUsers /> },
+          { label: "Lines", value: filteredCounts.lines, icon: <FaCogs /> },
+          { label: "Machines", value: filteredCounts.machines, icon: <MdPrecisionManufacturing /> },
+          { label: "Processes", value: filteredCounts.processes, icon: <FaChartBar /> },
         ].map((box) => (
           <div
             key={box.label}
-            className="bg-neutral-800 p-4 rounded-md text-center sm:text-left flex flex-col justify-center"
+            className="bg-gray-200 shadow rounded-xl p-4 flex flex-col items-center sm:items-start"
           >
-            <p className="text-gray-400 text-sm">{box.label}</p>
-            <p className="text-2xl sm:text-3xl font-bold">{box.value}</p>
+            <div className="flex items-center gap-2 text-gray-700">
+              {box.icon} <p className="text-sm">{box.label}</p>
+            </div>
+            <p className="text-2xl font-bold mt-2">{box.value}</p>
           </div>
         ))}
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-4 bg-neutral-800 p-4 rounded-md justify-start">
+      <div className="flex flex-wrap gap-4 bg-gray-200 shadow p-4 rounded-xl">
         {["Answer Type", "Line", "Machine", "Process", "Timeframe"].map((label, idx) => {
           const valueMap = {
             "Answer Type": answerType,
@@ -189,9 +231,9 @@ export default function AdminDashboard() {
 
           return (
             <div key={idx} className="flex flex-col w-full sm:w-40">
-              <label className="mb-1 text-gray-300 text-sm">{label}</label>
+              <label className="mb-1 text-gray-700 text-sm font-medium">{label}</label>
               <select
-                className="p-2 rounded bg-neutral-700 text-white w-full"
+                className="p-2 rounded-lg border border-gray-300 bg-white text-gray-900 shadow-sm"
                 value={valueMap[label]}
                 onChange={(e) => setValueMap[label](e.target.value)}
               >
@@ -212,11 +254,11 @@ export default function AdminDashboard() {
       {/* Charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Line Chart */}
-        <div className="bg-neutral-800 p-4 rounded-md w-full">
-          <h2 className="text-lg sm:text-xl font-bold mb-2 text-center md:text-left">
-            Trend Over Time ({answerType})
+        <div className="bg-gray-200 shadow rounded-xl p-4 w-full">
+          <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
+            <FaChartLine className="text-green-600" /> Trend Over Time ({answerType})
           </h2>
-          <div className="w-full h-64 sm:h-80 md:h-96">
+          <div className="w-full h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={lineData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -231,24 +273,54 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Bar Chart */}
-        <div className="bg-neutral-800 p-4 rounded-md w-full">
-          <h2 className="text-lg sm:text-xl font-bold mb-2 text-center md:text-left">
-            Bar Chart (Yes/No per Line)
+        {/* Pie Chart */}
+        <div className="bg-gray-200 shadow rounded-xl p-4 w-full">
+          <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
+            <FaChartPie className="text-purple-600" /> Overall Yes/No Ratio
           </h2>
-          <div className="w-full h-64 sm:h-80 md:h-96">
+          <div className="w-full h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={barData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
+              <PieChart>
+                <Pie
+                  data={pieData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) =>
+                    `${name} ${(percent * 100).toFixed(0)}%`
+                  }
+                  outerRadius={120}
+                  dataKey="value"
+                >
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index]} />
+                  ))}
+                </Pie>
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="Yes" fill="#00C49F" />
-                <Bar dataKey="No" fill="#FF8042" />
-              </BarChart>
+              </PieChart>
             </ResponsiveContainer>
           </div>
+        </div>
+      </div>
+
+      {/* Bar Chart Full Width */}
+      <div className="bg-gray-200 shadow rounded-xl p-4 w-full">
+        <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
+          <FaChartBar className="text-orange-600" /> Yes/No per Line
+        </h2>
+        <div className="w-full h-96">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={barData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="Yes" fill="#00C49F" />
+              <Bar dataKey="No" fill="#FF8042" />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
     </div>

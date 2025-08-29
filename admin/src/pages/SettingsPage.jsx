@@ -29,29 +29,33 @@ export default function ProfilePage() {
   }, []);
 
   if (loading)
-    return <p className="text-center text-white mt-10">Loading...</p>;
+    return <p className="text-center text-gray-700 mt-10">Loading...</p>;
   if (!profile)
-    return <p className="text-center text-red-400 mt-10">No profile found.</p>;
+    return <p className="text-center text-red-500 mt-10">No profile found.</p>;
 
   return (
-    <div className="min-h-screen bg-[#0f0f0f] text-white px-4 py-8 flex justify-center">
-      <div className="w-full max-w-4xl bg-[#181818] rounded-xl shadow-lg border border-[#303030] p-6 sm:p-8 md:p-10">
+    <div className="min-h-screen bg-gray-100 text-gray-900 px-4 py-8 flex justify-center">
+      <div className="w-full max-w-4xl bg-white rounded-xl shadow-md border border-gray-300 p-6 sm:p-8 md:p-10">
 
         {/* Profile Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-full bg-[#3ea6ff] flex items-center justify-center text-3xl font-bold">
+            <div className="w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center text-3xl font-bold text-white shadow-md">
               {profile.fullName.charAt(0).toUpperCase()}
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-semibold break-words">{profile.fullName}</h1>
-              <p className="text-gray-400 text-sm sm:text-base">{profile.role.toUpperCase()}</p>
+              <h1 className="text-2xl sm:text-3xl font-semibold break-words text-gray-900">
+                {profile.fullName}
+              </h1>
+              <p className="text-gray-500 text-sm sm:text-base">
+                {profile.role.toUpperCase()}
+              </p>
             </div>
           </div>
         </div>
 
         {/* Divider */}
-        <div className="my-6 border-t border-[#303030]"></div>
+        <div className="my-6 border-t border-gray-300"></div>
 
         {/* Profile Details */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
@@ -66,7 +70,7 @@ export default function ProfilePage() {
         {currentUser?.role === "admin" && (
           <div className="mt-8 sm:mt-10 flex justify-end">
             <button
-              className="bg-[#3ea6ff] hover:bg-[#65b8ff] px-5 sm:px-6 py-2 sm:py-3 rounded-lg text-black font-medium transition w-full sm:w-auto"
+              className="bg-blue-600 hover:bg-blue-700 px-5 sm:px-6 py-2 sm:py-3 rounded-lg text-white font-medium transition w-full sm:w-auto shadow-sm"
               onClick={() => navigate(`/admin/employee/edit/${profile._id}`)}
             >
               Edit Profile
@@ -80,11 +84,13 @@ export default function ProfilePage() {
 
 function ProfileItem({ icon, label, value }) {
   return (
-    <div className="flex items-start gap-3 bg-[#212121] hover:bg-[#2a2a2a] p-4 sm:p-5 rounded-lg transition break-words">
-      <span className="text-[#3ea6ff] mt-1">{icon}</span>
+    <div className="flex items-start gap-3 bg-gray-100 hover:bg-gray-200 p-4 sm:p-5 rounded-lg transition break-words border border-gray-300">
+      <span className="text-blue-600 mt-1">{icon}</span>
       <div className="flex-1">
-        <p className="text-sm sm:text-base text-gray-400">{label}</p>
-        <p className="text-base sm:text-lg font-medium text-white break-words">{value || "-"}</p>
+        <p className="text-sm sm:text-base text-gray-500">{label}</p>
+        <p className="text-base sm:text-lg font-medium text-gray-900 break-words">
+          {value || "-"}
+        </p>
       </div>
     </div>
   );

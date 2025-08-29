@@ -23,7 +23,7 @@ export default function LoginPage() {
       type: "text",
       name: "employeeId",
       placeholder: "Enter your Username",
-      icon: <User className="text-gray-400" size={20} />,
+      icon: <User className="text-gray-500" size={20} />,
     },
     {
       label: "Role",
@@ -31,7 +31,7 @@ export default function LoginPage() {
       name: "role",
       options: ["admin", "employee"],
       required: true,
-      icon: <UserCheck className="text-gray-400" size={20} />,
+      icon: <UserCheck className="text-gray-500" size={20} />,
       onChange: handleRoleChange,
     },
     {
@@ -41,14 +41,14 @@ export default function LoginPage() {
       options: ["IT", "HR", "Finance", "Sales", "Production"],
       disabled: departmentDisabled,
       required: !departmentDisabled,
-      icon: <Building2 className="text-gray-400" size={20} />,
+      icon: <Building2 className="text-gray-500" size={20} />,
     },
     {
       label: "Password",
       type: "password",
       name: "password",
       placeholder: "Enter your password",
-      icon: <Lock className="text-gray-400" size={20} />,
+      icon: <Lock className="text-gray-500" size={20} />,
     },
   ];
 
@@ -70,15 +70,13 @@ export default function LoginPage() {
 
       const role = result.data?.employee?.role;
       if (!role) throw new Error("Invalid login response");
-      console.log(role);
 
       // Store user in global context
       setUser(result.data.employee);
 
       // Navigate based on role
       if (role === "admin") navigate("/admin/dashboard", { replace: true });
-      else if (role === "employee")
-        navigate("/employee/inspections", { replace: true });
+      else if (role === "employee") navigate("/employee/inspections", { replace: true });
       else throw new Error("Invalid role received from server");
     } catch (err) {
       setError(err.message);
@@ -88,12 +86,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black text-white px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 text-gray-900 px-4">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-neutral-950 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-neutral-800"
+        className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-300"
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
@@ -101,10 +99,10 @@ export default function LoginPage() {
           transition={{ delay: 0.2, duration: 0.5 }}
           className="text-center"
         >
-          <h2 className="text-3xl font-bold mb-2 tracking-tight text-white">
+          <h2 className="text-3xl font-bold mb-2 tracking-tight text-gray-900">
             Login
           </h2>
-          <p className="text-gray-500 text-sm">
+          <p className="text-gray-600 text-sm">
             Enter your details to access your panel
           </p>
         </motion.div>
@@ -114,12 +112,12 @@ export default function LoginPage() {
         </div>
 
         {error && (
-          <p className="text-red-400 mt-4 text-center font-medium">
+          <p className="text-red-500 mt-4 text-center font-medium">
             ⚠️ {error}
           </p>
         )}
         {loading && (
-          <p className="text-gray-400 mt-4 text-center font-medium">
+          <p className="text-gray-500 mt-4 text-center font-medium">
             ⏳ Logging in...
           </p>
         )}

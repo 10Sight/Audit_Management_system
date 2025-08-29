@@ -25,9 +25,10 @@ export default function AdminEditAuditPage() {
   useEffect(() => {
     const fetchAudit = async () => {
       try {
-        const { data } = await axios.get(`http://localhost:5000/api/audits/${id}`, {
-          withCredentials: true,
-        });
+        const { data } = await axios.get(
+          `http://localhost:5000/api/audits/${id}`,
+          { withCredentials: true }
+        );
         const auditData = data.data;
 
         setAudit(auditData);
@@ -86,83 +87,94 @@ export default function AdminEditAuditPage() {
   };
 
   if (loading)
-    return <div className="p-6 text-white text-center">Loading audit...</div>;
+    return <div className="p-6 text-gray-700 text-center">Loading audit...</div>;
   if (!audit)
-    return <div className="p-6 text-white text-center">Audit not found.</div>;
+    return <div className="p-6 text-gray-700 text-center">Audit not found.</div>;
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto text-white">
-      <ToastContainer position="top-right" autoClose={3000} />
-      <h1 className="text-2xl sm:text-3xl font-bold mb-4">Edit Audit</h1>
+    <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto text-gray-900">
+      <ToastContainer position="top-right" autoClose={3000} theme="light" />
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Line Leader & Shift Incharge */}
-        <div className="flex flex-col md:flex-row gap-4">
-          <input
-            type="text"
-            name="lineLeader"
-            value={formData.lineLeader}
-            onChange={handleChange}
-            placeholder="Line Leader"
-            className="p-2 rounded bg-neutral-800 border border-neutral-700 w-full md:flex-1"
-          />
-          <input
-            type="text"
-            name="shiftIncharge"
-            value={formData.shiftIncharge}
-            onChange={handleChange}
-            placeholder="Shift Incharge"
-            className="p-2 rounded bg-neutral-800 border border-neutral-700 w-full md:flex-1"
-          />
-        </div>
+      <div className="bg-gray-100 shadow-lg rounded-2xl p-6 sm:p-8 border border-gray-300">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800">
+          Edit Audit
+        </h1>
 
-        {/* Answers */}
-        <div className="space-y-3 max-h-[60vh] overflow-y-auto">
-          {formData.answers.map((ans, idx) => (
-            <div
-              key={idx}
-              className="bg-neutral-900 p-3 rounded border border-neutral-700 flex flex-col gap-2"
-            >
-              <p className="font-semibold text-sm sm:text-base">{ans.questionText}</p>
-              <select
-                value={ans.answer}
-                onChange={(e) => handleAnswerChange(idx, "answer", e.target.value)}
-                className="p-2 rounded bg-neutral-800 border border-neutral-700 w-full"
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Line Leader & Shift Incharge */}
+          <div className="flex flex-col md:flex-row gap-4">
+            <input
+              type="text"
+              name="lineLeader"
+              value={formData.lineLeader}
+              onChange={handleChange}
+              placeholder="Line Leader"
+              className="p-3 rounded-md bg-white text-gray-900 border border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-full md:flex-1"
+            />
+            <input
+              type="text"
+              name="shiftIncharge"
+              value={formData.shiftIncharge}
+              onChange={handleChange}
+              placeholder="Shift Incharge"
+              className="p-3 rounded-md bg-white text-gray-900 border border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-full md:flex-1"
+            />
+          </div>
+
+          {/* Answers */}
+          <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+            {formData.answers.map((ans, idx) => (
+              <div
+                key={idx}
+                className="bg-white p-4 rounded-lg border border-gray-300 shadow-sm flex flex-col gap-3"
               >
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-              </select>
-              {ans.answer === "No" && (
-                <input
-                  type="text"
-                  placeholder="Remark"
-                  value={ans.remark}
-                  onChange={(e) => handleAnswerChange(idx, "remark", e.target.value)}
-                  className="p-2 rounded bg-neutral-800 border border-neutral-700 w-full"
-                />
-              )}
-            </div>
-          ))}
-        </div>
+                <p className="font-semibold text-gray-800 text-sm sm:text-base">
+                  {ans.questionText}
+                </p>
+                <select
+                  value={ans.answer}
+                  onChange={(e) =>
+                    handleAnswerChange(idx, "answer", e.target.value)
+                  }
+                  className="p-2 rounded-md bg-gray-50 text-gray-900 border border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="Yes">Yes</option>
+                  <option value="No">No</option>
+                </select>
+                {ans.answer === "No" && (
+                  <input
+                    type="text"
+                    placeholder="Remark"
+                    value={ans.remark}
+                    onChange={(e) =>
+                      handleAnswerChange(idx, "remark", e.target.value)
+                    }
+                    className="p-2 rounded-md bg-gray-50 text-gray-900 border border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
 
-        {/* Submit */}
-        <div className="flex flex-col sm:flex-row justify-end gap-3 mt-4">
-          <button
-            type="button"
-            onClick={() => navigate(-1)}
-            className="w-full sm:w-auto px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-700"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full sm:w-auto px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700"
-          >
-            {submitting ? "Updating..." : "Update Audit"}
-          </button>
-        </div>
-      </form>
+          {/* Submit */}
+          <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="w-full sm:w-auto px-5 py-2.5 rounded-md bg-gray-400 hover:bg-gray-500 text-white font-medium transition"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={submitting}
+              className="w-full sm:w-auto px-5 py-2.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
+            >
+              {submitting ? "Updating..." : "Update Audit"}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

@@ -58,73 +58,73 @@ export default function EditEmployeePage() {
     }
   };
 
-  if (loading) return <div className="text-white p-6 text-center">Loading...</div>;
+  if (loading) return <div className="text-gray-700 p-6 text-center">Loading...</div>;
   if (error) return <div className="text-red-500 p-6 text-center">{error}</div>;
 
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-3xl mx-auto">
-      <div className="bg-neutral-900 rounded-2xl shadow-lg p-6 sm:p-8 space-y-6 border border-neutral-800">
-        <h1 className="text-2xl sm:text-3xl font-bold text-white mb-4">Edit Profile</h1>
+      <div className="bg-white rounded-2xl shadow-md p-6 sm:p-8 space-y-6 border border-gray-300">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Edit Profile</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Full Name */}
           <div>
-            <label className="block text-sm sm:text-base text-gray-400 mb-1">Full Name</label>
+            <label className="block text-sm sm:text-base text-gray-700 mb-1">Full Name</label>
             <input
               type="text"
               name="fullName"
               value={employee.fullName}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md bg-neutral-800 text-white border border-neutral-700"
+              className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
           </div>
 
           {/* Email */}
           <div>
-            <label className="block text-sm sm:text-base text-gray-400 mb-1">Email</label>
+            <label className="block text-sm sm:text-base text-gray-700 mb-1">Email</label>
             <input
               type="email"
               name="emailId"
               value={employee.emailId}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md bg-neutral-800 text-white border border-neutral-700"
+              className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             />
           </div>
 
           {/* Phone */}
           <div>
-            <label className="block text-sm sm:text-base text-gray-400 mb-1">Phone Number</label>
+            <label className="block text-sm sm:text-base text-gray-700 mb-1">Phone Number</label>
             <input
               type="text"
               name="phoneNumber"
               value={employee.phoneNumber}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md bg-neutral-800 text-white border border-neutral-700"
+              className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
             />
           </div>
 
           {/* Department */}
           <div>
-            <label className="block text-sm sm:text-base text-gray-400 mb-1">Department</label>
+            <label className="block text-sm sm:text-base text-gray-700 mb-1">Department</label>
             <input
               type="text"
               name="department"
               value={employee.department}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md bg-neutral-800 text-white border border-neutral-700"
+              className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
             />
           </div>
 
           {/* Role */}
           <div>
-            <label className="block text-sm sm:text-base text-gray-400 mb-1">Role</label>
+            <label className="block text-sm sm:text-base text-gray-700 mb-1">Role</label>
             <select
               name="role"
               value={employee.role}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md bg-neutral-800 text-white border border-neutral-700"
+              className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
               required
             >
               <option value="">Select Role</option>
@@ -136,13 +136,13 @@ export default function EditEmployeePage() {
 
           {/* Employee ID */}
           <div>
-            <label className="block text-sm sm:text-base text-gray-400 mb-1">Employee ID</label>
+            <label className="block text-sm sm:text-base text-gray-700 mb-1">Employee ID</label>
             <input
               type="text"
               name="employeeId"
               value={employee.employeeId}
               onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md bg-neutral-800 text-white border border-neutral-700"
+              className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-900 border border-gray-300"
               disabled
             />
           </div>
@@ -152,14 +152,14 @@ export default function EditEmployeePage() {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="w-full sm:w-auto px-4 py-2 rounded-md bg-gray-600 hover:bg-gray-700 text-white"
+              className="w-full sm:w-auto px-4 py-2 rounded-md bg-gray-500 hover:bg-gray-600 text-white transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="w-full sm:w-auto px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full sm:w-auto px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm"
             >
               {saving ? "Saving..." : "Save Changes"}
             </button>

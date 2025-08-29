@@ -80,22 +80,22 @@ export default function AddEmployeePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#181818] p-4 sm:p-6 flex flex-col items-center">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-white text-center tracking-wide">
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 flex flex-col items-center">
+      <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 text-center tracking-wide">
         Add New Employee
       </h2>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-[#202020] shadow-lg rounded-xl p-6 sm:p-8 w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-5"
+        className="bg-white border border-gray-300 shadow-md rounded-xl p-6 sm:p-8 w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-5"
       >
         {/* Full Name */}
         <div className="flex flex-col">
-          <label className="mb-1 text-gray-300 font-medium">Full Name</label>
+          <label className="mb-1 text-gray-700 font-medium">Full Name</label>
           <input
             {...register("fullName")}
             placeholder="Enter full name"
-            className="p-3 rounded-md bg-[#282828] text-white border border-gray-700 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
+            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
           />
           {errors.fullName && (
             <p className="text-red-500 text-sm mt-1">
@@ -106,12 +106,12 @@ export default function AddEmployeePage() {
 
         {/* Email */}
         <div className="flex flex-col">
-          <label className="mb-1 text-gray-300 font-medium">Email</label>
+          <label className="mb-1 text-gray-700 font-medium">Email</label>
           <input
             {...register("emailId")}
             type="email"
             placeholder="Enter email"
-            className="p-3 rounded-md bg-[#282828] text-white border border-gray-700 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
+            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
           />
           {errors.emailId && (
             <p className="text-red-500 text-sm mt-1">
@@ -122,11 +122,11 @@ export default function AddEmployeePage() {
 
         {/* Department */}
         <div className="flex flex-col">
-          <label className="mb-1 text-gray-300 font-medium">Department</label>
+          <label className="mb-1 text-gray-700 font-medium">Department</label>
           <input
             {...register("department")}
             placeholder="Enter department"
-            className="p-3 rounded-md bg-[#282828] text-white border border-gray-700 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
+            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
           />
           {errors.department && (
             <p className="text-red-500 text-sm mt-1">
@@ -137,11 +137,11 @@ export default function AddEmployeePage() {
 
         {/* Employee ID */}
         <div className="flex flex-col">
-          <label className="mb-1 text-gray-300 font-medium">Employee ID</label>
+          <label className="mb-1 text-gray-700 font-medium">Employee ID</label>
           <input
             {...register("employeeId")}
             placeholder="Enter employee ID"
-            className="p-3 rounded-md bg-[#282828] text-white border border-gray-700 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
+            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
           />
           {errors.employeeId && (
             <p className="text-red-500 text-sm mt-1">
@@ -152,11 +152,11 @@ export default function AddEmployeePage() {
 
         {/* Phone Number */}
         <div className="flex flex-col">
-          <label className="mb-1 text-gray-300 font-medium">Phone Number</label>
+          <label className="mb-1 text-gray-700 font-medium">Phone Number</label>
           <input
             {...register("phoneNumber")}
             placeholder="Enter phone number"
-            className="p-3 rounded-md bg-[#282828] text-white border border-gray-700 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
+            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
           />
           {errors.phoneNumber && (
             <p className="text-red-500 text-sm mt-1">
@@ -167,12 +167,12 @@ export default function AddEmployeePage() {
 
         {/* Password */}
         <div className="flex flex-col">
-          <label className="mb-1 text-gray-300 font-medium">Password</label>
+          <label className="mb-1 text-gray-700 font-medium">Password</label>
           <input
             {...register("password")}
             type="password"
             placeholder="Enter password"
-            className="p-3 rounded-md bg-[#282828] text-white border border-gray-700 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
+            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
           />
           {errors.password && (
             <p className="text-red-500 text-sm mt-1">
@@ -183,10 +183,10 @@ export default function AddEmployeePage() {
 
         {/* Role */}
         <div className="flex flex-col">
-          <label className="mb-1 text-gray-300 font-medium">Role</label>
+          <label className="mb-1 text-gray-700 font-medium">Role</label>
           <select
             {...register("role")}
-            className="p-3 rounded-md bg-[#282828] text-white border border-gray-700 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
+            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
           >
             <option value="">Select Role</option>
             <option value="employee">Employee</option>
@@ -218,7 +218,7 @@ export default function AddEmployeePage() {
         closeOnClick
         pauseOnHover
         draggable
-        theme="dark"
+        theme="light"
       />
     </div>
   );
