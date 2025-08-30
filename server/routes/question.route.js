@@ -8,7 +8,6 @@ import { verifyJWT, authorizeRoles } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-// Admin creates/deletes, auditors just fetch
 router.post("/", verifyJWT, authorizeRoles("admin"), createQuestion);
 router.get("/", verifyJWT, getQuestions);
 router.delete("/:id", verifyJWT, authorizeRoles("admin"), deleteQuestion);

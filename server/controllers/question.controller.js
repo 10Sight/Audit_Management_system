@@ -5,7 +5,6 @@ import { ApiError } from "../utils/ApiError.js";
 import logger from "../logger/winston.logger.js";
 import {asyncHandler} from "../utils/asyncHandler.js";
 
-// ➕ Create Question
 export const createQuestion = asyncHandler(async (req, res) => {
   const questions = Array.isArray(req.body) ? req.body : req.body.questions;
 
@@ -36,7 +35,6 @@ export const createQuestion = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, createdQuestions, "Questions created"));
 });
 
-// 📄 Get Questions (filterable)
 export const getQuestions = asyncHandler(async (req, res) => {
   // Accept both old and new query params
   const lineId = req.query.lineId || req.query.line;
@@ -71,7 +69,7 @@ export const getQuestions = asyncHandler(async (req, res) => {
 
   return res.json({ status: "success", data: questions });
 });
-// ❌ Delete Question
+
 export const deleteQuestion = asyncHandler(async (req, res) => {
   const { id } = req.params;
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Trash2 } from "lucide-react"; // icon for delete
+import { Trash2 } from "lucide-react"; 
 
 export default function DepartmentPage() {
   const [lines, setLines] = useState([]);

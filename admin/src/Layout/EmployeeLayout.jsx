@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"; 
 import {
   LayoutDashboard,
   FileText,
   Settings,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
-import Sidebar from "../components/ui/Sidebar"; // ✅ Reuse Sidebar
-import { ChevronRight } from "lucide-react";
 
 export default function EmployeeLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -38,7 +39,6 @@ export default function EmployeeLayout() {
     }
   };
 
-  // Function to generate initials
   const getInitials = (name) => {
     if (!name) return "";
     return name
@@ -50,18 +50,111 @@ export default function EmployeeLayout() {
 
   return (
     <div className="flex min-h-screen bg-white text-black">
-      {/* ✅ Reusable Sidebar */}
-      <Sidebar
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
-        navLinks={navLinks}
-        handleLogout={handleLogout}
-        panelName="Employee Panel"   // 👈 Can change name easily
-      />
+      {/* Desktop Sidebar */}
+      <aside
+        className={`${
+          sidebarOpen ? "w-64" : "w-20"
+        } hidden md:flex flex-col transition-all duration-300 bg-gray-100 border-r border-gray-200`}
+      >
+        <div className="flex items-center justify-between px-4 py-5 border-b border-gray-200">
+          {sidebarOpen && (
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-bold tracking-wide text-black">Employee Panel</h1>
+            </div>
+          )}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="p-2 hover:bg-gray-200 rounded-lg transition"
+          >
+            {sidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+          </button>
+        </div>
+
+        <nav className="flex-1 px-2 py-6 space-y-2">
+          {navLinks.map((link, idx) => (
+            <Link
+              key={idx}
+              to={link.to}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                location.pathname === link.to
+                  ? "bg-[#099cdb] text-white font-semibold"
+                  : "hover:bg-[#099cdb]/10 text-black"
+              }`}
+            >
+              {link.icon}
+              {sidebarOpen && <span>{link.label}</span>}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Logout Button */}
+        <div className="px-3 py-4 border-t border-gray-200">
+          <button
+            className="flex items-center gap-2 w-full bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded-lg transition text-black"
+            onClick={handleLogout}
+          >
+            <LogOut size={20} />
+            {sidebarOpen && "Logout"}
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobile Sidebar */}
+      {mobileSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-40 md:hidden"
+          onClick={() => setMobileSidebarOpen(false)}
+        />
+      )}
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 md:hidden flex flex-col bg-gray-100 border-r border-gray-200 transition-transform duration-300 w-64 ${
+          mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
+          <div className="flex items-center gap-2">
+            <img src="/marelli.svg" alt="Logo" className="h-8 w-8 object-contain" />
+            <h1 className="text-lg font-bold tracking-wide text-black">Employee</h1>
+          </div>
+          <button
+            onClick={() => setMobileSidebarOpen(false)}
+            className="p-2 hover:bg-gray-200 rounded-lg transition"
+          >
+            <ChevronLeft size={20} />
+          </button>
+        </div>
+
+        <div className="flex-1 px-2 py-4 space-y-2">
+          {navLinks.map((link, idx) => (
+            <Link
+              key={idx}
+              to={link.to}
+              onClick={() => setMobileSidebarOpen(false)}
+              className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                location.pathname === link.to
+                  ? "bg-[#099cdb] text-white font-semibold"
+                  : "hover:bg-[#099cdb]/10 text-black"
+              }`}
+            >
+              {link.icon}
+              <span>{link.label}</span>
+            </Link>
+          ))}
+        </div>
+
+        <div className="px-3 py-4 border-t border-gray-200">
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 w-full bg-gray-200 hover:bg-gray-300 px-3 py-2 rounded-lg transition text-black"
+          >
+            <LogOut size={20} />
+            Logout
+          </button>
+        </div>
+      </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col transition-all duration-300">
-        {/* ✅ Shared Header */}
         <header className="bg-white border-b border-gray-200 shadow-sm p-4 flex items-center justify-between sticky top-0 z-30">
           {/* Mobile Toggle Button */}
           <button

@@ -8,7 +8,6 @@ import { verifyJWT, authorizeRoles } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-// Only admin can create/delete machines
 router.post("/", verifyJWT, authorizeRoles("admin"), createMachine);
 router.get("/", verifyJWT, getMachines);
 router.delete("/:id", verifyJWT, authorizeRoles("admin"), deleteMachine);

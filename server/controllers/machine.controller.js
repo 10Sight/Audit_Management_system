@@ -4,7 +4,6 @@ import { ApiError } from "../utils/ApiError.js";
 import logger from "../logger/winston.logger.js";
 import {asyncHandler} from "../utils/asyncHandler.js";
 
-// ➕ Create Machine
 export const createMachine = asyncHandler(async (req, res) => {
   const { name } = req.body;
   if (!name) throw new ApiError(400, "Machine name is required");
@@ -17,13 +16,11 @@ export const createMachine = asyncHandler(async (req, res) => {
   return res.status(201).json(new ApiResponse(201, machine, "Machine created"));
 });
 
-// 📄 Get All Machines
 export const getMachines = asyncHandler(async (req, res) => {
   const machines = await Machine.find({});
   return res.json(new ApiResponse(200, machines, "Machines fetched"));
 });
 
-// ❌ Delete Machine
 export const deleteMachine = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const machine = await Machine.findByIdAndDelete(id);

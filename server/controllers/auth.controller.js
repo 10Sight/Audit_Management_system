@@ -1,205 +1,134 @@
+// src/controllers/auth.controller.js
 import mongoose from "mongoose";
 import Employee from "../models/auth.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import logger from "../logger/winston.logger.js";
+import {asyncHandler} from "../utils/asyncHandler.js";
 
-// ================== REGISTER EMPLOYEE ==================
-export const registerEmployee = async (req, res, next) => {
-  try {
-    const { fullName, emailId, department, employeeId, phoneNumber, password, role } = req.body;
+export const registerEmployee = asyncHandler(async (req, res) => {
+  const { fullName, emailId, department, employeeId, phoneNumber, password, role } = req.body;
 
-    if (!fullName || !emailId || !department || !employeeId || !phoneNumber || !password || !role) {
-      throw new ApiError(400, "All fields are required");
-    }
+  const existingUser = await Employee.findOne({
+    $or: [{ emailId }, { phoneNumber }, { employeeId }],
+  });
+  if (existingUser) throw new ApiError(409, "User already exists with given Email / Phone / Employee ID");
 
-    const existingUser = await Employee.findOne({
-      $or: [{ emailId }, { phoneNumber }, { employeeId }],
-    });
+  const employee = await Employee.create({
+    fullName,
+    emailId,
+    department,
+    employeeId,
+    phoneNumber,
+    password,
+    role,
+  });
 
-    if (existingUser) {
-      throw new ApiError(409, "User already exists with given Email / Phone / Employee ID");
-    }
+  logger.info(`New employee registered: ${employee.fullName} (${employee.employeeId})`);
+  return res.status(201).json(new ApiResponse(201, { employee }, "Employee registered successfully"));
+});
 
-    const employee = await Employee.create({ fullName, emailId, department, employeeId, phoneNumber, password, role });
+export const loginEmployee = asyncHandler(async (req, res) => {
+  const { employeeId, role, department, password } = req.body;
 
-    logger.info(`New employee registered: ${employee.fullName} (${employee.employeeId})`);
+  let query = { employeeId, role };
+  if (role === "employee") query.department = department;
 
-    return res.status(201).json(new ApiResponse(201, { employee }, "Employee registered successfully"));
-  } catch (error) {
-    logger.error(`Register Error: ${error.message}`);
-    next(error);
-  }
-};
+  const employee = await Employee.findOne(query).select("+password");
+  if (!employee) throw new ApiError(401, "Invalid credentials");
 
-// ================== LOGIN EMPLOYEE ==================
-export const loginEmployee = async (req, res, next) => {
-  try {
-    const { employeeId, role, department, password } = req.body;
+  const isMatch = await employee.comparePassword(password);
+  if (!isMatch) throw new ApiError(401, "Invalid credentials");
 
-    if (!employeeId || !role || !password) {
-      throw new ApiError(400, "Employee ID, role, and password are required");
-    }
+  const token = employee.generateJWT();
+  res.cookie("accessToken", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
 
-    // For employee role, department is required
-    let query = { employeeId, role };
-    if (role === "employee") {
-      if (!department) throw new ApiError(400, "Department is required for employee");
-      query.department = department;
-    }
+  return res.status(200).json(new ApiResponse(200, { employee }, "Login successful"));
+});
 
-    const employee = await Employee.findOne(query).select("+password");
-    if (!employee) throw new ApiError(401, "Invalid credentials");
+export const logoutEmployee = asyncHandler(async (_req, res) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+  logger.info("Employee logged out");
+  return res.status(200).json(new ApiResponse(200, null, "Logout successful"));
+});
 
-    const isMatch = await employee.comparePassword(password);
-    if (!isMatch) throw new ApiError(401, "Invalid credentials");
+export const getEmployees = asyncHandler(async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
 
-    const token = employee.generateJWT();
+  const total = await Employee.countDocuments();
+  const employees = await Employee.find().select("-password").skip(skip).limit(limit).sort({ createdAt: -1 });
 
-    res.cookie("accessToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
+  logger.info(`Employees fetched by ${req.user.fullName} (${req.user.employeeId})`);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { employees, total, page, limit }, "Employees fetched successfully"));
+});
 
-    return res.status(200).json(new ApiResponse(200, { employee }, "Login successful"));
-  } catch (error) {
-    logger.error(`Login Error: ${error.message}`);
-    return res.status(error.status || 500).json({ message: error.message });
-  }
-};
+export const getSingleEmployee = asyncHandler(async (req, res) => {
+  const { id } = req.params;
 
-// ================== LOGOUT EMPLOYEE ==================
-export const logoutEmployee = (req, res, next) => {
-  try {
-    res.clearCookie("accessToken", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-    });
+  let employee = mongoose.Types.ObjectId.isValid(id)
+    ? await Employee.findById(id).select("-password")
+    : await Employee.findOne({ employeeId: id }).select("-password");
 
-    logger.info("Employee logged out");
+  if (!employee) throw new ApiError(404, "Employee not found");
+  return res.status(200).json(new ApiResponse(200, { employee }, "Employee fetched successfully"));
+});
 
-    return res.status(200).json(new ApiResponse(200, null, "Logout successful"));
-  } catch (error) {
-    logger.error(`Logout Error: ${error.message}`);
-    next(error);
-  }
-};
+export const updateEmployee = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { fullName, emailId, department, phoneNumber, role } = req.body;
 
-// ================== GET ALL EMPLOYEES ==================
-export const getEmployees = async (req, res, next) => {
-  try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
-    const skip = (page - 1) * limit;
+  const employee = await Employee.findById(id);
+  if (!employee) throw new ApiError(404, "Employee not found");
 
-    const total = await Employee.countDocuments();
-    const employees = await Employee.find().select("-password").skip(skip).limit(limit).sort({ createdAt: -1 });
+  const isAdmin = req.user.role === "admin";
+  const isSelf = String(req.user.id) === String(id);
 
-    logger.info(`Employees fetched by ${req.user.fullName} (${req.user.employeeId})`);
+  if (!isAdmin && !isSelf) throw new ApiError(403, "Only admin or owner can update this employee");
+  if (!isAdmin && role && role !== employee.role) throw new ApiError(403, "Employees cannot change role");
 
-    return res.status(200).json(new ApiResponse(200, { employees, total, page, limit }, "Employees fetched successfully"));
-  } catch (error) {
-    logger.error(`Get Employees Error: ${error.message}`);
-    next(error);
-  }
-};
+  if (fullName) employee.fullName = fullName;
+  if (emailId) employee.emailId = emailId;
+  if (department) employee.department = department;
+  if (phoneNumber) employee.phoneNumber = phoneNumber;
+  if (isAdmin && role) employee.role = role;
 
-// ================== GET SINGLE EMPLOYEE ==================
-export const getSingleEmployee = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+  await employee.save();
 
-    let employee = mongoose.Types.ObjectId.isValid(id)
-      ? await Employee.findById(id).select("-password")
-      : await Employee.findOne({ employeeId: id }).select("-password");
+  logger.info(
+    `Employee updated: ${employee.fullName} (${employee.employeeId}) by ${req.user.fullName} (${req.user.employeeId})`
+  );
+  return res.status(200).json(new ApiResponse(200, { employee }, "Employee updated successfully"));
+});
 
-    if (!employee) throw new ApiError(404, "Employee not found");
+export const deleteEmployee = asyncHandler(async (req, res) => {
+  if (req.user.role !== "admin") throw new ApiError(403, "Only admin can delete employees");
 
-    return res.status(200).json(new ApiResponse(200, { employee }, "Employee fetched successfully"));
-  } catch (error) {
-    next(error);
-  }
-};
+  const { id } = req.params;
+  const employee = await Employee.findByIdAndDelete(id);
+  if (!employee) throw new ApiError(404, `Employee with ID ${id} not found`);
 
-// ================== UPDATE EMPLOYEE ==================
-export const updateEmployee = async (req, res, next) => {
-  try {
-    const { id } = req.params;
+  logger.info(
+    `Employee deleted: ${employee.fullName} (${employee.employeeId}) by ${req.user.fullName} (${req.user.employeeId})`
+  );
+  return res.status(200).json(new ApiResponse(200, null, `Employee ${employee.fullName} deleted successfully`));
+});
 
-    if (!id) throw new ApiError(400, "Employee ID is required");
-
-    const { fullName, emailId, department, phoneNumber, role } = req.body;
-
-    // ✅ Check if employee exists
-    const employee = await Employee.findById(id);
-    if (!employee) throw new ApiError(404, "Employee not found");
-
-    // ✅ Optional: only admin can edit
-    if (req.user.role !== "admin") {
-      throw new ApiError(403, "Only admin can update employees");
-    }
-
-    // ✅ Update allowed fields
-    if (fullName) employee.fullName = fullName;
-    if (emailId) employee.emailId = emailId;
-    if (department) employee.department = department;
-    if (phoneNumber) employee.phoneNumber = phoneNumber;
-    if (role) employee.role = role;
-
-    await employee.save();
-
-    logger.info(
-      `Employee updated: ${employee.fullName} (${employee.employeeId}) by ${req.user.fullName} (${req.user.employeeId})`
-    );
-
-    return res
-      .status(200)
-      .json(new ApiResponse(200, { employee }, "Employee updated successfully"));
-  } catch (error) {
-    logger.error(`Update Employee Error: ${error.message}`);
-    next(error);
-  }
-};
-
-
-// ================== DELETE EMPLOYEE ==================
-export const deleteEmployee = async (req, res, next) => {
-  try {
-    const { id } = req.params;
-
-    if (!id) throw new ApiError(400, "Employee ID is required");
-
-    const employee = await Employee.findByIdAndDelete(id); // pass id directly
-    if (!employee) throw new ApiError(404, `Employee with ID ${id} not found`);
-
-    logger.info(
-      `Employee deleted: ${employee.fullName} (${employee.employeeId}) by ${req.user.fullName} (${req.user.employeeId})`
-    );
-
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(200, null, `Employee ${employee.fullName} deleted successfully`)
-      );
-  } catch (error) {
-    logger.error(`Delete Employee Error: ${error.message}`);
-    next(error);
-  }
-};
-
-// ================== GET CURRENT USER (/me) ==================
-export const getCurrentUser = async (req, res, next) => {
-  try {
-    const userId = req.user.id; // from verifyJWT middleware
-    const employee = await Employee.findById(userId).select("-password");
-
-    if (!employee) throw new ApiError(404, "User not found");
-
-    return res.status(200).json(new ApiResponse(200, { employee }, "User fetched successfully"));
-  } catch (error) {
-    next(error);
-  }
-};
+export const getCurrentUser = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
+  const employee = await Employee.findById(userId).select("-password");
+  if (!employee) throw new ApiError(404, "User not found");
+  return res.status(200).json(new ApiResponse(200, { employee }, "User fetched successfully"));
+});
