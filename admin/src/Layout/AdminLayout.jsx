@@ -31,7 +31,7 @@ export default function HomeLayout() {
 
   const handleLogout = async () => {
     try {
-      await axios.post("https://audit-management-system-server.onrender.com", {}, { withCredentials: true });
+      await axios.post("https://audit-management-system-server.onrender.com/pi/v1/auth/logout", {}, { withCredentials: true });
       setUser(null);
       navigate("/login", { replace: true });
     } catch (error) {
