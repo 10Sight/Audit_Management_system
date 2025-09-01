@@ -25,7 +25,7 @@ export default function AuditsPage() {
   const fetchAudits = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get("http://localhost:5000/api/audits", {
+      const { data } = await axios.get("https://audit-management-system-server.onrender.com/api/audits", {
         withCredentials: true,
       });
       const sortedAudits = (Array.isArray(data?.data) ? data.data : []).sort(
@@ -50,7 +50,7 @@ export default function AuditsPage() {
 
     try {
       setProcessing(true);
-      await axios.delete(`http://localhost:5000/api/audits/${id}`, {
+      await axios.delete(`https://audit-management-system-server.onrender.com/api/audits/${id}`, {
         withCredentials: true,
       });
       toast.success("Audit deleted successfully");

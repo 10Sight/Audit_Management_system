@@ -14,7 +14,7 @@ import questionRoutes from "./routes/question.route.js";
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:5173", 
+  origin: "https://audit-management-system.onrender.com", 
   credentials: true,             
 }));
 

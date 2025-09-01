@@ -120,7 +120,7 @@ export default function HomeLayout() {
         <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
           <div className="flex items-center gap-2">
             <img
-              src="/marelli.svg" // <-- replace with your logo path
+              src="/marelli.svg" 
               alt="Logo"
               className="w-8 h-8 object-contain"
             />

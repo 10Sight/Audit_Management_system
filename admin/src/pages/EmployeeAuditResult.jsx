@@ -12,7 +12,7 @@ export default function EmployeeAuditResult() {
   const [loading, setLoading] = useState(true);
   const [audit, setAudit] = useState(null);
 
-  const baseURL = "http://localhost:5000/api";
+  const baseURL = "https://audit-management-system-server.onrender.com/api";
 
   useEffect(() => {
     const fetchAudit = async () => {

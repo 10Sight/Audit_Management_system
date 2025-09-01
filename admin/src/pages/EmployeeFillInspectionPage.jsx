@@ -25,7 +25,7 @@ export default function EmployeeFillInspectionPage() {
   const [showModal, setShowModal] = useState(false);
   const [submittedAuditId, setSubmittedAuditId] = useState(null);
 
-  const baseURL = "http://localhost:5000/api";
+  const baseURL = "https://audit-management-system-server.onrender.com/api";
 
   // Fetch dropdowns
   useEffect(() => {

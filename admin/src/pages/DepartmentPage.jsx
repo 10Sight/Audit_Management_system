@@ -14,7 +14,7 @@ export default function DepartmentPage() {
   const [processName, setProcessName] = useState("");
 
   const api = axios.create({
-    baseURL: "http://localhost:5000/api",
+    baseURL: "https://audit-management-system-server.onrender.com/api",
     withCredentials: true,
   });
 

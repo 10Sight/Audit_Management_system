@@ -15,7 +15,7 @@ export default function EmployeeDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const auditsPerPage = 5;
 
-  const baseURL = "http://localhost:5000/api";
+  const baseURL = "https://audit-management-system-server.onrender.com/api";
 
   useEffect(() => {
     const fetchAudits = async () => {
@@ -187,7 +187,7 @@ export default function EmployeeDashboard() {
 
       {/* Modal */}
       {selectedAudit && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
+        <div className="fixed inset-0 bg-gray-100 bg-opacity-50 flex items-center justify-center z-50 p-4 sm:p-6 overflow-y-auto">
           <div className="bg-white p-4 sm:p-6 rounded-xl max-w-2xl w-full text-gray-900 space-y-4 shadow-lg">
             <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-4 text-center sm:text-left">
               Audit Details

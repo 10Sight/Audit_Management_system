@@ -1,10 +1,10 @@
-// src/controllers/auth.controller.js
 import mongoose from "mongoose";
 import Employee from "../models/auth.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import logger from "../logger/winston.logger.js";
 import {asyncHandler} from "../utils/asyncHandler.js";
+import EVN from "../config/env.config.js";
 
 export const registerEmployee = asyncHandler(async (req, res) => {
   const { fullName, emailId, department, employeeId, phoneNumber, password, role } = req.body;
@@ -43,7 +43,7 @@ export const loginEmployee = asyncHandler(async (req, res) => {
   const token = employee.generateJWT();
   res.cookie("accessToken", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: EVN.NODE_ENV === "production",
     sameSite: "strict",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
@@ -54,7 +54,7 @@ export const loginEmployee = asyncHandler(async (req, res) => {
 export const logoutEmployee = asyncHandler(async (_req, res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: EVN.NODE_ENV === "production",
     sameSite: "strict",
   });
   logger.info("Employee logged out");

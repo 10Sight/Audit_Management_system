@@ -1,6 +1,7 @@
 import mongoose, { Schema, model } from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import EVN from "../config/env.config.js";
 
 const EmployeeSchema = new Schema(
   {
@@ -80,8 +81,8 @@ EmployeeSchema.methods.generateJWT = function () {
       role: this.role,
       employeeId: this.employeeId,
     },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRE || "7d" }
+    EVN.JWT_ACCESS_SECRET,
+    { expiresIn: EVN.JWT_EXPIRY || "7d" }
   );
 };
 

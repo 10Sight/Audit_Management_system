@@ -25,7 +25,7 @@ export default function AdminEditAuditPage() {
     const fetchAudit = async () => {
       try {
         const { data } = await axios.get(
-          `http://localhost:5000/api/audits/${id}`,
+          `https://audit-management-system-server.onrender.com`,
           { withCredentials: true }
         );
         const auditData = data.data;
@@ -72,7 +72,7 @@ export default function AdminEditAuditPage() {
     setSubmitting(true);
 
     try {
-      await axios.put(`http://localhost:5000/api/audits/${id}`, formData, {
+      await axios.put(`https://audit-management-system-server.onrender.com`, formData, {
         withCredentials: true,
       });
       toast.success("Audit updated successfully");
