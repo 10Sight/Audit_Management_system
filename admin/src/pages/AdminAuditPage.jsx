@@ -72,7 +72,7 @@ export default function AdminEditAuditPage() {
     setSubmitting(true);
 
     try {
-      await axios.put(`https://audit-management-system-server.onrender.com`, formData, {
+      await axios.put(`https://audit-management-system-server.onrender.com/api/audits${id}`, formData, {
         withCredentials: true,
       });
       toast.success("Audit updated successfully");

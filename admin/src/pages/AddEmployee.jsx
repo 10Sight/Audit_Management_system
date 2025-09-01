@@ -58,7 +58,7 @@ export default function AddEmployeePage() {
     setLoading(true);
     try {
       const res = await axios.post(
-        "https://audit-management-system-server.onrender.com",
+        "https://audit-management-system-server.onrender.com/api/v1/auth/register",
         data,
         {
           withCredentials: true,
