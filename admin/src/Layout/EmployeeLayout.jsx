@@ -27,7 +27,7 @@ export default function EmployeeLayout() {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://localhost:5000/api/v1/auth/logout",
+        "https://audit-management-system-server.onrender.com/api/v1/auth/logout",
         {},
         { withCredentials: true }
       );
