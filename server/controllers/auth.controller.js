@@ -44,7 +44,7 @@ export const loginEmployee = asyncHandler(async (req, res) => {
   res.cookie("accessToken", token, {
     httpOnly: true,
     secure: EVN.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -55,7 +55,7 @@ export const logoutEmployee = asyncHandler(async (_req, res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
     secure: EVN.NODE_ENV === "production",
-    sameSite: "strict",
+    sameSite: "none",
   });
   logger.info("Employee logged out");
   return res.status(200).json(new ApiResponse(200, null, "Logout successful"));
