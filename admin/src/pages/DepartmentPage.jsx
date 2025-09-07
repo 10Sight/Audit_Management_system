@@ -14,7 +14,7 @@ export default function DepartmentPage() {
   const [processName, setProcessName] = useState("");
 
   const api = axios.create({
-    baseURL: "https://185.170.198.55:5000/api",
+    baseURL: "http://14793.78.231:5000/api",
     withCredentials: true,
   });
 

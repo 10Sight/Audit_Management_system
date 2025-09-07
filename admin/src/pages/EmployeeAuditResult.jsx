@@ -12,7 +12,7 @@ export default function EmployeeAuditResult() {
   const [loading, setLoading] = useState(true);
   const [audit, setAudit] = useState(null);
 
-  const baseURL = "https://185.170.198.55:5000/api";
+  const baseURL = "http://14793.78.231:5000/api";
 
   useEffect(() => {
     const fetchAudit = async () => {

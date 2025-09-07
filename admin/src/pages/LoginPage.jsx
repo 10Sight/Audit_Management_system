@@ -57,7 +57,7 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const res = await fetch("https://185.170.198.55:5000/api/v1/auth/login", {
+      const res = await fetch("http://14793.78.231:5000/api/v1/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

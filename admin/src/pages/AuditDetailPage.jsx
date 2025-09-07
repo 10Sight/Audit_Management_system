@@ -16,7 +16,7 @@ export default function AuditDetailPage() {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          `https://185.170.198.55:5000/api/audits/${id}`,
+          `http://14793.78.231:5000/api/audits/${id}`,
           { withCredentials: true }
         );
         setAudit(data?.data || null);

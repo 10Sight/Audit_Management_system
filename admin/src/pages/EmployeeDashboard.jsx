@@ -15,7 +15,7 @@ export default function EmployeeDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const auditsPerPage = 5;
 
-  const baseURL = "https://185.170.198.55:5000/api";
+  const baseURL = "http://14793.78.231:5000/api";
 
   useEffect(() => {
     const fetchAudits = async () => {
