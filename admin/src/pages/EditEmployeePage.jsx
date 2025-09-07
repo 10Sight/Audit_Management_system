@@ -22,7 +22,7 @@ export default function EditEmployeePage() {
     const fetchEmployee = async () => {
       try {
         const { data } = await axios.get(
-          `https://audit-management-system-server.onrender.com/api/v1/auth/employee/${id}`,
+          `https://185.170.198.55:5000/api/v1/auth/employee/${id}`,
           { withCredentials: true }
         );
         setEmployee(data.data.employee);
@@ -45,7 +45,7 @@ export default function EditEmployeePage() {
     setSaving(true);
     try {
       await axios.put(
-        `https://audit-management-system-server.onrender.com/api/v1/auth/employee/${id}`,
+        `https://185.170.198.55:5000/api/v1/auth/employee/${id}`,
         employee,
         { withCredentials: true }
       );
