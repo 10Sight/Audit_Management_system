@@ -18,7 +18,7 @@ export default function EmployeesPage() {
     const fetchEmployees = async () => {
       try {
         const { data } = await axios.get(
-          `http://14793.78.231:5000/api/v1/auth/get-employee?page=${page}&limit=${limit}`,
+          `http://185.170.198.55:5000/api/v1/auth/get-employee?page=${page}&limit=${limit}`,
           { withCredentials: true }
         );
         setEmployees(data.data?.employees || []);

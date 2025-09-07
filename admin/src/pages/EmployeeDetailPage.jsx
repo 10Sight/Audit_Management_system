@@ -14,7 +14,7 @@ export default function EmployeeDetailPage() {
     const fetchEmployee = async () => {
       try {
         const { data } = await axios.get(
-          `http://14793.78.231:5000/api/v1/auth/employee/${id}`,
+          `http://185.170.198.55:5000/api/v1/auth/employee/${id}`,
           { withCredentials: true }
         );
         setEmployee(data.data.employee);
@@ -33,7 +33,7 @@ export default function EmployeeDetailPage() {
     if (!window.confirm("Are you sure you want to delete this employee?")) return;
 
     try {
-      await axios.delete(`http://14793.78.231:5000/api/v1/auth/employee/${id}`, {
+      await axios.delete(`http://185.170.198.55:5000/api/v1/auth/employee/${id}`, {
         withCredentials: true,
       });
       alert("Employee deleted successfully!");

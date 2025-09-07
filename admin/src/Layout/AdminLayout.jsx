@@ -31,7 +31,7 @@ export default function HomeLayout() {
 
   const handleLogout = async () => {
     try {
-      await axios.post("http://14793.78.231:5000/api/v1/auth/logout", {}, { withCredentials: true });
+      await axios.post("http://185.170.198.55:5000/api/v1/auth/logout", {}, { withCredentials: true });
       setUser(null);
       navigate("/login", { replace: true });
     } catch (error) {

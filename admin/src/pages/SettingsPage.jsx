@@ -13,7 +13,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get("http://14793.78.231:5000/api/v1/auth/me", {
+        const res = await axios.get("http://185.170.198.55:5000/api/v1/auth/me", {
           withCredentials: true,
         });
         setProfile(res.data.data.employee);

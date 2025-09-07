@@ -58,7 +58,7 @@ export default function AddEmployeePage() {
     setLoading(true);
     try {
       const res = await axios.post(
-        "http://14793.78.231:5000/api/v1/auth/register",
+        "http://185.170.198.55:5000/api/v1/auth/register",
         data,
         {
           withCredentials: true,
