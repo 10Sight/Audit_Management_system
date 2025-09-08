@@ -43,8 +43,8 @@ export const loginEmployee = asyncHandler(async (req, res) => {
   const token = employee.generateJWT();
   res.cookie("accessToken", token, {
     httpOnly: true,
-    secure: EVN.NODE_ENV === "production",
-    sameSite: "none",
+    secure: true,
+    sameSite: "None",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -54,8 +54,8 @@ export const loginEmployee = asyncHandler(async (req, res) => {
 export const logoutEmployee = asyncHandler(async (_req, res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
-    secure: EVN.NODE_ENV === "production",
-    sameSite: "none",
+    secure: true,
+    sameSite: "None",
   });
   logger.info("Employee logged out");
   return res.status(200).json(new ApiResponse(200, null, "Logout successful"));

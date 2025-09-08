@@ -24,7 +24,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  res.send("This is Backend");
+  res.send("This is Backend Running");
 });
 
 app.use("/api/v1/auth", authRoutes);
