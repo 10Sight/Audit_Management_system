@@ -9,9 +9,11 @@ import {
   ChevronLeft,
   ChevronRight,
   HelpCircle,
+  ClipboardCheck,
 } from "lucide-react";
 import axios from "axios";
 import { useAuth } from "@/context/AuthContext";
+import api from "@/utils/axios";
 
 export default function HomeLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -23,7 +25,7 @@ export default function HomeLayout() {
   const navLinks = [
     { to: "/admin/dashboard", label: "Dashboard", icon: <LayoutDashboard size={22} /> },
     { to: "/admin/employees", label: "Employees", icon: <Users size={22} /> },
-    { to: "/admin/audits", label: "Audits", icon: <HelpCircle size={22} /> },
+    { to: "/admin/audits", label: "Audits", icon: <ClipboardCheck size={22} /> },
     { to: "/admin/questions", label: "Questions", icon: <HelpCircle size={22} /> },
     { to: "/admin/departments", label: "Departments", icon: <Building2 size={22} /> },
     { to: "/admin/settings", label: "Settings", icon: <Settings size={22} /> },
@@ -31,7 +33,7 @@ export default function HomeLayout() {
 
   const handleLogout = async () => {
     try {
-      await axios.post("https://api.audiotmanagementsystem.org/api/v1/auth/logout", {}, { withCredentials: true });
+      await api.post("/api/v1/auth/logout");
       setUser(null);
       navigate("/login", { replace: true });
     } catch (error) {
@@ -178,7 +180,7 @@ export default function HomeLayout() {
           {/* Brand in Header */}
           <div className="flex items-center gap-2">
             <img src="/marelli.svg" alt="Logo" className="w-8 h-8 object-contain" />
-            <span className="text-xl font-bold text-black">Moterson</span>
+            <span className="text-xl font-bold text-black">Motherson</span>
           </div>
 
           {/* User Info */}
@@ -192,7 +194,7 @@ export default function HomeLayout() {
           </div>
         </header>
 
-        <main className="flex-1 p-6 bg-white">
+        <main className="flex-1 lg:p-2 bg-white">
           <Outlet />
         </main>
       </div>

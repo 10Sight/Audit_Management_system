@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Edit, Trash2, User } from "lucide-react";
+import api from "@/utils/axios";
 
 export default function EmployeeDetailPage() {
   const { id } = useParams();
@@ -11,31 +12,32 @@ export default function EmployeeDetailPage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchEmployee = async () => {
-      try {
-        const { data } = await axios.get(
-          `https://api.audiotmanagementsystem.org/api/v1/auth/employee/${id}`,
-          { withCredentials: true }
-        );
-        setEmployee(data.data.employee);
-      } catch (err) {
-        setError(err.response?.data?.message || "Failed to fetch employee details");
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchEmployee = async () => {
+    try {
+      setLoading(true); // start loader here
 
-    if (id) fetchEmployee();
-  }, [id]);
+      const { data } = await api.get(`/api/v1/auth/employee/${id}`);
+
+      setEmployee(data?.data?.employee || null);
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to fetch employee details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (id) {
+    fetchEmployee();
+  }
+}, [id]);
+
 
   const handleEdit = () => navigate(`/admin/employee/edit/${id}`);
   const handleDelete = async () => {
     if (!window.confirm("Are you sure you want to delete this employee?")) return;
 
     try {
-      await axios.delete(`https://api.audiotmanagementsystem.org/api/v1/auth/employee/${id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/api/v1/auth/employee/${id}`);
       alert("Employee deleted successfully!");
       navigate("/admin/employees");
     } catch (err) {

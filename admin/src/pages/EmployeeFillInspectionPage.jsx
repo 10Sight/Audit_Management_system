@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FiCheckCircle, FiHome, FiBarChart2 } from "react-icons/fi";
 import "react-toastify/dist/ReactToastify.css";
+import api from "@/utils/axios";
 
 export default function EmployeeFillInspectionPage() {
   const { user: currentUser } = useAuth();
@@ -25,16 +26,14 @@ export default function EmployeeFillInspectionPage() {
   const [showModal, setShowModal] = useState(false);
   const [submittedAuditId, setSubmittedAuditId] = useState(null);
 
-  const baseURL = "https://api.audiotmanagementsystem.org/api";
-
   // Fetch dropdowns
   useEffect(() => {
     const fetchDropdowns = async () => {
       try {
         const [linesRes, machinesRes, processesRes] = await Promise.all([
-          axios.get(`${baseURL}/lines`, { withCredentials: true }),
-          axios.get(`${baseURL}/machines`, { withCredentials: true }),
-          axios.get(`${baseURL}/processes`, { withCredentials: true }),
+          api.get(`/api/lines`),
+          api.get(`/api/machines`),
+          api.get(`/api/processes`),
         ]);
         setLines(linesRes.data?.data || []);
         setMachines(machinesRes.data?.data || []);
@@ -57,11 +56,11 @@ export default function EmployeeFillInspectionPage() {
         if (machine) query.append("machineId", machine);
         if (process) query.append("processId", process);
 
-        const res = await axios.get(`${baseURL}/questions?${query.toString()}`, { withCredentials: true });
+        const res = await api.get(`/api/questions?${query.toString()}`);
         const data = res.data?.data || [];
 
         // Fetch global questions
-        const globalRes = await axios.get(`${baseURL}/questions?global=true`, { withCredentials: true });
+        const globalRes = await api.get(`/api/questions?global=true`);
         const globalData = globalRes.data?.data || [];
 
         // Merge unique
@@ -109,7 +108,7 @@ export default function EmployeeFillInspectionPage() {
           remark: q.answer === "No" ? q.remark : "",
         })),
       };
-      const res = await axios.post(`${baseURL}/audits`, payload, { withCredentials: true });
+      const res = await api.post(`/api/audits`, payload, { withCredentials: true });
       setSubmittedAuditId(res.data?.data?._id);
       setShowModal(true);
     } catch (err) {

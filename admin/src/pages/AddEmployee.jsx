@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
+import api from "@/utils/axios";
 
 export default function AddEmployeePage() {
   const navigate = useNavigate();
@@ -57,19 +58,13 @@ export default function AddEmployeePage() {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const res = await axios.post(
-        "https://api.audiotmanagementsystem.org/api/v1/auth/register",
-        data,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const res = await api.post(
+        "/api/v1/auth/register",
+        data
       );
 
       toast.success(res.data.message || "Employee registered successfully!");
-      navigate("/employees");
+      navigate("/admin/employees");
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to register employee"

@@ -11,6 +11,7 @@ import {
   FiArrowLeft,
   FiArrowRight,
 } from "react-icons/fi";
+import api from "@/utils/axios";
 
 export default function AuditsPage() {
   const [audits, setAudits] = useState([]);
@@ -25,9 +26,7 @@ export default function AuditsPage() {
   const fetchAudits = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get("https://api.audiotmanagementsystem.org/api/audits", {
-        withCredentials: true,
-      });
+      const { data } = await api.get("/api/audits");
       const sortedAudits = (Array.isArray(data?.data) ? data.data : []).sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
       );
@@ -50,9 +49,7 @@ export default function AuditsPage() {
 
     try {
       setProcessing(true);
-      await axios.delete(`https://api.audiotmanagementsystem.org/api/audits/${id}`, {
-        withCredentials: true,
-      });
+      await api.delete(`/api/audits/${id}`);
       toast.success("Audit deleted successfully");
       setAudits((prev) => prev.filter((audit) => audit._id !== id));
     } catch (err) {

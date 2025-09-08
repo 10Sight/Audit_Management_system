@@ -1592,3 +1592,87 @@
 [08 Sep, 2025 - 16:37:25:3725] [34minfo[39m: [34mMongoDB Connected[39m
 [08 Sep, 2025 - 16:37:30:3730] [34minfo[39m: [34mMongoDB Connected[39m
 [08 Sep, 2025 - 16:39:20:3920] [34minfo[39m: [34mMongoDB Connected[39m
+[08 Sep, 2025 - 16:39:36:3936] [34minfo[39m: [34mMongoDB Connected[39m
+[08 Sep, 2025 - 22:03:52:352] [34minfo[39m: [34mMongoDB Connected[39m
+[08 Sep, 2025 - 22:06:23:623] [34minfo[39m: [34mMongoDB Connected[39m
+[08 Sep, 2025 - 22:24:01:241] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:24:02:242] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:29:07:297] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:29:08:298] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:30:45:3045] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:30:45:3045] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:31:52:3152] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:31:52:3152] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:32:10:3210] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:32:10:3210] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:34:27:3427] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:34:27:3427] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:34:30:3430] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:34:30:3430] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:36:02:362] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:36:03:363] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:36:06:366] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:36:06:366] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:38:58:3858] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:38:58:3858] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:50:30:5030] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:50:30:5030] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:50:39:5039] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:50:39:5039] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:51:04:514] [34minfo[39m: [34mLine deleted: 68adc7718dc2fc711b2a0302[39m
+[08 Sep, 2025 - 22:51:10:5110] [34minfo[39m: [34mLine created: Line 3[39m
+[08 Sep, 2025 - 22:53:42:5342] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:53:42:5342] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:55:55:5555] [34minfo[39m: [34mAudit 68b92fd9156f48a918245b63 updated by 68af3a678dc2fc711b2a155f[39m
+[08 Sep, 2025 - 22:56:39:5639] [34minfo[39m: [34mCreated 1 questions by user 68af3a678dc2fc711b2a155f[39m
+[08 Sep, 2025 - 22:56:55:5655] [34minfo[39m: [34mQuestion deleted: 68b2828e4247788e3c827a4e by user 68af3a678dc2fc711b2a155f[39m
+[08 Sep, 2025 - 22:57:00:570] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:57:00:570] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:57:08:578] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:57:08:578] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:57:49:5749] [34minfo[39m: [34mNew employee registered: New (EMP123)[39m
+[08 Sep, 2025 - 22:58:59:5859] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:58:59:5859] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:59:02:592] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:59:02:592] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:59:40:5940] [34minfo[39m: [34mNew employee registered: asdf (EMP563)[39m
+[08 Sep, 2025 - 22:59:40:5940] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:59:41:5941] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:59:48:5948] [34minfo[39m: [34mEmployee deleted: asdf (EMP563) by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:59:50:5950] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:59:50:5950] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:59:55:5955] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 22:59:55:5955] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:01:36:136] [34minfo[39m: [34mEmployee logged out[39m
+[08 Sep, 2025 - 23:05:28:528] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[08 Sep, 2025 - 23:06:01:61] [34minfo[39m: [34mEmployee logged out[39m
+[08 Sep, 2025 - 23:06:32:632] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:06:33:633] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:06:43:643] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:06:43:643] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:10:08:108] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:10:08:108] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:10:30:1030] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:10:31:1031] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:10:43:1043] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:10:43:1043] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:10:46:1046] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:10:46:1046] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:15:43:1543] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:15:44:1544] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:15:47:1547] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:15:47:1547] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:15:51:1551] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:15:52:1552] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:16:01:161] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:16:01:161] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:16:05:165] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:16:05:165] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:16:07:167] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:16:07:167] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:16:16:1616] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:16:16:1616] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:16:40:1640] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:16:41:1641] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:19:31:1931] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[08 Sep, 2025 - 23:19:31:1931] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m

@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Trash2 } from "lucide-react"; 
+import api from "@/utils/axios";
 
 export default function DepartmentPage() {
   const [lines, setLines] = useState([]);
@@ -13,11 +14,6 @@ export default function DepartmentPage() {
   const [machineName, setMachineName] = useState("");
   const [processName, setProcessName] = useState("");
 
-  const api = axios.create({
-    baseURL: "https://api.audiotmanagementsystem.org/api",
-    withCredentials: true,
-  });
-
   useEffect(() => {
     fetchLines();
     fetchMachines();
@@ -27,7 +23,7 @@ export default function DepartmentPage() {
   // Fetch functions
   const fetchLines = async () => {
     try {
-      const res = await api.get("/lines");
+      const res = await api.get("/api/lines");
       setLines(res.data.data || []);
     } catch (err) {
       console.error(err);
@@ -36,7 +32,7 @@ export default function DepartmentPage() {
 
   const fetchMachines = async () => {
     try {
-      const res = await api.get("/machines");
+      const res = await api.get("/api/machines");
       setMachines(res.data.data || []);
     } catch (err) {
       console.error(err);
@@ -45,7 +41,7 @@ export default function DepartmentPage() {
 
   const fetchProcesses = async () => {
     try {
-      const res = await api.get("/processes");
+      const res = await api.get("/api/processes");
       setProcesses(res.data.data || []);
     } catch (err) {
       console.error(err);
@@ -56,7 +52,7 @@ export default function DepartmentPage() {
   const addLine = async () => {
     if (!lineName) return;
     try {
-      await api.post("/lines", { name: lineName });
+      await api.post("/api/lines", { name: lineName });
       toast.success("Line added");
       setLineName("");
       fetchLines();
@@ -68,7 +64,7 @@ export default function DepartmentPage() {
   const addMachine = async () => {
     if (!machineName) return;
     try {
-      await api.post("/machines", { name: machineName });
+      await api.post("/api/machines", { name: machineName });
       toast.success("Machine added");
       setMachineName("");
       fetchMachines();
@@ -80,7 +76,7 @@ export default function DepartmentPage() {
   const addProcess = async () => {
     if (!processName) return;
     try {
-      await api.post("/processes", { name: processName });
+      await api.post("/api/processes", { name: processName });
       toast.success("Process added");
       setProcessName("");
       fetchProcesses();
@@ -93,7 +89,7 @@ export default function DepartmentPage() {
   const deleteItem = async (type, id) => {
     if (!window.confirm("Are you sure you want to delete this item?")) return;
     try {
-      await api.delete(`/${type}/${id}`);
+      await api.delete(`/api/${type}/${id}`);
       toast.success(`${type.slice(0, -1)} deleted`);
       if (type === "lines") fetchLines();
       if (type === "machines") fetchMachines();

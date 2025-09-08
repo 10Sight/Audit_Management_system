@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import * as XLSX from "xlsx";
+import api from "@/utils/axios";
 
 export default function EmployeeDashboard() {
   const { user: currentUser } = useAuth();
@@ -15,14 +16,10 @@ export default function EmployeeDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
   const auditsPerPage = 5;
 
-  const baseURL = "https://api.audiotmanagementsystem.org/api";
-
   useEffect(() => {
     const fetchAudits = async () => {
       try {
-        const res = await axios.get(`${baseURL}/audits?auditor=${currentUser?._id}`, {
-          withCredentials: true,
-        });
+        const res = await api.get(`/api/audits?auditor=${currentUser?._id}`);
         const fetchedAudits = res.data?.data || [];
         fetchedAudits.sort((a, b) => new Date(b.date) - new Date(a.date));
         setAudits(fetchedAudits);

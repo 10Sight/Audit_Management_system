@@ -3,6 +3,7 @@ import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { Mail, Phone, Briefcase, IdCard, Shield } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import api from "@/utils/axios";
 
 export default function ProfilePage() {
   const { user: currentUser } = useAuth();
@@ -13,9 +14,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get("https://api.audiotmanagementsystem.org/api/v1/auth/me", {
-          withCredentials: true,
-        });
+        const res = await api.get("/api/v1/auth/me");
         setProfile(res.data.data.employee);
       } catch (err) {
         console.error(err);

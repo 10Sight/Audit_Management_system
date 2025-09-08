@@ -21,6 +21,7 @@ import { startOfWeek, startOfMonth, startOfYear, format } from "date-fns";
 import { FaChartLine, FaChartBar, FaChartPie, FaUsers } from "react-icons/fa";
 import { MdPrecisionManufacturing } from "react-icons/md";
 import { FaCogs } from "react-icons/fa";
+import api from "@/utils/axios";
 
 export default function AdminDashboard() {
   const [audits, setAudits] = useState([]);
@@ -41,11 +42,6 @@ export default function AdminDashboard() {
 
   const COLORS = ["#00C49F", "#FF8042"];
 
-  const api = axios.create({
-    baseURL: "https://api.audiotmanagementsystem.org/api",
-    withCredentials: true,
-  });
-
   const getTimeframeKey = (date, timeframe) => {
     const d = new Date(date);
     if (timeframe === "daily") return format(d, "yyyy-MM-dd");
@@ -57,34 +53,34 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [auditsRes, linesRes, machinesRes, processesRes, employeesRes] =
-          await Promise.all([
-            api.get("/audits"),
-            api.get("/lines"),
-            api.get("/machines"),
-            api.get("/processes"),
-            axios.get("https://api.audiotmanagementsystem.org/api/v1/auth/get-employee", {
-              withCredentials: true,
-            }),
-          ]);
+  const fetchData = async () => {
+    try {
+      const [auditsRes, linesRes, machinesRes, processesRes, employeesRes] =
+        await Promise.all([
+          api.get("/api/audits"),
+          api.get("/api/lines"),
+          api.get("/api/machines"),
+          api.get("/api/processes"), // ✅ fixed
+          api.get("/api/v1/auth/get-employee"),
+        ]);
 
-        setAudits(auditsRes.data.data || []);
-        setLines(linesRes.data.data || []);
-        setMachines(machinesRes.data.data || []);
-        setProcesses(processesRes.data.data || []);
-        setEmployees(
-          Array.isArray(employeesRes.data.data.employees)
-            ? employeesRes.data.data.employees
-            : []
-        );
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      }
-    };
-    fetchData();
-  }, []);
+      setAudits(auditsRes.data.data || []);
+      setLines(linesRes.data.data || []);
+      setMachines(machinesRes.data.data || []);
+      setProcesses(processesRes.data.data || []);
+      setEmployees(
+        Array.isArray(employeesRes.data.data.employees)
+          ? employeesRes.data.data.employees
+          : []
+      );
+    } catch (err) {
+      console.error("Error fetching data:", err.response?.data || err.message);
+    }
+  };
+
+  fetchData();
+}, []);
+
 
   // Line Chart Data
   useEffect(() => {

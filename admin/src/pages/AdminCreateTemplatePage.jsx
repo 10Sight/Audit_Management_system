@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../context/AuthContext";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
+import api from "@/utils/axios";
 
 export default function AdminCreateTemplatePage() {
   const navigate = useNavigate();
@@ -25,9 +26,9 @@ export default function AdminCreateTemplatePage() {
     const fetchOptions = async () => {
       try {
         const [linesRes, machinesRes, processesRes] = await Promise.all([
-          axios.get("https://api.audiotmanagementsystem.org/api/lines", { withCredentials: true }),
-          axios.get("https://api.audiotmanagementsystem.org/api/machines", { withCredentials: true }),
-          axios.get("https://api.audiotmanagementsystem.org/api/processes", { withCredentials: true }),
+          api.get("/api/lines"),
+          api.get("/api/machines"),
+          api.get("/api/processes"),
         ]);
 
         setLines(linesRes.data.data);
@@ -74,7 +75,7 @@ export default function AdminCreateTemplatePage() {
         process: selectedProcess,
       }));
 
-      await axios.post("https://api.audiotmanagementsystem.org/api/questions", payload, {
+      await api.post("/api/questions", payload, {
         withCredentials: true,
       });
 

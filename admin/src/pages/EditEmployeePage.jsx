@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import api from "@/utils/axios";
 
 export default function EditEmployeePage() {
   const { id } = useParams();
@@ -21,9 +22,8 @@ export default function EditEmployeePage() {
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
-        const { data } = await axios.get(
-          `https://api.audiotmanagementsystem.org/api/v1/auth/employee/${id}`,
-          { withCredentials: true }
+        const { data } = await api.get(
+          `/api/v1/auth/employee/${id}`
         );
         setEmployee(data.data.employee);
       } catch (err) {
@@ -44,8 +44,8 @@ export default function EditEmployeePage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await axios.put(
-        `https://api.audiotmanagementsystem.org/api/v1/auth/employee/${id}`,
+      await api.put(
+        `/api/v1/auth/employee/${id}`,
         employee,
         { withCredentials: true }
       );

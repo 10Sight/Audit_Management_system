@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../context/AuthContext";
+import api from "@/utils/axios";
 
 export default function AdminManageQuestionsPage() {
   const { user: currentUser } = useAuth();
@@ -25,9 +26,9 @@ export default function AdminManageQuestionsPage() {
     const fetchOptions = async () => {
       try {
         const [linesRes, machinesRes, processesRes] = await Promise.all([
-          axios.get("https://api.audiotmanagementsystem.org/api/lines", { withCredentials: true }),
-          axios.get("https://api.audiotmanagementsystem.org/api/machines", { withCredentials: true }),
-          axios.get("https://api.audiotmanagementsystem.org/api/processes", { withCredentials: true }),
+          api.get("/api/lines",),
+          api.get("/api/machines",),
+          api.get("/api/processes",),
         ]);
         setLines(linesRes.data.data || []);
         setMachines(machinesRes.data.data || []);
@@ -54,9 +55,8 @@ export default function AdminManageQuestionsPage() {
         }
         query.append("includeGlobal", includeGlobal ? "true" : "false");
 
-        const { data } = await axios.get(
-          `https://api.audiotmanagementsystem.org/api/questions?${query.toString()}`,
-          { withCredentials: true }
+        const { data } = await api.get(
+          `/api/questions?${query.toString()}`
         );
 
         setQuestions(data.data);
@@ -74,7 +74,7 @@ export default function AdminManageQuestionsPage() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this question?")) return;
     try {
-      await axios.delete(`https://api.audiotmanagementsystem.org/api/questions/${id}`, { withCredentials: true });
+      await api.delete(`/api/questions/${id}`);
       toast.success("Question deleted!");
       setQuestions(questions.filter((q) => q._id !== id));
     } catch (err) {

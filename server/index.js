@@ -14,7 +14,7 @@ import questionRoutes from "./routes/question.route.js";
 const app = express();
 
 app.use(cors({
-  origin: "https://audiotmanagementsystem.org", 
+  origin: ["http://localhost:5173", "https://audiotmanagementsystem.org"],
   credentials: true,             
 }));
 

@@ -10,6 +10,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import api from "@/utils/axios";
 
 export default function EmployeeLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -26,10 +27,8 @@ export default function EmployeeLayout() {
 
   const handleLogout = async () => {
     try {
-      await axios.post(
-        "https://api.audiotmanagementsystem.org/api/v1/auth/logout",
-        {},
-        { withCredentials: true }
+      await api.post(
+        "/api/v1/auth/logout"
       );
       setUser(null);
       navigate("/login", { replace: true });
@@ -167,7 +166,7 @@ export default function EmployeeLayout() {
           {/* Logo + Brand */}
           <div className="flex items-center gap-2">
             <img src="/marelli.svg" alt="Logo" className="h-8 w-8 object-contain" />
-            <span className="text-xl font-bold text-black">Moterson</span>
+            <span className="text-xl font-bold text-black">Motherson</span>
           </div>
 
           {/* User Info */}

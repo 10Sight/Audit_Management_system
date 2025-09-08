@@ -4,6 +4,7 @@ import DynamicForm from "@/components/ui/DynamicForm";
 import { User, Lock, Building2, UserCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
+import api from "@/utils/axios";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -53,37 +54,39 @@ export default function LoginPage() {
   ];
 
   const handleLogin = async (data) => {
-    setLoading(true);
-    setError(null);
+  setLoading(true);
+  setError(null);
 
-    try {
-      const res = await fetch("https://api.audiotmanagementsystem.org/api/v1/auth/login", {
-        method: "POST",
+  try {
+    const res = await api.post(
+      "/api/v1/auth/login",
+      data,
+      {
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(data),
-      });
+        withCredentials: true, // needed if backend uses cookies
+      }
+    );
 
-      const result = await res.json();
+    const result = res.data; // ✅ parsed JSON
 
-      if (!res.ok) throw new Error(result.message || "Login failed");
+    const role = result.data?.employee?.role;
+    if (!role) throw new Error("Invalid login response");
 
-      const role = result.data?.employee?.role;
-      if (!role) throw new Error("Invalid login response");
+    // Store user in global context
+    setUser(result.data.employee);
 
-      // Store user in global context
-      setUser(result.data.employee);
+    // Navigate based on role
+    if (role === "admin") navigate("/admin/dashboard", { replace: true });
+    else if (role === "employee") navigate("/employee/inspections", { replace: true });
+    else throw new Error("Invalid role received from server");
+  } catch (err) {
+    // Axios errors have response objects
+    setError(err.response?.data?.message || err.message);
+  } finally {
+    setLoading(false);
+  }
+};
 
-      // Navigate based on role
-      if (role === "admin") navigate("/admin/dashboard", { replace: true });
-      else if (role === "employee") navigate("/employee/inspections", { replace: true });
-      else throw new Error("Invalid role received from server");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 text-gray-900 px-4">

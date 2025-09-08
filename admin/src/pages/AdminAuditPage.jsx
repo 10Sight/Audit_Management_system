@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from "@/utils/axios";
 
 export default function AdminEditAuditPage() {
   const { id } = useParams();
@@ -21,38 +22,39 @@ export default function AdminEditAuditPage() {
     answers: [],
   });
 
-  useEffect(() => {
-    const fetchAudit = async () => {
-      try {
-        const { data } = await axios.get(
-          `https://api.audiotmanagementsystem.org`,
-          { withCredentials: true }
-        );
-        const auditData = data.data;
+useEffect(() => {
+  const fetchAudit = async () => {
+    try {
+      const { data } = await api.get(`/api/audits/${id}`);
+      const auditData = data?.data;
 
-        setAudit(auditData);
-        setFormData({
-          line: auditData.line?._id || "",
-          machine: auditData.machine?._id || "",
-          process: auditData.process?._id || "",
-          lineLeader: auditData.lineLeader || "",
-          shiftIncharge: auditData.shiftIncharge || "",
-          answers: auditData.answers.map((a) => ({
-            question: a.question?._id,
-            questionText: a.question?.questionText,
-            answer: a.answer,
-            remark: a.remark || "",
-          })),
-        });
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to fetch audit");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAudit();
-  }, [id]);
+      setAudit(auditData);
+      setFormData({
+        line: auditData?.line?._id || "",
+        machine: auditData?.machine?._id || "",
+        process: auditData?.process?._id || "",
+        lineLeader: auditData?.lineLeader || "",
+        shiftIncharge: auditData?.shiftIncharge || "",
+        answers: Array.isArray(auditData?.answers)
+          ? auditData.answers.map((a) => ({
+              question: a?.question?._id || "",
+              questionText: a?.question?.questionText || "",
+              answer: a?.answer || "",
+              remark: a?.remark || "",
+            }))
+          : [],
+      });
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to fetch audit");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (id) fetchAudit();
+}, [id]);
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -68,22 +70,21 @@ export default function AdminEditAuditPage() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
+  e.preventDefault();
+  setSubmitting(true);
 
-    try {
-      await axios.put(`https://api.audiotmanagementsystem.org/api/audits${id}`, formData, {
-        withCredentials: true,
-      });
-      toast.success("Audit updated successfully");
-      navigate(-1);
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to update audit");
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  try {
+    await api.put(`/api/audits/${id}`, formData);
+    toast.success("Audit updated successfully");
+    navigate(-1); // Go back to previous page
+  } catch (err) {
+    console.error(err);
+    toast.error(err.response?.data?.message || "Failed to update audit");
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   if (loading)
     return <div className="p-6 text-gray-700 text-center">Loading audit...</div>;

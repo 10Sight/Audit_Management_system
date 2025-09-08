@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from "@/utils/axios";
 
 export default function AuditDetailPage() {
   const { id } = useParams();
@@ -15,9 +16,8 @@ export default function AuditDetailPage() {
     const fetchAudit = async () => {
       try {
         setLoading(true);
-        const { data } = await axios.get(
-          `https://api.audiotmanagementsystem.org/api/audits/${id}`,
-          { withCredentials: true }
+        const { data } = await api.get(
+          `/api/audits/${id}`
         );
         setAudit(data?.data || null);
       } catch (err) {

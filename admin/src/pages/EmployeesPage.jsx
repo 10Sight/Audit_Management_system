@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { FiDownload, FiPlus, FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import api from "@/utils/axios";
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
@@ -17,9 +18,8 @@ export default function EmployeesPage() {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const { data } = await axios.get(
-          `https://api.audiotmanagementsystem.org/api/v1/auth/get-employee?page=${page}&limit=${limit}`,
-          { withCredentials: true }
+        const { data } = await api.get(
+          `/api/v1/auth/get-employee?page=${page}&limit=${limit}`
         );
         setEmployees(data.data?.employees || []);
         setTotal(data.data?.total || 0);

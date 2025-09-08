@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from "@/utils/axios";
 
 export default function EmployeeAuditResult() {
   const { user: currentUser } = useAuth();
@@ -12,12 +13,10 @@ export default function EmployeeAuditResult() {
   const [loading, setLoading] = useState(true);
   const [audit, setAudit] = useState(null);
 
-  const baseURL = "https://api.audiotmanagementsystem.org/api";
-
   useEffect(() => {
     const fetchAudit = async () => {
       try {
-        const res = await axios.get(`${baseURL}/audits/${auditId}`, { withCredentials: true });
+        const res = await api.get(`/api/audits/${auditId}`);
         setAudit(res.data?.data);
       } catch (err) {
         console.error(err);

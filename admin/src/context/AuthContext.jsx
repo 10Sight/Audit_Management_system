@@ -1,20 +1,18 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import axios from "axios";
+import api from "@/utils/axios";
 
 // Create the context
 const AuthContext = createContext();
 
 // Provider component
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);       // stores logged-in user
-  const [loading, setLoading] = useState(true); // tracks fetching state
+  const [user, setUser] = useState(null);      
+  const [loading, setLoading] = useState(true); 
 
   // Fetch current user from backend
   const fetchUser = async () => {
     try {
-      const res = await axios.get("https://api.audiotmanagementsystem.org", {
-        withCredentials: true, // important to send HttpOnly cookie
-      });
+      const res = await api.get("/api/v1/auth/me");
       setUser(res.data?.data?.employee || null);
     } catch (err) {
       setUser(null);
