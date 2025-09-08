@@ -16,7 +16,7 @@ export default function AuditDetailPage() {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          `https://audit-management-system-server.onrender.com/api/audits/${id}`,
+          `http://185.170.198.55:5000/api/audits/${id}`,
           { withCredentials: true }
         );
         setAudit(data?.data || null);

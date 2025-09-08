@@ -25,9 +25,9 @@ export default function AdminCreateTemplatePage() {
     const fetchOptions = async () => {
       try {
         const [linesRes, machinesRes, processesRes] = await Promise.all([
-          axios.get("https://audit-management-system-server.onrender.com/api/lines", { withCredentials: true }),
-          axios.get("https://audit-management-system-server.onrender.com/api/machines", { withCredentials: true }),
-          axios.get("https://audit-management-system-server.onrender.com/api/processes", { withCredentials: true }),
+          axios.get("http://185.170.198.55:5000/api/lines", { withCredentials: true }),
+          axios.get("http://185.170.198.55:5000/api/machines", { withCredentials: true }),
+          axios.get("http://185.170.198.55:5000/api/processes", { withCredentials: true }),
         ]);
 
         setLines(linesRes.data.data);
@@ -74,7 +74,7 @@ export default function AdminCreateTemplatePage() {
         process: selectedProcess,
       }));
 
-      await axios.post("https://audit-management-system-server.onrender.com/api/questions", payload, {
+      await axios.post("http://185.170.198.55:5000/api/questions", payload, {
         withCredentials: true,
       });
 
