@@ -42,7 +42,7 @@ export default function AdminDashboard() {
   const COLORS = ["#00C49F", "#FF8042"];
 
   const api = axios.create({
-    baseURL: "http://185.170.198.55:5000/api",
+    baseURL: "https://api.audiotmanagementsystem.org//api",
     withCredentials: true,
   });
 
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
             api.get("/lines"),
             api.get("/machines"),
             api.get("/processes"),
-            axios.get("http://185.170.198.55:5000/api/v1/auth/get-employee", {
+            axios.get("https://api.audiotmanagementsystem.org//api/v1/auth/get-employee", {
               withCredentials: true,
             }),
           ]);

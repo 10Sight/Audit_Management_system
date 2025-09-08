@@ -14,7 +14,7 @@ export default function DepartmentPage() {
   const [processName, setProcessName] = useState("");
 
   const api = axios.create({
-    baseURL: "http://185.170.198.55:5000/api",
+    baseURL: "https://api.audiotmanagementsystem.org//api",
     withCredentials: true,
   });
 

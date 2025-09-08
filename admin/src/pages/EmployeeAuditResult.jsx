@@ -12,7 +12,7 @@ export default function EmployeeAuditResult() {
   const [loading, setLoading] = useState(true);
   const [audit, setAudit] = useState(null);
 
-  const baseURL = "http://185.170.198.55:5000/api";
+  const baseURL = "https://api.audiotmanagementsystem.org//api";
 
   useEffect(() => {
     const fetchAudit = async () => {

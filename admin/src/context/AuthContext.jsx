@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   // Fetch current user from backend
   const fetchUser = async () => {
     try {
-      const res = await axios.get("http://185.170.198.55:5000", {
+      const res = await axios.get("https://api.audiotmanagementsystem.org/", {
         withCredentials: true, // important to send HttpOnly cookie
       });
       setUser(res.data?.data?.employee || null);

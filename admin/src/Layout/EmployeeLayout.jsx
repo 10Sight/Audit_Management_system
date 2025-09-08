@@ -27,7 +27,7 @@ export default function EmployeeLayout() {
   const handleLogout = async () => {
     try {
       await axios.post(
-        "http://185.170.198.55:5000/api/v1/auth/logout",
+        "https://api.audiotmanagementsystem.org//api/v1/auth/logout",
         {},
         { withCredentials: true }
       );

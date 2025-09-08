@@ -25,9 +25,9 @@ export default function AdminManageQuestionsPage() {
     const fetchOptions = async () => {
       try {
         const [linesRes, machinesRes, processesRes] = await Promise.all([
-          axios.get("http://185.170.198.55:5000/api/lines", { withCredentials: true }),
-          axios.get("http://185.170.198.55:5000/api/machines", { withCredentials: true }),
-          axios.get("http://185.170.198.55:5000/api/processes", { withCredentials: true }),
+          axios.get("https://api.audiotmanagementsystem.org//api/lines", { withCredentials: true }),
+          axios.get("https://api.audiotmanagementsystem.org//api/machines", { withCredentials: true }),
+          axios.get("https://api.audiotmanagementsystem.org//api/processes", { withCredentials: true }),
         ]);
         setLines(linesRes.data.data || []);
         setMachines(machinesRes.data.data || []);
@@ -55,7 +55,7 @@ export default function AdminManageQuestionsPage() {
         query.append("includeGlobal", includeGlobal ? "true" : "false");
 
         const { data } = await axios.get(
-          `http://185.170.198.55:5000/api/questions?${query.toString()}`,
+          `https://api.audiotmanagementsystem.org//api/questions?${query.toString()}`,
           { withCredentials: true }
         );
 
@@ -74,7 +74,7 @@ export default function AdminManageQuestionsPage() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this question?")) return;
     try {
-      await axios.delete(`http://185.170.198.55:5000/api/questions/${id}`, { withCredentials: true });
+      await axios.delete(`https://api.audiotmanagementsystem.org//api/questions/${id}`, { withCredentials: true });
       toast.success("Question deleted!");
       setQuestions(questions.filter((q) => q._id !== id));
     } catch (err) {

@@ -18,7 +18,7 @@ export default function EmployeesPage() {
     const fetchEmployees = async () => {
       try {
         const { data } = await axios.get(
-          `http://185.170.198.55:5000/api/v1/auth/get-employee?page=${page}&limit=${limit}`,
+          `https://api.audiotmanagementsystem.org//api/v1/auth/get-employee?page=${page}&limit=${limit}`,
           { withCredentials: true }
         );
         setEmployees(data.data?.employees || []);
