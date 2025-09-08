@@ -25,7 +25,7 @@ export default function EmployeeFillInspectionPage() {
   const [showModal, setShowModal] = useState(false);
   const [submittedAuditId, setSubmittedAuditId] = useState(null);
 
-  const baseURL = "https://api.audiotmanagementsystem.org//api";
+  const baseURL = "https://api.audiotmanagementsystem.org/api";
 
   // Fetch dropdowns
   useEffect(() => {

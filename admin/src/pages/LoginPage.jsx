@@ -57,7 +57,7 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const res = await fetch("https://api.audiotmanagementsystem.org//api/v1/auth/login", {
+      const res = await fetch("https://api.audiotmanagementsystem.org/api/v1/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

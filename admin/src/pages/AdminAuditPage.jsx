@@ -25,7 +25,7 @@ export default function AdminEditAuditPage() {
     const fetchAudit = async () => {
       try {
         const { data } = await axios.get(
-          `https://api.audiotmanagementsystem.org/`,
+          `https://api.audiotmanagementsystem.org`,
           { withCredentials: true }
         );
         const auditData = data.data;
@@ -72,7 +72,7 @@ export default function AdminEditAuditPage() {
     setSubmitting(true);
 
     try {
-      await axios.put(`https://api.audiotmanagementsystem.org//api/audits${id}`, formData, {
+      await axios.put(`https://api.audiotmanagementsystem.org/api/audits${id}`, formData, {
         withCredentials: true,
       });
       toast.success("Audit updated successfully");

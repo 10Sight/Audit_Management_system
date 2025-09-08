@@ -58,7 +58,7 @@ export default function AddEmployeePage() {
     setLoading(true);
     try {
       const res = await axios.post(
-        "https://api.audiotmanagementsystem.org//api/v1/auth/register",
+        "https://api.audiotmanagementsystem.org/api/v1/auth/register",
         data,
         {
           withCredentials: true,

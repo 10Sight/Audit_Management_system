@@ -14,7 +14,7 @@ export default function EmployeeDetailPage() {
     const fetchEmployee = async () => {
       try {
         const { data } = await axios.get(
-          `https://api.audiotmanagementsystem.org//api/v1/auth/employee/${id}`,
+          `https://api.audiotmanagementsystem.org/api/v1/auth/employee/${id}`,
           { withCredentials: true }
         );
         setEmployee(data.data.employee);
@@ -33,7 +33,7 @@ export default function EmployeeDetailPage() {
     if (!window.confirm("Are you sure you want to delete this employee?")) return;
 
     try {
-      await axios.delete(`https://api.audiotmanagementsystem.org//api/v1/auth/employee/${id}`, {
+      await axios.delete(`https://api.audiotmanagementsystem.org/api/v1/auth/employee/${id}`, {
         withCredentials: true,
       });
       alert("Employee deleted successfully!");

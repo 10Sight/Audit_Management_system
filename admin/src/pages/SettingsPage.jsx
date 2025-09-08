@@ -13,7 +13,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get("https://api.audiotmanagementsystem.org//api/v1/auth/me", {
+        const res = await axios.get("https://api.audiotmanagementsystem.org/api/v1/auth/me", {
           withCredentials: true,
         });
         setProfile(res.data.data.employee);

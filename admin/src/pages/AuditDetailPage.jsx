@@ -16,7 +16,7 @@ export default function AuditDetailPage() {
       try {
         setLoading(true);
         const { data } = await axios.get(
-          `https://api.audiotmanagementsystem.org//api/audits/${id}`,
+          `https://api.audiotmanagementsystem.org/api/audits/${id}`,
           { withCredentials: true }
         );
         setAudit(data?.data || null);

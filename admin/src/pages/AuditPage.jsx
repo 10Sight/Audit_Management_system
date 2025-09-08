@@ -25,7 +25,7 @@ export default function AuditsPage() {
   const fetchAudits = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get("https://api.audiotmanagementsystem.org//api/audits", {
+      const { data } = await axios.get("https://api.audiotmanagementsystem.org/api/audits", {
         withCredentials: true,
       });
       const sortedAudits = (Array.isArray(data?.data) ? data.data : []).sort(
@@ -50,7 +50,7 @@ export default function AuditsPage() {
 
     try {
       setProcessing(true);
-      await axios.delete(`https://api.audiotmanagementsystem.org//api/audits/${id}`, {
+      await axios.delete(`https://api.audiotmanagementsystem.org/api/audits/${id}`, {
         withCredentials: true,
       });
       toast.success("Audit deleted successfully");
