@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   // Fetch current user from backend
   const fetchUser = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/v1/auth/me", {
+      const res = await axios.get("https://audit-management-system-server.onrender.com", {
         withCredentials: true, // important to send HttpOnly cookie
       });
       setUser(res.data?.data?.employee || null);
