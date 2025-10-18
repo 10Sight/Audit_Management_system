@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import DynamicForm from "@/components/ui/DynamicForm";
-import { User, Lock, Building2, UserCheck } from "lucide-react";
-import { motion } from "framer-motion";
+import SimpleDynamicForm from "@/components/ui/SimpleDynamicForm";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { User, Lock, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import api from "@/utils/axios";
 
@@ -10,39 +10,17 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [departmentDisabled, setDepartmentDisabled] = useState(false);
 
   const { setUser } = useAuth();
-
-  const handleRoleChange = (roleValue) => {
-    setDepartmentDisabled(roleValue === "admin");
-  };
 
   const loginFields = [
     {
       label: "Username",
       type: "text",
-      name: "employeeId",
-      placeholder: "Enter your Username",
+      name: "username",
+      placeholder: "Enter your username",
       icon: <User className="text-gray-500" size={20} />,
-    },
-    {
-      label: "Role",
-      type: "select",
-      name: "role",
-      options: ["admin", "employee"],
       required: true,
-      icon: <UserCheck className="text-gray-500" size={20} />,
-      onChange: handleRoleChange,
-    },
-    {
-      label: "Department",
-      type: "select",
-      name: "department",
-      options: ["IT", "HR", "Finance", "Sales", "Production"],
-      disabled: departmentDisabled,
-      required: !departmentDisabled,
-      icon: <Building2 className="text-gray-500" size={20} />,
     },
     {
       label: "Password",
@@ -50,81 +28,96 @@ export default function LoginPage() {
       name: "password",
       placeholder: "Enter your password",
       icon: <Lock className="text-gray-500" size={20} />,
+      required: true,
     },
   ];
 
   const handleLogin = async (data) => {
-  setLoading(true);
-  setError(null);
+    setLoading(true);
+    setError(null);
 
-  try {
-    const res = await api.post(
-      "/api/v1/auth/login",
-      data,
-      {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true, // needed if backend uses cookies
-      }
-    );
+    try {
+      const res = await api.post("/api/v1/auth/login", {
+        username: data.username,
+        password: data.password,
+      });
 
-    const result = res.data; // ✅ parsed JSON
+      const result = res.data;
+      const role = result.data?.employee?.role;
+      
+      if (!role) throw new Error("Invalid login response");
 
-    const role = result.data?.employee?.role;
-    if (!role) throw new Error("Invalid login response");
+      // Store user in global context
+      setUser(result.data.employee);
 
-    // Store user in global context
-    setUser(result.data.employee);
-
-    // Navigate based on role
-    if (role === "admin") navigate("/admin/dashboard", { replace: true });
-    else if (role === "employee") navigate("/employee/inspections", { replace: true });
-    else throw new Error("Invalid role received from server");
-  } catch (err) {
-    // Axios errors have response objects
-    setError(err.response?.data?.message || err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+      // Navigate based on role
+      if (role === "admin") navigate("/admin/dashboard", { replace: true });
+      else if (role === "employee") navigate("/employee/inspections", { replace: true });
+      else throw new Error("Invalid role received from server");
+    } catch (err) {
+      // Axios errors have response objects
+      setError(err.response?.data?.message || err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 text-gray-900 px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-300"
-      >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="text-center"
-        >
-          <h2 className="text-3xl font-bold mb-2 tracking-tight text-gray-900">
-            Login
-          </h2>
-          <p className="text-gray-600 text-sm">
-            Enter your details to access your panel
-          </p>
-        </motion.div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 via-indigo-50 to-sky-50 px-4 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+        <div className="absolute top-40 left-1/2 transform -translate-x-1/2 w-80 h-80 bg-sky-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+      </div>
+      <div className="w-full max-w-md">
+        <Card className="shadow-2xl border-0 bg-white/80 backdrop-blur-md ring-1 ring-blue-100/50 relative z-10">
+          <CardHeader className="space-y-1 text-center pb-2">
+            <div className="flex justify-center mb-2">
+              <div className="p-4 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full shadow-lg ring-4 ring-blue-100">
+                <ShieldCheck className="h-8 w-8 text-white" />
+              </div>
+            </div>
+            <CardTitle className="text-2xl font-bold tracking-tight">
+              Welcome Back
+            </CardTitle>
+            <CardDescription className="text-muted-foreground">
+              Sign in to access your automobile parts inspection panel
+            </CardDescription>
+          </CardHeader>
+          
+          <CardContent className="space-y-4">
+            <SimpleDynamicForm 
+              fields={loginFields} 
+              onSubmit={handleLogin}
+              submitText={"Sign In"}
+              className="space-y-4"
+              loading={loading}
+            />
 
-        <div className="mt-6 space-y-4">
-          <DynamicForm fields={loginFields} onSubmit={handleLogin} />
-        </div>
+            {error && (
+              <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+                <p className="text-destructive text-sm font-medium text-center flex items-center justify-center gap-2">
+                  <ShieldCheck className="h-4 w-4" />
+                  {error}
+                </p>
+              </div>
+            )}
 
-        {error && (
-          <p className="text-red-500 mt-4 text-center font-medium">
-            ⚠️ {error}
-          </p>
-        )}
-        {loading && (
-          <p className="text-gray-500 mt-4 text-center font-medium">
-            ⏳ Logging in...
-          </p>
-        )}
-      </motion.div>
+            {loading && (
+              <div className="flex items-center justify-center gap-2 text-muted-foreground text-sm">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                Authenticating your credentials...
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          Secure access to automobile parts inspection system
+        </p>
+      </div>
     </div>
   );
 }

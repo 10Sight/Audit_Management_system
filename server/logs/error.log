@@ -57,3 +57,6 @@
 [27 Aug, 2025 - 22:30:38:3038] [31merror[39m: [31mLogin Error: 401[39m
 [27 Aug, 2025 - 22:33:03:333] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
 [27 Aug, 2025 - 22:33:17:3317] [31merror[39m: [31mRegister Error: Employee validation failed: phoneNumber: Phone number must be 10 digits[39m
+[15 Oct, 2025 - 21:35:38:3538] [31merror[39m: [31m🚨 All MongoDB connection attempts failed![39m
+[15 Oct, 2025 - 21:35:48:3548] [31merror[39m: [31m🚨 All MongoDB connection attempts failed![39m
+[15 Oct, 2025 - 21:36:30:3630] [31merror[39m: [31m🚨 All MongoDB connection attempts failed![39m

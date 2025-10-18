@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useMemo } from "react";
-import axios from "axios";
 import {
   ResponsiveContainer,
   LineChart,
@@ -16,12 +15,20 @@ import {
   Cell,
 } from "recharts";
 import { startOfWeek, startOfMonth, startOfYear, format } from "date-fns";
-
-// react-icons
-import { FaChartLine, FaChartBar, FaChartPie, FaUsers } from "react-icons/fa";
-import { MdPrecisionManufacturing } from "react-icons/md";
-import { FaCogs } from "react-icons/fa";
+import { 
+  BarChart3, 
+  TrendingUp, 
+  Users, 
+  Building2, 
+  Cog, 
+  Calendar,
+  Filter
+} from "lucide-react";
 import api from "@/utils/axios";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 export default function AdminDashboard() {
   const [audits, setAudits] = useState([]);
@@ -29,18 +36,31 @@ export default function AdminDashboard() {
   const [machines, setMachines] = useState([]);
   const [processes, setProcesses] = useState([]);
   const [employees, setEmployees] = useState([]);
+  const [lastFetch, setLastFetch] = useState(Date.now());
 
-  const [answerType, setAnswerType] = useState("Yes");
-  const [selectedLine, setSelectedLine] = useState("");
-  const [selectedMachine, setSelectedMachine] = useState("");
-  const [selectedProcess, setSelectedProcess] = useState("");
+  const [answerType, setAnswerType] = useState("all");
+  const [selectedLine, setSelectedLine] = useState("all");
+  const [selectedMachine, setSelectedMachine] = useState("all");
+  const [selectedProcess, setSelectedProcess] = useState("all");
   const [timeframe, setTimeframe] = useState("daily");
 
   const [lineData, setLineData] = useState([]);
   const [barData, setBarData] = useState([]);
   const [pieData, setPieData] = useState([]);
 
-  const COLORS = ["#00C49F", "#FF8042"];
+  // Modern vibrant color palette for charts
+  const CHART_COLORS = {
+    success: '#10B981',     // Emerald green
+    warning: '#F59E0B',     // Amber
+    error: '#EF4444',       // Red
+    info: '#3B82F6',        // Blue
+    primary: '#8B5CF6',     // Purple
+    secondary: '#06B6D4',   // Cyan
+    accent: '#EC4899',      // Pink
+    neutral: '#6B7280'      // Gray
+  };
+  
+  const PIE_COLORS = [CHART_COLORS.success, CHART_COLORS.error];
 
   const getTimeframeKey = (date, timeframe) => {
     const d = new Date(date);
@@ -55,64 +75,90 @@ export default function AdminDashboard() {
   useEffect(() => {
   const fetchData = async () => {
     try {
+      // Fetch all data for dashboard analytics
       const [auditsRes, linesRes, machinesRes, processesRes, employeesRes] =
         await Promise.all([
-          api.get("/api/audits"),
+          api.get(`/api/audits?limit=1000&t=${lastFetch}`), // Add cache busting parameter
           api.get("/api/lines"),
           api.get("/api/machines"),
-          api.get("/api/processes"), // ✅ fixed
-          api.get("/api/v1/auth/get-employee"),
+          api.get("/api/processes"), 
+          api.get("/api/v1/auth/get-all-users"),
         ]);
 
-      setAudits(auditsRes.data.data || []);
+      // Handle paginated audit response
+      const auditData = auditsRes.data.data?.audits || auditsRes.data.data || [];
+      console.log(`Fetched ${auditData.length} audits for dashboard`);
+      setAudits(auditData);
+      
       setLines(linesRes.data.data || []);
       setMachines(machinesRes.data.data || []);
       setProcesses(processesRes.data.data || []);
       setEmployees(
-        Array.isArray(employeesRes.data.data.employees)
-          ? employeesRes.data.data.employees
+        Array.isArray(employeesRes.data.data?.users)
+          ? employeesRes.data.data.users
           : []
       );
     } catch (err) {
       console.error("Error fetching data:", err.response?.data || err.message);
+      // Set empty arrays as fallback
+      setAudits([]);
+      setLines([]);
+      setMachines([]);
+      setProcesses([]);
+      setEmployees([]);
     }
   };
 
   fetchData();
-}, []);
+}, [lastFetch]);
+
+  // Auto-refresh data every 30 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLastFetch(Date.now());
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, []);
 
 
   // Line Chart Data
   useEffect(() => {
+    if (!Array.isArray(audits)) return;
+    
     const countsByPeriod = {};
     audits.forEach((audit) => {
-      if (selectedLine && audit.line?._id !== selectedLine) return;
-      if (selectedMachine && audit.machine?._id !== selectedMachine) return;
-      if (selectedProcess && audit.process?._id !== selectedProcess) return;
+      
+      if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return;
+      if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return;
+      if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return;
 
       const key = getTimeframeKey(audit.date, timeframe);
       if (!countsByPeriod[key]) countsByPeriod[key] = { Yes: 0, No: 0 };
+      
       audit.answers?.forEach((ans) => {
-        countsByPeriod[key][ans.answer] =
-          (countsByPeriod[key][ans.answer] || 0) + 1;
+        if (ans.answer === 'Yes' || ans.answer === 'No') {
+          countsByPeriod[key][ans.answer] = (countsByPeriod[key][ans.answer] || 0) + 1;
+        }
       });
     });
 
-    setLineData(
-      Object.keys(countsByPeriod)
-        .sort((a, b) => new Date(a) - new Date(b))
-        .map((period) => ({ date: period, ...countsByPeriod[period] }))
-    );
+    const lineChartData = Object.keys(countsByPeriod)
+      .sort((a, b) => new Date(a) - new Date(b))
+      .map((period) => ({ date: period, ...countsByPeriod[period] }));
+    setLineData(lineChartData);
   }, [audits, timeframe, selectedLine, selectedMachine, selectedProcess]);
 
   // Bar Chart Data
   useEffect(() => {
+    if (!Array.isArray(audits)) return;
+    
     const counts = {};
     audits.forEach((audit) => {
       audit.answers?.forEach((ans) => {
-        if (selectedLine && audit.line?._id !== selectedLine) return;
-        if (selectedMachine && audit.machine?._id !== selectedMachine) return;
-        if (selectedProcess && audit.process?._id !== selectedProcess) return;
+        if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return;
+        if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return;
+        if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return;
 
         const lineName = audit.line?.name || "N/A";
         if (!counts[lineName]) counts[lineName] = { Yes: 0, No: 0 };
@@ -126,13 +172,15 @@ export default function AdminDashboard() {
 
   // Pie Chart Data
   useEffect(() => {
+    if (!Array.isArray(audits)) return;
+    
     let yesCount = 0;
     let noCount = 0;
 
     audits.forEach((audit) => {
-      if (selectedLine && audit.line?._id !== selectedLine) return;
-      if (selectedMachine && audit.machine?._id !== selectedMachine) return;
-      if (selectedProcess && audit.process?._id !== selectedProcess) return;
+      if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return;
+      if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return;
+      if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return;
 
       audit.answers?.forEach((ans) => {
         if (ans.answer === "Yes") yesCount++;
@@ -147,15 +195,24 @@ export default function AdminDashboard() {
   }, [audits, selectedLine, selectedMachine, selectedProcess]);
 
   const totalEmployees = useMemo(
-    () => employees.filter((emp) => emp.role === "employee").length,
+    () => employees.length,
     [employees]
   );
 
   const filteredCounts = useMemo(() => {
+    if (!Array.isArray(audits)) {
+      return {
+        filteredEmployees: 0,
+        lines: lines.length,
+        machines: machines.length,
+        processes: processes.length,
+      };
+    }
+    
     const filteredAudits = audits.filter((audit) => {
-      if (selectedLine && audit.line?._id !== selectedLine) return false;
-      if (selectedMachine && audit.machine?._id !== selectedMachine) return false;
-      if (selectedProcess && audit.process?._id !== selectedProcess) return false;
+      if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return false;
+      if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return false;
+      if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return false;
       return true;
     });
 
@@ -166,158 +223,304 @@ export default function AdminDashboard() {
 
     return {
       filteredEmployees: employeeIds.size,
-      lines: selectedLine ? 1 : lines.length,
-      machines: selectedMachine ? 1 : machines.length,
-      processes: selectedProcess ? 1 : processes.length,
+      lines: selectedLine && selectedLine !== "all" ? 1 : lines.length,
+      machines: selectedMachine && selectedMachine !== "all" ? 1 : machines.length,
+      processes: selectedProcess && selectedProcess !== "all" ? 1 : processes.length,
     };
   }, [audits, selectedLine, selectedMachine, selectedProcess, lines, machines, processes]);
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen text-gray-900 space-y-6">
-      <h1 className="text-3xl font-bold mb-4 flex items-center gap-2">
-        <FaChartLine className="text-blue-600" /> Admin Dashboard
-      </h1>
-
-      {/* Number Boxes */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {[
-          { label: "Total Employees", value: totalEmployees, icon: <FaUsers /> },
-          { label: "Filtered Auditors", value: filteredCounts.filteredEmployees, icon: <FaUsers /> },
-          { label: "Lines", value: filteredCounts.lines, icon: <FaCogs /> },
-          { label: "Machines", value: filteredCounts.machines, icon: <MdPrecisionManufacturing /> },
-          { label: "Processes", value: filteredCounts.processes, icon: <FaChartBar /> },
-        ].map((box) => (
-          <div
-            key={box.label}
-            className="bg-gray-200 shadow rounded-xl p-4 flex flex-col items-center sm:items-start"
-          >
-            <div className="flex items-center gap-2 text-gray-700">
-              {box.icon} <p className="text-sm">{box.label}</p>
-            </div>
-            <p className="text-2xl font-bold mt-2">{box.value}</p>
-          </div>
-        ))}
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">Overview of your inspection system</p>
+        </div>
+        <Badge variant="outline" className="flex items-center gap-2">
+          <Calendar className="h-4 w-4" />
+          {format(new Date(), "MMM dd, yyyy")}
+        </Badge>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-4 bg-gray-200 shadow p-4 rounded-xl">
-        {["Answer Type", "Line", "Machine", "Process", "Timeframe"].map((label, idx) => {
-          const valueMap = {
-            "Answer Type": answerType,
-            Line: selectedLine,
-            Machine: selectedMachine,
-            Process: selectedProcess,
-            Timeframe: timeframe,
-          };
-          const setValueMap = {
-            "Answer Type": setAnswerType,
-            Line: setSelectedLine,
-            Machine: setSelectedMachine,
-            Process: setSelectedProcess,
-            Timeframe: setTimeframe,
-          };
-          const optionsMap = {
-            "Answer Type": ["Yes", "No"],
-            Line: lines,
-            Machine: machines,
-            Process: processes,
-            Timeframe: ["daily", "weekly", "monthly", "yearly"],
-          };
 
+      {/* Metrics Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {[
+          { 
+            title: "Total Audits", 
+            value: audits.length, 
+            icon: BarChart3,
+            description: "Total audit records",
+            trend: "All time"
+          },
+          { 
+            title: "Total Employees", 
+            value: totalEmployees, 
+            icon: Users,
+            description: "Active users in system",
+            trend: "+2.1% from last month"
+          },
+          { 
+            title: "Production Lines", 
+            value: filteredCounts.lines, 
+            icon: Building2,
+            description: "Operational lines",
+            trend: "2 new lines added"
+          },
+          { 
+            title: "Machines", 
+            value: filteredCounts.machines, 
+            icon: Cog,
+            description: "Total machinery",
+            trend: "Stable"
+          },
+        ].map((metric) => {
+          const Icon = metric.icon;
           return (
-            <div key={idx} className="flex flex-col w-full sm:w-40">
-              <label className="mb-1 text-gray-700 text-sm font-medium">{label}</label>
-              <select
-                className="p-2 rounded-lg border border-gray-300 bg-white text-gray-900 shadow-sm"
-                value={valueMap[label]}
-                onChange={(e) => setValueMap[label](e.target.value)}
-              >
-                <option value="">
-                  {label === "Answer Type" ? "Select Answer" : `All ${label}s`}
-                </option>
-                {optionsMap[label].map((opt) => (
-                  <option key={opt._id || opt} value={opt._id || opt}>
-                    {opt.name || opt}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Card key={metric.title} className="">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{metric.title}</CardTitle>
+                <Icon className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{metric.value}</div>
+                <p className="text-xs text-muted-foreground">{metric.description}</p>
+                <p className="text-xs text-green-600 mt-1">{metric.trend}</p>
+              </CardContent>
+            </Card>
           );
         })}
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Line Chart */}
-        <div className="bg-gray-200 shadow rounded-xl p-4 w-full">
-          <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
-            <FaChartLine className="text-green-600" /> Trend Over Time ({answerType})
-          </h2>
-          <div className="w-full h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={lineData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip formatter={(value, name) => [`${value} audits`, name]} />
-                <Legend />
-                <Line type="monotone" dataKey="Yes" stroke="#00C49F" />
-                <Line type="monotone" dataKey="No" stroke="#FF8042" />
-              </LineChart>
-            </ResponsiveContainer>
+      {/* Filters */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Filter className="h-5 w-5" />
+            Filters
+          </CardTitle>
+          <CardDescription>Filter data to focus on specific metrics</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+            {["Answer Type", "Line", "Machine", "Process", "Timeframe"].map((label) => {
+              const valueMap = {
+                "Answer Type": answerType,
+                Line: selectedLine,
+                Machine: selectedMachine,
+                Process: selectedProcess,
+                Timeframe: timeframe,
+              };
+              const setValueMap = {
+                "Answer Type": setAnswerType,
+                Line: setSelectedLine,
+                Machine: setSelectedMachine,
+                Process: setSelectedProcess,
+                Timeframe: setTimeframe,
+              };
+              const optionsMap = {
+                "Answer Type": ["Yes", "No"],
+                Line: lines,
+                Machine: machines,
+                Process: processes,
+                Timeframe: ["daily", "weekly", "monthly", "yearly"],
+              };
+
+              return (
+                <div key={label} className="space-y-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    {label}
+                  </label>
+                  <Select value={valueMap[label]} onValueChange={setValueMap[label]}>
+                    <SelectTrigger>
+                      <SelectValue 
+                        placeholder={label === "Answer Type" ? "Select Answer" : `All ${label}s`} 
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">
+                        {label === "Answer Type" ? "Select Answer" : `All ${label}s`}
+                      </SelectItem>
+                      {optionsMap[label].map((opt) => (
+                        <SelectItem key={opt._id || opt} value={opt._id || opt}>
+                          {opt.name || opt}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              );
+            })}
           </div>
-        </div>
+        </CardContent>
+      </Card>
+
+      {/* Charts */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Line Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Trend Over Time
+            </CardTitle>
+            <CardDescription>
+              Tracking {answerType || 'all'} responses over selected timeframe
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={lineData}>
+                  <CartesianGrid 
+                    strokeDasharray="3 3" 
+                    stroke="hsl(var(--muted))" 
+                    opacity={0.3}
+                  />
+                  <XAxis 
+                    dataKey="date" 
+                    tick={{ fontSize: 12 }}
+                    tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <YAxis 
+                    tick={{ fontSize: 12 }}
+                    tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <Tooltip 
+                    formatter={(value, name) => [`${value} audits`, name]}
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--background))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px hsl(var(--foreground) / 0.15)'
+                    }}
+                  />
+                  <Legend />
+                  <Line 
+                    type="monotone" 
+                    dataKey="Yes" 
+                    stroke={CHART_COLORS.success} 
+                    strokeWidth={3}
+                    dot={{ r: 5, fill: CHART_COLORS.success }}
+                    activeDot={{ r: 7, fill: CHART_COLORS.success }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="No" 
+                    stroke={CHART_COLORS.error} 
+                    strokeWidth={3}
+                    dot={{ r: 5, fill: CHART_COLORS.error }}
+                    activeDot={{ r: 7, fill: CHART_COLORS.error }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Pie Chart */}
-        <div className="bg-gray-200 shadow rounded-xl p-4 w-full">
-          <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
-            <FaChartPie className="text-purple-600" /> Overall Yes/No Ratio
-          </h2>
-          <div className="w-full h-80">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={pieData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) =>
-                    `${name} ${(percent * 100).toFixed(0)}%`
-                  }
-                  outerRadius={120}
-                  dataKey="value"
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Overall Distribution
+            </CardTitle>
+            <CardDescription>
+              Yes/No response ratio across all filtered data
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) =>
+                      `${name} ${(percent * 100).toFixed(0)}%`
+                    }
+                    outerRadius={100}
+                    dataKey="value"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={PIE_COLORS[index]} 
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--background))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px hsl(var(--foreground) / 0.15)'
+                    }}
+                  />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Bar Chart Full Width */}
-      <div className="bg-gray-200 shadow rounded-xl p-4 w-full">
-        <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
-          <FaChartBar className="text-orange-600" /> Yes/No per Line
-        </h2>
-        <div className="w-full h-96">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={barData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="Yes" fill="#00C49F" />
-              <Bar dataKey="No" fill="#FF8042" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Performance by Production Line
+          </CardTitle>
+          <CardDescription>
+            Comparison of Yes/No responses across different production lines
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="h-96">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={barData}>
+                <CartesianGrid 
+                  strokeDasharray="3 3" 
+                  stroke="hsl(var(--muted))" 
+                  opacity={0.3}
+                />
+                <XAxis 
+                  dataKey="name" 
+                  tick={{ fontSize: 12 }}
+                  tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
+                />
+                <YAxis 
+                  tick={{ fontSize: 12 }}
+                  tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
+                />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--background))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px hsl(var(--foreground) / 0.15)'
+                  }}
+                />
+                <Legend />
+                <Bar 
+                  dataKey="Yes" 
+                  fill={CHART_COLORS.success} 
+                  radius={[4, 4, 0, 0]}
+                />
+                <Bar 
+                  dataKey="No" 
+                  fill={CHART_COLORS.error} 
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

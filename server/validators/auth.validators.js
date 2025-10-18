@@ -3,21 +3,16 @@ import Joi from "joi";
 export const registerSchema = Joi.object({
   fullName: Joi.string().min(3).required(),
   emailId: Joi.string().email().required(),
-  department: Joi.string().valid("Production", "Quality", "HR", "Admin", "Other").required(),
+  department: Joi.string().required(), // Allow any ObjectId string
   employeeId: Joi.string().trim().uppercase().required(),
+  username: Joi.string().trim().lowercase().min(3).optional(),
   phoneNumber: Joi.string().pattern(/^[0-9]{10}$/).required(),
   password: Joi.string().min(6).required(),
   role: Joi.string().valid("admin", "employee").required(),
 });
 
 export const loginSchema = Joi.object({
-  employeeId: Joi.string().trim().required(),
-  role: Joi.string().valid("admin", "employee").required(),
-  department: Joi.when("role", {
-    is: "employee",
-    then: Joi.string().valid("Production", "Quality", "HR", "Admin", "Other").required(),
-    otherwise: Joi.forbidden().strip(),
-  }),
+  username: Joi.string().trim().lowercase().required(),
   password: Joi.string().required(),
 });
 

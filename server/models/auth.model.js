@@ -15,7 +15,6 @@ const EmployeeSchema = new Schema(
     emailId: {
       type: String,
       required: [true, "Email is required"],
-      unique: true,
       lowercase: true,
       match: [
         /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
@@ -24,16 +23,21 @@ const EmployeeSchema = new Schema(
     },
 
     department: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: "Department",
       required: [true, "Department is required"],
-      enum: ["Production", "Quality", "HR", "Admin", "Other"],
-      default: "Other",
+    },
+
+    username: {
+      type: String,
+      required: false, // Made optional for migration
+      lowercase: true,
+      trim: true,
     },
 
     employeeId: {
       type: String,
       required: [true, "Employee ID is required"],
-      unique: true,
       uppercase: true,
       trim: true,
     },
@@ -41,7 +45,6 @@ const EmployeeSchema = new Schema(
     phoneNumber: {
       type: String,
       required: [true, "Phone number is required"],
-      unique: true,
       match: [/^[0-9]{10}$/, "Phone number must be 10 digits"],
     },
 
@@ -91,6 +94,16 @@ EmployeeSchema.methods.toJSON = function () {
   delete obj.password;
   return obj;
 };
+
+// Create indexes for better query performance
+EmployeeSchema.index({ emailId: 1 }, { unique: true });
+EmployeeSchema.index({ employeeId: 1 }, { unique: true });
+EmployeeSchema.index({ username: 1 }, { unique: false, sparse: true }); // Made non-unique for migration
+EmployeeSchema.index({ phoneNumber: 1 }, { unique: true });
+EmployeeSchema.index({ role: 1 });
+EmployeeSchema.index({ department: 1 });
+EmployeeSchema.index({ username: 1, department: 1 }); // Compound index for login queries
+EmployeeSchema.index({ createdAt: -1 }); // For sorting by creation date
 
 const Employee = model("Employee", EmployeeSchema);
 

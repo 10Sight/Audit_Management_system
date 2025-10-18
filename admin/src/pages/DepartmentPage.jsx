@@ -1,152 +1,580 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { Trash2 } from "lucide-react"; 
+import { 
+  Trash2, 
+  Plus, 
+  Building2, 
+  Edit3, 
+  Settings,
+  Users,
+  AlertTriangle,
+  UserCheck,
+  BarChart3
+} from "lucide-react"; 
 import api from "@/utils/axios";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 export default function DepartmentPage() {
-  const [lines, setLines] = useState([]);
-  const [machines, setMachines] = useState([]);
-  const [processes, setProcesses] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [employees, setEmployees] = useState([]);
+  const [stats, setStats] = useState({});
 
-  const [lineName, setLineName] = useState("");
-  const [machineName, setMachineName] = useState("");
-  const [processName, setProcessName] = useState("");
+  const [departmentName, setDepartmentName] = useState("");
+  const [departmentDescription, setDepartmentDescription] = useState("");
+  const [editingDepartment, setEditingDepartment] = useState(null);
+  const [selectedEmployee, setSelectedEmployee] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [selectedTransferDepartment, setSelectedTransferDepartment] = useState("");
+
+  const [openCreateDialog, setOpenCreateDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [openAssignDialog, setOpenAssignDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [departmentToDelete, setDepartmentToDelete] = useState(null);
+
+  const [loading, setLoading] = useState(false);
+  const [assignLoading, setAssignLoading] = useState(false);
 
   useEffect(() => {
-    fetchLines();
-    fetchMachines();
-    fetchProcesses();
+    fetchData();
   }, []);
 
+  const fetchData = async () => {
+    await Promise.all([
+      fetchDepartments(),
+      fetchEmployees(),
+      fetchStats()
+    ]);
+  };
+
   // Fetch functions
-  const fetchLines = async () => {
+  const fetchDepartments = async () => {
     try {
-      const res = await api.get("/api/lines");
-      setLines(res.data.data || []);
+      const res = await api.get("/api/departments");
+      setDepartments(res.data.data?.departments || []);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching departments:", err);
+      toast.error("Failed to fetch departments");
     }
   };
 
-  const fetchMachines = async () => {
+  const fetchEmployees = async () => {
     try {
-      const res = await api.get("/api/machines");
-      setMachines(res.data.data || []);
+      const res = await api.get("/api/v1/auth/get-all-users");
+      setEmployees(res.data.data?.users || []);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching employees:", err);
     }
   };
 
-  const fetchProcesses = async () => {
+  const fetchStats = async () => {
     try {
-      const res = await api.get("/api/processes");
-      setProcesses(res.data.data || []);
+      const res = await api.get("/api/departments/stats");
+      setStats(res.data.data || {});
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching stats:", err);
     }
   };
 
-  // Add functions
-  const addLine = async () => {
-    if (!lineName) return;
+  // CRUD Operations
+  const createDepartment = async () => {
+    if (!departmentName.trim()) {
+      toast.error("Please enter a department name");
+      return;
+    }
+    setLoading(true);
     try {
-      await api.post("/api/lines", { name: lineName });
-      toast.success("Line added");
-      setLineName("");
-      fetchLines();
+      await api.post("/api/departments", { 
+        name: departmentName.trim(), 
+        description: departmentDescription.trim() 
+      });
+      toast.success("Department created successfully");
+      setDepartmentName("");
+      setDepartmentDescription("");
+      setOpenCreateDialog(false);
+      fetchData();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to add line");
+      toast.error(err.response?.data?.message || "Failed to create department");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const addMachine = async () => {
-    if (!machineName) return;
+  const updateDepartment = async () => {
+    if (!editingDepartment || !departmentName.trim()) {
+      toast.error("Please enter a department name");
+      return;
+    }
+    setLoading(true);
     try {
-      await api.post("/api/machines", { name: machineName });
-      toast.success("Machine added");
-      setMachineName("");
-      fetchMachines();
+      await api.put(`/api/departments/${editingDepartment._id}`, {
+        name: departmentName.trim(),
+        description: departmentDescription.trim()
+      });
+      toast.success("Department updated successfully");
+      setDepartmentName("");
+      setDepartmentDescription("");
+      setEditingDepartment(null);
+      setOpenEditDialog(false);
+      fetchData();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to add machine");
+      toast.error(err.response?.data?.message || "Failed to update department");
+    } finally {
+      setLoading(false);
     }
   };
 
-  const addProcess = async () => {
-    if (!processName) return;
+  const deleteDepartment = async (department) => {
+    setLoading(true);
     try {
-      await api.post("/api/processes", { name: processName });
-      toast.success("Process added");
-      setProcessName("");
-      fetchProcesses();
+      const payload = {};
+      if (selectedTransferDepartment) {
+        payload.transferToDepartmentId = selectedTransferDepartment;
+      }
+      
+      await api.delete(`/api/departments/${department._id}`, { data: payload });
+      toast.success("Department deleted successfully");
+      setOpenDeleteDialog(false);
+      setDepartmentToDelete(null);
+      setSelectedTransferDepartment("");
+      fetchData();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to add process");
+      toast.error(err.response?.data?.message || "Failed to delete department");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Delete functions
-  const deleteItem = async (type, id) => {
-    if (!window.confirm("Are you sure you want to delete this item?")) return;
+  const assignEmployeeToDepartment = async () => {
+    if (!selectedEmployee || !selectedDepartment) {
+      toast.error("Please select both employee and department");
+      return;
+    }
+    setAssignLoading(true);
     try {
-      await api.delete(`/api/${type}/${id}`);
-      toast.success(`${type.slice(0, -1)} deleted`);
-      if (type === "lines") fetchLines();
-      if (type === "machines") fetchMachines();
-      if (type === "processes") fetchProcesses();
+      await api.post("/api/departments/assign-employee", {
+        employeeId: selectedEmployee,
+        departmentId: selectedDepartment
+      });
+      toast.success("Employee assigned successfully");
+      setSelectedEmployee("");
+      setSelectedDepartment("");
+      setOpenAssignDialog(false);
+      fetchData();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to delete");
+      toast.error(err.response?.data?.message || "Failed to assign employee");
+    } finally {
+      setAssignLoading(false);
     }
   };
 
-  const renderList = (items, type) => (
-    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-      {items.map((item) => (
-        <div
-          key={item._id}
-          className="flex justify-between items-center p-4 bg-gray-100 border border-gray-300 rounded-lg shadow-sm hover:shadow-md transition"
-        >
-          <span className="text-gray-800 font-medium">{item.name}</span>
-          <button
-            onClick={() => deleteItem(type, item._id)}
-            className="text-red-600 hover:text-red-500"
-          >
-            <Trash2 size={18} />
-          </button>
+  const openEditDepartment = (department) => {
+    setEditingDepartment(department);
+    setDepartmentName(department.name);
+    setDepartmentDescription(department.description || "");
+    setOpenEditDialog(true);
+  };
+
+  const openDeleteConfirm = (department) => {
+    setDepartmentToDelete(department);
+    setOpenDeleteDialog(true);
+  };
+
+  const resetCreateForm = () => {
+    setDepartmentName("");
+    setDepartmentDescription("");
+    setOpenCreateDialog(false);
+  };
+
+  const resetEditForm = () => {
+    setDepartmentName("");
+    setDepartmentDescription("");
+    setEditingDepartment(null);
+    setOpenEditDialog(false);
+  };
+
+  const renderDepartmentList = () => {
+    if (!departments.length) {
+      return (
+        <div className="text-center py-12">
+          <Building2 className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground text-lg mb-4">No departments created yet</p>
+          <Button onClick={() => setOpenCreateDialog(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create First Department
+          </Button>
         </div>
-      ))}
-    </div>
-  );
+      );
+    }
 
-  const renderSection = (title, inputValue, setInputValue, addFunc, items, type) => (
-    <div className="mb-10">
-      <h2 className="text-2xl font-semibold mb-3 text-gray-800">{title}</h2>
-      <div className="flex flex-col sm:flex-row gap-2 mb-3">
-        <input
-          className="flex-1 p-3 rounded-lg bg-white border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder={`Enter ${title.toLowerCase().slice(0, -1)} name`}
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-        />
-        <button
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-lg font-semibold transition"
-          onClick={addFunc}
-        >
-          Add
-        </button>
+    return (
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {departments.map((department) => (
+          <Card key={department._id} className="group hover:shadow-lg transition-all duration-200">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 rounded-full bg-primary/10">
+                  <Building2 className="h-6 w-6 text-primary" />
+                </div>
+                <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => openEditDepartment(department)}
+                  >
+                    <Edit3 className="h-4 w-4" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => openDeleteConfirm(department)}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <h3 className="font-semibold text-lg">{department.name}</h3>
+                {department.description && (
+                  <p className="text-sm text-muted-foreground">{department.description}</p>
+                )}
+                
+                <div className="flex items-center justify-between pt-4">
+                  <div className="flex items-center space-x-2">
+                    <Users className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm font-medium">{department.employeeCount || 0}</span>
+                    <span className="text-sm text-muted-foreground">employees</span>
+                  </div>
+                  
+                  <Badge variant={department.isActive ? "default" : "secondary"}>
+                    {department.isActive ? "Active" : "Inactive"}
+                  </Badge>
+                </div>
+                
+                <div className="text-xs text-muted-foreground pt-2">
+                  Created {new Date(department.createdAt).toLocaleDateString()}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
-      {renderList(items, type)}
-    </div>
-  );
+    );
+  };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto text-gray-900">
-      <ToastContainer position="top-right" autoClose={3000} />
-      <h1 className="text-4xl font-bold mb-10 text-center">Department Management</h1>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Department Management</h1>
+          <p className="text-muted-foreground">Create and manage company departments, assign employees</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button onClick={() => setOpenAssignDialog(true)} variant="outline">
+            <UserCheck className="mr-2 h-4 w-4" />
+            Assign Employee
+          </Button>
+          <Button onClick={() => setOpenCreateDialog(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Department
+          </Button>
+        </div>
+      </div>
 
-      {renderSection("Lines", lineName, setLineName, addLine, lines, "lines")}
-      {renderSection("Machines", machineName, setMachineName, addMachine, machines, "machines")}
-      {renderSection("Processes", processName, setProcessName, addProcess, processes, "processes")}
+      {/* Stats Overview */}
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Departments</CardTitle>
+            <Building2 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.summary?.totalDepartments || 0}</div>
+            <p className="text-xs text-muted-foreground">
+              {stats.summary?.activeDepartments || 0} active
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Employees</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{stats.summary?.totalEmployees || 0}</div>
+            <p className="text-xs text-muted-foreground">Across all departments</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg per Department</CardTitle>
+            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {stats.summary?.totalDepartments > 0 
+                ? Math.round((stats.summary?.totalEmployees || 0) / stats.summary.totalDepartments)
+                : 0}
+            </div>
+            <p className="text-xs text-muted-foreground">Employees per dept</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Status</CardTitle>
+            <Settings className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600">Good</div>
+            <p className="text-xs text-muted-foreground">All systems operational</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Departments List */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Building2 className="h-5 w-5" />
+            Departments
+          </CardTitle>
+          <CardDescription>
+            Manage your organization's departments and their assignments
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {renderDepartmentList()}
+        </CardContent>
+      </Card>
+
+      {/* Create Department Dialog */}
+      <Dialog open={openCreateDialog} onOpenChange={setOpenCreateDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Department</DialogTitle>
+            <DialogDescription>
+              Add a new department to your organization
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="name">Department Name</Label>
+              <Input
+                id="name"
+                placeholder="e.g., Human Resources, Production, IT"
+                value={departmentName}
+                onChange={(e) => setDepartmentName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && createDepartment()}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="description">Description (Optional)</Label>
+              <Textarea
+                id="description"
+                placeholder="Brief description of the department's role..."
+                value={departmentDescription}
+                onChange={(e) => setDepartmentDescription(e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={resetCreateForm}>
+              Cancel
+            </Button>
+            <Button onClick={createDepartment} disabled={loading}>
+              {loading ? "Creating..." : "Create Department"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Department Dialog */}
+      <Dialog open={openEditDialog} onOpenChange={setOpenEditDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Department</DialogTitle>
+            <DialogDescription>
+              Update department information
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="editName">Department Name</Label>
+              <Input
+                id="editName"
+                placeholder="Department name"
+                value={departmentName}
+                onChange={(e) => setDepartmentName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && updateDepartment()}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="editDescription">Description</Label>
+              <Textarea
+                id="editDescription"
+                placeholder="Brief description..."
+                value={departmentDescription}
+                onChange={(e) => setDepartmentDescription(e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={resetEditForm}>
+              Cancel
+            </Button>
+            <Button onClick={updateDepartment} disabled={loading}>
+              {loading ? "Updating..." : "Update Department"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Assign Employee Dialog */}
+      <Dialog open={openAssignDialog} onOpenChange={setOpenAssignDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Assign Employee to Department</DialogTitle>
+            <DialogDescription>
+              Select an employee and assign them to a department
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label>Select Employee</Label>
+              <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose an employee" />
+                </SelectTrigger>
+                <SelectContent>
+                  {employees.map((employee) => (
+                    <SelectItem key={employee._id} value={employee._id}>
+                      {employee.fullName} ({employee.employeeId})
+                      {employee.department && (
+                        <span className="text-muted-foreground ml-2">
+                          - Currently in {employee.department.name}
+                        </span>
+                      )}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label>Select Department</Label>
+              <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose a department" />
+                </SelectTrigger>
+                <SelectContent>
+                  {departments.map((department) => (
+                    <SelectItem key={department._id} value={department._id}>
+                      {department.name} ({department.employeeCount || 0} employees)
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setOpenAssignDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={assignEmployeeToDepartment} disabled={assignLoading}>
+              {assignLoading ? "Assigning..." : "Assign Employee"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Department</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-3">
+                <p>
+                  Are you sure you want to delete the department "{departmentToDelete?.name}"?
+                </p>
+                {departmentToDelete?.employeeCount > 0 && (
+                  <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-center mb-2">
+                      <AlertTriangle className="h-4 w-4 text-yellow-600 mr-2" />
+                      <span className="font-medium text-yellow-800">
+                        This department has {departmentToDelete.employeeCount} employee(s)
+                      </span>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Transfer employees to:</Label>
+                      <Select value={selectedTransferDepartment} onValueChange={setSelectedTransferDepartment}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select department to transfer employees" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {departments
+                            .filter(dept => dept._id !== departmentToDelete?._id)
+                            .map((department) => (
+                              <SelectItem key={department._id} value={department._id}>
+                                {department.name}
+                              </SelectItem>
+                            ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => deleteDepartment(departmentToDelete)}
+              disabled={departmentToDelete?.employeeCount > 0 && !selectedTransferDepartment}
+            >
+              {loading ? "Deleting..." : "Delete Department"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

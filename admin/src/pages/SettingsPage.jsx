@@ -1,11 +1,27 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import { Mail, Phone, Briefcase, IdCard, Shield } from "lucide-react";
+import { 
+  Mail, 
+  Phone, 
+  Briefcase, 
+  IdCard, 
+  Shield, 
+  User, 
+  Edit3,
+  Calendar,
+  Settings,
+  UserCircle2
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "@/utils/axios";
+import Loader from "@/components/ui/Loader";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 
-export default function ProfilePage() {
+export default function SettingsPage() {
   const { user: currentUser } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -26,70 +42,192 @@ export default function ProfilePage() {
     fetchProfile();
   }, []);
 
+  const getInitials = (name) => {
+    return name ? name.split(" ").map((n) => n[0]).join("").toUpperCase() : "?";
+  };
+
+  const getRoleBadgeVariant = (role) => {
+    switch (role?.toLowerCase()) {
+      case 'admin': return 'default';
+      case 'supervisor': return 'secondary';
+      case 'employee': return 'outline';
+      default: return 'outline';
+    }
+  };
+
   if (loading)
-    return <p className="text-center text-gray-700 mt-10">Loading...</p>;
+    return <Loader />;
   if (!profile)
-    return <p className="text-center text-red-500 mt-10">No profile found.</p>;
+    return (
+      <div className="space-y-8">
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <UserCircle2 className="h-16 w-16 text-muted-foreground mb-4" />
+            <p className="text-lg font-medium text-muted-foreground">No profile found</p>
+            <p className="text-sm text-muted-foreground mt-2">Unable to load your profile information</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-900 px-4 py-8 flex justify-center">
-      <div className="w-full max-w-4xl bg-white rounded-xl shadow-md border border-gray-300 p-6 sm:p-8 md:p-10">
-
-        {/* Profile Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center text-3xl font-bold text-white shadow-md">
-              {profile.fullName.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-semibold break-words text-gray-900">
-                {profile.fullName}
-              </h1>
-              <p className="text-gray-500 text-sm sm:text-base">
-                {profile.role.toUpperCase()}
-              </p>
-            </div>
-          </div>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Profile Settings</h1>
+          <p className="text-muted-foreground">Manage your account information and preferences</p>
         </div>
+        <Badge variant="outline" className="flex items-center gap-2">
+          <Settings className="h-4 w-4" />
+          Settings
+        </Badge>
+      </div>
 
-        {/* Divider */}
-        <div className="my-6 border-t border-gray-300"></div>
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Profile Overview Card */}
+        <div className="lg:col-span-1">
+          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
+            <CardHeader className="text-center">
+              <div className="flex justify-center mb-4">
+                <Avatar className="h-24 w-24 ring-4 ring-blue-100">
+                  <AvatarImage src="" />
+                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-2xl font-bold">
+                    {getInitials(profile.fullName)}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              <CardTitle className="text-2xl">{profile.fullName}</CardTitle>
+              <CardDescription className="flex items-center justify-center gap-2">
+                <Badge variant={getRoleBadgeVariant(profile.role)} className="capitalize">
+                  <Shield className="h-3 w-3 mr-1" />
+                  {profile.role}
+                </Badge>
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <IdCard className="h-4 w-4" />
+                  <span>ID: {profile.employeeId}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Briefcase className="h-4 w-4" />
+                  <span>{profile.department || "No Department"}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Calendar className="h-4 w-4" />
+                  <span>Joined {new Date(profile.createdAt).toLocaleDateString()}</span>
+                </div>
+              </div>
+              
+              {currentUser?.role === "admin" && (
+                <>
+                  <Separator className="my-4" />
+                  <Button 
+                    className="w-full" 
+                    onClick={() => navigate(`/admin/employee/edit/${profile._id}`)}
+                  >
+                    <Edit3 className="h-4 w-4 mr-2" />
+                    Edit Profile
+                  </Button>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Profile Details */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-          <ProfileItem icon={<Mail size={18} />} label="Email" value={profile.emailId} />
-          <ProfileItem icon={<Phone size={18} />} label="Phone" value={profile.phoneNumber || "-"} />
-          <ProfileItem icon={<Briefcase size={18} />} label="Department" value={profile.department || "-"} />
-          <ProfileItem icon={<IdCard size={18} />} label="Employee ID" value={profile.employeeId} />
-          <ProfileItem icon={<Shield size={18} />} label="Role" value={profile.role} />
+        <div className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="h-5 w-5" />
+                Personal Information
+              </CardTitle>
+              <CardDescription>
+                Your account details and contact information
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6 md:grid-cols-2">
+                <ProfileItem 
+                  icon={<Mail className="h-5 w-5 text-blue-500" />} 
+                  label="Email Address" 
+                  value={profile.emailId} 
+                />
+                <ProfileItem 
+                  icon={<Phone className="h-5 w-5 text-green-500" />} 
+                  label="Phone Number" 
+                  value={profile.phoneNumber || "Not provided"} 
+                />
+                <ProfileItem 
+                  icon={<Briefcase className="h-5 w-5 text-purple-500" />} 
+                  label="Department" 
+                  value={profile.department || "Not assigned"} 
+                />
+                <ProfileItem 
+                  icon={<IdCard className="h-5 w-5 text-orange-500" />} 
+                  label="Employee ID" 
+                  value={profile.employeeId} 
+                />
+                <ProfileItem 
+                  icon={<Shield className="h-5 w-5 text-indigo-500" />} 
+                  label="Role & Permissions" 
+                  value={profile.role} 
+                  isRole={true}
+                />
+                <ProfileItem 
+                  icon={<Calendar className="h-5 w-5 text-gray-500" />} 
+                  label="Account Created" 
+                  value={new Date(profile.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })} 
+                />
+              </div>
+            </CardContent>
+          </Card>
         </div>
-
-        {/* Admin Edit Button */}
-        {currentUser?.role === "admin" && (
-          <div className="mt-8 sm:mt-10 flex justify-end">
-            <button
-              className="bg-blue-600 hover:bg-blue-700 px-5 sm:px-6 py-2 sm:py-3 rounded-lg text-white font-medium transition w-full sm:w-auto shadow-sm"
-              onClick={() => navigate(`/admin/employee/edit/${profile._id}`)}
-            >
-              Edit Profile
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
 }
 
-function ProfileItem({ icon, label, value }) {
+function ProfileItem({ icon, label, value, isRole = false }) {
+  const getRoleBadgeVariant = (role) => {
+    switch (role?.toLowerCase()) {
+      case 'admin': return 'default';
+      case 'supervisor': return 'secondary';
+      case 'employee': return 'outline';
+      default: return 'outline';
+    }
+  };
+
   return (
-    <div className="flex items-start gap-3 bg-gray-100 hover:bg-gray-200 p-4 sm:p-5 rounded-lg transition break-words border border-gray-300">
-      <span className="text-blue-600 mt-1">{icon}</span>
-      <div className="flex-1">
-        <p className="text-sm sm:text-base text-gray-500">{label}</p>
-        <p className="text-base sm:text-lg font-medium text-gray-900 break-words">
-          {value || "-"}
-        </p>
-      </div>
-    </div>
+    <Card className="hover:shadow-md transition-shadow border-l-4 border-l-blue-500">
+      <CardContent className="p-4">
+        <div className="flex items-start gap-3">
+          <div className="flex-shrink-0 mt-1">
+            {icon}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-muted-foreground mb-1">
+              {label}
+            </p>
+            {isRole ? (
+              <Badge variant={getRoleBadgeVariant(value)} className="capitalize">
+                {value || "Not specified"}
+              </Badge>
+            ) : (
+              <p className="text-base font-semibold text-foreground break-words">
+                {value || "Not specified"}
+              </p>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

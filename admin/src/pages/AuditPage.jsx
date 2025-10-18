@@ -12,37 +12,52 @@ import {
   FiArrowRight,
 } from "react-icons/fi";
 import api from "@/utils/axios";
+import Loader from "@/components/ui/Loader";
 
 export default function AuditsPage() {
   const [audits, setAudits] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const auditsPerPage = 5;
+  const [pagination, setPagination] = useState({ total: 0, totalRecords: 0, count: 0 });
+  const auditsPerPage = 10;
   const navigate = useNavigate();
   const { user: currentUser, loading: authLoading } = useAuth();
 
-  // Fetch audits
-  const fetchAudits = async () => {
+  // Fetch audits with pagination
+  const fetchAudits = async (page = 1) => {
     try {
       setLoading(true);
-      const { data } = await api.get("/api/audits");
-      const sortedAudits = (Array.isArray(data?.data) ? data.data : []).sort(
-        (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-      );
-      setAudits(sortedAudits);
+      const { data } = await api.get(`/api/audits?page=${page}&limit=${auditsPerPage}`);
+      
+      if (data?.data?.audits) {
+        setAudits(data.data.audits);
+        setPagination(data.data.pagination);
+      } else {
+        // Fallback for old API response format
+        const sortedAudits = (Array.isArray(data?.data) ? data.data : []).sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+        setAudits(sortedAudits.slice((page - 1) * auditsPerPage, page * auditsPerPage));
+        setPagination({
+          total: Math.ceil(sortedAudits.length / auditsPerPage),
+          totalRecords: sortedAudits.length,
+          count: sortedAudits.slice((page - 1) * auditsPerPage, page * auditsPerPage).length
+        });
+      }
     } catch (err) {
       console.error("Failed to fetch audits:", err);
       toast.error("Failed to fetch audits");
       setAudits([]);
+      setPagination({ total: 0, totalRecords: 0, count: 0 });
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAudits();
-  }, []);
+    fetchAudits(currentPage);
+  }, [currentPage]);
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this audit?")) return;
@@ -51,7 +66,8 @@ export default function AuditsPage() {
       setProcessing(true);
       await api.delete(`/api/audits/${id}`);
       toast.success("Audit deleted successfully");
-      setAudits((prev) => prev.filter((audit) => audit._id !== id));
+      // Refresh current page after deletion
+      await fetchAudits(currentPage);
     } catch (err) {
       console.error(err);
       toast.error(err.response?.data?.message || "Failed to delete audit");
@@ -60,19 +76,13 @@ export default function AuditsPage() {
     }
   };
 
-  // Pagination
-  const indexOfLast = currentPage * auditsPerPage;
-  const indexOfFirst = indexOfLast - auditsPerPage;
-  const currentAudits = audits.slice(indexOfFirst, indexOfLast);
-  const totalPages = Math.ceil(audits.length / auditsPerPage);
-
   const goToPage = (page) => {
-    if (page < 1 || page > totalPages) return;
+    if (page < 1 || page > pagination.total) return;
     setCurrentPage(page);
   };
 
   if (loading || authLoading)
-    return <div className="p-6 text-gray-700">Loading audits...</div>;
+    return <Loader />;
 
   return (
     <div className="p-4 sm:p-6 max-w-5xl mx-auto text-gray-800">
@@ -95,7 +105,7 @@ export default function AuditsPage() {
       {/* Audits List */}
       <div className="space-y-4">
         {audits.length > 0 ? (
-          currentAudits.map((audit) => (
+          audits.map((audit) => (
             <div
               key={audit._id}
               className="bg-white p-4 sm:p-5 rounded-lg shadow-md border border-gray-300 cursor-pointer hover:shadow-lg transition"
@@ -151,35 +161,53 @@ export default function AuditsPage() {
       </div>
 
       {/* Pagination Controls */}
-      {audits.length > auditsPerPage && (
-        <div className="flex flex-wrap justify-center items-center mt-6 gap-2">
-          <button
-            onClick={() => goToPage(currentPage - 1)}
-            disabled={currentPage === 1}
-            className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50 flex items-center gap-1"
-          >
-            <FiArrowLeft /> Prev
-          </button>
-          {Array.from({ length: totalPages }, (_, i) => (
+      {pagination.total > 1 && (
+        <div className="flex flex-wrap justify-between items-center mt-6 gap-2">
+          <div className="text-sm text-gray-600">
+            Showing {((currentPage - 1) * auditsPerPage) + 1} to {Math.min(currentPage * auditsPerPage, pagination.totalRecords)} of {pagination.totalRecords} audits
+          </div>
+          <div className="flex gap-2">
             <button
-              key={i + 1}
-              onClick={() => goToPage(i + 1)}
-              className={`px-3 py-1 rounded-md ${
-                currentPage === i + 1
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
+              onClick={() => goToPage(currentPage - 1)}
+              disabled={currentPage === 1 || loading}
+              className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50 flex items-center gap-1"
             >
-              {i + 1}
+              <FiArrowLeft /> Prev
             </button>
-          ))}
-          <button
-            onClick={() => goToPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-            className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50 flex items-center gap-1"
-          >
-            Next <FiArrowRight />
-          </button>
+            {Array.from({ length: Math.min(pagination.total, 5) }, (_, i) => {
+              let pageNum;
+              if (pagination.total <= 5) {
+                pageNum = i + 1;
+              } else if (currentPage <= 3) {
+                pageNum = i + 1;
+              } else if (currentPage >= pagination.total - 2) {
+                pageNum = pagination.total - 4 + i;
+              } else {
+                pageNum = currentPage - 2 + i;
+              }
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => goToPage(pageNum)}
+                  disabled={loading}
+                  className={`px-3 py-1 rounded-md ${
+                    currentPage === pageNum
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-200 hover:bg-gray-300"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+            <button
+              onClick={() => goToPage(currentPage + 1)}
+              disabled={currentPage === pagination.total || loading}
+              className="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50 flex items-center gap-1"
+            >
+              Next <FiArrowRight />
+            </button>
+          </div>
         </div>
       )}
     </div>

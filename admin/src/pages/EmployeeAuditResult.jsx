@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import api from "@/utils/axios";
+import Loader from "@/components/ui/Loader";
 
 export default function EmployeeAuditResult() {
   const { user: currentUser } = useAuth();
@@ -29,7 +30,7 @@ export default function EmployeeAuditResult() {
     fetchAudit();
   }, [auditId]);
 
-  if (loading) return <div className="p-6 text-gray-700 text-center">Loading audit result...</div>;
+  if (loading) return <Loader />;
   if (!audit) return <div className="p-6 text-gray-700 text-center">No audit found.</div>;
 
   return (

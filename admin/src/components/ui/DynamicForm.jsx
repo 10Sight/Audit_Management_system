@@ -1,6 +1,13 @@
 import React, { useState } from "react";
+import { Button } from "./button";
+import { Input } from "./input";
+import { Label } from "./label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./select";
+import { Textarea } from "./textarea";
+import { Eye, EyeOff } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-const DynamicForm = ({ fields, onSubmit }) => {
+const DynamicForm = ({ fields, onSubmit, submitText = "Submit", className }) => {
   const [formData, setFormData] = useState(
     fields.reduce((acc, field) => {
       if (field.type === "checkbox") acc[field.name] = [];
@@ -42,15 +49,34 @@ const DynamicForm = ({ fields, onSubmit }) => {
     onSubmit(formData);
   };
 
+  const handleSelectChange = (value, fieldName, field) => {
+    setFormData({ ...formData, [fieldName]: value });
+    if (field.onChange) field.onChange(value);
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 w-full">
+    <form onSubmit={handleSubmit} className={cn("space-y-6 w-full", className)}>
       {fields.map((field, idx) => (
-        <div key={idx} className="flex flex-col">
-          <label className="mb-1 font-medium text-gray-700">{field.label}</label>
+        <div key={idx} className="space-y-2">
+          <div className="flex items-center space-x-2">
+            {field.icon && (
+              <div className="flex-shrink-0">
+                {field.icon}
+              </div>
+            )}
+            <Label 
+              htmlFor={field.name} 
+              className="text-sm font-medium text-foreground"
+            >
+              {field.label}
+              {field.required && <span className="text-destructive ml-1">*</span>}
+            </Label>
+          </div>
 
           {/* Text / Email / Number */}
           {["text", "email", "number"].includes(field.type) && (
-            <input
+            <Input
+              id={field.name}
               type={field.type}
               name={field.name}
               placeholder={field.placeholder}
@@ -58,15 +84,15 @@ const DynamicForm = ({ fields, onSubmit }) => {
               onChange={(e) => handleChange(e, field)}
               disabled={field.disabled}
               required={field.required}
-              className="p-3 rounded-lg bg-gray-50 text-gray-900 border border-gray-300 
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+              className="h-11"
             />
           )}
 
           {/* Password */}
           {field.type === "password" && (
             <div className="relative">
-              <input
+              <Input
+                id={field.name}
                 type={showPassword[field.name] ? "text" : "password"}
                 name={field.name}
                 placeholder={field.placeholder}
@@ -74,103 +100,124 @@ const DynamicForm = ({ fields, onSubmit }) => {
                 onChange={(e) => handleChange(e, field)}
                 disabled={field.disabled}
                 required={field.required}
-                className="p-3 rounded-lg bg-gray-50 text-gray-900 border border-gray-300 
-                focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition w-full"
+                className="h-11 pr-10"
               />
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => togglePassword(field.name)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 text-sm"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
               >
-                {showPassword[field.name] ? "Hide" : "Show"}
-              </button>
+                {showPassword[field.name] ? (
+                  <EyeOff className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <Eye className="h-4 w-4 text-muted-foreground" />
+                )}
+                <span className="sr-only">
+                  {showPassword[field.name] ? "Hide password" : "Show password"}
+                </span>
+              </Button>
             </div>
           )}
 
           {/* Textarea */}
           {field.type === "textarea" && (
-            <textarea
+            <Textarea
+              id={field.name}
               name={field.name}
               placeholder={field.placeholder}
               value={formData[field.name]}
               onChange={(e) => handleChange(e, field)}
               disabled={field.disabled}
               required={field.required}
-              className="p-3 rounded-lg bg-gray-50 text-gray-900 border border-gray-300 
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+              className="min-h-[100px] resize-vertical"
             />
           )}
 
           {/* Select Dropdown */}
           {field.type === "select" && (
-            <select
-              name={field.name}
+            <Select
               value={formData[field.name]}
-              onChange={(e) => handleChange(e, field)}
+              onValueChange={(value) => handleSelectChange(value, field.name, field)}
               disabled={field.disabled}
               required={field.required}
-              className="p-3 rounded-lg bg-gray-50 text-gray-900 border border-gray-300 
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
             >
-              <option value="">Select {field.label}</option>
-              {field.options?.map((opt, i) => (
-                <option key={i} value={opt} className="bg-white text-gray-900">
-                  {opt}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger className="h-11" id={field.name}>
+                <SelectValue placeholder={`Select ${field.label}`} />
+              </SelectTrigger>
+              <SelectContent>
+                {field.options?.map((opt, i) => (
+                  <SelectItem key={i} value={opt || `option-${i}`}>
+                    {opt}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )}
 
           {/* Radio Buttons */}
           {field.type === "radio" && (
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-6">
               {field.options?.map((opt, i) => (
-                <label key={i} className="flex items-center gap-2 text-gray-700">
+                <div key={i} className="flex items-center space-x-2">
                   <input
                     type="radio"
+                    id={`${field.name}-${i}`}
                     name={field.name}
                     value={opt}
                     checked={formData[field.name] === opt}
                     onChange={(e) => handleChange(e, field)}
                     disabled={field.disabled}
                     required={field.required}
-                    className="accent-blue-600"
+                    className="h-4 w-4 text-primary border-2 border-muted-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
-                  {opt}
-                </label>
+                  <Label 
+                    htmlFor={`${field.name}-${i}`} 
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    {opt}
+                  </Label>
+                </div>
               ))}
             </div>
           )}
 
           {/* Checkboxes */}
           {field.type === "checkbox" && (
-            <div className="flex gap-4 flex-wrap">
+            <div className="flex flex-wrap gap-6">
               {field.options?.map((opt, i) => (
-                <label key={i} className="flex items-center gap-2 text-gray-700">
+                <div key={i} className="flex items-center space-x-2">
                   <input
                     type="checkbox"
+                    id={`${field.name}-${i}`}
                     name={field.name}
                     value={opt}
                     checked={formData[field.name].includes(opt)}
                     onChange={(e) => handleChange(e, field)}
                     disabled={field.disabled}
-                    className="accent-blue-600"
+                    className="h-4 w-4 text-primary border-2 border-muted-foreground rounded focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   />
-                  {opt}
-                </label>
+                  <Label 
+                    htmlFor={`${field.name}-${i}`} 
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    {opt}
+                  </Label>
+                </div>
               ))}
             </div>
           )}
         </div>
       ))}
 
-      <button
+      <Button
         type="submit"
-        className="w-full bg-blue-600 text-white px-4 py-3 mt-4 rounded-lg 
-        hover:bg-blue-700 transition font-medium shadow-md"
+        className="w-full h-11 text-base font-medium"
+        size="lg"
       >
-        Submit
-      </button>
+        {submitText}
+      </Button>
     </form>
   );
 };

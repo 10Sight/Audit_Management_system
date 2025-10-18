@@ -3,7 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FiImage, FiEye, FiX } from "react-icons/fi";
 import api from "@/utils/axios";
+import Loader from "@/components/ui/Loader";
 
 export default function AuditDetailPage() {
   const { id } = useParams();
@@ -11,6 +13,18 @@ export default function AuditDetailPage() {
 
   const [audit, setAudit] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showImageModal, setShowImageModal] = useState(false);
+
+  const openImageModal = (imageUrl) => {
+    setSelectedImage(imageUrl);
+    setShowImageModal(true);
+  };
+
+  const closeImageModal = () => {
+    setSelectedImage(null);
+    setShowImageModal(false);
+  };
 
   useEffect(() => {
     const fetchAudit = async () => {
@@ -33,7 +47,7 @@ export default function AuditDetailPage() {
 
   if (loading)
     return (
-      <div className="p-6 text-gray-700 text-center">Loading audit...</div>
+      <Loader />
     );
   if (!audit)
     return (
@@ -83,6 +97,7 @@ export default function AuditDetailPage() {
                   <th className="px-4 py-2 border border-gray-300">Question</th>
                   <th className="px-4 py-2 border border-gray-300">Answer</th>
                   <th className="px-4 py-2 border border-gray-300">Remark</th>
+                  <th className="px-4 py-2 border border-gray-300">Photos</th>
                 </tr>
               </thead>
               <tbody>
@@ -104,6 +119,30 @@ export default function AuditDetailPage() {
                     </td>
                     <td className="px-4 py-2 border border-gray-300">
                       {ans.remark || "-"}
+                    </td>
+                    <td className="px-4 py-2 border border-gray-300">
+                      {ans.photoUrls && ans.photoUrls.length > 0 ? (
+                        <div className="flex gap-1 justify-center">
+                          {ans.photoUrls.slice(0, 3).map((photo, photoIdx) => (
+                            <button
+                              key={photoIdx}
+                              onClick={() => openImageModal(photo.url)}
+                              className="w-8 h-8 rounded border hover:opacity-75 transition"
+                            >
+                              <img
+                                src={photo.url}
+                                alt={`Photo ${photoIdx + 1}`}
+                                className="w-full h-full object-cover rounded"
+                              />
+                            </button>
+                          ))}
+                          {ans.photoUrls.length > 3 && (
+                            <span className="text-xs text-gray-500 self-center">+{ans.photoUrls.length - 3}</span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-gray-400 text-sm">-</span>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -133,6 +172,26 @@ export default function AuditDetailPage() {
                     <span className="font-medium">Remark:</span> {ans.remark}
                   </p>
                 )}
+                {ans.photoUrls && ans.photoUrls.length > 0 && (
+                  <div className="mt-2">
+                    <p className="font-medium text-sm mb-1">Photos:</p>
+                    <div className="flex gap-2 flex-wrap">
+                      {ans.photoUrls.map((photo, photoIdx) => (
+                        <button
+                          key={photoIdx}
+                          onClick={() => openImageModal(photo.url)}
+                          className="w-16 h-16 rounded border hover:opacity-75 transition"
+                        >
+                          <img
+                            src={photo.url}
+                            alt={`Photo ${photoIdx + 1}`}
+                            className="w-full h-full object-cover rounded"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -142,6 +201,29 @@ export default function AuditDetailPage() {
           <p className="text-gray-500 mt-2">No questions found for this audit.</p>
         )}
       </div>
+
+      {/* Image Modal */}
+      {showImageModal && selectedImage && (
+        <div 
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+          onClick={closeImageModal}
+        >
+          <div className="relative max-w-4xl max-h-[90vh] w-full h-full flex items-center justify-center">
+            <img
+              src={selectedImage}
+              alt="Full size view"
+              className="max-w-full max-h-full object-contain rounded-lg shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+            <button
+              onClick={closeImageModal}
+              className="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full p-2 transition"
+            >
+              <FiX className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

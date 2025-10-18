@@ -1,9 +1,39 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { 
+  HelpCircle, 
+  Filter, 
+  Trash2, 
+  Globe, 
+  Building2,
+  Cog,
+  Settings,
+  Search,
+  Plus,
+  AlertCircle
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import api from "@/utils/axios";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import Loader from "@/components/ui/Loader";
+import { toast } from "sonner";
 
 export default function AdminManageQuestionsPage() {
   const { user: currentUser } = useAuth();
@@ -12,9 +42,9 @@ export default function AdminManageQuestionsPage() {
   const [machines, setMachines] = useState([]);
   const [processes, setProcesses] = useState([]);
 
-  const [selectedLine, setSelectedLine] = useState("");
-  const [selectedMachine, setSelectedMachine] = useState("");
-  const [selectedProcess, setSelectedProcess] = useState("");
+  const [selectedLine, setSelectedLine] = useState("all");
+  const [selectedMachine, setSelectedMachine] = useState("all");
+  const [selectedProcess, setSelectedProcess] = useState("all");
   const [includeGlobal, setIncludeGlobal] = useState(true);
   const [fetchAll, setFetchAll] = useState(false);
 
@@ -49,9 +79,9 @@ export default function AdminManageQuestionsPage() {
       try {
         const query = new URLSearchParams();
         if (!fetchAll) {
-          if (selectedLine) query.append("line", selectedLine);
-          if (selectedMachine) query.append("machine", selectedMachine);
-          if (selectedProcess) query.append("process", selectedProcess);
+          if (selectedLine && selectedLine !== "all") query.append("line", selectedLine);
+          if (selectedMachine && selectedMachine !== "all") query.append("machine", selectedMachine);
+          if (selectedProcess && selectedProcess !== "all") query.append("process", selectedProcess);
         }
         query.append("includeGlobal", includeGlobal ? "true" : "false");
 
@@ -71,127 +101,275 @@ export default function AdminManageQuestionsPage() {
   }, [selectedLine, selectedMachine, selectedProcess, includeGlobal, fetchAll, currentUser]);
 
   // Delete question
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this question?")) return;
+  const handleDelete = async (id, questionText) => {
     try {
       await api.delete(`/api/questions/${id}`);
-      toast.success("Question deleted!");
+      toast.success("Question deleted successfully!");
       setQuestions(questions.filter((q) => q._id !== id));
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to delete question");
     }
   };
 
-  if (!currentUser || currentUser.role !== "admin")
-    return <div className="text-center p-6 text-red-500">Access Denied</div>;
+  if (!currentUser || currentUser.role !== "admin") {
+    return (
+      <div className="space-y-8">
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <AlertCircle className="h-16 w-16 text-destructive mb-4" />
+            <p className="text-lg font-medium text-destructive">Access Denied</p>
+            <p className="text-sm text-muted-foreground mt-2">You don't have permission to access this page</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 max-w-6xl mx-auto text-gray-900">
-      <ToastContainer position="top-right" autoClose={3000} />
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6">Manage Questions</h1>
-
-      {/* Filters */}
-      <div className="bg-gray-100 p-4 sm:p-6 rounded-lg flex flex-col sm:flex-row flex-wrap gap-4 mb-6 items-start sm:items-center shadow">
-        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-          <select
-            value={selectedLine}
-            onChange={(e) => setSelectedLine(e.target.value)}
-            className="p-2 bg-white border border-gray-300 rounded-md min-w-[150px]"
-            disabled={fetchAll}
-          >
-            <option value="">-- All Lines --</option>
-            {lines.map((line) => (
-              <option key={line._id} value={line._id}>
-                {line.name}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={selectedMachine}
-            onChange={(e) => setSelectedMachine(e.target.value)}
-            className="p-2 bg-white border border-gray-300 rounded-md min-w-[150px]"
-            disabled={fetchAll}
-          >
-            <option value="">-- All Machines --</option>
-            {machines.map((machine) => (
-              <option key={machine._id} value={machine._id}>
-                {machine.name}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={selectedProcess}
-            onChange={(e) => setSelectedProcess(e.target.value)}
-            className="p-2 bg-white border border-gray-300 rounded-md min-w-[150px]"
-            disabled={fetchAll}
-          >
-            <option value="">-- All Processes --</option>
-            {processes.map((process) => (
-              <option key={process._id} value={process._id}>
-                {process.name}
-              </option>
-            ))}
-          </select>
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Manage Questions</h1>
+          <p className="text-muted-foreground">Configure and manage audit questions</p>
         </div>
-
-        <div className="flex gap-4 flex-wrap">
-          <label className="flex items-center gap-2 text-gray-700">
-            <input
-              type="checkbox"
-              checked={includeGlobal}
-              onChange={() => setIncludeGlobal(!includeGlobal)}
-              className="accent-green-600"
-            />
-            Include Global
-          </label>
-
-          <label className="flex items-center gap-2 text-gray-700">
-            <input
-              type="checkbox"
-              checked={fetchAll}
-              onChange={() => setFetchAll(!fetchAll)}
-              className="accent-blue-600"
-            />
-            Fetch All Questions
-          </label>
-        </div>
+        <Badge variant="outline" className="flex items-center gap-2">
+          <HelpCircle className="h-4 w-4" />
+          {questions.length} Total Questions
+        </Badge>
       </div>
 
-      {/* Questions List */}
-      {loading ? (
-        <div className="text-center p-4 text-gray-600">Loading...</div>
-      ) : questions.length === 0 ? (
-        <div className="text-gray-500 text-center p-4">No questions found.</div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {questions.map((q) => (
-            <div
-              key={q._id}
-              className={`p-4 rounded-md border flex flex-col justify-between h-full shadow ${
-                q.isGlobal
-                  ? "border-yellow-400 bg-yellow-50"
-                  : "bg-white border-gray-300"
-              }`}
-            >
-              <div>
-                <p className="font-semibold mb-1 text-gray-900">{q.questionText}</p>
-                <p className="text-sm text-gray-600">
-                  Line: {q.lines?.[0]?.name || "-"}, Machine: {q.machines?.[0]?.name || "-"}, Process:{" "}
-                  {q.processes?.[0]?.name || "-"} {q.isGlobal && "(Global)"}
-                </p>
+      {/* Filters */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Filter className="h-5 w-5" />
+            Filters
+          </CardTitle>
+          <CardDescription>
+            Filter questions by line, machine, process, or view all questions
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Dropdown Filters */}
+            <div className="space-y-4">
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4" />
+                    Production Line
+                  </Label>
+                  <Select 
+                    value={selectedLine} 
+                    onValueChange={setSelectedLine}
+                    disabled={fetchAll}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Lines" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Lines</SelectItem>
+                      {lines.map((line) => (
+                        <SelectItem key={line._id} value={line._id}>
+                          {line.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Cog className="h-4 w-4" />
+                    Machine
+                  </Label>
+                  <Select 
+                    value={selectedMachine} 
+                    onValueChange={setSelectedMachine}
+                    disabled={fetchAll}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Machines" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Machines</SelectItem>
+                      {machines.map((machine) => (
+                        <SelectItem key={machine._id} value={machine._id}>
+                          {machine.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <Settings className="h-4 w-4" />
+                    Process
+                  </Label>
+                  <Select 
+                    value={selectedProcess} 
+                    onValueChange={setSelectedProcess}
+                    disabled={fetchAll}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="All Processes" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Processes</SelectItem>
+                      {processes.map((process) => (
+                        <SelectItem key={process._id} value={process._id}>
+                          {process.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              <button
-                onClick={() => handleDelete(q._id)}
-                className="mt-3 px-3 py-1 bg-red-600 rounded-md hover:bg-red-700 transition self-start text-sm text-white"
-              >
-                Delete
-              </button>
             </div>
-          ))}
-        </div>
-      )}
+
+            {/* Checkbox Options */}
+            <div className="space-y-4">
+              <div className="space-y-3">
+                <Label>Display Options</Label>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="includeGlobal"
+                    checked={includeGlobal}
+                    onCheckedChange={setIncludeGlobal}
+                  />
+                  <Label htmlFor="includeGlobal" className="flex items-center gap-2">
+                    <Globe className="h-4 w-4" />
+                    Include Global Questions
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="fetchAll"
+                    checked={fetchAll}
+                    onCheckedChange={setFetchAll}
+                  />
+                  <Label htmlFor="fetchAll" className="flex items-center gap-2">
+                    <Search className="h-4 w-4" />
+                    Fetch All Questions
+                  </Label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Questions Display */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Questions Library</CardTitle>
+              <CardDescription>
+                {loading ? "Loading questions..." : `Found ${questions.length} questions`}
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <Loader />
+            </div>
+          ) : questions.length === 0 ? (
+            <div className="text-center py-16">
+              <HelpCircle className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-lg font-medium text-muted-foreground">No questions found</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Try adjusting your filters or create new questions
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {questions.map((q) => (
+                <Card 
+                  key={q._id} 
+                  className={`group hover:shadow-md transition-all ${
+                    q.isGlobal 
+                      ? "border-l-4 border-l-amber-500 bg-amber-50/50" 
+                      : "border-l-4 border-l-blue-500"
+                  }`}
+                >
+                  <CardContent className="p-4 space-y-3">
+                    <div className="space-y-2">
+                      <div className="flex items-start justify-between">
+                        <p className="font-medium text-sm leading-relaxed">
+                          {q.questionText}
+                        </p>
+                        {q.isGlobal && (
+                          <Badge variant="secondary" className="ml-2 flex-shrink-0">
+                            <Globe className="h-3 w-3 mr-1" />
+                            Global
+                          </Badge>
+                        )}
+                      </div>
+                      
+                      <div className="space-y-1 text-xs text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Building2 className="h-3 w-3" />
+                          <span>Line: {q.lines?.[0]?.name || "Any"}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Cog className="h-3 w-3" />
+                          <span>Machine: {q.machines?.[0]?.name || "Any"}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Settings className="h-3 w-3" />
+                          <span>Process: {q.processes?.[0]?.name || "Any"}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    <div className="flex items-center justify-between pt-1">
+                      <Badge variant="outline" className="text-xs">
+                        ID: {q._id.slice(-6)}
+                      </Badge>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Question?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This will permanently delete the question "{q.questionText.slice(0, 50)}..." 
+                              This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction 
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              onClick={() => handleDelete(q._id, q.questionText)}
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

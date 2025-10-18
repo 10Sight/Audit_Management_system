@@ -1,11 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { 
+  ArrowLeft, 
+  Save, 
+  FileText, 
+  User, 
+  Building2,
+  CheckCircle2,
+  XCircle,
+  MessageSquare,
+  Calendar,
+  Clock
+} from "lucide-react";
 import api from "@/utils/axios";
+import Loader from "@/components/ui/Loader";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
-export default function AdminEditAuditPage() {
+export default function AdminAuditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -87,93 +106,237 @@ useEffect(() => {
 
 
   if (loading)
-    return <div className="p-6 text-gray-700 text-center">Loading audit...</div>;
+    return <Loader />;
   if (!audit)
-    return <div className="p-6 text-gray-700 text-center">Audit not found.</div>;
+    return (
+      <div className="space-y-8">
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-16">
+            <FileText className="h-16 w-16 text-muted-foreground mb-4" />
+            <p className="text-lg font-medium text-muted-foreground">Audit not found</p>
+            <p className="text-sm text-muted-foreground mt-2">The requested audit could not be loaded</p>
+            <Button onClick={() => navigate(-1)} className="mt-4">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Go Back
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto text-gray-900">
-      <ToastContainer position="top-right" autoClose={3000} theme="light" />
-
-      <div className="bg-gray-100 shadow-lg rounded-2xl p-6 sm:p-8 border border-gray-300">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800">
-          Edit Audit
-        </h1>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Line Leader & Shift Incharge */}
-          <div className="flex flex-col md:flex-row gap-4">
-            <input
-              type="text"
-              name="lineLeader"
-              value={formData.lineLeader}
-              onChange={handleChange}
-              placeholder="Line Leader"
-              className="p-3 rounded-md bg-white text-gray-900 border border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-full md:flex-1"
-            />
-            <input
-              type="text"
-              name="shiftIncharge"
-              value={formData.shiftIncharge}
-              onChange={handleChange}
-              placeholder="Shift Incharge"
-              className="p-3 rounded-md bg-white text-gray-900 border border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 w-full md:flex-1"
-            />
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Edit Audit</h1>
+            <p className="text-muted-foreground">Modify audit responses and details</p>
           </div>
+        </div>
+        <Badge variant="outline" className="flex items-center gap-2">
+          <FileText className="h-4 w-4" />
+          Audit #{audit?._id?.slice(-6)}
+        </Badge>
+      </div>
 
-          {/* Answers */}
-          <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
-            {formData.answers.map((ans, idx) => (
-              <div
-                key={idx}
-                className="bg-white p-4 rounded-lg border border-gray-300 shadow-sm flex flex-col gap-3"
-              >
-                <p className="font-semibold text-gray-800 text-sm sm:text-base">
-                  {ans.questionText}
-                </p>
-                <select
-                  value={ans.answer}
-                  onChange={(e) =>
-                    handleAnswerChange(idx, "answer", e.target.value)
-                  }
-                  className="p-2 rounded-md bg-gray-50 text-gray-900 border border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                >
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-                {ans.answer === "No" && (
-                  <input
-                    type="text"
-                    placeholder="Remark"
-                    value={ans.remark}
-                    onChange={(e) =>
-                      handleAnswerChange(idx, "remark", e.target.value)
-                    }
-                    className="p-2 rounded-md bg-gray-50 text-gray-900 border border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  />
-                )}
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* Audit Info */}
+        <div className="lg:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Building2 className="h-5 w-5" />
+                Audit Information
+              </CardTitle>
+              <CardDescription>
+                Basic audit details and metadata
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium">Date:</span>
+                <span>{new Date(audit.date).toLocaleDateString()}</span>
               </div>
-            ))}
-          </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Building2 className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium">Line:</span>
+                <Badge variant="outline">{audit.line?.name || "N/A"}</Badge>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Building2 className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium">Machine:</span>
+                <Badge variant="outline">{audit.machine?.name || "N/A"}</Badge>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Building2 className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium">Process:</span>
+                <Badge variant="outline">{audit.process?.name || "N/A"}</Badge>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <User className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium">Auditor:</span>
+                <span>{audit.auditor?.fullName || "N/A"}</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-          {/* Submit */}
-          <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6">
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-md bg-gray-400 hover:bg-gray-500 text-white font-medium transition"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold transition"
-            >
-              {submitting ? "Updating..." : "Update Audit"}
-            </button>
-          </div>
-        </form>
+        {/* Edit Form */}
+        <div className="lg:col-span-2">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Personnel Information */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5" />
+                  Personnel Information
+                </CardTitle>
+                <CardDescription>
+                  Update personnel details for this audit
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="lineLeader">Line Leader</Label>
+                  <Input
+                    id="lineLeader"
+                    name="lineLeader"
+                    value={formData.lineLeader}
+                    onChange={handleChange}
+                    placeholder="Enter line leader name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="shiftIncharge">Shift Incharge</Label>
+                  <Input
+                    id="shiftIncharge"
+                    name="shiftIncharge"
+                    value={formData.shiftIncharge}
+                    onChange={handleChange}
+                    placeholder="Enter shift incharge name"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Audit Questions */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <FileText className="h-5 w-5" />
+                  Audit Questions ({formData.answers.length})
+                </CardTitle>
+                <CardDescription>
+                  Review and update responses to audit questions
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
+                  {formData.answers.map((ans, idx) => (
+                    <Card key={idx} className="border-l-4 border-l-blue-500 hover:shadow-md transition-shadow">
+                      <CardContent className="p-4 space-y-4">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0 mt-1">
+                            <div className="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-xs font-bold flex items-center justify-center">
+                              {idx + 1}
+                            </div>
+                          </div>
+                          <div className="flex-1 space-y-3">
+                            <p className="font-medium text-foreground">
+                              {ans.questionText}
+                            </p>
+                            
+                            <div className="space-y-2">
+                              <Label>Response</Label>
+                              <Select
+                                value={ans.answer}
+                                onValueChange={(value) =>
+                                  handleAnswerChange(idx, "answer", value)
+                                }
+                              >
+                                <SelectTrigger>
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="Yes">
+                                    <div className="flex items-center gap-2">
+                                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                      Yes
+                                    </div>
+                                  </SelectItem>
+                                  <SelectItem value="No">
+                                    <div className="flex items-center gap-2">
+                                      <XCircle className="h-4 w-4 text-red-500" />
+                                      No
+                                    </div>
+                                  </SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            {ans.answer === "No" && (
+                              <div className="space-y-2">
+                                <Label className="flex items-center gap-2">
+                                  <MessageSquare className="h-4 w-4" />
+                                  Remark
+                                </Label>
+                                <Textarea
+                                  placeholder="Please provide details about the issue..."
+                                  value={ans.remark}
+                                  onChange={(e) =>
+                                    handleAnswerChange(idx, "remark", e.target.value)
+                                  }
+                                  className="min-h-[80px]"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Actions */}
+            <Card>
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-end gap-3">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => navigate(-1)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={submitting}>
+                    {submitting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="mr-2 h-4 w-4" />
+                        Update Audit
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </form>
+        </div>
       </div>
     </div>
   );

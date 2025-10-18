@@ -1,27 +1,92 @@
 import express from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import compression from "compression";
+import helmet from "helmet";
+import session from "express-session";
+import RedisStore from "connect-redis";
 
 import ENV from "./config/env.config.js";
 import connectDB from "./db/connectDB.js";
+import { getRedisClient } from "./config/redis.config.js";
 import authRoutes from "./routes/auth.route.js";
 import machineRoutes from "./routes/machine.route.js";
 import lineRoutes from "./routes/line.route.js";
 import processRoutes from "./routes/process.route.js";
 import auditRoutes from "./routes/audit.route.js";
 import questionRoutes from "./routes/question.route.js";
+import departmentRoutes from "./routes/department.route.js";
+import uploadRoutes from "./routes/upload.route.js";
 
 const app = express();
+const httpServer = createServer(app);
 
+// Initialize Redis client
+const redisClient = getRedisClient();
+
+// Configure session store (Redis if available, otherwise memory)
+const sessionConfig = {
+  secret: ENV.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: ENV.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000, // 24 hours
+  },
+};
+
+// Use Redis store if available, otherwise fall back to memory store
+if (redisClient) {
+  try {
+    sessionConfig.store = new RedisStore({ client: redisClient });
+    console.log('✅ Using Redis session store');
+  } catch (error) {
+    console.warn('⚠️ Failed to setup Redis session store, using memory store:', error.message);
+  }
+} else {
+  console.log('💡 Using memory session store (Redis not available)');
+}
+
+app.use(session(sessionConfig));
+
+// Initialize Socket.IO
+const io = new Server(httpServer, {
+  cors: {
+    origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:3000"],
+    credentials: true,
+    methods: ["GET", "POST"]
+  },
+  transports: ['websocket', 'polling']
+});
+
+// Security middleware
+app.use(helmet({
+  crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: false, // Allow for development
+}));
+
+// Enable gzip compression
+app.use(compression());
+
+// CORS configuration
 app.use(cors({
-  origin: "https://audiotmanagementsystem.org",
-  credentials: true,             
+  origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:3000"],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 }));
 
 app.use(cookieParser());
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Parse JSON with limit to prevent large payload attacks
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Disable x-powered-by header for security
+app.disable('x-powered-by');
 
 app.get("/", (req, res) => {
   res.send("This is Backend Running");
@@ -33,12 +98,65 @@ app.use("/api/machines", machineRoutes);
 app.use("/api/lines", lineRoutes);
 app.use("/api/processes", processRoutes);
 app.use("/api/audits", auditRoutes);
+app.use("/api/v1/departments", departmentRoutes);
+app.use("/api/upload", uploadRoutes);
+
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log(`👤 User connected: ${socket.id}`);
+
+  // Join room based on user role or department
+  socket.on('join-room', (room) => {
+    socket.join(room);
+    console.log(`🏠 User ${socket.id} joined room: ${room}`);
+  });
+
+  // Leave room
+  socket.on('leave-room', (room) => {
+    socket.leave(room);
+    console.log(`🚪 User ${socket.id} left room: ${room}`);
+  });
+
+  // Handle audit updates
+  socket.on('audit-update', (data) => {
+    socket.to(data.room || 'general').emit('audit-notification', {
+      type: 'audit-update',
+      message: data.message,
+      auditId: data.auditId,
+      timestamp: new Date().toISOString()
+    });
+  });
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log(`👋 User disconnected: ${socket.id}`);
+  });
+});
+
+// Make io available globally for controllers
+app.set('io', io);
 
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(ENV.PORT, () => {
-      console.log(`Server running on http://localhost:${ENV.PORT}`);
+    
+    // Try to connect Redis if available, but don't fail if it's not
+    if (redisClient) {
+      try {
+        await redisClient.connect();
+        console.log('✅ Redis connected successfully');
+      } catch (error) {
+        console.warn('⚠️ Redis connection failed:', error.message);
+        console.log('💡 Server will continue without Redis');
+      }
+    }
+    
+    httpServer.listen(ENV.PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${ENV.PORT}`);
+      console.log(`🔌 Socket.IO enabled`);
+      if (!redisClient) {
+        console.log('💡 Running without Redis caching (install Redis for better performance)');
+      }
     });
   } catch (error) {
     console.error("Failed to start server:", error.message);

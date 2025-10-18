@@ -1,6 +1,7 @@
 import React, { Suspense, lazy } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
+import OptimizedLoader from "@/components/ui/OptimizedLoader";
 
 // Layouts
 const AdminLayout = lazy(() => import("../Layout/AdminLayout"));
@@ -23,10 +24,13 @@ const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const AdminEditAuditPage = lazy(() => import("@/pages/AdminAuditPage"));
 const EditEmployeePage = lazy(() => import("@/pages/EditEmployeePage"));
 const EmployeeAuditResult = lazy(() => import("@/pages/EmployeeAuditResult"));
+const LinesPage = lazy(() => import("@/pages/LinesPage"));
+const MachinesPage = lazy(() => import("@/pages/MachinesPage"));
+const ProcessesPage = lazy(() => import("@/pages/ProcessesPage"));
 
 export default function AppRoutes() {
   return (
-    <Suspense fallback={<div className="p-4 text-center">Loading...</div>}>
+    <Suspense fallback={<OptimizedLoader />}>
       <Routes>
         {/* Public Route */}
         <Route path="/login" element={<LoginPage />} />
@@ -50,6 +54,9 @@ export default function AppRoutes() {
           <Route path="audits/:id" element={<AuditDetailPage />} />
           <Route path="audits/create" element={<AdminCreateTemplatePage />} />
           <Route path="departments" element={<DepartmentPage />} />
+          <Route path="lines" element={<LinesPage />} />
+          <Route path="machines" element={<MachinesPage />} />
+          <Route path="processes" element={<ProcessesPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="audits/edit/:id" element={<AdminEditAuditPage />} />
           <Route path="employee/edit/:id" element={<EditEmployeePage />} />

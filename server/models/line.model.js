@@ -8,6 +8,19 @@ const LineSchema = new mongoose.Schema(
       unique: true,
       trim: true,
     },
+    order: {
+      type: Number,
+      default: 0,
+      index: true,
+    },
+    description: {
+      type: String,
+      trim: true,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
   { timestamps: true, versionKey: false }
 );

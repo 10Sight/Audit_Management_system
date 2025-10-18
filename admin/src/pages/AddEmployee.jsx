@@ -1,17 +1,23 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
+import { ArrowLeft, UserPlus, Eye, EyeOff, Building2, Mail, Phone, User, Key, Shield } from "lucide-react";
 import api from "@/utils/axios";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { toast } from "sonner";
 
 export default function AddEmployeePage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [departments, setDepartments] = useState([]);
 
   const schema = Joi.object({
     fullName: Joi.string()
@@ -41,19 +47,38 @@ export default function AddEmployeePage() {
       "string.empty": "Password is required",
       "string.min": "Password must be at least 6 characters",
     }),
-    role: Joi.string().valid("employee", "admin", "hr").required().messages({
+    role: Joi.string().valid("employee", "admin", "supervisor").required().messages({
       "any.only": "Role must be selected",
       "string.empty": "Role is required",
     }),
   });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const form = useForm({
     resolver: joiResolver(schema),
+    defaultValues: {
+      fullName: "",
+      emailId: "",
+      department: "",
+      employeeId: "",
+      phoneNumber: "",
+      password: "",
+      role: "",
+    },
   });
+
+  useEffect(() => {
+    fetchDepartments();
+  }, []);
+
+  const fetchDepartments = async () => {
+    try {
+      const res = await api.get("/api/departments");
+      setDepartments(res.data.data?.departments || []);
+    } catch (err) {
+      console.error("Error fetching departments:", err);
+      toast.error("Failed to load departments");
+    }
+  };
 
   const onSubmit = async (data) => {
     setLoading(true);
@@ -64,7 +89,7 @@ export default function AddEmployeePage() {
       );
 
       toast.success(res.data.message || "Employee registered successfully!");
-      navigate("/admin/employees");
+      setTimeout(() => navigate("/admin/employees"), 1000);
     } catch (error) {
       toast.error(
         error.response?.data?.message || "Failed to register employee"
@@ -75,146 +100,262 @@ export default function AddEmployeePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 flex flex-col items-center">
-      <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 text-center tracking-wide">
-        Add New Employee
-      </h2>
-
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white border border-gray-300 shadow-md rounded-xl p-6 sm:p-8 w-full max-w-2xl grid grid-cols-1 sm:grid-cols-2 gap-5"
-      >
-        {/* Full Name */}
-        <div className="flex flex-col">
-          <label className="mb-1 text-gray-700 font-medium">Full Name</label>
-          <input
-            {...register("fullName")}
-            placeholder="Enter full name"
-            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
-          />
-          {errors.fullName && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.fullName.message}
-            </p>
-          )}
-        </div>
-
-        {/* Email */}
-        <div className="flex flex-col">
-          <label className="mb-1 text-gray-700 font-medium">Email</label>
-          <input
-            {...register("emailId")}
-            type="email"
-            placeholder="Enter email"
-            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
-          />
-          {errors.emailId && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.emailId.message}
-            </p>
-          )}
-        </div>
-
-        {/* Department */}
-        <div className="flex flex-col">
-          <label className="mb-1 text-gray-700 font-medium">Department</label>
-          <input
-            {...register("department")}
-            placeholder="Enter department"
-            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
-          />
-          {errors.department && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.department.message}
-            </p>
-          )}
-        </div>
-
-        {/* Employee ID */}
-        <div className="flex flex-col">
-          <label className="mb-1 text-gray-700 font-medium">Employee ID</label>
-          <input
-            {...register("employeeId")}
-            placeholder="Enter employee ID"
-            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
-          />
-          {errors.employeeId && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.employeeId.message}
-            </p>
-          )}
-        </div>
-
-        {/* Phone Number */}
-        <div className="flex flex-col">
-          <label className="mb-1 text-gray-700 font-medium">Phone Number</label>
-          <input
-            {...register("phoneNumber")}
-            placeholder="Enter phone number"
-            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
-          />
-          {errors.phoneNumber && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.phoneNumber.message}
-            </p>
-          )}
-        </div>
-
-        {/* Password */}
-        <div className="flex flex-col">
-          <label className="mb-1 text-gray-700 font-medium">Password</label>
-          <input
-            {...register("password")}
-            type="password"
-            placeholder="Enter password"
-            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
-          />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
-
-        {/* Role */}
-        <div className="flex flex-col">
-          <label className="mb-1 text-gray-700 font-medium">Role</label>
-          <select
-            {...register("role")}
-            className="p-3 rounded-md bg-white text-gray-900 border border-gray-300 focus:border-red-600 focus:ring-1 focus:ring-red-600 transition"
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => navigate("/admin/employees")}
           >
-            <option value="">Select Role</option>
-            <option value="employee">Employee</option>
-            <option value="admin">Admin</option>
-            <option value="hr">HR</option>
-          </select>
-          {errors.role && (
-            <p className="text-red-500 text-sm mt-1">{errors.role.message}</p>
-          )}
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Add New Employee</h1>
+            <p className="text-muted-foreground">Create a new employee account in the system</p>
+          </div>
         </div>
-
-        {/* Submit Button */}
-        <div className="sm:col-span-2">
-          <button
-            type="submit"
-            className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-md transition"
-            disabled={loading}
-          >
-            {loading ? "Submitting..." : "Submit"}
-          </button>
+        <div className="flex items-center space-x-2">
+          <UserPlus className="h-5 w-5 text-muted-foreground" />
         </div>
-      </form>
+      </div>
 
-      <ToastContainer
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnHover
-        draggable
-        theme="light"
-      />
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <User className="h-5 w-5" />
+            Employee Information
+          </CardTitle>
+          <CardDescription>
+            Fill in the details below to create a new employee account
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                {/* Full Name */}
+                <FormField
+                  control={form.control}
+                  name="fullName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        Full Name
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter employee's full name" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Employee ID */}
+                <FormField
+                  control={form.control}
+                  name="employeeId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Shield className="h-4 w-4" />
+                        Employee ID
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter unique employee ID" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        This will be used for login identification
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Email */}
+                <FormField
+                  control={form.control}
+                  name="emailId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        Email Address
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="email"
+                          placeholder="Enter email address" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Phone Number */}
+                <FormField
+                  control={form.control}
+                  name="phoneNumber"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        Phone Number
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          placeholder="Enter 10-digit phone number" 
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Department */}
+                <FormField
+                  control={form.control}
+                  name="department"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Building2 className="h-4 w-4" />
+                        Department
+                      </FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select department" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {departments.length > 0 ? (
+                            departments.map((department) => (
+                              <SelectItem key={department._id} value={department._id}>
+                                {department.name}{department.description ? ` - ${department.description}` : ''}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem disabled value="no-departments">
+                              No departments available
+                            </SelectItem>
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        Select the department this employee will belong to
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Role */}
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Shield className="h-4 w-4" />
+                        Role
+                      </FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select employee role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="employee">Employee</SelectItem>
+                          <SelectItem value="supervisor">Supervisor</SelectItem>
+                          <SelectItem value="admin">Administrator</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Password */}
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="flex items-center gap-2">
+                      <Key className="h-4 w-4" />
+                      Password
+                    </FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <Input 
+                          type={showPassword ? "text" : "password"}
+                          placeholder="Enter secure password (min 6 characters)" 
+                          {...field} 
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                          onClick={() => setShowPassword(!showPassword)}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </Button>
+                      </div>
+                    </FormControl>
+                    <FormDescription>
+                      Password will be used for initial login. Employee can change it later.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Submit Buttons */}
+              <div className="flex items-center justify-end space-x-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate("/admin/employees")}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={loading} className="min-w-32">
+                  {loading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="mr-2 h-4 w-4" />
+                      Create Employee
+                    </>
+                  )}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

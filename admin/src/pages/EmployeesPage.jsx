@@ -1,25 +1,70 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-import { FiDownload, FiPlus, FiArrowLeft, FiArrowRight } from "react-icons/fi";
+import { 
+  Download, 
+  Plus, 
+  Search,
+  ChevronLeft, 
+  ChevronRight,
+  MoreHorizontal,
+  Eye,
+  Edit,
+  Users
+} from "lucide-react";
 import api from "@/utils/axios";
+import Loader from "@/components/ui/Loader";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [total, setTotal] = useState(0);
 
   const navigate = useNavigate();
 
+  const getInitials = (name) => {
+    return name ? name.split(" ").map((n) => n[0]).join("").toUpperCase() : "?";
+  };
+
+  const getRoleBadgeVariant = (role) => {
+    switch (role?.toLowerCase()) {
+      case 'admin': return 'destructive';
+      case 'supervisor': return 'secondary';
+      case 'employee': return 'default';
+      default: return 'outline';
+    }
+  };
+
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
         const { data } = await api.get(
-          `/api/v1/auth/get-employee?page=${page}&limit=${limit}`
+          `/api/v1/auth/get-employee?page=${page}&limit=${limit}&search=${encodeURIComponent(searchTerm)}`
         );
         setEmployees(data.data?.employees || []);
         setTotal(data.data?.total || 0);
@@ -30,8 +75,10 @@ export default function EmployeesPage() {
         setLoading(false);
       }
     };
-    fetchEmployees();
-  }, [page, limit]);
+    
+    const timeoutId = setTimeout(fetchEmployees, 300); // Debounce search
+    return () => clearTimeout(timeoutId);
+  }, [page, limit, searchTerm]);
 
   const downloadExcel = () => {
     if (!employees.length) return;
@@ -40,7 +87,7 @@ export default function EmployeesPage() {
       "Full Name": emp.fullName,
       Email: emp.emailId,
       "Employee ID": emp.employeeId,
-      Department: emp.department,
+      Department: emp.department?.name || emp.department || 'N/A',
       Phone: emp.phoneNumber,
       Role: emp.role,
       Created: new Date(emp.createdAt).toLocaleDateString(),
@@ -55,128 +102,226 @@ export default function EmployeesPage() {
   };
 
   if (loading)
-    return <div className="p-6 text-gray-800 text-center">Loading employees...</div>;
+    return <Loader />;
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-100 min-h-screen space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Employees</h1>
-        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-          <button
-            onClick={downloadExcel}
-            className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow transition flex items-center justify-center gap-2"
-          >
-            <FiDownload /> Download Excel
-          </button>
-          <button
-            onClick={() => navigate("/admin/add-employee")}
-            className="flex-1 sm:flex-none bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow transition flex items-center justify-center gap-2"
-          >
-            <FiPlus /> Add Employee
-          </button>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Employees</h1>
+          <p className="text-muted-foreground">Manage your team members and their access</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button onClick={downloadExcel} variant="outline" size="sm">
+            <Download className="mr-2 h-4 w-4" />
+            Export
+          </Button>
+          <Button onClick={() => navigate("/admin/add-employee")} size="sm">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Employee
+          </Button>
         </div>
       </div>
 
-      {/* Table (Desktop) */}
-      <div className="hidden sm:block overflow-x-auto border border-gray-300 rounded-lg bg-white shadow">
-        <table className="min-w-full text-sm">
-          <thead className="bg-gray-200 text-gray-700">
-            <tr>
-              <th className="px-3 sm:px-4 py-2 text-left">Full Name</th>
-              <th className="px-3 sm:px-4 py-2 text-left">Email</th>
-              <th className="px-3 sm:px-4 py-2 text-left">Employee ID</th>
-              <th className="px-3 sm:px-4 py-2 text-left">Department</th>
-              <th className="px-3 sm:px-4 py-2 text-left">Phone</th>
-              <th className="px-3 sm:px-4 py-2 text-left">Role</th>
-              <th className="px-3 sm:px-4 py-2 text-left">Created</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employees.length > 0 ? (
-              employees.map((emp) => (
-                <tr
-                  key={emp._id}
-                  className="border-t border-gray-200 hover:bg-gray-50 cursor-pointer transition"
-                  onClick={() => navigate(`/admin/employee/${emp._id}`)}
-                >
-                  <td className="px-3 sm:px-4 py-2">{emp.fullName}</td>
-                  <td className="px-3 sm:px-4 py-2">{emp.emailId}</td>
-                  <td className="px-3 sm:px-4 py-2">{emp.employeeId}</td>
-                  <td className="px-3 sm:px-4 py-2">{emp.department}</td>
-                  <td className="px-3 sm:px-4 py-2">{emp.phoneNumber}</td>
-                  <td className="px-3 sm:px-4 py-2 capitalize">{emp.role}</td>
-                  <td className="px-3 sm:px-4 py-2">
-                    {new Date(emp.createdAt).toLocaleDateString()}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="text-center px-4 py-6 text-gray-500">
-                  No employees found
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      {/* Stats Card */}
+      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Employees</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{total}</div>
+            <p className="text-xs text-muted-foreground">Regular employees only</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Active This Page</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{employees.length}</div>
+            <p className="text-xs text-muted-foreground">Showing on current page</p>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Mobile Cards */}
-      <div className="sm:hidden space-y-4">
-        {employees.length > 0 ? (
-          employees.map((emp) => (
-            <div
-              key={emp._id}
-              className="border border-gray-300 rounded-lg p-4 bg-white shadow cursor-pointer hover:bg-gray-50 transition"
-              onClick={() => navigate(`/admin/employee/${emp._id}`)}
-            >
-              <p className="font-semibold text-lg text-gray-900 truncate">{emp.fullName}</p>
-              <p className="text-gray-500 text-sm truncate">{emp.emailId}</p>
-              <p className="mt-2 text-sm text-gray-700">
-                <span className="font-medium">ID:</span> {emp.employeeId}
-              </p>
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Dept:</span> {emp.department}
-              </p>
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Phone:</span> {emp.phoneNumber}
-              </p>
-              <p className="text-sm text-gray-700">
-                <span className="font-medium">Role:</span> {emp.role}
-              </p>
-              <p className="text-sm text-gray-500">
-                {new Date(emp.createdAt).toLocaleDateString()}
-              </p>
+      {/* Search and Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Employee Directory</CardTitle>
+          <CardDescription>
+            Search and manage employee information
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          {/* Search Bar */}
+          <div className="p-6 pb-4">
+            <div className="flex items-center space-x-2">
+              <div className="relative flex-1 max-w-sm">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search employees..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-8"
+                />
+              </div>
             </div>
-          ))
-        ) : (
-          <p className="text-center text-gray-500">No employees found</p>
-        )}
-      </div>
+          </div>
 
-      {/* Pagination */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-3">
-        <button
-          disabled={page === 1}
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 disabled:opacity-50 px-4 py-2 rounded-lg flex items-center gap-2 justify-center text-gray-700"
-        >
-          <FiArrowLeft /> Prev
-        </button>
+          {/* Table Container */}
+          <div className="border-t">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Employee</TableHead>
+                  <TableHead>Contact</TableHead>
+                  <TableHead>Department</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Joined</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {employees.length > 0 ? (
+                  employees.map((emp) => (
+                    <TableRow key={emp._id} className="cursor-pointer hover:bg-muted/50">
+                      <TableCell className="font-medium">
+                        <div className="flex items-center space-x-2">
+                          <Avatar className="h-8 w-8">
+                            <AvatarImage src="" />
+                            <AvatarFallback className="text-xs">
+                              {getInitials(emp.fullName)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <div className="font-medium">{emp.fullName}</div>
+                            <div className="text-sm text-muted-foreground">ID: {emp.employeeId}</div>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm">
+                          <div>{emp.emailId}</div>
+                          <div className="text-muted-foreground">{emp.phoneNumber}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{emp.department?.name || emp.department || 'N/A'}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={getRoleBadgeVariant(emp.role)}>
+                          {emp.role}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {new Date(emp.createdAt).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="h-8 w-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuItem
+                              onClick={() => navigate(`/admin/employee/${emp._id}`)}
+                            >
+                              <Eye className="mr-2 h-4 w-4" />
+                              View details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => navigate(`/admin/employee/${emp._id}/edit`)}
+                            >
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit employee
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-24 text-center">
+                      {searchTerm ? (
+                        <div className="flex flex-col items-center justify-center">
+                          <Search className="h-8 w-8 text-muted-foreground mb-2" />
+                          <p className="text-muted-foreground">No employees found matching "{searchTerm}"</p>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center justify-center">
+                          <Users className="h-8 w-8 text-muted-foreground mb-2" />
+                          <p className="text-muted-foreground">No employees found</p>
+                        </div>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
 
-        <span className="text-gray-600 text-sm sm:text-base">
-          Page {page} of {Math.ceil(total / limit) || 1}
-        </span>
-
-        <button
-          disabled={page >= Math.ceil(total / limit)}
-          onClick={() => setPage((prev) => prev + 1)}
-          className="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 disabled:opacity-50 px-4 py-2 rounded-lg flex items-center gap-2 justify-center text-gray-700"
-        >
-          Next <FiArrowRight />
-        </button>
-      </div>
+          {/* Pagination */}
+          <div className="flex items-center justify-between px-6 py-4 border-t">
+            <div className="flex items-center space-x-6 lg:space-x-8">
+              <div className="flex items-center space-x-2">
+                <p className="text-sm font-medium">Rows per page</p>
+                <span className="text-sm text-muted-foreground">{limit}</span>
+              </div>
+              <div className="flex w-[100px] items-center justify-center text-sm font-medium">
+                Page {page} of {Math.ceil(total / limit) || 1}
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  className="h-8 w-8 p-0"
+                  onClick={() => setPage(1)}
+                  disabled={page === 1}
+                >
+                  <span className="sr-only">Go to first page</span>
+                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4 -ml-2" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-8 w-8 p-0"
+                  onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={page === 1}
+                >
+                  <span className="sr-only">Go to previous page</span>
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-8 w-8 p-0"
+                  onClick={() => setPage((prev) => prev + 1)}
+                  disabled={page >= Math.ceil(total / limit)}
+                >
+                  <span className="sr-only">Go to next page</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  className="h-8 w-8 p-0"
+                  onClick={() => setPage(Math.ceil(total / limit))}
+                  disabled={page >= Math.ceil(total / limit)}
+                >
+                  <span className="sr-only">Go to last page</span>
+                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4 -ml-2" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

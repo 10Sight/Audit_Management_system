@@ -3,9 +3,13 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FiCheckCircle, FiHome, FiBarChart2 } from "react-icons/fi";
+import { FiCheckCircle, FiHome, FiBarChart2, FiCamera, FiX } from "react-icons/fi";
 import "react-toastify/dist/ReactToastify.css";
 import api from "@/utils/axios";
+import Loader from "@/components/ui/Loader";
+import CameraCapture from "@/components/CameraCapture";
+import { uploadImageWithRetry, validateImageFile } from "@/utils/imageUpload";
+import simpleImageUpload from "@/utils/simpleUpload";
 
 export default function EmployeeFillInspectionPage() {
   const { user: currentUser } = useAuth();
@@ -25,6 +29,12 @@ export default function EmployeeFillInspectionPage() {
   const [questions, setQuestions] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [submittedAuditId, setSubmittedAuditId] = useState(null);
+  
+  // Photo capture states
+  const [showCamera, setShowCamera] = useState(false);
+  const [currentQuestionForPhoto, setCurrentQuestionForPhoto] = useState(null);
+  const [questionPhotos, setQuestionPhotos] = useState({}); // questionId -> array of photos
+  const [uploading, setUploading] = useState(false);
 
   // Fetch dropdowns
   useEffect(() => {
@@ -87,6 +97,98 @@ export default function EmployeeFillInspectionPage() {
     setQuestions(newQs);
   };
 
+  // Photo handling functions
+  const handleCameraOpen = (question) => {
+    setCurrentQuestionForPhoto(question);
+    setShowCamera(true);
+  };
+
+  const handleCameraClose = () => {
+    setShowCamera(false);
+    setCurrentQuestionForPhoto(null);
+  };
+
+  const handlePhotoCapture = async (questionId, capturedImage) => {
+    setUploading(true);
+    try {
+      // Validate image file
+      const validationErrors = validateImageFile(capturedImage.file);
+      if (validationErrors.length > 0) {
+        toast.error(validationErrors.join(', '));
+        return;
+      }
+
+      let uploadRes;
+      
+      try {
+        // Try the advanced upload first
+        console.log('Attempting advanced upload...');
+        uploadRes = await uploadImageWithRetry(api, capturedImage.file);
+      } catch (advancedError) {
+        console.warn('Advanced upload failed, trying simple upload...', advancedError.message);
+        
+        // Fallback to simple upload
+        try {
+          uploadRes = await simpleImageUpload(api.defaults.baseURL, capturedImage.file);
+        } catch (simpleError) {
+          console.error('Both upload methods failed');
+          throw simpleError;
+        }
+      }
+      
+      if (uploadRes.data?.data?.length > 0) {
+        const photoUrl = uploadRes.data.data[0].secure_url;
+        
+        // Add photo to question photos
+        setQuestionPhotos(prev => ({
+          ...prev,
+          [questionId]: [...(prev[questionId] || []), {
+            url: photoUrl,
+            publicId: uploadRes.data.data[0].public_id,
+            originalName: capturedImage.file.name,
+            uploadedAt: new Date().toISOString()
+          }]
+        }));
+        
+        toast.success('Photo uploaded successfully!');
+      }
+    } catch (error) {
+      console.error('Photo upload error:', error);
+      if (error.code === 'ECONNABORTED') {
+        toast.error('Upload timeout. Please try a smaller image or check your connection.');
+      } else if (error.response?.status === 413) {
+        toast.error('Image file too large. Please use a smaller image.');
+      } else if (error.message && error.message.includes('timeout')) {
+        toast.error('Upload timeout. The image may be too large or connection is slow.');
+      } else {
+        toast.error(`Upload failed: ${error.response?.data?.message || error.message || 'Please try again.'}`);
+      }
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handlePhotoRemove = async (questionId, photoIndex) => {
+    try {
+      const photos = questionPhotos[questionId] || [];
+      const photoToRemove = photos[photoIndex];
+      
+      if (photoToRemove?.publicId) {
+        await api.delete(`/api/upload/${photoToRemove.publicId}`, { withCredentials: true });
+      }
+      
+      setQuestionPhotos(prev => ({
+        ...prev,
+        [questionId]: photos.filter((_, idx) => idx !== photoIndex)
+      }));
+      
+      toast.success('Photo removed successfully!');
+    } catch (error) {
+      console.error('Photo removal error:', error);
+      toast.error('Failed to remove photo.');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!line || !machine || !process || !lineLeader || !shiftIncharge) {
@@ -106,6 +208,12 @@ export default function EmployeeFillInspectionPage() {
           question: q._id,
           answer: q.answer,
           remark: q.answer === "No" ? q.remark : "",
+          photoUrls: q.answer === "No" && questionPhotos[q._id] ? 
+            questionPhotos[q._id].map(photo => ({
+              url: photo.url,
+              publicId: photo.publicId,
+              uploadedAt: photo.uploadedAt
+            })) : []
         })),
       };
       const res = await api.post(`/api/audits`, payload, { withCredentials: true });
@@ -116,7 +224,7 @@ export default function EmployeeFillInspectionPage() {
     }
   };
 
-  if (loading) return <div className="p-6 text-gray-700">Loading form...</div>;
+  if (loading) return <Loader />;
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto text-gray-800">
@@ -191,7 +299,56 @@ export default function EmployeeFillInspectionPage() {
                   <option value="No">No</option>
                 </select>
                 {q.answer === "No" && (
-                  <input type="text" placeholder="Remark" value={q.remark} onChange={(e) => handleRemarkChange(idx, e.target.value)} className="p-2 rounded-md border bg-white w-full" required />
+                  <div className="space-y-3">
+                    <input 
+                      type="text" 
+                      placeholder="Remark" 
+                      value={q.remark} 
+                      onChange={(e) => handleRemarkChange(idx, e.target.value)} 
+                      className="p-2 rounded-md border bg-white w-full" 
+                      required 
+                    />
+                    
+                    {/* Photo Upload Section */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium text-gray-700">
+                          Photos (Optional)
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => handleCameraOpen(q)}
+                          disabled={uploading}
+                          className="flex items-center gap-1 px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 transition"
+                        >
+                          <FiCamera className="w-4 h-4" />
+                          {uploading ? 'Uploading...' : 'Add Photo'}
+                        </button>
+                      </div>
+                      
+                      {/* Photo Previews */}
+                      {questionPhotos[q._id]?.length > 0 && (
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+                          {questionPhotos[q._id].map((photo, photoIdx) => (
+                            <div key={photoIdx} className="relative group">
+                              <img
+                                src={photo.url}
+                                alt={`Photo ${photoIdx + 1}`}
+                                className="w-full h-20 object-cover rounded-md border"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handlePhotoRemove(q._id, photoIdx)}
+                                className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <FiX />
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 )}
               </div>
             ))
@@ -222,6 +379,17 @@ export default function EmployeeFillInspectionPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Camera Capture Component */}
+      {showCamera && currentQuestionForPhoto && (
+        <CameraCapture
+          isOpen={showCamera}
+          onClose={handleCameraClose}
+          onCapture={handlePhotoCapture}
+          questionId={currentQuestionForPhoto._id}
+          questionText={currentQuestionForPhoto.questionText}
+        />
       )}
 
       <style>

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import api from "@/utils/axios";
+import Loader from "@/components/ui/Loader";
 
 export default function EditEmployeePage() {
   const { id } = useParams();
@@ -58,7 +59,7 @@ export default function EditEmployeePage() {
     }
   };
 
-  if (loading) return <div className="text-gray-700 p-6 text-center">Loading...</div>;
+  if (loading) return <Loader />;
   if (error) return <div className="text-red-500 p-6 text-center">{error}</div>;
 
   return (
