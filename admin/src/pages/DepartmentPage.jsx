@@ -10,7 +10,15 @@ import {
   UserCheck,
   BarChart3
 } from "lucide-react"; 
-import api from "@/utils/axios";
+import { 
+  useGetDepartmentsQuery,
+  useGetAllUsersQuery,
+  useGetDepartmentStatsQuery,
+  useCreateDepartmentMutation,
+  useUpdateDepartmentMutation,
+  useDeleteDepartmentMutation,
+  useAssignEmployeeToDepartmentMutation
+} from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -67,46 +75,19 @@ export default function DepartmentPage() {
   const [loading, setLoading] = useState(false);
   const [assignLoading, setAssignLoading] = useState(false);
 
+  const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
+  const { data: usersRes } = useGetAllUsersQuery({ page: 1, limit: 1000 });
+  const { data: statsRes } = useGetDepartmentStatsQuery();
+  const [createDepartmentMutation] = useCreateDepartmentMutation();
+  const [updateDepartmentMutation] = useUpdateDepartmentMutation();
+  const [deleteDepartmentMutation] = useDeleteDepartmentMutation();
+  const [assignEmployeeMutation] = useAssignEmployeeToDepartmentMutation();
+
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
-    await Promise.all([
-      fetchDepartments(),
-      fetchEmployees(),
-      fetchStats()
-    ]);
-  };
-
-  // Fetch functions
-  const fetchDepartments = async () => {
-    try {
-      const res = await api.get("/api/departments");
-      setDepartments(res.data.data?.departments || []);
-    } catch (err) {
-      console.error("Error fetching departments:", err);
-      toast.error("Failed to fetch departments");
-    }
-  };
-
-  const fetchEmployees = async () => {
-    try {
-      const res = await api.get("/api/v1/auth/get-all-users");
-      setEmployees(res.data.data?.users || []);
-    } catch (err) {
-      console.error("Error fetching employees:", err);
-    }
-  };
-
-  const fetchStats = async () => {
-    try {
-      const res = await api.get("/api/departments/stats");
-      setStats(res.data.data || {});
-    } catch (err) {
-      console.error("Error fetching stats:", err);
-    }
-  };
+    setDepartments(deptRes?.data?.departments || []);
+    setEmployees(Array.isArray(usersRes?.data?.users) ? usersRes.data.users : []);
+    setStats(statsRes?.data || {});
+  }, [deptRes, usersRes, statsRes]);
 
   // CRUD Operations
   const createDepartment = async () => {
@@ -116,17 +97,13 @@ export default function DepartmentPage() {
     }
     setLoading(true);
     try {
-      await api.post("/api/departments", { 
-        name: departmentName.trim(), 
-        description: departmentDescription.trim() 
-      });
+      await createDepartmentMutation({ name: departmentName.trim(), description: departmentDescription.trim() }).unwrap();
       toast.success("Department created successfully");
       setDepartmentName("");
       setDepartmentDescription("");
       setOpenCreateDialog(false);
-      fetchData();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to create department");
+      toast.error(err?.data?.message || err?.message || "Failed to create department");
     } finally {
       setLoading(false);
     }
@@ -139,18 +116,14 @@ export default function DepartmentPage() {
     }
     setLoading(true);
     try {
-      await api.put(`/api/departments/${editingDepartment._id}`, {
-        name: departmentName.trim(),
-        description: departmentDescription.trim()
-      });
+      await updateDepartmentMutation({ id: editingDepartment._id, name: departmentName.trim(), description: departmentDescription.trim() }).unwrap();
       toast.success("Department updated successfully");
       setDepartmentName("");
       setDepartmentDescription("");
       setEditingDepartment(null);
       setOpenEditDialog(false);
-      fetchData();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update department");
+      toast.error(err?.data?.message || err?.message || "Failed to update department");
     } finally {
       setLoading(false);
     }
@@ -163,15 +136,13 @@ export default function DepartmentPage() {
       if (selectedTransferDepartment) {
         payload.transferToDepartmentId = selectedTransferDepartment;
       }
-      
-      await api.delete(`/api/departments/${department._id}`, { data: payload });
+      await deleteDepartmentMutation({ id: department._id, payload }).unwrap();
       toast.success("Department deleted successfully");
       setOpenDeleteDialog(false);
       setDepartmentToDelete(null);
       setSelectedTransferDepartment("");
-      fetchData();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to delete department");
+      toast.error(err?.data?.message || err?.message || "Failed to delete department");
     } finally {
       setLoading(false);
     }
@@ -184,17 +155,13 @@ export default function DepartmentPage() {
     }
     setAssignLoading(true);
     try {
-      await api.post("/api/departments/assign-employee", {
-        employeeId: selectedEmployee,
-        departmentId: selectedDepartment
-      });
+      await assignEmployeeMutation({ employeeId: selectedEmployee, departmentId: selectedDepartment }).unwrap();
       toast.success("Employee assigned successfully");
       setSelectedEmployee("");
       setSelectedDepartment("");
       setOpenAssignDialog(false);
-      fetchData();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to assign employee");
+      toast.error(err?.data?.message || err?.message || "Failed to assign employee");
     } finally {
       setAssignLoading(false);
     }
@@ -336,8 +303,8 @@ export default function DepartmentPage() {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.summary?.totalEmployees || 0}</div>
-            <p className="text-xs text-muted-foreground">Across all departments</p>
+            <div className="text-2xl font-bold">{stats.summary?.employeeRoleCount ?? stats.summary?.totalEmployees ?? 0}</div>
+            <p className="text-xs text-muted-foreground">Employees (role = employee)</p>
           </CardContent>
         </Card>
         <Card>

@@ -8,7 +8,7 @@ export const registerSchema = Joi.object({
   username: Joi.string().trim().lowercase().min(3).optional(),
   phoneNumber: Joi.string().pattern(/^[0-9]{10}$/).required(),
   password: Joi.string().min(6).required(),
-  role: Joi.string().valid("admin", "employee").required(),
+  role: Joi.string().valid("superadmin", "admin", "employee").required(),
 });
 
 export const loginSchema = Joi.object({
@@ -30,5 +30,5 @@ export const updateSchema = Joi.object({
   emailId: Joi.string().email(),
   department: Joi.string().valid("Production", "Quality", "HR", "Admin", "Other"),
   phoneNumber: Joi.string().pattern(/^[0-9]{10}$/),
-  role: Joi.string().valid("admin", "employee"),
+  role: Joi.string().valid("superadmin", "admin", "employee"),
 }).min(1);

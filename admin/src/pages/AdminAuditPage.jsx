@@ -12,7 +12,7 @@ import {
   Calendar,
   Clock
 } from "lucide-react";
-import api from "@/utils/axios";
+import { useGetAuditByIdQuery, useUpdateAuditMutation } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,7 @@ import { toast } from "sonner";
 export default function AdminAuditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [updateAudit] = useUpdateAuditMutation();
 
   const [audit, setAudit] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -41,38 +42,30 @@ export default function AdminAuditPage() {
     answers: [],
   });
 
+const { data: auditRes, isLoading: auditLoading } = useGetAuditByIdQuery(id, { skip: !id });
+
 useEffect(() => {
-  const fetchAudit = async () => {
-    try {
-      const { data } = await api.get(`/api/audits/${id}`);
-      const auditData = data?.data;
-
-      setAudit(auditData);
-      setFormData({
-        line: auditData?.line?._id || "",
-        machine: auditData?.machine?._id || "",
-        process: auditData?.process?._id || "",
-        lineLeader: auditData?.lineLeader || "",
-        shiftIncharge: auditData?.shiftIncharge || "",
-        answers: Array.isArray(auditData?.answers)
-          ? auditData.answers.map((a) => ({
-              question: a?.question?._id || "",
-              questionText: a?.question?.questionText || "",
-              answer: a?.answer || "",
-              remark: a?.remark || "",
-            }))
-          : [],
-      });
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to fetch audit");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (id) fetchAudit();
-}, [id]);
+  setLoading(auditLoading);
+  const auditData = auditRes?.data;
+  if (auditData) {
+    setAudit(auditData);
+    setFormData({
+      line: auditData?.line?._id || "",
+      machine: auditData?.machine?._id || "",
+      process: auditData?.process?._id || "",
+      lineLeader: auditData?.lineLeader || "",
+      shiftIncharge: auditData?.shiftIncharge || "",
+      answers: Array.isArray(auditData?.answers)
+        ? auditData.answers.map((a) => ({
+            question: a?.question?._id || "",
+            questionText: a?.question?.questionText || "",
+            answer: a?.answer || "",
+            remark: a?.remark || "",
+          }))
+        : [],
+    });
+  }
+}, [auditRes, auditLoading]);
 
 
   const handleChange = (e) => {
@@ -93,12 +86,12 @@ useEffect(() => {
   setSubmitting(true);
 
   try {
-    await api.put(`/api/audits/${id}`, formData);
+    await updateAudit({ id, ...formData }).unwrap();
     toast.success("Audit updated successfully");
-    navigate(-1); // Go back to previous page
+    navigate(-1);
   } catch (err) {
     console.error(err);
-    toast.error(err.response?.data?.message || "Failed to update audit");
+    toast.error(err?.data?.message || err?.message || "Failed to update audit");
   } finally {
     setSubmitting(false);
   }

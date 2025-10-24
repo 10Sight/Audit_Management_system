@@ -15,7 +15,8 @@ const connectDB = async () => {
 
     if (connectionURIs.length === 0) {
         logger.error('No MongoDB URI available. Please set MONGO_URI in environment variables.');
-        process.exit(1);
+        // Do not exit; allow app to run without DB for limited functionality
+        return false;
     }
 
     for (let i = 0; i < connectionURIs.length; i++) {
@@ -49,7 +50,7 @@ const connectDB = async () => {
                 process.exit(0);
             });
             
-            return; // Success - exit the function
+            return true; // Success
             
         } catch (error) {
             logger.warn(`❌ MongoDB connection ${i + 1} failed: ${error.message}`);
@@ -64,13 +65,16 @@ const connectDB = async () => {
                     logger.info('💡 Or start with Docker: docker run -d -p 27017:27017 --name mongodb mongo:latest');
                 }
                 
-                process.exit(1);
+                // Do not exit; allow app to run without DB for limited functionality
+                return false;
             }
             
             // Wait a bit before trying next connection
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
     }
+
+    return false;
 };
 
 export default connectDB;

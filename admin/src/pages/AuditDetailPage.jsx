@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FiImage, FiEye, FiX } from "react-icons/fi";
-import api from "@/utils/axios";
+import { useGetAuditByIdQuery } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 
 export default function AuditDetailPage() {
@@ -26,24 +25,11 @@ export default function AuditDetailPage() {
     setShowImageModal(false);
   };
 
+  const { data: auditRes, isLoading: auditLoading } = useGetAuditByIdQuery(id, { skip: !id });
   useEffect(() => {
-    const fetchAudit = async () => {
-      try {
-        setLoading(true);
-        const { data } = await api.get(
-          `/api/audits/${id}`
-        );
-        setAudit(data?.data || null);
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to fetch audit");
-        setAudit(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAudit();
-  }, [id]);
+    setLoading(auditLoading);
+    setAudit(auditRes?.data || null);
+  }, [auditRes, auditLoading]);
 
   if (loading)
     return (
@@ -121,9 +107,9 @@ export default function AuditDetailPage() {
                       {ans.remark || "-"}
                     </td>
                     <td className="px-4 py-2 border border-gray-300">
-                      {ans.photoUrls && ans.photoUrls.length > 0 ? (
+                      {ans.photos && ans.photos.length > 0 ? (
                         <div className="flex gap-1 justify-center">
-                          {ans.photoUrls.slice(0, 3).map((photo, photoIdx) => (
+                          {ans.photos.slice(0, 3).map((photo, photoIdx) => (
                             <button
                               key={photoIdx}
                               onClick={() => openImageModal(photo.url)}
@@ -136,8 +122,8 @@ export default function AuditDetailPage() {
                               />
                             </button>
                           ))}
-                          {ans.photoUrls.length > 3 && (
-                            <span className="text-xs text-gray-500 self-center">+{ans.photoUrls.length - 3}</span>
+                          {ans.photos.length > 3 && (
+                            <span className="text-xs text-gray-500 self-center">+{ans.photos.length - 3}</span>
                           )}
                         </div>
                       ) : (
@@ -172,11 +158,11 @@ export default function AuditDetailPage() {
                     <span className="font-medium">Remark:</span> {ans.remark}
                   </p>
                 )}
-                {ans.photoUrls && ans.photoUrls.length > 0 && (
+                {ans.photos && ans.photos.length > 0 && (
                   <div className="mt-2">
                     <p className="font-medium text-sm mb-1">Photos:</p>
                     <div className="flex gap-2 flex-wrap">
-                      {ans.photoUrls.map((photo, photoIdx) => (
+                      {ans.photos.map((photo, photoIdx) => (
                         <button
                           key={photoIdx}
                           onClick={() => openImageModal(photo.url)}

@@ -12,7 +12,7 @@ import {
   AlertCircle
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import api from "@/utils/axios";
+import { useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useGetQuestionsQuery, useDeleteQuestionMutation } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,63 +51,40 @@ export default function AdminManageQuestionsPage() {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // Fetch dropdown options
+  const { data: linesRes } = useGetLinesQuery();
+  const { data: machinesRes } = useGetMachinesQuery();
+  const { data: processesRes } = useGetProcessesQuery();
+  const [deleteQuestion] = useDeleteQuestionMutation();
+
   useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const [linesRes, machinesRes, processesRes] = await Promise.all([
-          api.get("/api/lines",),
-          api.get("/api/machines",),
-          api.get("/api/processes",),
-        ]);
-        setLines(linesRes.data.data || []);
-        setMachines(machinesRes.data.data || []);
-        setProcesses(processesRes.data.data || []);
-      } catch (err) {
-        toast.error("Failed to load dropdown options");
-      }
-    };
-    fetchOptions();
-  }, []);
+    setLines(linesRes?.data || []);
+    setMachines(machinesRes?.data || []);
+    setProcesses(processesRes?.data || []);
+  }, [linesRes, machinesRes, processesRes]);
 
-  // Fetch questions based on filters
+  // Fetch questions based on filters via RTK Query
+  const queryParams = {
+    ...(fetchAll ? {} : {
+      ...(selectedLine && selectedLine !== 'all' ? { line: selectedLine } : {}),
+      ...(selectedMachine && selectedMachine !== 'all' ? { machine: selectedMachine } : {}),
+      ...(selectedProcess && selectedProcess !== 'all' ? { process: selectedProcess } : {}),
+    }),
+    includeGlobal: includeGlobal ? 'true' : 'false',
+  };
+  const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery(queryParams);
   useEffect(() => {
-    if (!currentUser || currentUser.role !== "admin") return;
-
-    const fetchQuestions = async () => {
-      setLoading(true);
-      try {
-        const query = new URLSearchParams();
-        if (!fetchAll) {
-          if (selectedLine && selectedLine !== "all") query.append("line", selectedLine);
-          if (selectedMachine && selectedMachine !== "all") query.append("machine", selectedMachine);
-          if (selectedProcess && selectedProcess !== "all") query.append("process", selectedProcess);
-        }
-        query.append("includeGlobal", includeGlobal ? "true" : "false");
-
-        const { data } = await api.get(
-          `/api/questions?${query.toString()}`
-        );
-
-        setQuestions(data.data);
-      } catch (err) {
-        toast.error(err.response?.data?.message || "Failed to fetch questions");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchQuestions();
-  }, [selectedLine, selectedMachine, selectedProcess, includeGlobal, fetchAll, currentUser]);
+    setLoading(questionsLoading);
+    if (Array.isArray(questionsRes?.data)) setQuestions(questionsRes.data);
+  }, [questionsRes, questionsLoading]);
 
   // Delete question
   const handleDelete = async (id, questionText) => {
     try {
-      await api.delete(`/api/questions/${id}`);
+      await deleteQuestion(id).unwrap();
       toast.success("Question deleted successfully!");
       setQuestions(questions.filter((q) => q._id !== id));
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to delete question");
+      toast.error(err?.data?.message || err?.message || "Failed to delete question");
     }
   };
 
@@ -329,10 +306,7 @@ export default function AdminManageQuestionsPage() {
 
                     <Separator />
 
-                    <div className="flex items-center justify-between pt-1">
-                      <Badge variant="outline" className="text-xs">
-                        ID: {q._id.slice(-6)}
-                      </Badge>
+                    <div className="flex items-center justify-end pt-1">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button 

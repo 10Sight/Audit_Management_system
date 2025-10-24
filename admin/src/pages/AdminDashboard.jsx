@@ -24,7 +24,7 @@ import {
   Calendar,
   Filter
 } from "lucide-react";
-import api from "@/utils/axios";
+import { useGetAuditsQuery, useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useGetAllUsersQuery, useGetEmployeesQuery } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +36,6 @@ export default function AdminDashboard() {
   const [machines, setMachines] = useState([]);
   const [processes, setProcesses] = useState([]);
   const [employees, setEmployees] = useState([]);
-  const [lastFetch, setLastFetch] = useState(Date.now());
 
   const [answerType, setAnswerType] = useState("all");
   const [selectedLine, setSelectedLine] = useState("all");
@@ -72,54 +71,25 @@ export default function AdminDashboard() {
     return format(d, "yyyy-MM-dd");
   };
 
+  // Fetch data with RTK Query (poll audits every 30s)
+  const { data: auditsRes } = useGetAuditsQuery({ page: 1, limit: 1000 }, { pollingInterval: 30000 });
+  const { data: linesRes } = useGetLinesQuery();
+  const { data: machinesRes } = useGetMachinesQuery();
+  const { data: processesRes } = useGetProcessesQuery();
+  const { data: usersRes } = useGetAllUsersQuery({ page: 1, limit: 1000 });
+  // Query only employees to get accurate total count from backend
+  const { data: employeesCountRes } = useGetEmployeesQuery({ page: 1, limit: 1 });
+
   useEffect(() => {
-  const fetchData = async () => {
-    try {
-      // Fetch all data for dashboard analytics
-      const [auditsRes, linesRes, machinesRes, processesRes, employeesRes] =
-        await Promise.all([
-          api.get(`/api/audits?limit=1000&t=${lastFetch}`), // Add cache busting parameter
-          api.get("/api/lines"),
-          api.get("/api/machines"),
-          api.get("/api/processes"), 
-          api.get("/api/v1/auth/get-all-users"),
-        ]);
+    const auditData = auditsRes?.data?.audits || auditsRes?.data || [];
+    setAudits(Array.isArray(auditData) ? auditData : []);
+    setLines(linesRes?.data || []);
+    setMachines(machinesRes?.data || []);
+    setProcesses(processesRes?.data || []);
+    setEmployees(Array.isArray(usersRes?.data?.users) ? usersRes.data.users : []);
+  }, [auditsRes, linesRes, machinesRes, processesRes, usersRes]);
 
-      // Handle paginated audit response
-      const auditData = auditsRes.data.data?.audits || auditsRes.data.data || [];
-      console.log(`Fetched ${auditData.length} audits for dashboard`);
-      setAudits(auditData);
-      
-      setLines(linesRes.data.data || []);
-      setMachines(machinesRes.data.data || []);
-      setProcesses(processesRes.data.data || []);
-      setEmployees(
-        Array.isArray(employeesRes.data.data?.users)
-          ? employeesRes.data.data.users
-          : []
-      );
-    } catch (err) {
-      console.error("Error fetching data:", err.response?.data || err.message);
-      // Set empty arrays as fallback
-      setAudits([]);
-      setLines([]);
-      setMachines([]);
-      setProcesses([]);
-      setEmployees([]);
-    }
-  };
-
-  fetchData();
-}, [lastFetch]);
-
-  // Auto-refresh data every 30 seconds
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setLastFetch(Date.now());
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, []);
+  // RTK Query polling handles refresh; no manual interval needed
 
 
   // Line Chart Data
@@ -195,8 +165,13 @@ export default function AdminDashboard() {
   }, [audits, selectedLine, selectedMachine, selectedProcess]);
 
   const totalEmployees = useMemo(
-    () => employees.length,
-    [employees]
+    () => {
+      const backendTotal = employeesCountRes?.data?.total;
+      if (typeof backendTotal === 'number') return backendTotal;
+      // Fallback: filter current users list
+      return Array.isArray(employees) ? employees.filter(u => u.role === 'employee').length : 0;
+    },
+    [employeesCountRes, employees]
   );
 
   const filteredCounts = useMemo(() => {

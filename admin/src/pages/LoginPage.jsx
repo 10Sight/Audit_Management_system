@@ -4,7 +4,7 @@ import SimpleDynamicForm from "@/components/ui/SimpleDynamicForm";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { User, Lock, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import api from "@/utils/axios";
+import { useLoginMutation } from "@/store/api";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -12,6 +12,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
 
   const { setUser } = useAuth();
+  const [login, { isLoading: loginLoading }] = useLoginMutation();
 
   const loginFields = [
     {
@@ -35,28 +36,16 @@ export default function LoginPage() {
   const handleLogin = async (data) => {
     setLoading(true);
     setError(null);
-
     try {
-      const res = await api.post("/api/v1/auth/login", {
-        username: data.username,
-        password: data.password,
-      });
-
-      const result = res.data;
-      const role = result.data?.employee?.role;
-      
+      const result = await login({ username: data.username, password: data.password }).unwrap();
+      const role = result?.data?.employee?.role;
       if (!role) throw new Error("Invalid login response");
-
-      // Store user in global context
       setUser(result.data.employee);
-
-      // Navigate based on role
       if (role === "admin") navigate("/admin/dashboard", { replace: true });
       else if (role === "employee") navigate("/employee/inspections", { replace: true });
       else throw new Error("Invalid role received from server");
     } catch (err) {
-      // Axios errors have response objects
-      setError(err.response?.data?.message || err.message);
+      setError(err?.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -93,7 +82,7 @@ export default function LoginPage() {
               onSubmit={handleLogin}
               submitText={"Sign In"}
               className="space-y-4"
-              loading={loading}
+              loading={loading || loginLoading}
             />
 
             {error && (

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import api from "@/utils/axios";
+import { useGetAuditByIdQuery } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 
 export default function EmployeeAuditResult() {
@@ -14,21 +13,11 @@ export default function EmployeeAuditResult() {
   const [loading, setLoading] = useState(true);
   const [audit, setAudit] = useState(null);
 
+  const { data: auditRes, isLoading: auditLoading } = useGetAuditByIdQuery(auditId, { skip: !auditId });
   useEffect(() => {
-    const fetchAudit = async () => {
-      try {
-        const res = await api.get(`/api/audits/${auditId}`);
-        setAudit(res.data?.data);
-      } catch (err) {
-        console.error(err);
-        toast.error("Failed to fetch audit data");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAudit();
-  }, [auditId]);
+    setLoading(auditLoading);
+    setAudit(auditRes?.data);
+  }, [auditRes, auditLoading]);
 
   if (loading) return <Loader />;
   if (!audit) return <div className="p-6 text-gray-700 text-center">No audit found.</div>;
@@ -81,6 +70,21 @@ export default function EmployeeAuditResult() {
                 <p className="text-sm sm:text-base text-gray-700">
                   <strong>Remark:</strong> {ans.remark}
                 </p>
+              )}
+              {ans.photos && ans.photos.length > 0 && (
+                <div className="mt-2">
+                  <p className="font-medium text-sm mb-1">Photos:</p>
+                  <div className="flex gap-2 flex-wrap">
+                    {ans.photos.map((photo, photoIdx) => (
+                      <img
+                        key={photoIdx}
+                        src={photo.url}
+                        alt={`Photo ${photoIdx + 1}`}
+                        className="w-16 h-16 rounded border object-cover"
+                      />
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           ))

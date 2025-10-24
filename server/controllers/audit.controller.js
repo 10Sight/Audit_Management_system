@@ -119,6 +119,18 @@ export const getAudits = asyncHandler(async (req, res) => {
     if (req.query.endDate) query.date.$lte = new Date(req.query.endDate);
   }
 
+  // Optional filters: line, machine, process
+  if (req.query.line) query.line = req.query.line;
+  if (req.query.machine) query.machine = req.query.machine;
+  if (req.query.process) query.process = req.query.process;
+
+  // Result filter: allYes or allNo
+  if (req.query.result === 'allYes') {
+    query.answers = { $not: { $elemMatch: { answer: 'No' } } };
+  } else if (req.query.result === 'allNo') {
+    query.answers = { $not: { $elemMatch: { answer: 'Yes' } } };
+  }
+
   const audits = await Audit.find(query)
     .select('date line machine process lineLeader shiftIncharge auditor createdBy createdAt answers')
     .populate("line", "name")

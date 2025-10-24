@@ -19,7 +19,7 @@ import {
   Cog
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import api from "@/utils/axios";
+import { useLogoutMutation } from "@/store/api";
 import RealtimeNotifications from "@/components/RealtimeNotifications";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,10 +44,11 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, setUser } = useAuth();
+  const [logout] = useLogoutMutation();
 
   const handleLogout = async () => {
     try {
-      await api.post("/api/v1/auth/logout");
+      await logout().unwrap();
       setUser(null);
       navigate("/login", { replace: true });
     } catch (error) {

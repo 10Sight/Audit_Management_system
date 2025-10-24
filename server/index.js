@@ -23,10 +23,10 @@ import uploadRoutes from "./routes/upload.route.js";
 const app = express();
 const httpServer = createServer(app);
 
-// Initialize Redis client
+// Initialize Redis client (lazy)
 const redisClient = getRedisClient();
 
-// Configure session store (Redis if available, otherwise memory)
+// Base session config; store will be attached after successful Redis connect
 const sessionConfig = {
   secret: ENV.SESSION_SECRET,
   resave: false,
@@ -38,20 +38,6 @@ const sessionConfig = {
   },
 };
 
-// Use Redis store if available, otherwise fall back to memory store
-if (redisClient) {
-  try {
-    sessionConfig.store = new RedisStore({ client: redisClient });
-    console.log('✅ Using Redis session store');
-  } catch (error) {
-    console.warn('⚠️ Failed to setup Redis session store, using memory store:', error.message);
-  }
-} else {
-  console.log('💡 Using memory session store (Redis not available)');
-}
-
-app.use(session(sessionConfig));
-
 // Initialize Socket.IO
 const io = new Server(httpServer, {
   cors: {
@@ -59,7 +45,10 @@ const io = new Server(httpServer, {
     credentials: true,
     methods: ["GET", "POST"]
   },
-  transports: ['websocket', 'polling']
+  transports: ['polling', 'websocket'], // prefer polling first for compatibility, then upgrade
+  allowEIO3: false,
+  pingTimeout: 30000,
+  pingInterval: 25000,
 });
 
 // Security middleware
@@ -136,28 +125,69 @@ io.on('connection', (socket) => {
 // Make io available globally for controllers
 app.set('io', io);
 
+// Attempt to listen on a port, trying subsequent ports if busy
+const listenWithRetry = async (startPort, maxTries = 10) => {
+  let port = Number(startPort) || 5000;
+  for (let attempt = 0; attempt < maxTries; attempt++, port++) {
+    const result = await new Promise((resolve) => {
+      const onError = (err) => {
+        httpServer.removeListener('listening', onListening);
+        if (err && err.code === 'EADDRINUSE') return resolve(null);
+        return resolve({ error: err });
+      };
+      const onListening = () => {
+        httpServer.removeListener('error', onError);
+        resolve(port);
+      };
+      httpServer.once('error', onError);
+      httpServer.once('listening', onListening);
+      httpServer.listen(port, '0.0.0.0');
+    });
+    if (typeof result === 'number') return result;
+  }
+  return null;
+};
+
 const startServer = async () => {
   try {
-    await connectDB();
+    const dbConnected = await connectDB();
+    if (!dbConnected) {
+      console.warn('⚠️ Starting server without MongoDB connection; some routes may be unavailable.');
+    }
     
-    // Try to connect Redis if available, but don't fail if it's not
+// Try to connect Redis if available, but don't fail if it's not
     if (redisClient) {
       try {
         await redisClient.connect();
+        // Attach Redis store only after successful connection
+        sessionConfig.store = new RedisStore({ client: redisClient });
+        console.log('✅ Using Redis session store');
         console.log('✅ Redis connected successfully');
       } catch (error) {
+        // Ensure Redis client is disconnected to prevent reconnection spam
+        try { await redisClient.disconnect(); } catch {}
         console.warn('⚠️ Redis connection failed:', error.message);
-        console.log('💡 Server will continue without Redis');
+        console.log('💡 Using memory session store (Redis not available)');
       }
+    } else {
+      console.log('💡 Using memory session store (Redis not available)');
     }
-    
-    httpServer.listen(ENV.PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${ENV.PORT}`);
-      console.log(`🔌 Socket.IO enabled`);
-      if (!redisClient) {
-        console.log('💡 Running without Redis caching (install Redis for better performance)');
-      }
-    });
+
+    // Apply session middleware after deciding the store
+    app.use(session(sessionConfig));
+
+    const port = await listenWithRetry(ENV.PORT, 10);
+    if (!port) {
+      console.error('❌ No available ports found near', ENV.PORT);
+      process.exit(1);
+    }
+
+    console.log(`ℹ️ Selected port: ${port}`);
+    console.log(`🚀 Server running on http://localhost:${port}`);
+    console.log(`🔌 Socket.IO enabled`);
+    if (!redisClient || !sessionConfig.store) {
+      console.log('💡 Running without Redis caching (install Redis for better performance)');
+    }
   } catch (error) {
     console.error("Failed to start server:", error.message);
     process.exit(1);

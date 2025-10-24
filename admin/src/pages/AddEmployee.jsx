@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { ArrowLeft, UserPlus, Eye, EyeOff, Building2, Mail, Phone, User, Key, Shield } from "lucide-react";
-import api from "@/utils/axios";
+import { useRegisterEmployeeMutation, useGetDepartmentsQuery } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,34 +66,20 @@ export default function AddEmployeePage() {
     },
   });
 
+  const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
+  const [registerEmployee] = useRegisterEmployeeMutation();
   useEffect(() => {
-    fetchDepartments();
-  }, []);
-
-  const fetchDepartments = async () => {
-    try {
-      const res = await api.get("/api/departments");
-      setDepartments(res.data.data?.departments || []);
-    } catch (err) {
-      console.error("Error fetching departments:", err);
-      toast.error("Failed to load departments");
-    }
-  };
+    setDepartments(deptRes?.data?.departments || []);
+  }, [deptRes]);
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const res = await api.post(
-        "/api/v1/auth/register",
-        data
-      );
-
-      toast.success(res.data.message || "Employee registered successfully!");
+      const res = await registerEmployee(data).unwrap();
+      toast.success(res?.message || "Employee registered successfully!");
       setTimeout(() => navigate("/admin/employees"), 1000);
     } catch (error) {
-      toast.error(
-        error.response?.data?.message || "Failed to register employee"
-      );
+      toast.error(error?.data?.message || error?.message || "Failed to register employee");
     } finally {
       setLoading(false);
     }

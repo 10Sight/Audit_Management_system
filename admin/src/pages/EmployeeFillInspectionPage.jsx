@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FiCheckCircle, FiHome, FiBarChart2, FiCamera, FiX } from "react-icons/fi";
 import "react-toastify/dist/ReactToastify.css";
-import api from "@/utils/axios";
+import { 
+  useGetLinesQuery,
+  useGetMachinesQuery,
+  useGetProcessesQuery,
+  useGetQuestionsQuery,
+  useCreateAuditMutation,
+  useUploadImageMutation,
+  useDeleteUploadMutation
+} from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import CameraCapture from "@/components/CameraCapture";
 import { uploadImageWithRetry, validateImageFile } from "@/utils/imageUpload";
-import simpleImageUpload from "@/utils/simpleUpload";
+import simpleImageUpload, { simpleCompressImage } from "@/utils/simpleUpload";
+import api from "@/utils/axios";
 
 export default function EmployeeFillInspectionPage() {
   const { user: currentUser } = useAuth();
@@ -36,53 +44,33 @@ export default function EmployeeFillInspectionPage() {
   const [questionPhotos, setQuestionPhotos] = useState({}); // questionId -> array of photos
   const [uploading, setUploading] = useState(false);
 
-  // Fetch dropdowns
+  const { data: linesRes } = useGetLinesQuery();
+  const { data: machinesRes } = useGetMachinesQuery();
+  const { data: processesRes } = useGetProcessesQuery();
+  const [createAudit] = useCreateAuditMutation();
+  const [uploadImage] = useUploadImageMutation();
+  const [deleteUpload] = useDeleteUploadMutation();
+
   useEffect(() => {
-    const fetchDropdowns = async () => {
-      try {
-        const [linesRes, machinesRes, processesRes] = await Promise.all([
-          api.get(`/api/lines`),
-          api.get(`/api/machines`),
-          api.get(`/api/processes`),
-        ]);
-        setLines(linesRes.data?.data || []);
-        setMachines(machinesRes.data?.data || []);
-        setProcesses(processesRes.data?.data || []);
-      } catch (err) {
-        toast.error("Failed to load dropdowns");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDropdowns();
-  }, []);
+    setLines(linesRes?.data || []);
+    setMachines(machinesRes?.data || []);
+    setProcesses(processesRes?.data || []);
+    setLoading(false);
+  }, [linesRes, machinesRes, processesRes]);
 
-  // Fetch questions when line/machine/process changes
+  // Fetch questions when line/machine/process changes via RTK Query
+  const questionParams = {
+    ...(line ? { lineId: line } : {}),
+    ...(machine ? { machineId: machine } : {}),
+    ...(process ? { processId: process } : {}),
+    includeGlobal: 'true',
+  };
+  const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery(questionParams, { skip: !(line && machine && process) });
   useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const query = new URLSearchParams();
-        if (line) query.append("lineId", line);
-        if (machine) query.append("machineId", machine);
-        if (process) query.append("processId", process);
-
-        const res = await api.get(`/api/questions?${query.toString()}`);
-        const data = res.data?.data || [];
-
-        // Fetch global questions
-        const globalRes = await api.get(`/api/questions?global=true`);
-        const globalData = globalRes.data?.data || [];
-
-        // Merge unique
-        const merged = [...data, ...globalData.filter(g => !data.some(d => d._id === g._id))];
-        setQuestions(merged.map((q) => ({ ...q, answer: "", remark: "" })));
-      } catch {
-        toast.error("Failed to load questions");
-      }
-    };
-
-    fetchQuestions();
-  }, [line, machine, process]);
+    if (questionsLoading) return;
+    const list = Array.isArray(questionsRes?.data) ? questionsRes.data : [];
+    setQuestions(list.map(q => ({ ...q, answer: "", remark: "" })));
+  }, [questionsRes, questionsLoading]);
 
   const handleAnswerChange = (idx, value) => {
     const newQs = [...questions];
@@ -111,58 +99,41 @@ export default function EmployeeFillInspectionPage() {
   const handlePhotoCapture = async (questionId, capturedImage) => {
     setUploading(true);
     try {
-      // Validate image file
       const validationErrors = validateImageFile(capturedImage.file);
       if (validationErrors.length > 0) {
         toast.error(validationErrors.join(', '));
         return;
       }
 
-      let uploadRes;
-      
-      try {
-        // Try the advanced upload first
-        console.log('Attempting advanced upload...');
-        uploadRes = await uploadImageWithRetry(api, capturedImage.file);
-      } catch (advancedError) {
-        console.warn('Advanced upload failed, trying simple upload...', advancedError.message);
-        
-        // Fallback to simple upload
-        try {
-          uploadRes = await simpleImageUpload(api.defaults.baseURL, capturedImage.file);
-        } catch (simpleError) {
-          console.error('Both upload methods failed');
-          throw simpleError;
-        }
-      }
-      
-      if (uploadRes.data?.data?.length > 0) {
-        const photoUrl = uploadRes.data.data[0].secure_url;
-        
-        // Add photo to question photos
-        setQuestionPhotos(prev => ({
-          ...prev,
-          [questionId]: [...(prev[questionId] || []), {
-            url: photoUrl,
-            publicId: uploadRes.data.data[0].public_id,
-            originalName: capturedImage.file.name,
-            uploadedAt: new Date().toISOString()
-          }]
-        }));
-        
-        toast.success('Photo uploaded successfully!');
-      }
+      // Fast path: compress small and upload single image endpoint
+      const compressedBlob = await simpleCompressImage(capturedImage.file, 0.55);
+      const compressedFile = new File([compressedBlob], `photo_${Date.now()}.webp`, { type: 'image/webp' });
+      const form = new FormData();
+      form.append('photo', compressedFile);
+      const res = await api.post('/api/upload/image', form, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true,
+        timeout: 0, // do not time out large uploads
+      });
+      const data = res?.data?.data;
+      const photoUrl = data?.url;
+      const publicId = data?.publicId;
+      if (!photoUrl || !publicId) throw new Error('Upload succeeded but missing URL or publicId');
+
+      setQuestionPhotos(prev => ({
+        ...prev,
+        [questionId]: [...(prev[questionId] || []), {
+          url: photoUrl,
+          publicId,
+          originalName: compressedFile.name,
+          uploadedAt: new Date().toISOString()
+        }]
+      }));
+      toast.success('Photo uploaded successfully!');
     } catch (error) {
       console.error('Photo upload error:', error);
-      if (error.code === 'ECONNABORTED') {
-        toast.error('Upload timeout. Please try a smaller image or check your connection.');
-      } else if (error.response?.status === 413) {
-        toast.error('Image file too large. Please use a smaller image.');
-      } else if (error.message && error.message.includes('timeout')) {
-        toast.error('Upload timeout. The image may be too large or connection is slow.');
-      } else {
-        toast.error(`Upload failed: ${error.response?.data?.message || error.message || 'Please try again.'}`);
-      }
+      const msg = error?.data?.message || error?.response?.data?.message || error?.message || 'Upload failed';
+      toast.error(msg);
     } finally {
       setUploading(false);
     }
@@ -174,7 +145,7 @@ export default function EmployeeFillInspectionPage() {
       const photoToRemove = photos[photoIndex];
       
       if (photoToRemove?.publicId) {
-        await api.delete(`/api/upload/${photoToRemove.publicId}`, { withCredentials: true });
+        await deleteUpload(photoToRemove.publicId).unwrap();
       }
       
       setQuestionPhotos(prev => ({
@@ -195,6 +166,25 @@ export default function EmployeeFillInspectionPage() {
       toast.error("Please fill all required fields");
       return;
     }
+
+    // Validate each 'No' answer has remark and at least one photo
+    const missing = [];
+    questions.forEach((q) => {
+      if (q.answer === 'No') {
+        const photos = questionPhotos[q._id] || [];
+        if (!q.remark || q.remark.trim() === '') {
+          missing.push(`Remark required for: ${q.questionText}`);
+        }
+        if (photos.length === 0) {
+          missing.push(`At least one photo required for: ${q.questionText}`);
+        }
+      }
+    });
+    if (missing.length) {
+      toast.error(missing[0]);
+      return;
+    }
+
     try {
       const payload = {
         date: new Date(),
@@ -208,19 +198,22 @@ export default function EmployeeFillInspectionPage() {
           question: q._id,
           answer: q.answer,
           remark: q.answer === "No" ? q.remark : "",
-          photoUrls: q.answer === "No" && questionPhotos[q._id] ? 
-            questionPhotos[q._id].map(photo => ({
-              url: photo.url,
-              publicId: photo.publicId,
-              uploadedAt: photo.uploadedAt
-            })) : []
+          photos: q.answer === "No" && questionPhotos[q._id]
+            ? questionPhotos[q._id].map(photo => ({
+                url: photo.url,
+                publicId: photo.publicId,
+                uploadedAt: photo.uploadedAt,
+                originalName: photo.originalName,
+              }))
+            : []
         })),
       };
-      const res = await api.post(`/api/audits`, payload, { withCredentials: true });
-      setSubmittedAuditId(res.data?.data?._id);
+      const res = await createAudit(payload).unwrap();
+      setSubmittedAuditId(res?.data?._id);
       setShowModal(true);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to submit inspection");
+      const msg = err?.data?.message || err?.response?.data?.message || err?.message || 'Failed to submit inspection';
+      toast.error(msg);
     }
   };
 

@@ -13,7 +13,7 @@ import {
   Edit,
   Users
 } from "lucide-react";
-import api from "@/utils/axios";
+import { useGetEmployeesQuery } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -60,25 +60,22 @@ export default function EmployeesPage() {
     }
   };
 
+  // Debounce search term
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   useEffect(() => {
-    const fetchEmployees = async () => {
-      try {
-        const { data } = await api.get(
-          `/api/v1/auth/get-employee?page=${page}&limit=${limit}&search=${encodeURIComponent(searchTerm)}`
-        );
-        setEmployees(data.data?.employees || []);
-        setTotal(data.data?.total || 0);
-      } catch (error) {
-        console.error("Error fetching employees:", error);
-        setEmployees([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    const timeoutId = setTimeout(fetchEmployees, 300); // Debounce search
-    return () => clearTimeout(timeoutId);
-  }, [page, limit, searchTerm]);
+    const id = setTimeout(() => setDebouncedSearch(searchTerm), 300);
+    return () => clearTimeout(id);
+  }, [searchTerm]);
+
+  const { data, isFetching, isLoading: queryLoading } = useGetEmployeesQuery({ page, limit, search: debouncedSearch });
+
+  useEffect(() => {
+    setLoading(queryLoading);
+    if (data?.data) {
+      setEmployees(data.data.employees || []);
+      setTotal(data.data.total || 0);
+    }
+  }, [data, queryLoading]);
 
   const downloadExcel = () => {
     if (!employees.length) return;
@@ -237,7 +234,7 @@ export default function EmployeesPage() {
                               View details
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              onClick={() => navigate(`/admin/employee/${emp._id}/edit`)}
+                              onClick={() => navigate(`/admin/employee/edit/${emp._id}`)}
                             >
                               <Edit className="mr-2 h-4 w-4" />
                               Edit employee

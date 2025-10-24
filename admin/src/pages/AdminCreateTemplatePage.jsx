@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../context/AuthContext";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
-import api from "@/utils/axios";
+import { useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useCreateQuestionsMutation } from "@/store/api";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function AdminCreateTemplatePage() {
   const navigate = useNavigate();
@@ -22,24 +27,15 @@ export default function AdminCreateTemplatePage() {
 
   const [questions, setQuestions] = useState([{ questionText: "", isGlobal: false }]);
 
+  const { data: linesRes } = useGetLinesQuery();
+  const { data: machinesRes } = useGetMachinesQuery();
+  const { data: processesRes } = useGetProcessesQuery();
+  const [createQuestions] = useCreateQuestionsMutation();
   useEffect(() => {
-    const fetchOptions = async () => {
-      try {
-        const [linesRes, machinesRes, processesRes] = await Promise.all([
-          api.get("/api/lines"),
-          api.get("/api/machines"),
-          api.get("/api/processes"),
-        ]);
-
-        setLines(linesRes.data.data);
-        setMachines(machinesRes.data.data);
-        setProcesses(processesRes.data.data);
-      } catch (err) {
-        toast.error("Failed to load options");
-      }
-    };
-    fetchOptions();
-  }, []);
+    setLines(linesRes?.data || []);
+    setMachines(machinesRes?.data || []);
+    setProcesses(processesRes?.data || []);
+  }, [linesRes, machinesRes, processesRes]);
 
   const addQuestion = () =>
     setQuestions([...questions, { questionText: "", isGlobal: false }]);
@@ -75,9 +71,7 @@ export default function AdminCreateTemplatePage() {
         process: selectedProcess,
       }));
 
-      await api.post("/api/questions", payload, {
-        withCredentials: true,
-      });
+      await createQuestions(payload).unwrap();
 
       toast.success("Template created!");
       navigate("/admin/questions");
@@ -91,115 +85,97 @@ export default function AdminCreateTemplatePage() {
   if (!currentUser || currentUser.role !== "admin") return <div>Access Denied</div>;
 
   return (
-    <div className="p-6 max-w-4xl mx-auto text-gray-900">
+    <div className="p-6 max-w-5xl mx-auto">
       <ToastContainer theme="light" />
-      <div className="bg-gray-100 shadow-lg rounded-2xl p-6 sm:p-8 border border-gray-300">
-        <h1 className="text-3xl font-bold mb-6 text-gray-800">
-          Create Inspection Template
-        </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Select Options */}
-          <div className="space-y-4">
-            <select
-              value={selectedLine}
-              onChange={(e) => setSelectedLine(e.target.value)}
-              className="p-3 bg-white border border-gray-400 rounded-md w-full text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              required
-            >
-              <option value="">-- Select Line --</option>
-              {lines.map((line) => (
-                <option key={line._id} value={line._id}>
-                  {line.name}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={selectedMachine}
-              onChange={(e) => setSelectedMachine(e.target.value)}
-              className="p-3 bg-white border border-gray-400 rounded-md w-full text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              required
-            >
-              <option value="">-- Select Machine --</option>
-              {machines.map((machine) => (
-                <option key={machine._id} value={machine._id}>
-                  {machine.name}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={selectedProcess}
-              onChange={(e) => setSelectedProcess(e.target.value)}
-              className="p-3 bg-white border border-gray-400 rounded-md w-full text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-              required
-            >
-              <option value="">-- Select Process --</option>
-              {processes.map((process) => (
-                <option key={process._id} value={process._id}>
-                  {process.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Questions Section */}
-          <div className="space-y-4">
-            <h2 className="font-semibold text-lg text-gray-800">Questions</h2>
-            {questions.map((q, idx) => (
-              <div
-                key={idx}
-                className="p-4 border rounded-lg bg-white space-y-3 shadow-sm"
-              >
-                <input
-                  type="text"
-                  placeholder="Question"
-                  value={q.questionText}
-                  onChange={(e) => handleQuestionChange(idx, e.target.value)}
-                  className="p-2 bg-gray-50 border border-gray-400 rounded-md w-full text-gray-900 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
-                  required
-                />
-
-                <div className="flex justify-between items-center">
-                  <label className="flex items-center gap-1 text-gray-700">
-                    <input
-                      type="checkbox"
-                      checked={q.isGlobal}
-                      onChange={() => handleGlobalToggle(idx)}
-                      className="accent-green-600"
-                    />
-                    Global
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => removeQuestion(idx)}
-                    className="px-3 py-1 bg-red-600 hover:bg-red-700 rounded-md flex items-center gap-1 text-white transition"
-                  >
-                    <FiTrash2 /> Remove
-                  </button>
-                </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Create Inspection Template</CardTitle>
+          <CardDescription>Define contextual questions for a Line, Machine and Process.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Select Options */}
+            <div className="grid gap-4 md:grid-cols-3">
+              <div className="space-y-2">
+                <Label>Production Line</Label>
+                <Select value={selectedLine} onValueChange={setSelectedLine}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select line" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lines.map((line) => (
+                      <SelectItem key={line._id} value={line._id}>{line.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            ))}
+              <div className="space-y-2">
+                <Label>Machine</Label>
+                <Select value={selectedMachine} onValueChange={setSelectedMachine}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select machine" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {machines.map((m) => (
+                      <SelectItem key={m._id} value={m._id}>{m.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Process</Label>
+                <Select value={selectedProcess} onValueChange={setSelectedProcess}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select process" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {processes.map((p) => (
+                      <SelectItem key={p._id} value={p._id}>{p.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
 
-            <button
-              type="button"
-              onClick={addQuestion}
-              className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md mt-2 flex items-center gap-2 transition"
-            >
-              <FiPlus /> Add Question
-            </button>
-          </div>
+            {/* Questions Section */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">Questions</h2>
+                <Button type="button" size="sm" onClick={addQuestion}>
+                  <FiPlus className="mr-2 h-4 w-4" /> Add Question
+                </Button>
+              </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md mt-4 font-medium transition"
-          >
-            {loading ? "Creating..." : "Create Template"}
-          </button>
-        </form>
-      </div>
+              <div className="space-y-3">
+                {questions.map((q, idx) => (
+                  <div key={idx} className="grid gap-3 md:grid-cols-[1fr_auto_auto] items-center">
+                    <Input
+                      placeholder="Enter question text"
+                      value={q.questionText}
+                      onChange={(e) => handleQuestionChange(idx, e.target.value)}
+                      required
+                    />
+                    <div className="flex items-center gap-2">
+                      <Checkbox id={`global_${idx}`} checked={q.isGlobal} onCheckedChange={() => handleGlobalToggle(idx)} />
+                      <Label htmlFor={`global_${idx}`}>Global</Label>
+                    </div>
+                    <Button type="button" variant="destructive" size="sm" onClick={() => removeQuestion(idx)}>
+                      <FiTrash2 className="mr-2 h-4 w-4" /> Remove
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-end">
+              <Button type="submit" disabled={loading}>
+                {loading ? "Creating..." : "Create Template"}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

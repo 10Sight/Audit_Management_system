@@ -6,7 +6,7 @@ import {
   Edit3, 
   AlertTriangle
 } from "lucide-react"; 
-import api from "@/utils/axios";
+import { useGetProcessesQuery, useCreateProcessMutation, useUpdateProcessMutation, useDeleteProcessMutation } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,19 +45,14 @@ export default function ProcessesPage() {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchProcesses();
-  }, []);
+  const { data: processesRes } = useGetProcessesQuery();
+  const [createProcessMutation] = useCreateProcessMutation();
+  const [updateProcessMutation] = useUpdateProcessMutation();
+  const [deleteProcessMutation] = useDeleteProcessMutation();
 
-  const fetchProcesses = async () => {
-    try {
-      const res = await api.get("/api/processes");
-      setProcesses(res.data.data || []);
-    } catch (err) {
-      console.error("Error fetching processes:", err);
-      toast.error("Failed to fetch processes");
-    }
-  };
+  useEffect(() => {
+    setProcesses(processesRes?.data || []);
+  }, [processesRes]);
 
   const createProcess = async () => {
     if (!processName.trim()) {
@@ -66,17 +61,13 @@ export default function ProcessesPage() {
     }
     setLoading(true);
     try {
-      await api.post("/api/processes", { 
-        name: processName.trim(), 
-        description: processDescription.trim() 
-      });
+      await createProcessMutation({ name: processName.trim(), description: processDescription.trim() }).unwrap();
       toast.success("Process created successfully");
       setProcessName("");
       setProcessDescription("");
       setOpenCreateDialog(false);
-      fetchProcesses();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to create process");
+      toast.error(err?.data?.message || err?.message || "Failed to create process");
     } finally {
       setLoading(false);
     }
@@ -89,18 +80,14 @@ export default function ProcessesPage() {
     }
     setLoading(true);
     try {
-      await api.put(`/api/processes/${editingProcess._id}`, {
-        name: processName.trim(),
-        description: processDescription.trim()
-      });
+      await updateProcessMutation({ id: editingProcess._id, name: processName.trim(), description: processDescription.trim() }).unwrap();
       toast.success("Process updated successfully");
       setProcessName("");
       setProcessDescription("");
       setEditingProcess(null);
       setOpenEditDialog(false);
-      fetchProcesses();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update process");
+      toast.error(err?.data?.message || err?.message || "Failed to update process");
     } finally {
       setLoading(false);
     }
@@ -109,11 +96,10 @@ export default function ProcessesPage() {
   const deleteProcess = async (process) => {
     setLoading(true);
     try {
-      await api.delete(`/api/processes/${process._id}`);
+      await deleteProcessMutation(process._id).unwrap();
       toast.success("Process deleted successfully");
-      fetchProcesses();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to delete process");
+      toast.error(err?.data?.message || err?.message || "Failed to delete process");
     } finally {
       setLoading(false);
     }

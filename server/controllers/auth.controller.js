@@ -128,12 +128,28 @@ export const getEmployees = asyncHandler(async (req, res) => {
   }
 
   const total = await Employee.countDocuments(query);
-  const employees = await Employee.find(query)
-    .select("-password")
-    .populate('department', 'name description')
-    .skip(skip)
-    .limit(limit)
-    .sort({ createdAt: -1 });
+  let employees;
+  try {
+    employees = await Employee.find(query)
+      .select("-password")
+      .populate('department', 'name description')
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .lean();
+  } catch (err) {
+    if (err?.name === 'CastError') {
+      // Fallback without populate for legacy records where department is a string
+      employees = await Employee.find(query)
+        .select("-password")
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .lean();
+    } else {
+      throw err;
+    }
+  }
 
   logger.info(`Employees fetched by ${req.user.fullName} (${req.user.employeeId})`);
   return res
@@ -257,12 +273,27 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   }
 
   const total = await Employee.countDocuments(query);
-  const users = await Employee.find(query)
-    .select("-password")
-    .populate('department', 'name description')
-    .skip(skip)
-    .limit(limit)
-    .sort({ createdAt: -1 });
+  let users;
+  try {
+    users = await Employee.find(query)
+      .select("-password")
+      .populate('department', 'name description')
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 })
+      .lean();
+  } catch (err) {
+    if (err?.name === 'CastError') {
+      users = await Employee.find(query)
+        .select("-password")
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdAt: -1 })
+        .lean();
+    } else {
+      throw err;
+    }
+  }
 
   logger.info(`All users fetched by ${req.user.fullName} (${req.user.employeeId})`);
   return res

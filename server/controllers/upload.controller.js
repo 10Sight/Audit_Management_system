@@ -1,25 +1,41 @@
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { deleteImage } from "../config/cloudinary.config.js";
+import { cloudinary, deleteImage } from "../config/cloudinary.config.js";
+import fs from 'fs';
 
-// Upload single image
+// Upload single image: first saved locally by multer, then uploaded to Cloudinary
 export const uploadImage = asyncHandler(async (req, res) => {
   if (!req.file) {
     throw new ApiError(400, "No image file provided");
   }
 
-  const imageData = {
-    url: req.file.path,
-    publicId: req.file.filename,
-    originalName: req.file.originalname,
-    size: req.file.size,
-    uploadedAt: new Date(),
-  };
+  const localPath = req.file.path;
+  try {
+    const result = await cloudinary.uploader.upload(localPath, {
+      folder: 'audit-photos',
+      use_filename: true,
+      unique_filename: true,
+      resource_type: 'image',
+    });
 
-  return res.status(201).json(
-    new ApiResponse(201, imageData, "Image uploaded successfully")
-  );
+    const imageData = {
+      url: result.secure_url,
+      publicId: result.public_id,
+      originalName: req.file.originalname,
+      size: req.file.size,
+      uploadedAt: new Date(),
+    };
+
+    return res.status(201).json(
+      new ApiResponse(201, imageData, "Image uploaded successfully")
+    );
+  } catch (err) {
+    throw new ApiError(500, `Cloud upload failed: ${err.message}`);
+  } finally {
+    // cleanup local file
+    try { fs.unlinkSync(localPath); } catch {}
+  }
 });
 
 // Upload multiple images
@@ -28,18 +44,29 @@ export const uploadMultipleImages = asyncHandler(async (req, res) => {
     throw new ApiError(400, "No image files provided");
   }
 
-  const imagesData = req.files.map(file => ({
-    secure_url: file.path,
-    public_id: file.filename,
-    url: file.path,
-    publicId: file.filename,
-    originalName: file.originalname,
-    size: file.size,
-    uploadedAt: new Date(),
-  }));
+  const uploads = [];
+  for (const file of req.files) {
+    try {
+      const result = await cloudinary.uploader.upload(file.path, {
+        folder: 'audit-photos',
+        use_filename: true,
+        unique_filename: true,
+        resource_type: 'image',
+      });
+      uploads.push({
+        url: result.secure_url,
+        publicId: result.public_id,
+        originalName: file.originalname,
+        size: file.size,
+        uploadedAt: new Date(),
+      });
+    } finally {
+      try { fs.unlinkSync(file.path); } catch {}
+    }
+  }
 
   return res.status(201).json(
-    new ApiResponse(201, imagesData, "Images uploaded successfully")
+    new ApiResponse(201, uploads, "Images uploaded successfully")
   );
 });
 

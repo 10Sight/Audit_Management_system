@@ -19,10 +19,14 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Initialize socket connection
-    const newSocket = io(import.meta.env.VITE_SERVER_URL || 'http://localhost:5000', {
-      transports: ['websocket', 'polling'],
+    const newSocket = io(import.meta.env.VITE_SERVER_URL || 'https://audit-management-system-server.onrender.com', {
+      transports: ['polling', 'websocket'],
       withCredentials: true,
       autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: 10,
+      reconnectionDelay: 500,
+      timeout: 20000,
     });
 
     // Connection event handlers

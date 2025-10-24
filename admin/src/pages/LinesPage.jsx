@@ -7,7 +7,7 @@ import {
   GripVertical,
   AlertTriangle
 } from "lucide-react"; 
-import api from "@/utils/axios";
+import { useGetLinesQuery, useCreateLineMutation, useUpdateLineMutation, useDeleteLineMutation, useReorderLinesMutation } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,19 +47,15 @@ export default function LinesPage() {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchLines();
-  }, []);
+  const { data: linesRes } = useGetLinesQuery();
+  const [createLineMutation, { isLoading: creating }] = useCreateLineMutation();
+  const [updateLineMutation, { isLoading: updating }] = useUpdateLineMutation();
+  const [deleteLineMutation, { isLoading: deleting }] = useDeleteLineMutation();
+  const [reorderLinesMutation, { isLoading: reordering }] = useReorderLinesMutation();
 
-  const fetchLines = async () => {
-    try {
-      const res = await api.get("/api/lines");
-      setLines(res.data.data || []);
-    } catch (err) {
-      console.error("Error fetching lines:", err);
-      toast.error("Failed to fetch lines");
-    }
-  };
+  useEffect(() => {
+    setLines(linesRes?.data || []);
+  }, [linesRes]);
 
   const createLine = async () => {
     if (!lineName.trim()) {
@@ -68,17 +64,13 @@ export default function LinesPage() {
     }
     setLoading(true);
     try {
-      await api.post("/api/lines", { 
-        name: lineName.trim(), 
-        description: lineDescription.trim() 
-      });
+      await createLineMutation({ name: lineName.trim(), description: lineDescription.trim() }).unwrap();
       toast.success("Line created successfully");
       setLineName("");
       setLineDescription("");
       setOpenCreateDialog(false);
-      fetchLines();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to create line");
+      toast.error(err?.data?.message || err?.message || "Failed to create line");
     } finally {
       setLoading(false);
     }
@@ -91,18 +83,14 @@ export default function LinesPage() {
     }
     setLoading(true);
     try {
-      await api.put(`/api/lines/${editingLine._id}`, {
-        name: lineName.trim(),
-        description: lineDescription.trim()
-      });
+      await updateLineMutation({ id: editingLine._id, name: lineName.trim(), description: lineDescription.trim() }).unwrap();
       toast.success("Line updated successfully");
       setLineName("");
       setLineDescription("");
       setEditingLine(null);
       setOpenEditDialog(false);
-      fetchLines();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update line");
+      toast.error(err?.data?.message || err?.message || "Failed to update line");
     } finally {
       setLoading(false);
     }
@@ -111,11 +99,10 @@ export default function LinesPage() {
   const deleteLine = async (line) => {
     setLoading(true);
     try {
-      await api.delete(`/api/lines/${line._id}`);
+      await deleteLineMutation(line._id).unwrap();
       toast.success("Line deleted successfully");
-      fetchLines();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to delete line");
+      toast.error(err?.data?.message || err?.message || "Failed to delete line");
     } finally {
       setLoading(false);
     }
@@ -134,12 +121,10 @@ export default function LinesPage() {
     try {
       // Send new order to backend
       const lineIds = items.map(line => line._id);
-      await api.post("/api/lines/reorder", { lineIds });
+      await reorderLinesMutation({ lineIds }).unwrap();
       toast.success("Lines reordered successfully");
     } catch (err) {
       toast.error("Failed to save new order");
-      // Revert to original order on error
-      fetchLines();
     }
   };
 

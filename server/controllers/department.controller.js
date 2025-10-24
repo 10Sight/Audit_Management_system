@@ -168,6 +168,11 @@ export const assignEmployeeToDepartment = asyncHandler(async (req, res) => {
   const employee = await Employee.findById(employeeId);
   if (!employee) throw new ApiError(404, "Employee not found");
 
+  // Permission: admin can assign only employees; superadmin can assign any role
+  if (req.user.role === 'admin' && employee.role !== 'employee') {
+    throw new ApiError(403, "Admins can assign departments to employees only");
+  }
+
   // Find new department
   const newDepartment = await Department.findById(departmentId);
   if (!newDepartment) throw new ApiError(404, "Department not found");
@@ -206,7 +211,7 @@ export const assignEmployeeToDepartment = asyncHandler(async (req, res) => {
 // Get department statistics
 export const getDepartmentStats = asyncHandler(async (req, res) => {
   // Use Promise.all to run queries concurrently for better performance
-  const [stats, totalDepartments, activeDepartments, totalEmployees] = await Promise.all([
+  const [stats, totalDepartments, activeDepartments, totalUsers, totalEmployees] = await Promise.all([
     Department.aggregate([
       {
         $lookup: {
@@ -254,7 +259,8 @@ export const getDepartmentStats = asyncHandler(async (req, res) => {
     ]),
     Department.countDocuments(),
     Department.countDocuments({ isActive: true }),
-    Employee.countDocuments()
+    Employee.countDocuments(), // total users (all roles)
+    Employee.countDocuments({ role: 'employee' }) // employees only
   ]);
 
   logger.info(`Department statistics fetched by ${req.user.fullName} (${req.user.employeeId})`);
@@ -267,6 +273,7 @@ export const getDepartmentStats = asyncHandler(async (req, res) => {
         summary: {
           totalDepartments,
           activeDepartments,
+          totalUsers,
           totalEmployees
         }
       },

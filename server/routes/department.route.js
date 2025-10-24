@@ -34,6 +34,6 @@ router.put("/:id", verifyJWT, authorizeRoles("admin"), updateDepartment);
 router.delete("/:id", verifyJWT, authorizeRoles("admin"), deleteDepartment);
 
 // Assign employee to department (admin only)
-router.post("/assign-employee", verifyJWT, authorizeRoles("admin"), assignEmployeeToDepartment);
+router.post("/assign-employee", verifyJWT, authorizeRoles("admin", "superadmin"), assignEmployeeToDepartment);
 
 export default router;

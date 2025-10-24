@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Create axios instance with optimized configuration
 const api = axios.create({
-    baseURL: import.meta.env.VITE_SERVER_URL || 'http://localhost:5000',
+    baseURL: import.meta.env.VITE_SERVER_URL || 'https://audit-management-system-server.onrender.com',
     withCredentials: true,
     timeout: 30000, // 30 second default timeout
     headers: {

@@ -16,15 +16,21 @@ export const createQuestion = asyncHandler(async (req, res) => {
   for (const q of questions) {
     if (!q.questionText) throw new ApiError(400, "Question text is required");
 
-    const question = await Question.create({
+    const isGlobal = !!q.isGlobal;
+    const base = {
       questionText: q.questionText,
-      isGlobal: q.isGlobal || false,
-      machines: q.machine ? [q.machine] : undefined,
-      lines: q.line ? [q.line] : undefined,
-      processes: q.process ? [q.process] : undefined,
+      isGlobal,
       createdBy: req.user.id,
-    });
+    };
 
+    // Only attach scoping fields when NOT global
+    if (!isGlobal) {
+      if (q.machine) base.machines = [q.machine];
+      if (q.line) base.lines = [q.line];
+      if (q.process) base.processes = [q.process];
+    }
+
+    const question = await Question.create(base);
     createdQuestions.push(question);
   }
 

@@ -13,7 +13,7 @@ import {
   Briefcase,
   Activity
 } from "lucide-react";
-import api from "@/utils/axios";
+import { useLogoutMutation } from "@/store/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -34,6 +34,7 @@ export default function EmployeeLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
+  const [logout] = useLogoutMutation();
 
   const navLinks = [
     { to: "/employee/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -43,7 +44,7 @@ export default function EmployeeLayout() {
 
   const handleLogout = async () => {
     try {
-      await api.post("/api/v1/auth/logout");
+      await logout().unwrap();
       setUser(null);
       navigate("/login", { replace: true });
     } catch (error) {

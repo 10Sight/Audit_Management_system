@@ -6,7 +6,7 @@ import {
   Edit3, 
   AlertTriangle
 } from "lucide-react"; 
-import api from "@/utils/axios";
+import { useGetMachinesQuery, useCreateMachineMutation, useUpdateMachineMutation, useDeleteMachineMutation } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -45,19 +45,14 @@ export default function MachinesPage() {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    fetchMachines();
-  }, []);
+  const { data: machinesRes } = useGetMachinesQuery();
+  const [createMachineMutation] = useCreateMachineMutation();
+  const [updateMachineMutation] = useUpdateMachineMutation();
+  const [deleteMachineMutation] = useDeleteMachineMutation();
 
-  const fetchMachines = async () => {
-    try {
-      const res = await api.get("/api/machines");
-      setMachines(res.data.data || []);
-    } catch (err) {
-      console.error("Error fetching machines:", err);
-      toast.error("Failed to fetch machines");
-    }
-  };
+  useEffect(() => {
+    setMachines(machinesRes?.data || []);
+  }, [machinesRes]);
 
   const createMachine = async () => {
     if (!machineName.trim()) {
@@ -66,17 +61,13 @@ export default function MachinesPage() {
     }
     setLoading(true);
     try {
-      await api.post("/api/machines", { 
-        name: machineName.trim(), 
-        description: machineDescription.trim() 
-      });
+      await createMachineMutation({ name: machineName.trim(), description: machineDescription.trim() }).unwrap();
       toast.success("Machine created successfully");
       setMachineName("");
       setMachineDescription("");
       setOpenCreateDialog(false);
-      fetchMachines();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to create machine");
+      toast.error(err?.data?.message || err?.message || "Failed to create machine");
     } finally {
       setLoading(false);
     }
@@ -89,18 +80,14 @@ export default function MachinesPage() {
     }
     setLoading(true);
     try {
-      await api.put(`/api/machines/${editingMachine._id}`, {
-        name: machineName.trim(),
-        description: machineDescription.trim()
-      });
+      await updateMachineMutation({ id: editingMachine._id, name: machineName.trim(), description: machineDescription.trim() }).unwrap();
       toast.success("Machine updated successfully");
       setMachineName("");
       setMachineDescription("");
       setEditingMachine(null);
       setOpenEditDialog(false);
-      fetchMachines();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update machine");
+      toast.error(err?.data?.message || err?.message || "Failed to update machine");
     } finally {
       setLoading(false);
     }
@@ -109,11 +96,10 @@ export default function MachinesPage() {
   const deleteMachine = async (machine) => {
     setLoading(true);
     try {
-      await api.delete(`/api/machines/${machine._id}`);
+      await deleteMachineMutation(machine._id).unwrap();
       toast.success("Machine deleted successfully");
-      fetchMachines();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to delete machine");
+      toast.error(err?.data?.message || err?.message || "Failed to delete machine");
     } finally {
       setLoading(false);
     }

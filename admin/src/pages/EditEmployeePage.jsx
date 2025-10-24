@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import api from "@/utils/axios";
+import { useGetEmployeeByIdQuery, useUpdateEmployeeByIdMutation, useGetDepartmentsQuery } from "@/store/api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import Loader from "@/components/ui/Loader";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function EditEmployeePage() {
   const { id } = useParams();
@@ -12,29 +16,31 @@ export default function EditEmployeePage() {
     fullName: "",
     emailId: "",
     phoneNumber: "",
-    department: "",
     role: "",
     employeeId: "",
   });
+  const [departmentId, setDepartmentId] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
+  const { data: empRes, isLoading: empLoading } = useGetEmployeeByIdQuery(id, { skip: !id });
+  const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
+  const [updateEmployeeMutation] = useUpdateEmployeeByIdMutation();
   useEffect(() => {
-    const fetchEmployee = async () => {
-      try {
-        const { data } = await api.get(
-          `/api/v1/auth/employee/${id}`
-        );
-        setEmployee(data.data.employee);
-      } catch (err) {
-        setError(err.response?.data?.message || "Failed to fetch employee details");
-      } finally {
-        setLoading(false);
-      }
-    };
-    if (id) fetchEmployee();
-  }, [id]);
+    setLoading(empLoading);
+    if (empRes?.data?.employee) {
+      const e = empRes.data.employee;
+      setEmployee({
+        fullName: e.fullName || "",
+        emailId: e.emailId || "",
+        phoneNumber: e.phoneNumber || "",
+        role: e.role || "",
+        employeeId: e.employeeId || "",
+      });
+      setDepartmentId(e.department?._id || e.department || "");
+    }
+  }, [empRes, empLoading]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,15 +51,11 @@ export default function EditEmployeePage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.put(
-        `/api/v1/auth/employee/${id}`,
-        employee,
-        { withCredentials: true }
-      );
+      await updateEmployeeMutation({ id, ...employee, department: departmentId }).unwrap();
       alert("Employee updated successfully!");
       navigate(`/admin/employee/${id}`);
     } catch (err) {
-      alert(err.response?.data?.message || "Failed to update employee");
+      alert(err?.data?.message || err?.message || "Failed to update employee");
     } finally {
       setSaving(false);
     }
@@ -63,110 +65,93 @@ export default function EditEmployeePage() {
   if (error) return <div className="text-red-500 p-6 text-center">{error}</div>;
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 max-w-3xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-md p-6 sm:p-8 space-y-6 border border-gray-300">
-        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">Edit Profile</h1>
+    <div className="p-4 sm:p-6 max-w-3xl mx-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle>Edit Employee</CardTitle>
+          <CardDescription>Update profile information and access level.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Full Name */}
+            <div className="space-y-1">
+              <Label>Full Name</Label>
+              <Input
+                name="fullName"
+                value={employee.fullName}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Full Name */}
-          <div>
-            <label className="block text-sm sm:text-base text-gray-700 mb-1">Full Name</label>
-            <input
-              type="text"
-              name="fullName"
-              value={employee.fullName}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              required
-            />
-          </div>
+            {/* Email */}
+            <div className="space-y-1">
+              <Label>Email</Label>
+              <Input
+                type="email"
+                name="emailId"
+                value={employee.emailId}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-          {/* Email */}
-          <div>
-            <label className="block text-sm sm:text-base text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              name="emailId"
-              value={employee.emailId}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              required
-            />
-          </div>
+            {/* Phone */}
+            <div className="space-y-1">
+              <Label>Phone Number</Label>
+              <Input
+                name="phoneNumber"
+                value={employee.phoneNumber}
+                onChange={handleChange}
+              />
+            </div>
 
-          {/* Phone */}
-          <div>
-            <label className="block text-sm sm:text-base text-gray-700 mb-1">Phone Number</label>
-            <input
-              type="text"
-              name="phoneNumber"
-              value={employee.phoneNumber}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-          </div>
+            {/* Department */}
+            <div className="space-y-1">
+              <Label>Department</Label>
+              <Select value={departmentId} onValueChange={setDepartmentId}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select Department" />
+                </SelectTrigger>
+                <SelectContent>
+                  {(deptRes?.data?.departments || []).map((d) => (
+                    <SelectItem key={d._id} value={d._id}>{d.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          {/* Department */}
-          <div>
-            <label className="block text-sm sm:text-base text-gray-700 mb-1">Department</label>
-            <input
-              type="text"
-              name="department"
-              value={employee.department}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-            />
-          </div>
+            {/* Role */}
+            <div className="space-y-1">
+              <Label>Role</Label>
+              <Select value={employee.role} onValueChange={(v) => setEmployee((prev) => ({ ...prev, role: v }))}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="employee">Employee</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          {/* Role */}
-          <div>
-            <label className="block text-sm sm:text-base text-gray-700 mb-1">Role</label>
-            <select
-              name="role"
-              value={employee.role}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-900 border border-gray-300 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-              required
-            >
-              <option value="">Select Role</option>
-              <option value="admin">Admin</option>
-              <option value="employee">Employee</option>
-              <option value="manager">Manager</option>
-            </select>
-          </div>
+            {/* Employee ID */}
+            <div className="space-y-1">
+              <Label>Employee ID</Label>
+              <Input name="employeeId" value={employee.employeeId} disabled />
+            </div>
 
-          {/* Employee ID */}
-          <div>
-            <label className="block text-sm sm:text-base text-gray-700 mb-1">Employee ID</label>
-            <input
-              type="text"
-              name="employeeId"
-              value={employee.employeeId}
-              onChange={handleChange}
-              className="w-full px-4 py-2 rounded-md bg-gray-100 text-gray-900 border border-gray-300"
-              disabled
-            />
-          </div>
-
-          {/* Submit Buttons */}
-          <div className="flex flex-col sm:flex-row justify-end gap-3 mt-2">
-            <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="w-full sm:w-auto px-4 py-2 rounded-md bg-gray-500 hover:bg-gray-600 text-white transition"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={saving}
-              className="w-full sm:w-auto px-4 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm"
-            >
-              {saving ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-        </form>
-      </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="outline" onClick={() => navigate(-1)}>
+                Cancel
+              </Button>
+              <Button type="submit" disabled={saving}>
+                {saving ? "Saving..." : "Save Changes"}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

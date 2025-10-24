@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
-import api from "@/utils/axios";
+import { useGetMeQuery } from "@/store/api";
 
 // Create the context
 const AuthContext = createContext();
@@ -10,29 +10,20 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null);
 
-  // Memoized fetch user function to prevent unnecessary re-renders
+  const { data: meData, isLoading: meLoading, refetch } = useGetMeQuery();
+
+  // Memoized fetch user function
   const fetchUser = useCallback(async () => {
-    if (loading === false) {
-      setLoading(true);
-    }
     setError(null);
-    
     try {
-      const res = await api.get("/api/v1/auth/me");
+      const res = await refetch();
       const userData = res.data?.data?.employee || null;
       setUser(userData);
     } catch (err) {
-      if (process.env.NODE_ENV === 'development') {
-        console.error('Auth fetch error:', err.response?.status);
-      }
       setUser(null);
-      if (err.response?.status !== 401) {
-        setError(err.message || 'Failed to authenticate');
-      }
-    } finally {
-      setLoading(false);
+      setError(err?.error || 'Failed to authenticate');
     }
-  }, [loading]);
+  }, [refetch]);
 
   // Memoized logout function
   const logout = useCallback(() => {
@@ -40,22 +31,14 @@ export const AuthProvider = ({ children }) => {
     setError(null);
   }, []);
 
-  // Only fetch user on initial mount
+  // Sync local state with RTK Query data
   useEffect(() => {
-    let mounted = true;
-    
-    const initAuth = async () => {
-      if (mounted) {
-        await fetchUser();
-      }
-    };
-    
-    initAuth();
-    
-    return () => {
-      mounted = false;
-    };
-  }, []); // Empty dependency array for initial fetch only
+    setLoading(meLoading);
+    const userData = meData?.data?.employee || null;
+    if (userData !== undefined) {
+      setUser(userData);
+    }
+  }, [meData, meLoading]);
 
   // Memoize context value to prevent unnecessary re-renders
   const contextValue = useMemo(() => ({

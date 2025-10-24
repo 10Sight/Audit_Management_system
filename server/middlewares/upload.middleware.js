@@ -1,6 +1,13 @@
 import multer from 'multer';
-import { storage } from '../config/cloudinary.config.js';
+import fs from 'fs';
+import path from 'path';
 import { ApiError } from '../utils/ApiError.js';
+
+// Ensure local upload directory exists
+const uploadDir = path.resolve(process.cwd(), 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 // File filter for images only
 const fileFilter = (req, file, cb) => {
@@ -13,14 +20,27 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+// Local disk storage first; Cloudinary upload happens in controller
+const diskStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    const timestamp = Date.now();
+    const safeName = (file.originalname || 'photo').replace(/[^a-zA-Z0-9._-]/g, '_');
+    const ext = path.extname(safeName) || '.jpg';
+    cb(null, `audit_${timestamp}_${Math.random().toString(36).slice(2)}${ext}`);
+  }
+});
+
 // Configure multer
 const upload = multer({
-  storage: storage,
+  storage: diskStorage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit (reduced for faster uploads)
-    files: 3, // Maximum 3 files per request
-    fieldSize: 10 * 1024 * 1024, // 10MB field size
+    fileSize: 8 * 1024 * 1024, // 8MB limit
+    files: 5,
+    fieldSize: 10 * 1024 * 1024,
   },
 });
 

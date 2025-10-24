@@ -12,14 +12,17 @@ const CameraCapture = ({ isOpen, onClose, onCapture, questionId, questionText })
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const fileInputRef = useRef(null);
+  const isStartingRef = useRef(false);
 
   // Start camera
   const startCamera = useCallback(async () => {
+    if (isStartingRef.current) return; // prevent parallel starts
+    isStartingRef.current = true;
     try {
       setError(null);
       setIsCapturing(true);
       
-      // Stop existing stream
+      // Stop existing stream first
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
       }
@@ -34,8 +37,22 @@ const CameraCapture = ({ isOpen, onClose, onCapture, questionId, questionText })
       
       setStream(mediaStream);
       if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-        videoRef.current.play();
+        const video = videoRef.current;
+        video.srcObject = mediaStream;
+        // Wait for metadata before play
+        await new Promise((resolve) => {
+          const onLoaded = () => {
+            video.removeEventListener('loadedmetadata', onLoaded);
+            resolve();
+          };
+          video.addEventListener('loadedmetadata', onLoaded);
+        });
+        try {
+          await video.play();
+        } catch (playErr) {
+          // Ignore AbortError triggered by quick reloads
+          console.warn('video.play() interrupted:', playErr?.message);
+        }
       }
     } catch (err) {
       console.error('Camera access error:', err);
@@ -43,6 +60,7 @@ const CameraCapture = ({ isOpen, onClose, onCapture, questionId, questionText })
       toast.error('Camera access denied or not available');
     } finally {
       setIsCapturing(false);
+      isStartingRef.current = false;
     }
   }, [facingMode, stream]);
 
@@ -57,8 +75,13 @@ const CameraCapture = ({ isOpen, onClose, onCapture, questionId, questionText })
     }
   }, [stream]);
 
-  // Toggle camera (front/back)
+// Toggle camera (front/back)
   const toggleCamera = () => {
+    // Stop first to avoid play() interruption
+    if (stream) {
+      stream.getTracks().forEach(t => t.stop());
+      setStream(null);
+    }
     setFacingMode(prev => prev === 'user' ? 'environment' : 'user');
   };
 
@@ -70,25 +93,36 @@ const CameraCapture = ({ isOpen, onClose, onCapture, questionId, questionText })
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
 
-    // Set canvas dimensions to match video
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    // Downscale for faster upload (max 800px)
+    const srcW = video.videoWidth;
+    const srcH = video.videoHeight;
+    const maxDim = 800;
+    let dstW = srcW;
+    let dstH = srcH;
+    if (srcW > srcH && srcW > maxDim) {
+      dstW = maxDim; dstH = Math.round((srcH * maxDim) / srcW);
+    } else if (srcH >= srcW && srcH > maxDim) {
+      dstH = maxDim; dstW = Math.round((srcW * maxDim) / srcH);
+    }
 
-    // Draw the video frame to canvas
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.width = dstW;
+    canvas.height = dstH;
 
-    // Convert to blob with compression
+    // Draw the video frame to canvas (scaled)
+    context.drawImage(video, 0, 0, dstW, dstH);
+
+    // Convert to small WebP blob for speed
     canvas.toBlob((blob) => {
       if (blob) {
         const imageUrl = URL.createObjectURL(blob);
         setCapturedImage({
           blob,
           url: imageUrl,
-          file: new File([blob], `audit_photo_${Date.now()}.jpg`, { type: 'image/jpeg' })
+          file: new File([blob], `audit_photo_${Date.now()}.webp`, { type: 'image/webp' })
         });
         stopCamera();
       }
-    }, 'image/jpeg', 0.6); // Increased compression
+    }, 'image/webp', 0.5);
   };
 
   // Handle file upload
@@ -142,7 +176,7 @@ const CameraCapture = ({ isOpen, onClose, onCapture, questionId, questionText })
     onClose();
   };
 
-  // Start camera when dialog opens
+// Start camera when dialog opens
   React.useEffect(() => {
     if (isOpen && !capturedImage) {
       startCamera();
@@ -156,7 +190,12 @@ const CameraCapture = ({ isOpen, onClose, onCapture, questionId, questionText })
 
   // Update camera when facing mode changes
   React.useEffect(() => {
-    if (isOpen && stream && !capturedImage) {
+    if (isOpen && !capturedImage) {
+      // Stop before restarting to avoid interrupted play()
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+        setStream(null);
+      }
       startCamera();
     }
   }, [facingMode]);
