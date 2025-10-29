@@ -17,6 +17,7 @@ const AdminCreateTemplatePage = lazy(() => import("@/pages/AdminCreateTemplatePa
 const EmployeeFillInspectionPage = lazy(() => import("@/pages/EmployeeFillInspectionPage"));
 const AuditsPage = lazy(() => import("@/pages/AuditPage"));
 const DepartmentPage = lazy(() => import("@/pages/DepartmentPage"));
+const DepartmentDetailPage = lazy(() => import("@/pages/DepartmentDetailPage"));
 const AuditDetailPage = lazy(() => import("@/pages/AuditDetailPage"));
 const AdminManageQuestionsPage = lazy(() => import("@/pages/AdminManageQuestionsPage"));
 const EmployeeDashboard = lazy(() => import("@/pages/EmployeeDashboard"));
@@ -54,6 +55,7 @@ export default function AppRoutes() {
           <Route path="audits/:id" element={<AuditDetailPage />} />
           <Route path="audits/create" element={<AdminCreateTemplatePage />} />
           <Route path="departments" element={<DepartmentPage />} />
+          <Route path="departments/:id" element={<DepartmentDetailPage />} />
           <Route path="lines" element={<LinesPage />} />
           <Route path="machines" element={<MachinesPage />} />
           <Route path="processes" element={<ProcessesPage />} />

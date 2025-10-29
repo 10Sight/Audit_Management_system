@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { 
   Trash2, 
   Plus, 
@@ -52,9 +52,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 export default function DepartmentPage() {
+  const navigate = useNavigate();
   const [departments, setDepartments] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [stats, setStats] = useState({});
@@ -65,6 +68,7 @@ export default function DepartmentPage() {
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedTransferDepartment, setSelectedTransferDepartment] = useState("");
+  const [includeAssigned, setIncludeAssigned] = useState(false);
 
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -88,6 +92,14 @@ export default function DepartmentPage() {
     setEmployees(Array.isArray(usersRes?.data?.users) ? usersRes.data.users : []);
     setStats(statsRes?.data || {});
   }, [deptRes, usersRes, statsRes]);
+
+  const { unassignedEmployees, assignedEmployees } = useMemo(() => {
+    const onlyEmployees = (employees || []).filter((u) => (u.role?.toLowerCase?.() || "") === "employee");
+    return {
+      unassignedEmployees: onlyEmployees.filter((u) => !u.department),
+      assignedEmployees: onlyEmployees.filter((u) => !!u.department),
+    };
+  }, [employees]);
 
   // CRUD Operations
   const createDepartment = async () => {
@@ -209,7 +221,16 @@ export default function DepartmentPage() {
     return (
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {departments.map((department) => (
-          <Card key={department._id} className="group hover:shadow-lg transition-all duration-200">
+          <Card
+            key={department._id}
+            className="group hover:shadow-lg transition-all duration-200 cursor-pointer"
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate(`/admin/departments/${department._id}`)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') navigate(`/admin/departments/${department._id}`)
+            }}
+          >
             <CardContent className="p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="p-3 rounded-full bg-primary/10">
@@ -219,15 +240,28 @@ export default function DepartmentPage() {
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    onClick={() => openEditDepartment(department)}
+                    onClick={(e) => { e.stopPropagation(); navigate(`/admin/departments/${department._id}`); }}
+                    title="View members"
+                    aria-label="View members"
+                  >
+                    <Users className="h-4 w-4" />
+                    <span className="hidden sm:inline ml-1">Members</span>
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={(e) => { e.stopPropagation(); openEditDepartment(department); }}
+                    title="Edit department"
+                    aria-label="Edit department"
                   >
                     <Edit3 className="h-4 w-4" />
                   </Button>
                   <Button 
                     variant="ghost" 
                     size="sm" 
-                    onClick={() => openDeleteConfirm(department)}
+                    onClick={(e) => { e.stopPropagation(); openDeleteConfirm(department); }}
                     className="text-destructive hover:text-destructive"
+                    title="Delete department"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -439,10 +473,25 @@ export default function DepartmentPage() {
           <DialogHeader>
             <DialogTitle>Assign Employee to Department</DialogTitle>
             <DialogDescription>
-              Select an employee and assign them to a department
+              Unassigned employees are shown by default. Enable the option below to reassign employees already in a department.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
+            <div className="flex items-center justify-between rounded-md border p-3 bg-muted/30">
+              <div className="space-y-0.5">
+                <p className="text-sm font-medium">Include already-assigned</p>
+                <p className="text-xs text-muted-foreground">Allows reassigning employees who already belong to a department</p>
+              </div>
+              <label className="inline-flex items-center gap-2 text-sm text-muted-foreground select-none">
+                <Checkbox
+                  checked={includeAssigned}
+                  onCheckedChange={(v) => setIncludeAssigned(Boolean(v))}
+                  aria-label="Include already-assigned employees"
+                />
+                Include assigned
+              </label>
+            </div>
+
             <div className="grid gap-2">
               <Label>Select Employee</Label>
               <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
@@ -450,19 +499,23 @@ export default function DepartmentPage() {
                   <SelectValue placeholder="Choose an employee" />
                 </SelectTrigger>
                 <SelectContent>
-                  {employees.map((employee) => (
+                  {(includeAssigned ? unassignedEmployees.concat(assignedEmployees) : unassignedEmployees).map((employee) => (
                     <SelectItem key={employee._id} value={employee._id}>
                       {employee.fullName} ({employee.employeeId})
                       {employee.department && (
-                        <span className="text-muted-foreground ml-2">
-                          - Currently in {employee.department.name}
-                        </span>
+                        <span className="text-muted-foreground ml-2">– {employee.department?.name || "Assigned"}</span>
                       )}
                     </SelectItem>
                   ))}
+                  {(!unassignedEmployees.length && !includeAssigned) && (
+                    <SelectItem value="__none__" disabled>
+                      All employees are already assigned to a department
+                    </SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             </div>
+
             <div className="grid gap-2">
               <Label>Select Department</Label>
               <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
@@ -484,7 +537,7 @@ export default function DepartmentPage() {
               Cancel
             </Button>
             <Button onClick={assignEmployeeToDepartment} disabled={assignLoading}>
-              {assignLoading ? "Assigning..." : "Assign Employee"}
+              {assignLoading ? "Assigning..." : includeAssigned ? "Assign / Reassign" : "Assign Employee"}
             </Button>
           </DialogFooter>
         </DialogContent>

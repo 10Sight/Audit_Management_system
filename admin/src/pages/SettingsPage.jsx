@@ -55,6 +55,13 @@ export default function SettingsPage() {
     }
   };
 
+  const getDepartmentName = (dept) => {
+    if (!dept) return 'Not assigned';
+    if (typeof dept === 'string') return dept;
+    if (typeof dept === 'object' && dept?.name) return dept.name;
+    return 'Not assigned';
+  };
+
   if (loading)
     return <Loader />;
   if (!profile)
@@ -113,7 +120,7 @@ export default function SettingsPage() {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Briefcase className="h-4 w-4" />
-                  <span>{profile.department || "No Department"}</span>
+                  <span>{getDepartmentName(profile.department)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Calendar className="h-4 w-4" />
@@ -164,7 +171,7 @@ export default function SettingsPage() {
                 <ProfileItem 
                   icon={<Briefcase className="h-5 w-5 text-purple-500" />} 
                   label="Department" 
-                  value={profile.department || "Not assigned"} 
+                  value={getDepartmentName(profile.department)} 
                 />
                 <ProfileItem 
                   icon={<IdCard className="h-5 w-5 text-orange-500" />} 

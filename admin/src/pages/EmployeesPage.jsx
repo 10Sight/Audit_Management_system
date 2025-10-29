@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -13,7 +13,7 @@ import {
   Edit,
   Users
 } from "lucide-react";
-import { useGetEmployeesQuery } from "@/store/api";
+import { useGetDepartmentsQuery, useGetEmployeesQuery } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -68,6 +68,7 @@ export default function EmployeesPage() {
   }, [searchTerm]);
 
   const { data, isFetching, isLoading: queryLoading } = useGetEmployeesQuery({ page, limit, search: debouncedSearch });
+  const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
 
   useEffect(() => {
     setLoading(queryLoading);
@@ -77,6 +78,20 @@ export default function EmployeesPage() {
     }
   }, [data, queryLoading]);
 
+  const departmentMap = useMemo(() => {
+    const list = deptRes?.data?.departments || [];
+    const map = new Map();
+    for (const d of list) map.set(d._id, d.name);
+    return map;
+  }, [deptRes]);
+
+  const getDepartmentName = (dept) => {
+    if (!dept) return 'N/A';
+    if (typeof dept === 'object' && dept?.name) return dept.name;
+    if (typeof dept === 'string') return departmentMap.get(dept) || 'N/A';
+    return 'N/A';
+  };
+
   const downloadExcel = () => {
     if (!employees.length) return;
 
@@ -84,7 +99,7 @@ export default function EmployeesPage() {
       "Full Name": emp.fullName,
       Email: emp.emailId,
       "Employee ID": emp.employeeId,
-      Department: emp.department?.name || emp.department || 'N/A',
+      Department: getDepartmentName(emp.department),
       Phone: emp.phoneNumber,
       Role: emp.role,
       Created: new Date(emp.createdAt).toLocaleDateString(),
@@ -207,7 +222,7 @@ export default function EmployeesPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">{emp.department?.name || emp.department || 'N/A'}</Badge>
+                        <Badge variant="outline">{getDepartmentName(emp.department)}</Badge>
                       </TableCell>
                       <TableCell>
                         <Badge variant={getRoleBadgeVariant(emp.role)}>

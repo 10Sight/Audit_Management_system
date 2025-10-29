@@ -61,6 +61,13 @@ export default function EmployeeLayout() {
       .toUpperCase();
   };
 
+  const getDepartmentName = (dept) => {
+    if (!dept) return "Department";
+    if (typeof dept === "string") return dept;
+    if (typeof dept === "object" && dept?.name) return dept.name;
+    return "Department";
+  };
+
   const SidebarContent = ({ className = "" }) => (
     <div className={`flex h-full flex-col ${className}`}>
       {/* Logo */}
@@ -85,7 +92,7 @@ export default function EmployeeLayout() {
               {user?.fullName || "Employee"}
             </span>
             <Badge variant="secondary" className="w-fit text-xs">
-              {user?.department || "Department"}
+              {getDepartmentName(user?.department)}
             </Badge>
           </div>
         </div>
