@@ -112,11 +112,27 @@ export const getAudits = asyncHandler(async (req, res) => {
     query = { auditor: req.query.auditor };
   }
 
-  // Add date range filter if provided
+  // Add date range filter if provided (match either logical audit date or creation timestamp)
   if (req.query.startDate || req.query.endDate) {
-    query.date = {};
-    if (req.query.startDate) query.date.$gte = new Date(req.query.startDate);
-    if (req.query.endDate) query.date.$lte = new Date(req.query.endDate);
+    const start = req.query.startDate ? new Date(req.query.startDate) : null;
+    const end = req.query.endDate ? new Date(req.query.endDate) : null;
+
+    const dateRange = {};
+    const createdAtRange = {};
+    if (start) { dateRange.$gte = start; createdAtRange.$gte = start; }
+    if (end) { dateRange.$lte = end; createdAtRange.$lte = end; }
+
+    // Combine with any existing query via $and
+    const base = Object.keys(query).length ? [query] : [];
+    query = {
+      $and: [
+        ...base,
+        { $or: [
+          Object.keys(dateRange).length ? { date: dateRange } : {},
+          Object.keys(createdAtRange).length ? { createdAt: createdAtRange } : {}
+        ]}
+      ]
+    };
   }
 
   // Optional filters: line, machine, process
@@ -131,18 +147,38 @@ export const getAudits = asyncHandler(async (req, res) => {
     query.answers = { $not: { $elemMatch: { answer: 'Yes' } } };
   }
 
-  const audits = await Audit.find(query)
-    .select('date line machine process lineLeader shiftIncharge auditor createdBy createdAt answers')
-    .populate("line", "name")
-    .populate("machine", "name")
-    .populate("process", "name")
-    .populate("auditor", "fullName emailId")
-    .populate("createdBy", "fullName employeeId")
-    .populate("answers.question", "questionText")
-    .sort({ createdAt: -1 })
-    .limit(limit)
-    .skip(skip)
-    .lean(); // Use lean for better performance
+  let audits;
+  try {
+    audits = await Audit.find(query)
+      .select('date line machine process lineLeader shiftIncharge auditor createdBy createdAt answers')
+      .populate("line", "name")
+      .populate("machine", "name")
+      .populate("process", "name")
+      .populate("auditor", "fullName emailId")
+      .populate("createdBy", "fullName employeeId")
+      .populate({ path: "answers.question", select: "questionText", options: { lean: true } })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(skip)
+      .lean(); // Use lean for better performance
+  } catch (err) {
+    if (err?.name === 'CastError') {
+      // Fallback without populating nested answers if legacy data shape
+      audits = await Audit.find(query)
+        .select('date line machine process lineLeader shiftIncharge auditor createdBy createdAt answers')
+        .populate("line", "name")
+        .populate("machine", "name")
+        .populate("process", "name")
+        .populate("auditor", "fullName emailId")
+        .populate("createdBy", "fullName employeeId")
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip(skip)
+        .lean();
+    } else {
+      throw err;
+    }
+  }
 
   const total = await Audit.countDocuments(query);
 

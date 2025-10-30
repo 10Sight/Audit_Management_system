@@ -7,8 +7,38 @@ import logger from "../logger/winston.logger.js";
 import {asyncHandler} from "../utils/asyncHandler.js";
 import EVN from "../config/env.config.js";
 
+// Bootstrap: create initial superadmin if none exists
+export const bootstrapSuperAdmin = asyncHandler(async (req, res) => {
+  const existing = await Employee.findOne({ role: "superadmin" });
+  if (existing) throw new ApiError(400, "Superadmin already exists");
+
+  const { fullName, emailId, department, employeeId, username, phoneNumber, password } = req.body || {};
+  if (!fullName || !emailId || !employeeId || !phoneNumber || !password) {
+    throw new ApiError(400, "Missing required fields");
+  }
+
+  const user = await Employee.create({
+    fullName,
+    emailId,
+    department: department || undefined,
+    employeeId,
+    username: username || employeeId.toLowerCase(),
+    phoneNumber,
+    password,
+    role: "superadmin",
+  });
+
+  await user.populate('department', 'name description');
+  logger.info(`Superadmin bootstrapped: ${user.fullName} (${user.employeeId})`);
+  return res.status(201).json(new ApiResponse(201, { employee: user }, "Superadmin created"));
+});
 export const registerEmployee = asyncHandler(async (req, res) => {
   const { fullName, emailId, department, employeeId, username, phoneNumber, password, role } = req.body;
+
+  // Permissions: Only superadmin can create admins/superadmins; admins can create employees only
+  if (req.user?.role !== "superadmin" && role !== "employee") {
+    throw new ApiError(403, "Only superadmin can create admin users");
+  }
 
   // Validate department exists
   if (department) {
@@ -87,10 +117,11 @@ export const loginEmployee = asyncHandler(async (req, res) => {
   if (!isMatch) throw new ApiError(401, "Invalid password");
 
   const token = employee.generateJWT();
+  const isProd = EVN.NODE_ENV === 'production';
   res.cookie("accessToken", token, {
     httpOnly: true,
-    secure: true,
-    sameSite: "None",
+    secure: isProd,
+    sameSite: isProd ? "None" : "Lax",
     maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
@@ -99,10 +130,11 @@ export const loginEmployee = asyncHandler(async (req, res) => {
 });
 
 export const logoutEmployee = asyncHandler(async (_req, res) => {
+  const isProd = EVN.NODE_ENV === 'production';
   res.clearCookie("accessToken", {
     httpOnly: true,
-    secure: true,
-    sameSite: "None",
+    secure: isProd,
+    sameSite: isProd ? "None" : "Lax",
   });
   logger.info("Employee logged out");
   return res.status(200).json(new ApiResponse(200, null, "Logout successful"));
@@ -175,17 +207,26 @@ export const updateEmployee = asyncHandler(async (req, res) => {
   const employee = await Employee.findById(id);
   if (!employee) throw new ApiError(404, "Employee not found");
 
-  const isAdmin = req.user.role === "admin";
+  const isManager = ["admin", "superadmin"].includes(req.user.role);
   const isSelf = String(req.user.id) === String(id);
 
-  if (!isAdmin && !isSelf) throw new ApiError(403, "Only admin or owner can update this employee");
-  if (!isAdmin && role && role !== employee.role) throw new ApiError(403, "Employees cannot change role");
+  if (!isManager && !isSelf) throw new ApiError(403, "Only admin/superadmin or owner can update this employee");
+
+  // Admins cannot modify other admins or elevate roles to admin/superadmin
+  if (req.user.role === "admin") {
+    if (employee.role === "admin" && !isSelf) {
+      throw new ApiError(403, "Admins cannot modify other admin accounts");
+    }
+    if (role && ["admin", "superadmin"].includes(role) && role !== employee.role) {
+      throw new ApiError(403, "Admins cannot assign admin/superadmin roles");
+    }
+  }
 
   if (fullName) employee.fullName = fullName;
   if (emailId) employee.emailId = emailId;
   if (department) employee.department = department;
   if (phoneNumber) employee.phoneNumber = phoneNumber;
-  if (isAdmin && role) employee.role = role;
+  if (isManager && role) employee.role = role;
 
   await employee.save();
 
@@ -194,13 +235,21 @@ export const updateEmployee = asyncHandler(async (req, res) => {
   );
   return res.status(200).json(new ApiResponse(200, { employee }, "Employee updated successfully"));
 });
-
 export const deleteEmployee = asyncHandler(async (req, res) => {
-  if (req.user.role !== "admin") throw new ApiError(403, "Only admin can delete employees");
+  if (!["admin", "superadmin"].includes(req.user.role)) {
+    throw new ApiError(403, "Only admin/superadmin can delete users");
+  }
 
   const { id } = req.params;
-  const employee = await Employee.findByIdAndDelete(id);
+  const employee = await Employee.findById(id);
   if (!employee) throw new ApiError(404, `Employee with ID ${id} not found`);
+
+  // Only superadmin can delete admin/superadmin accounts
+  if (["admin", "superadmin"].includes(employee.role) && req.user.role !== "superadmin") {
+    throw new ApiError(403, "Only superadmin can delete admin/superadmin accounts");
+  }
+
+  await Employee.findByIdAndDelete(id);
 
   logger.info(
     `Employee deleted: ${employee.fullName} (${employee.employeeId}) by ${req.user.fullName} (${req.user.employeeId})`
@@ -252,7 +301,7 @@ export const populateUsernames = asyncHandler(async (req, res) => {
   }
 });
 
-// Get all users (admins, supervisors, employees) for admin management
+// Get all users (admins, employees) for management
 export const getAllUsers = asyncHandler(async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 20;
@@ -262,14 +311,21 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   // Build query - get all users
   let query = {};
 
+  // Optional role filter
+  const role = (req.query.role || '').toLowerCase();
+  if (["admin", "employee", "superadmin"].includes(role)) {
+    query.role = role;
+  }
+
   // Add search functionality
   if (search) {
-    query.$or = [
+    const searchOr = [
       { fullName: { $regex: search, $options: 'i' } },
       { emailId: { $regex: search, $options: 'i' } },
       { employeeId: { $regex: search, $options: 'i' } },
       { phoneNumber: { $regex: search, $options: 'i' } }
     ];
+    query.$or = searchOr;
   }
 
   const total = await Employee.countDocuments(query);
@@ -299,4 +355,24 @@ export const getAllUsers = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(new ApiResponse(200, { users, total, page, limit }, "All users fetched successfully"));
+});
+
+// Superadmin/Admin: user stats (counts by role, recent users)
+export const getUserStats = asyncHandler(async (req, res) => {
+  const [total, admins, employees, superadmins, recentUsers] = await Promise.all([
+    Employee.countDocuments({}),
+    Employee.countDocuments({ role: 'admin' }),
+    Employee.countDocuments({ role: 'employee' }),
+    Employee.countDocuments({ role: 'superadmin' }),
+    Employee.find({})
+      .select('-password')
+      .populate('department', 'name description')
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .lean(),
+  ]);
+
+  return res.status(200).json(new ApiResponse(200, {
+    total, admins, employees, superadmins, recentUsers
+  }, 'User stats fetched successfully'));
 });

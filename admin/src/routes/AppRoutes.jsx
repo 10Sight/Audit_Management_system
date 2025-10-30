@@ -6,6 +6,7 @@ import OptimizedLoader from "@/components/ui/OptimizedLoader";
 // Layouts
 const AdminLayout = lazy(() => import("../Layout/AdminLayout"));
 const EmployeeLayout = lazy(() => import("../Layout/EmployeeLayout"));
+const SuperAdminLayout = lazy(() => import("../Layout/SuperAdminLayout"));
 
 // Pages
 const LoginPage = lazy(() => import("../pages/LoginPage"));
@@ -28,6 +29,8 @@ const EmployeeAuditResult = lazy(() => import("@/pages/EmployeeAuditResult"));
 const LinesPage = lazy(() => import("@/pages/LinesPage"));
 const MachinesPage = lazy(() => import("@/pages/MachinesPage"));
 const ProcessesPage = lazy(() => import("@/pages/ProcessesPage"));
+const SuperAdminDashboard = lazy(() => import("@/pages/SuperAdminDashboard"));
+const SuperAdminUsersPage = lazy(() => import("@/pages/SuperAdminUsersPage"));
 
 export default function AppRoutes() {
   return (
@@ -35,6 +38,21 @@ export default function AppRoutes() {
       <Routes>
         {/* Public Route */}
         <Route path="/login" element={<LoginPage />} />
+
+        {/* SuperAdmin Routes */}
+        <Route
+          path="/superadmin/*"
+          element={
+            <ProtectedRoute allowedRoles={["superadmin"]}>
+              <SuperAdminLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<SuperAdminDashboard />} />
+          <Route path="dashboard" element={<SuperAdminDashboard />} />
+          <Route path="users" element={<SuperAdminUsersPage />} />
+          <Route path="add-user" element={<AddEmployeePage />} />
+        </Route>
 
         {/* Admin Routes */}
         <Route

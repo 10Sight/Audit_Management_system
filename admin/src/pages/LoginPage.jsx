@@ -40,7 +40,8 @@ export default function LoginPage() {
       const role = result?.data?.employee?.role;
       if (!role) throw new Error("Invalid login response");
       setUser(result.data.employee);
-      if (role === "admin") navigate("/admin/dashboard", { replace: true });
+      if (role === "superadmin") navigate("/superadmin/dashboard", { replace: true });
+      else if (role === "admin") navigate("/admin/dashboard", { replace: true });
       else if (role === "employee") navigate("/employee/inspections", { replace: true });
       else throw new Error("Invalid role received from server");
     } catch (err) {

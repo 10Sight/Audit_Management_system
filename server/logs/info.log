@@ -2380,3 +2380,57 @@
 [29 Oct, 2025 - 22:05:25:525] [33mwarn[39m: [33mMongoDB disconnected[39m
 [29 Oct, 2025 - 22:07:14:714] [33mwarn[39m: [33mMongoDB disconnected[39m
 [29 Oct, 2025 - 22:37:12:3712] [33mwarn[39m: [33mMongoDB disconnected[39m
+[29 Oct, 2025 - 23:46:37:4637] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[29 Oct, 2025 - 23:46:39:4639] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[30 Oct, 2025 - 22:10:00:100] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[30 Oct, 2025 - 22:10:06:106] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[30 Oct, 2025 - 22:30:39:3039] [33mwarn[39m: [33mMongoDB disconnected[39m
+[30 Oct, 2025 - 22:37:24:3724] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[30 Oct, 2025 - 22:37:25:3725] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[30 Oct, 2025 - 22:45:31:4531] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[30 Oct, 2025 - 22:45:32:4532] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[30 Oct, 2025 - 23:10:38:1038] [33mwarn[39m: [33mMongoDB disconnected[39m
+[30 Oct, 2025 - 23:17:49:1749] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[30 Oct, 2025 - 23:17:54:1754] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[30 Oct, 2025 - 23:18:09:189] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[30 Oct, 2025 - 23:18:12:1812] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[30 Oct, 2025 - 23:34:57:3457] [33mwarn[39m: [33mMongoDB disconnected[39m
+[31 Oct, 2025 - 00:02:23:223] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Oct, 2025 - 00:02:24:224] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[31 Oct, 2025 - 00:02:37:237] [34minfo[39m: [34mSuperadmin bootstrapped: Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:20:14:2014] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Oct, 2025 - 00:20:14:2014] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[31 Oct, 2025 - 00:22:44:2244] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Oct, 2025 - 00:22:44:2244] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[31 Oct, 2025 - 00:25:59:2559] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Oct, 2025 - 00:26:01:261] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[31 Oct, 2025 - 00:35:55:3555] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:35:55:3555] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:36:14:3614] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:36:49:3649] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:36:49:3649] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:37:52:3752] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:37:56:3756] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:37:57:3757] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:38:05:385] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:39:32:3932] [34minfo[39m: [34mEmployee deleted: testing (1111) by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:39:32:3932] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:39:54:3954] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:39:54:3954] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:40:58:4058] [33mwarn[39m: [33mMongoDB disconnected[39m
+[31 Oct, 2025 - 00:41:49:4149] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Oct, 2025 - 00:41:50:4150] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[31 Oct, 2025 - 00:42:33:4233] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:42:33:4233] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:42:45:4245] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:44:47:4447] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:44:48:4448] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:45:04:454] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:45:04:454] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:46:36:4636] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Oct, 2025 - 00:46:36:4636] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[31 Oct, 2025 - 00:46:43:4643] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:46:47:4647] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:46:58:4658] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:47:03:473] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[31 Oct, 2025 - 00:47:09:479] [34minfo[39m: [34mEmployee logged out[39m

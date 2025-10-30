@@ -25,7 +25,10 @@ const EmployeeSchema = new Schema(
     department: {
       type: Schema.Types.ObjectId,
       ref: "Department",
-      required: [true, "Department is required"],
+      required: function() {
+        // Allow superadmin without department
+        return this.role !== "superadmin";
+      },
     },
 
     username: {

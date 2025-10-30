@@ -8,14 +8,12 @@ import {
   LogOut,
   Menu,
   Bell,
-  Search,
   User,
   Briefcase,
   Activity
 } from "lucide-react";
 import { useLogoutMutation } from "@/store/api";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   DropdownMenu,
@@ -26,11 +24,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { motion } from "framer-motion";
 
 export default function EmployeeLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
@@ -68,7 +67,50 @@ export default function EmployeeLayout() {
     return "Department";
   };
 
-  const SidebarContent = ({ className = "" }) => (
+  const CollapsedSidebarContent = () => (
+    <div className="flex h-full flex-col">
+      {/* Logo */}
+      <div className="flex h-16 items-center justify-center border-b">
+        <Briefcase className="h-6 w-6 text-primary" />
+      </div>
+
+      {/* Navigation */}
+      <nav className="flex-1 space-y-2 p-2">
+        {navLinks.map((link) => {
+          const Icon = link.icon;
+          const isActive = location.pathname === link.to;
+          return (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`flex items-center justify-center w-full h-10 rounded-lg transition-all hover:bg-accent ${
+                isActive 
+                  ? "bg-primary text-primary-foreground" 
+                  : "text-muted-foreground hover:text-accent-foreground"
+              }`}
+              title={link.label}
+            >
+              <Icon className="h-4 w-4" />
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Logout */}
+      <div className="border-t p-2">
+        <Button 
+          variant="ghost" 
+          size="sm"
+          className="w-full h-10 p-0 text-destructive hover:text-destructive"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+
+  const SidebarContent = ({ className = "", isMobile = false, onLinkClick = () => {} }) => (
     <div className={`flex h-full flex-col ${className}`}>
       {/* Logo */}
       <div className="flex h-16 items-center border-b px-6">
@@ -87,11 +129,11 @@ export default function EmployeeLayout() {
               {getInitials(user?.fullName)}
             </AvatarFallback>
           </Avatar>
-          <div className="flex flex-col">
-            <span className="text-sm font-medium">
+          <div className="flex flex-col min-w-0">
+            <span className="text-sm font-medium truncate">
               {user?.fullName || "Employee"}
             </span>
-            <Badge variant="secondary" className="w-fit text-xs">
+            <Badge variant="secondary" className="w-fit text-xs truncate">
               {getDepartmentName(user?.department)}
             </Badge>
           </div>
@@ -108,14 +150,15 @@ export default function EmployeeLayout() {
             <Link
               key={link.to}
               to={link.to}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground ${
+              onClick={() => isMobile && onLinkClick()}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground ${
                 isActive 
                   ? "bg-primary text-primary-foreground shadow-sm" 
                   : "text-muted-foreground"
               }`}
             >
-              <Icon className="h-4 w-4" />
-              {link.label}
+              <Icon className="h-4 w-4 shrink-0" />
+              <span className="truncate">{link.label}</span>
             </Link>
           );
         })}
@@ -139,26 +182,30 @@ export default function EmployeeLayout() {
     <div className="flex h-screen bg-background">
       {/* Desktop Sidebar */}
       <motion.aside
-        initial={{ width: sidebarOpen ? 280 : 80 }}
-        animate={{ width: sidebarOpen ? 280 : 80 }}
+        initial={{ width: sidebarOpen ? 280 : 64 }}
+        animate={{ width: sidebarOpen ? 280 : 64 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="hidden border-r bg-background md:block"
+        className="hidden border-r bg-background md:block shrink-0"
       >
-        <SidebarContent />
+        {sidebarOpen ? <SidebarContent /> : <CollapsedSidebarContent />}
       </motion.aside>
 
-      <div className="flex flex-col flex-1">
+      <div className="flex flex-col flex-1 min-w-0">
         {/* Header */}
-        <header className="flex h-16 items-center gap-4 border-b bg-background px-6">
+        <header className="flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
           {/* Mobile Menu */}
-          <Sheet>
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0">
-              <SidebarContent className="w-full" />
+            <SheetContent side="left" className="p-0 w-[280px]">
+              <SheetHeader className="sr-only">
+                <SheetTitle>Navigation Menu</SheetTitle>
+                <SheetDescription>Main navigation menu for the application</SheetDescription>
+              </SheetHeader>
+              <SidebarContent className="w-full" isMobile={true} onLinkClick={() => setMobileMenuOpen(false)} />
             </SheetContent>
           </Sheet>
 
@@ -172,20 +219,8 @@ export default function EmployeeLayout() {
             <Menu className="h-5 w-5" />
           </Button>
 
-          {/* Search */}
-          <div className="flex-1">
-            <div className="relative max-w-md">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search inspections..."
-                className="w-full pl-8 pr-4"
-              />
-            </div>
-          </div>
-
           {/* Header Actions */}
-          <div className="flex items-center gap-4">
+          <div className="ml-auto flex items-center gap-3 md:gap-4">
             {/* Notifications */}
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-4 w-4" />
@@ -193,19 +228,17 @@ export default function EmployeeLayout() {
             </Button>
             
             {/* Activity Status */}
-            <div className="flex items-center gap-2">
+            <div className="hidden sm:flex items-center gap-2">
               <Activity className="h-4 w-4 text-green-500" />
-              <span className="text-sm text-muted-foreground hidden sm:block">
-                Active
-              </span>
+              <span className="text-sm text-muted-foreground">Active</span>
             </div>
 
             {/* Brand */}
-            <div className="flex items-center gap-2">
+            <div className="hidden xs:flex items-center gap-2">
               <img 
                 src="/marelli.svg" 
                 alt="Motherson" 
-                className="h-8 w-8 object-contain" 
+                className="h-6 w-6 md:h-8 md:w-8 object-contain" 
               />
               <span className="hidden sm:block font-semibold text-lg">
                 Motherson
@@ -215,8 +248,8 @@ export default function EmployeeLayout() {
             {/* User Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                  <Avatar className="h-10 w-10">
+                <Button variant="ghost" className="relative h-9 w-9 md:h-10 md:w-10 rounded-full">
+                  <Avatar className="h-8 w-8 md:h-10 md:w-10">
                     <AvatarImage src="" />
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       {getInitials(user?.fullName)}
@@ -255,8 +288,8 @@ export default function EmployeeLayout() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto bg-muted/10 p-6">
-          <div className="mx-auto max-w-7xl">
+        <main className="flex-1 overflow-y-auto bg-muted/10">
+          <div className="mx-auto max-w-7xl w-full p-4 md:p-6">
             <Outlet />
           </div>
         </main>

@@ -119,7 +119,7 @@ export default function EmployeesPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Employees</h1>
           <p className="text-muted-foreground">Manage your team members and their access</p>
@@ -191,9 +191,9 @@ export default function EmployeesPage() {
                 <TableRow>
                   <TableHead>Employee</TableHead>
                   <TableHead>Contact</TableHead>
-                  <TableHead>Department</TableHead>
-                  <TableHead>Role</TableHead>
-                  <TableHead>Joined</TableHead>
+                  <TableHead className="hidden md:table-cell">Department</TableHead>
+                  <TableHead className="hidden md:table-cell">Role</TableHead>
+                  <TableHead className="hidden md:table-cell">Joined</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -221,15 +221,15 @@ export default function EmployeesPage() {
                           <div className="text-muted-foreground">{emp.phoneNumber}</div>
                         </div>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden md:table-cell">
                         <Badge variant="outline">{getDepartmentName(emp.department)}</Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="hidden md:table-cell">
                         <Badge variant={getRoleBadgeVariant(emp.role)}>
                           {emp.role}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell className="hidden md:table-cell text-muted-foreground">
                         {new Date(emp.createdAt).toLocaleDateString()}
                       </TableCell>
                       <TableCell className="text-right">
@@ -281,7 +281,7 @@ export default function EmployeesPage() {
           </div>
 
           {/* Pagination */}
-          <div className="flex items-center justify-between px-6 py-4 border-t">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-6 py-4 border-t">
             <div className="flex items-center space-x-6 lg:space-x-8">
               <div className="flex items-center space-x-2">
                 <p className="text-sm font-medium">Rows per page</p>

@@ -10,7 +10,6 @@ import {
   Settings,
   Menu,
   Bell,
-  Search,
   LogOut,
   User,
   Shield,
@@ -22,7 +21,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useLogoutMutation } from "@/store/api";
 import RealtimeNotifications from "@/components/RealtimeNotifications";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   DropdownMenu,
@@ -272,20 +270,8 @@ export default function AdminLayout() {
             <Menu className="h-5 w-5" />
           </Button>
 
-          {/* Search Bar */}
-          <div className="flex-1 max-w-md">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search..."
-                className="w-full pl-8 pr-4 h-9"
-              />
-            </div>
-          </div>
-
           {/* Header Actions */}
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="ml-auto flex items-center gap-2 md:gap-4">
             {/* Real-time Notifications */}
             <RealtimeNotifications />
             

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const baseUrl = import.meta.env.VITE_SERVER_URL || 'https://audit-management-system-server.onrender.com';
+const baseUrl = import.meta.env.VITE_SERVER_URL || 'http://https://audit-management-system-server.onrender.com';
 
 export const api = createApi({
   reducerPath: 'api',
@@ -36,6 +36,10 @@ export const api = createApi({
       query: () => '/api/v1/auth/me',
       providesTags: ['Auth'],
     }),
+    getUserStats: builder.query({
+      query: () => '/api/v1/auth/user-stats',
+      providesTags: ['Employee'],
+    }),
 
     // Employees
     getEmployees: builder.query({
@@ -52,9 +56,9 @@ export const api = createApi({
           : [{ type: 'Employee', id: 'LIST' }],
     }),
     getAllUsers: builder.query({
-      query: ({ page = 1, limit = 20, search = '' } = {}) => ({
+      query: ({ page = 1, limit = 20, search = '', role } = {}) => ({
         url: '/api/v1/auth/get-all-users',
-        params: { page, limit, search },
+        params: { page, limit, search, ...(role ? { role } : {}) },
       }),
       providesTags: [{ type: 'Employee', id: 'ALL' }],
     }),
@@ -256,4 +260,5 @@ export const {
   useRegisterEmployeeMutation,
   useUploadImageMutation,
   useDeleteUploadMutation,
+  useGetUserStatsQuery,
 } = api;

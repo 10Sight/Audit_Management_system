@@ -131,20 +131,20 @@ export default function EmployeeDashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center space-x-4">
-          <Avatar className="h-12 w-12">
+          <Avatar className="h-10 w-10 sm:h-12 sm:w-12">
             <AvatarImage src="" />
             <AvatarFallback className="bg-primary text-primary-foreground">
               {getInitials(currentUser?.fullName)}
             </AvatarFallback>
           </Avatar>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Welcome back, {currentUser?.fullName}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Welcome back, {currentUser?.fullName}</h1>
             <p className="text-muted-foreground">Here's your audit activity overview</p>
           </div>
         </div>
-        <Button onClick={downloadExcel} disabled={audits.length === 0}>
+        <Button onClick={downloadExcel} disabled={audits.length === 0} className="w-full sm:w-auto">
           <Download className="mr-2 h-4 w-4" />
           Export Data
         </Button>
@@ -197,7 +197,7 @@ export default function EmployeeDashboard() {
       {/* Audit History */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
             <Activity className="h-5 w-5" />
             Recent Audits
           </CardTitle>
@@ -214,47 +214,48 @@ export default function EmployeeDashboard() {
             </div>
           ) : (
             <>
-              <div className="rounded-md border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Production Line</TableHead>
-                      <TableHead>Machine</TableHead>
-                      <TableHead>Process</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Score</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
+              <div className="w-full overflow-x-auto -mx-2 sm:mx-0">
+                <div className="rounded-md border min-w-[720px] mx-2 sm:mx-0">
+                  <Table className="min-w-[720px]">
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="whitespace-nowrap">Date</TableHead>
+                        <TableHead className="whitespace-nowrap">Line</TableHead>
+                        <TableHead className="hidden md:table-cell whitespace-nowrap">Machine</TableHead>
+                        <TableHead className="hidden md:table-cell whitespace-nowrap">Process</TableHead>
+                        <TableHead className="whitespace-nowrap">Status</TableHead>
+                        <TableHead className="hidden md:table-cell whitespace-nowrap">Score</TableHead>
+                        <TableHead className="text-right whitespace-nowrap">Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
                   <TableBody>
                     {currentAudits.map((audit) => {
                       const statusInfo = getStatusInfo(audit);
                       return (
                         <TableRow key={audit._id}>
-                          <TableCell className="font-medium">
+                          <TableCell className="font-medium whitespace-nowrap">
                             <div className="flex items-center gap-2">
                               <Calendar className="h-4 w-4 text-muted-foreground" />
                               {new Date(audit.date).toLocaleDateString()}
                             </div>
                           </TableCell>
-                          <TableCell>{audit.line?.name || "N/A"}</TableCell>
-                          <TableCell>{audit.machine?.name || "N/A"}</TableCell>
-                          <TableCell>{audit.process?.name || "N/A"}</TableCell>
+                          <TableCell className="whitespace-nowrap truncate max-w-[200px]">{audit.line?.name || "N/A"}</TableCell>
+                          <TableCell className="hidden md:table-cell whitespace-nowrap truncate max-w-[200px]">{audit.machine?.name || "N/A"}</TableCell>
+                          <TableCell className="hidden md:table-cell whitespace-nowrap truncate max-w-[200px]">{audit.process?.name || "N/A"}</TableCell>
                           <TableCell>
                             {statusInfo.isCompleted ? (
-                              <Badge className="bg-green-100 text-green-800 border-green-200">
+                              <Badge className="bg-green-100 text-green-800 border-green-200 px-2.5 py-0.5 text-xs">
                                 <CheckCircle2 className="mr-1 h-3 w-3" />
                                 Completed
                               </Badge>
                             ) : (
-                              <Badge variant="destructive">
+                              <Badge variant="destructive" className="text-xs px-2.5 py-0.5">
                                 <XCircle className="mr-1 h-3 w-3" />
                                 Issues Found
                               </Badge>
                             )}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="hidden md:table-cell">
                             <div className="flex items-center gap-2">
                               <span className="text-sm font-medium">
                                 {statusInfo.completedCount}/{statusInfo.totalCount}
@@ -282,20 +283,24 @@ export default function EmployeeDashboard() {
                     })}
                   </TableBody>
                 </Table>
+                </div>
               </div>
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between px-2 mt-4">
-                  <div className="flex items-center space-x-6 lg:space-x-8">
-                    <div className="flex items-center space-x-2">
-                      <p className="text-sm font-medium">Rows per page</p>
-                      <span className="text-sm text-muted-foreground">{auditsPerPage}</span>
+                <div className="flex flex-col gap-3 px-2 mt-4">
+                  {/* Desktop layout */}
+                  <div className="hidden sm:flex items-center justify-between">
+                    <div className="flex items-center space-x-6 lg:space-x-8">
+                      <div className="flex items-center space-x-2">
+                        <p className="text-sm font-medium">Rows per page</p>
+                        <span className="text-sm text-muted-foreground">{auditsPerPage}</span>
+                      </div>
+                      <div className="flex w-[120px] items-center justify-center text-sm font-medium">
+                        Page {currentPage} of {totalPages}
+                      </div>
                     </div>
-                    <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-                      Page {currentPage} of {totalPages}
-                    </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="hidden sm:flex items-center space-x-2">
                       <Button
                         variant="outline"
                         className="h-8 w-8 p-0"
@@ -330,6 +335,45 @@ export default function EmployeeDashboard() {
                         disabled={currentPage >= totalPages}
                       >
                         <span className="sr-only">Go to last page</span>
+                        »»
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Mobile layout */}
+                  <div className="sm:hidden flex flex-col items-center gap-2">
+                    <div className="text-sm font-medium">Page {currentPage} of {totalPages}</div>
+                    <div className="grid grid-cols-4 gap-2 w-full">
+                      <Button
+                        variant="outline"
+                        className="h-9 w-full p-0"
+                        onClick={() => setCurrentPage(1)}
+                        disabled={currentPage === 1}
+                      >
+                        ««
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="h-9 w-full p-0"
+                        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={currentPage === 1}
+                      >
+                        ‹
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="h-9 w-full p-0"
+                        onClick={() => setCurrentPage((prev) => prev + 1)}
+                        disabled={currentPage >= totalPages}
+                      >
+                        ›
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="h-9 w-full p-0"
+                        onClick={() => setCurrentPage(totalPages)}
+                        disabled={currentPage >= totalPages}
+                      >
                         »»
                       </Button>
                     </div>

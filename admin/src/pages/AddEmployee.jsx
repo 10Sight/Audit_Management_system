@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
@@ -12,14 +12,18 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 export default function AddEmployeePage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [departments, setDepartments] = useState([]);
 
-  const schema = Joi.object({
+  const allowedRoles = useMemo(() => (user?.role === "superadmin" ? ["employee", "admin"] : ["employee"]), [user]);
+
+  const schema = useMemo(() => Joi.object({
     fullName: Joi.string()
       .required()
       .messages({ "string.empty": "Full Name is required" }),
@@ -47,11 +51,11 @@ export default function AddEmployeePage() {
       "string.empty": "Password is required",
       "string.min": "Password must be at least 6 characters",
     }),
-    role: Joi.string().valid("employee", "admin", "supervisor").required().messages({
+    role: Joi.string().valid(...allowedRoles).required().messages({
       "any.only": "Role must be selected",
       "string.empty": "Role is required",
     }),
-  });
+  }), [allowedRoles]);
 
   const form = useForm({
     resolver: joiResolver(schema),
@@ -76,10 +80,10 @@ export default function AddEmployeePage() {
     setLoading(true);
     try {
       const res = await registerEmployee(data).unwrap();
-      toast.success(res?.message || "Employee registered successfully!");
-      setTimeout(() => navigate("/admin/employees"), 1000);
+      toast.success(res?.message || "User registered successfully!");
+      setTimeout(() => navigate(user?.role === "superadmin" ? "/superadmin/users" : "/admin/employees"), 800);
     } catch (error) {
-      toast.error(error?.data?.message || error?.message || "Failed to register employee");
+      toast.error(error?.data?.message || error?.message || "Failed to register user");
     } finally {
       setLoading(false);
     }
@@ -90,10 +94,10 @@ export default function AddEmployeePage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <Button
+<Button
             variant="outline"
             size="icon"
-            onClick={() => navigate("/admin/employees")}
+            onClick={() => navigate(user?.role === "superadmin" ? "/superadmin/users" : "/admin/employees")}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -247,7 +251,7 @@ export default function AddEmployeePage() {
                   )}
                 />
 
-                {/* Role */}
+{/* Role */}
                 <FormField
                   control={form.control}
                   name="role"
@@ -260,13 +264,14 @@ export default function AddEmployeePage() {
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select employee role" />
+                            <SelectValue placeholder="Select user role" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="employee">Employee</SelectItem>
-                          <SelectItem value="supervisor">Supervisor</SelectItem>
-                          <SelectItem value="admin">Administrator</SelectItem>
+                          {user?.role === "superadmin" && (
+                            <SelectItem value="admin">Administrator</SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                       <FormMessage />

@@ -82,7 +82,7 @@ export default function AdminCreateTemplatePage() {
     }
   };
 
-  if (!currentUser || currentUser.role !== "admin") return <div>Access Denied</div>;
+  if (!currentUser || !["admin", "superadmin"].includes(currentUser.role)) return <div>Access Denied</div>;
 
   return (
     <div className="p-6 max-w-5xl mx-auto">

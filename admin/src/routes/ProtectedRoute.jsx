@@ -8,8 +8,9 @@ const ProtectedRoute = memo(({ children, allowedRoles }) => {
 
   if (loading) return <OptimizedLoader />;
   if (!user) return <Navigate to="/login" replace />;
-  if (!allowedRoles.includes(user.role))
-    return <Navigate to="/login" replace />; // Redirect to login instead of unauthorized
+  // Superadmin can access everything
+  if (user.role !== "superadmin" && !allowedRoles.includes(user.role))
+    return <Navigate to="/login" replace />;
 
   return children;
 });

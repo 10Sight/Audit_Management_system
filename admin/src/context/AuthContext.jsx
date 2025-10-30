@@ -59,3 +59,9 @@ export const AuthProvider = ({ children }) => {
 
 // Custom hook to use context easily
 export const useAuth = () => useContext(AuthContext);
+
+export const getRoleBasedRedirect = (role) => {
+  if (role === "superadmin") return "/superadmin/dashboard";
+  if (role === "admin") return "/admin/dashboard";
+  return "/employee/dashboard";
+};

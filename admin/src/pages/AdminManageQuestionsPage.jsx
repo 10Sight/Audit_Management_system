@@ -88,7 +88,7 @@ export default function AdminManageQuestionsPage() {
     }
   };
 
-  if (!currentUser || currentUser.role !== "admin") {
+  if (!currentUser || !["admin", "superadmin"].includes(currentUser.role)) {
     return (
       <div className="space-y-8">
         <Card>
