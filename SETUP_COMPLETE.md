@@ -143,7 +143,7 @@ redis-cli ping
 
 **Test Backend:**
 ```bash
-curl https://swargaya-learning-management-system-3vcz.onrender.com
+curl https://audit-management-system-server.onrender.com
 # Should return: "This is Backend Running"
 ```
 
