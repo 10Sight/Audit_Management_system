@@ -19,6 +19,7 @@ import auditRoutes from "./routes/audit.route.js";
 import questionRoutes from "./routes/question.route.js";
 import departmentRoutes from "./routes/department.route.js";
 import uploadRoutes from "./routes/upload.route.js";
+import errorHandler from "./middlewares/error.middleware.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -98,6 +99,9 @@ app.use("/api/processes", processRoutes);
 app.use("/api/audits", auditRoutes);
 app.use("/api/v1/departments", departmentRoutes);
 app.use("/api/upload", uploadRoutes);
+
+// Global error handler (must be after all routes)
+app.use(errorHandler);
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {

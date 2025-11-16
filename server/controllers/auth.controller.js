@@ -35,8 +35,14 @@ export const bootstrapSuperAdmin = asyncHandler(async (req, res) => {
 export const registerEmployee = asyncHandler(async (req, res) => {
   const { fullName, emailId, department, employeeId, username, phoneNumber, password, role } = req.body;
 
-  // Permissions: Only superadmin can create admins/superadmins; admins can create employees only
-  if (req.user?.role !== "superadmin" && role !== "employee") {
+  // Normalize role coming from client; default to 'employee' if missing
+  const requestedRole = role || "employee";
+  const creatorRole = req.user?.role;
+
+  // Permissions:
+  // - Admins can only create employees
+  // - Only superadmin can create admin/superadmin users
+  if (creatorRole !== "superadmin" && requestedRole !== "employee") {
     throw new ApiError(403, "Only superadmin can create admin users");
   }
 
@@ -59,7 +65,7 @@ export const registerEmployee = asyncHandler(async (req, res) => {
     username,
     phoneNumber,
     password,
-    role,
+    role: requestedRole,
   });
 
   // Update department employee count
