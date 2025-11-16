@@ -52,17 +52,34 @@ export const registerEmployee = asyncHandler(async (req, res) => {
     if (!departmentExists) throw new ApiError(400, "Invalid department selected");
   }
 
+  // Check for duplicates based on fields that are actually unique in the DB
   const existingUser = await Employee.findOne({
-    $or: [{ emailId }, { phoneNumber }, { employeeId }, { username }],
+    $or: [{ emailId }, { phoneNumber }, { employeeId }],
   });
-  if (existingUser) throw new ApiError(409, "User already exists with given Email / Phone / Employee ID / Username");
+
+  if (existingUser) {
+    // Provide a more specific error message to help debugging
+    let conflictField = "";
+    if (existingUser.emailId === emailId) conflictField = "Email";
+    else if (existingUser.phoneNumber === phoneNumber) conflictField = "Phone";
+    else if (existingUser.employeeId === employeeId?.toUpperCase()) conflictField = "Employee ID";
+
+    const message = conflictField
+      ? `${conflictField} already exists`
+      : "User already exists with given Email / Phone / Employee ID";
+
+    throw new ApiError(409, message);
+  }
+
+  // If username not provided, default to employeeId in lowercase for login convenience
+  const finalUsername = username || (employeeId ? employeeId.toLowerCase() : undefined);
 
   const employee = await Employee.create({
     fullName,
     emailId,
     department,
     employeeId,
-    username,
+    username: finalUsername,
     phoneNumber,
     password,
     role: requestedRole,

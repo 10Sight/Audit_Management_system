@@ -19,7 +19,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Initialize socket connection
-    const newSocket = io(import.meta.env.VITE_SERVER_URL || 'https://audit-management-system-server.onrender.com', {
+    const newSocket = io(import.meta.env.VITE_SERVER_URL || 'https://swargaya-learning-management-system-3vcz.onrender.com', {
       transports: ['polling', 'websocket'],
       withCredentials: true,
       autoConnect: true,

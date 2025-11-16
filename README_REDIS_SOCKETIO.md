@@ -81,8 +81,8 @@ This document explains the Redis caching and Socket.IO real-time features added 
 2. **Environment Variables**:
    Create `.env` file in the admin directory:
    ```env
-   VITE_SERVER_URL=https://audit-management-system-server.onrender.com
-   VITE_API_BASE_URL=https://audit-management-system-server.onrender.com/api
+   VITE_SERVER_URL=https://swargaya-learning-management-system-3vcz.onrender.com
+   VITE_API_BASE_URL=https://swargaya-learning-management-system-3vcz.onrender.com/api
    ```
 
 3. **Integrate Socket Provider**:
