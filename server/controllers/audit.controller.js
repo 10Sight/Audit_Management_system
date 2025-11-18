@@ -1,4 +1,5 @@
 import Audit from "../models/audit.model.js";
+import AuditEmailSetting from "../models/auditEmailSetting.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import logger from "../logger/winston.logger.js";
@@ -7,7 +8,7 @@ import { invalidateCache } from "../middlewares/cache.middleware.js";
 import sendMail from "../utils/mail.util.js";
 
 export const createAudit = asyncHandler(async (req, res) => {
-  const { date, line, machine, process, unit, lineLeader, shiftIncharge, answers } = req.body;
+  const { date, line, machine, process, unit, lineLeader, shiftIncharge, answers, lineRating, machineRating, processRating, unitRating, department } = req.body;
 
   if (!date || !line || !machine || !process || !lineLeader || !shiftIncharge) {
     throw new ApiError(400, "All required fields must be filled");
@@ -18,6 +19,23 @@ export const createAudit = asyncHandler(async (req, res) => {
   if (today !== enteredDate) {
     throw new ApiError(400, "Audit date must be today");
   }
+
+  // Validate ratings (1-10)
+  const parseRating = (value, label) => {
+    if (value === undefined || value === null || value === "") {
+      throw new ApiError(400, `${label} is required`);
+    }
+    const num = Number(value);
+    if (!Number.isFinite(num) || num < 1 || num > 10) {
+      throw new ApiError(400, `${label} must be a number between 1 and 10`);
+    }
+    return num;
+  };
+
+  const normalizedLineRating = parseRating(lineRating, "Line rating");
+  const normalizedMachineRating = parseRating(machineRating, "Machine rating");
+  const normalizedProcessRating = parseRating(processRating, "Process rating");
+  const normalizedUnitRating = parseRating(unitRating, "Unit rating");
 
   // Parse answers if it's a string (from form data)
   let parsedAnswers;
@@ -74,8 +92,13 @@ export const createAudit = asyncHandler(async (req, res) => {
     machine,
     process,
     unit,
+    department: department || req.user.department || undefined,
     lineLeader,
     shiftIncharge,
+    lineRating: normalizedLineRating,
+    machineRating: normalizedMachineRating,
+    processRating: normalizedProcessRating,
+    unitRating: normalizedUnitRating,
     auditor: req.user.id,     
     createdBy: req.user.id, 
     answers: parsedAnswers,
@@ -169,11 +192,12 @@ export const getAudits = asyncHandler(async (req, res) => {
   let audits;
   try {
     audits = await Audit.find(query)
-      .select('date line machine process unit lineLeader shiftIncharge auditor createdBy createdAt answers')
+      .select('date line machine process unit department lineLeader shiftIncharge lineRating machineRating processRating unitRating auditor createdBy createdAt answers')
       .populate("line", "name")
       .populate("machine", "name")
       .populate("process", "name")
       .populate("unit", "name")
+      .populate("department", "name")
       .populate("auditor", "fullName emailId")
       .populate("createdBy", "fullName employeeId")
       .populate({ path: "answers.question", select: "questionText", options: { lean: true } })
@@ -185,11 +209,12 @@ export const getAudits = asyncHandler(async (req, res) => {
     if (err?.name === 'CastError') {
       // Fallback without populating nested answers if legacy data shape
       audits = await Audit.find(query)
-        .select('date line machine process unit lineLeader shiftIncharge auditor createdBy createdAt answers')
+        .select('date line machine process unit department lineLeader shiftIncharge lineRating machineRating processRating unitRating auditor createdBy createdAt answers')
         .populate("line", "name")
         .populate("machine", "name")
         .populate("process", "name")
         .populate("unit", "name")
+        .populate("department", "name")
         .populate("auditor", "fullName emailId")
         .populate("createdBy", "fullName employeeId")
         .sort({ createdAt: -1 })
@@ -222,6 +247,7 @@ export const getAuditById = asyncHandler(async (req, res) => {
     .populate("machine", "name")
     .populate("process", "name")
     .populate("unit", "name")
+    .populate("department", "name")
     .populate("auditor", "fullName emailId")
     .populate("answers.question", "questionText")
     .populate("createdBy", "fullName employeeId"); 
@@ -233,18 +259,25 @@ export const getAuditById = asyncHandler(async (req, res) => {
 
 export const shareAuditByEmail = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { email, note } = req.body || {};
+  const { note } = req.body || {};
 
-  if (!email) {
-    throw new ApiError(400, "Email is required");
+  // Load global email settings configured by admin
+  const emailSetting = await AuditEmailSetting.findOne().sort({ createdAt: -1 }).lean();
+  if (!emailSetting || !emailSetting.to) {
+    throw new ApiError(400, "Audit email recipients are not configured. Please contact your administrator.");
   }
+
+  const primaryRecipients = emailSetting.to;
+  const ccRecipients = emailSetting.cc || undefined;
 
   const audit = await Audit.findById(id)
     .populate("line", "name")
     .populate("machine", "name")
     .populate("process", "name")
     .populate("unit", "name")
+    .populate("department", "name")
     .populate("auditor", "fullName emailId")
+    .populate({ path: "answers.question", select: "questionText questionType" })
     .populate("createdBy", "fullName employeeId");
 
   if (!audit) {
@@ -268,19 +301,41 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
   const machineName = audit.machine?.name || "N/A";
   const processName = audit.process?.name || "N/A";
   const unitName = audit.unit?.name || "N/A";
+  const departmentName = audit.department?.name || "N/A";
   const auditorName = audit.auditor?.fullName || "N/A";
 
   const totalQuestions = Array.isArray(audit.answers) ? audit.answers.length : 0;
-  const noCount = Array.isArray(audit.answers)
-    ? audit.answers.filter((a) => a.answer === "No").length
-    : 0;
-  const yesCount = totalQuestions - noCount;
+  const yesNoAnswers = Array.isArray(audit.answers)
+    ? audit.answers.filter((a) => {
+        const qType = a.question?.questionType;
+        // Treat undefined type as legacy yes/no question
+        return !qType || qType === "yes_no" || qType === "image";
+      })
+    : [];
+  const yesNoTotal = yesNoAnswers.length;
+  const noCount = yesNoAnswers.filter((a) => a.answer === "No").length;
+  const yesCount = yesNoAnswers.filter((a) => a.answer === "Yes").length;
+  const otherCount = Math.max(0, totalQuestions - yesNoTotal);
+
+  const lineRatingValue = audit.lineRating ?? null;
+  const machineRatingValue = audit.machineRating ?? null;
+  const processRatingValue = audit.processRating ?? null;
+  const unitRatingValue = audit.unitRating ?? null;
 
   const subject = `Audit Result - ${dateStr} - ${lineName}`;
 
   const rowsHtml = (audit.answers || [])
     .map((ans, idx) => {
-      const qText = ans.question?.questionText || ans.questionText || `Q${idx + 1}`;
+      const rawQuestionText = ans.question?.questionText || ans.questionText || `Q${idx + 1}`;
+      const qType = ans.question?.questionType;
+      let typeLabel = "";
+      if (qType === "mcq") typeLabel = "MCQ";
+      else if (qType === "dropdown") typeLabel = "Dropdown";
+      else if (qType === "short_text") typeLabel = "Short description";
+      else if (qType === "image") typeLabel = "Image + Yes/No";
+      else if (qType === "yes_no") typeLabel = "Yes/No";
+      const qText = typeLabel ? `${rawQuestionText} (${typeLabel})` : rawQuestionText;
+
       const remark = ans.remark || "-";
       const answer = ans.answer || "-";
       const photos = Array.isArray(ans.photos) ? ans.photos : [];
@@ -318,10 +373,23 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
 
       <div style="margin-bottom:16px;padding:12px 14px;border-radius:8px;background:#f9fafb;border:1px solid #e5e7eb;">
         <p style="margin:0 0 4px 0;font-size:13px;"><strong>Date:</strong> ${dateStr}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Department:</strong> ${departmentName}</p>
         <p style="margin:0 0 4px 0;font-size:13px;"><strong>Line:</strong> ${lineName}</p>
         <p style="margin:0 0 4px 0;font-size:13px;"><strong>Machine:</strong> ${machineName}</p>
         <p style="margin:0 0 4px 0;font-size:13px;"><strong>Process:</strong> ${processName}</p>
         <p style="margin:0 0 4px 0;font-size:13px;"><strong>Unit:</strong> ${unitName}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Line Rating:</strong> ${
+          lineRatingValue !== null ? `${lineRatingValue}/10` : "N/A"
+        }</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Machine Rating:</strong> ${
+          machineRatingValue !== null ? `${machineRatingValue}/10` : "N/A"
+        }</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Process Rating:</strong> ${
+          processRatingValue !== null ? `${processRatingValue}/10` : "N/A"
+        }</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Unit Rating:</strong> ${
+          unitRatingValue !== null ? `${unitRatingValue}/10` : "N/A"
+        }</p>
         <p style="margin:0 0 4px 0;font-size:13px;"><strong>Line Leader:</strong> ${
           audit.lineLeader || "N/A"
         }</p>
@@ -332,11 +400,11 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
       </div>
 
       <div style="margin-bottom:16px;">
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Total Questions:</strong> ${
-          totalQuestions
-        }</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>YES:</strong> ${yesCount}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>NO:</strong> ${noCount}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Total Questions:</strong> ${totalQuestions}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Yes/No Questions:</strong> ${yesNoTotal}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>YES (Yes/No only):</strong> ${yesCount}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>NO (Yes/No only):</strong> ${noCount}</p>
+        ${otherCount > 0 ? `<p style="margin:0 0 4px 0;font-size:13px;"><strong>Other Question Types:</strong> ${otherCount}</p>` : ""}
       </div>
 
       ${extraNote}
@@ -362,16 +430,56 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
     </div>
   `;
 
-  await sendMail(email, subject, html);
+  // Respond immediately and send the email in the background
+  res.json(new ApiResponse(200, null, "Audit share request received. Email will be sent shortly."));
 
-  logger.info(`Audit ${id} shared via email to ${email} by ${req.user._id}`);
+  sendMail(primaryRecipients, subject, html, ccRecipients)
+    .then(() => {
+      logger.info(`Audit ${id} shared via email to ${primaryRecipients}${ccRecipients ? ` (cc: ${ccRecipients})` : ""} by ${req.user._id}`);
+    })
+    .catch((error) => {
+      logger.error(`Failed to send audit ${id} email to ${primaryRecipients}${ccRecipients ? ` (cc: ${ccRecipients})` : ""}: ${error?.message || error}`);
+    });
+});
 
-  return res.json(new ApiResponse(200, null, "Audit shared via email"));
+// ===== Audit Email Settings (Admin) =====
+
+export const getAuditEmailSettings = asyncHandler(async (req, res) => {
+  const setting = await AuditEmailSetting.findOne().sort({ createdAt: -1 }).lean();
+  return res.json(new ApiResponse(200, setting, "Audit email settings fetched"));
+});
+
+export const updateAuditEmailSettings = asyncHandler(async (req, res) => {
+  const { to, cc } = req.body || {};
+
+  if (!to || !to.trim()) {
+    throw new ApiError(400, "Primary recipient email(s) are required");
+  }
+
+  const normalizedTo = to
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean)
+    .join(", ");
+
+  const normalizedCc = (cc || "")
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean)
+    .join(", ");
+
+  const setting = await AuditEmailSetting.findOneAndUpdate(
+    {},
+    { to: normalizedTo, cc: normalizedCc },
+    { new: true, upsert: true, setDefaultsOnInsert: true }
+  ).lean();
+
+  return res.json(new ApiResponse(200, setting, "Audit email settings updated"));
 });
 
 export const updateAudit = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { line, machine, process, unit, lineLeader, shiftIncharge, answers } = req.body;
+  const { line, machine, process, unit, lineLeader, shiftIncharge, answers, lineRating, machineRating, processRating, unitRating } = req.body;
 
   const audit = await Audit.findById(id);
   if (!audit) throw new ApiError(404, "Audit not found");
@@ -380,12 +488,30 @@ export const updateAudit = asyncHandler(async (req, res) => {
     throw new ApiError(403, "You are not authorized to update this audit");
   }
 
+  const normalizeRating = (value, label) => {
+    if (value === undefined || value === null || value === "") return undefined;
+    const num = Number(value);
+    if (!Number.isFinite(num) || num < 1 || num > 10) {
+      throw new ApiError(400, `${label} must be a number between 1 and 10`);
+    }
+    return num;
+  };
+
+  const updatedLineRating = normalizeRating(lineRating, "Line rating");
+  const updatedMachineRating = normalizeRating(machineRating, "Machine rating");
+  const updatedProcessRating = normalizeRating(processRating, "Process rating");
+  const updatedUnitRating = normalizeRating(unitRating, "Unit rating");
+
   if (line) audit.line = line;
   if (machine) audit.machine = machine;
   if (process) audit.process = process;
   if (unit) audit.unit = unit;
   if (lineLeader) audit.lineLeader = lineLeader;
   if (shiftIncharge) audit.shiftIncharge = shiftIncharge;
+  if (updatedLineRating !== undefined) audit.lineRating = updatedLineRating;
+  if (updatedMachineRating !== undefined) audit.machineRating = updatedMachineRating;
+  if (updatedProcessRating !== undefined) audit.processRating = updatedProcessRating;
+  if (updatedUnitRating !== undefined) audit.unitRating = updatedUnitRating;
 
   if (answers) {
     if (!Array.isArray(answers) || answers.length === 0) {

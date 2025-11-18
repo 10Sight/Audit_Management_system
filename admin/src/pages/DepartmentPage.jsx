@@ -338,7 +338,7 @@ export default function DepartmentPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.summary?.employeeRoleCount ?? stats.summary?.totalEmployees ?? 0}</div>
-            <p className="text-xs text-muted-foreground">Employees (role = employee)</p>
+            <p className="text-xs text-muted-foreground">Employees</p>
           </CardContent>
         </Card>
         <Card>

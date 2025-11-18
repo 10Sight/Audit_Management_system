@@ -62,9 +62,15 @@ export default function AuditDetailPage() {
           {audit.date ? new Date(audit.date).toLocaleDateString() : "N/A"})
         </h2>
         <p className="text-gray-600 mb-1">
-          Process: {audit.process?.name || "N/A"} | Unit: {audit.unit?.name || "N/A"} | Auditor:{" "}
+          Department: {audit.department?.name || "N/A"} | Process: {audit.process?.name || "N/A"} | Unit: {audit.unit?.name || "N/A"} | Auditor:{" "}
           {audit.auditor?.fullName || "N/A"} | Shift Incharge:{" "}
           {audit.shiftIncharge || "N/A"} | Line Leader: {audit.lineLeader || "N/A"}
+        </p>
+        <p className="text-gray-600 mb-1">
+          Line Rating: {audit.lineRating != null ? `${audit.lineRating}/10` : "N/A"} | Machine Rating: {audit.machineRating != null ? `${audit.machineRating}/10` : "N/A"}
+        </p>
+        <p className="text-gray-600 mb-1">
+          Process Rating: {audit.processRating != null ? `${audit.processRating}/10` : "N/A"} | Unit Rating: {audit.unitRating != null ? `${audit.unitRating}/10` : "N/A"}
         </p>
         <p className="text-gray-600">
           Created by: {audit.createdBy?.fullName || "N/A"}

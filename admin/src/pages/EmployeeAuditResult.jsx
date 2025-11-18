@@ -34,10 +34,15 @@ export default function EmployeeAuditResult() {
       {/* Audit Metadata */}
       <div className="bg-gray-100 p-4 sm:p-6 rounded-lg space-y-2 sm:space-y-3 border border-gray-300 shadow-sm">
         <div><strong>Date:</strong> {new Date(audit.date).toLocaleDateString()}</div>
+        <div><strong>Department:</strong> {audit.department?.name || audit.department || "N/A"}</div>
         <div><strong>Line:</strong> {audit.line?.name || audit.line}</div>
         <div><strong>Machine:</strong> {audit.machine?.name || audit.machine}</div>
         <div><strong>Process:</strong> {audit.process?.name || audit.process}</div>
         <div><strong>Unit:</strong> {audit.unit?.name || audit.unit}</div>
+        <div><strong>Line Rating:</strong> {audit.lineRating != null ? `${audit.lineRating}/10` : "N/A"}</div>
+        <div><strong>Machine Rating:</strong> {audit.machineRating != null ? `${audit.machineRating}/10` : "N/A"}</div>
+        <div><strong>Process Rating:</strong> {audit.processRating != null ? `${audit.processRating}/10` : "N/A"}</div>
+        <div><strong>Unit Rating:</strong> {audit.unitRating != null ? `${audit.unitRating}/10` : "N/A"}</div>
         <div><strong>Line Leader:</strong> {audit.lineLeader}</div>
         <div><strong>Shift Incharge:</strong> {audit.shiftIncharge}</div>
         <div><strong>Auditor:</strong> {audit.auditor?.fullName || "Unknown"}</div>

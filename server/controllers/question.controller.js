@@ -17,11 +17,49 @@ export const createQuestion = asyncHandler(async (req, res) => {
     if (!q.questionText) throw new ApiError(400, "Question text is required");
 
     const isGlobal = !!q.isGlobal;
+
+    // Normalize question type and extra configuration fields
+    const questionType = q.questionType || q.type || "yes_no";
+    const allowedTypes = ["yes_no", "mcq", "short_text", "image", "dropdown"];
+    if (!allowedTypes.includes(questionType)) {
+      throw new ApiError(400, `Invalid question type: ${questionType}`);
+    }
+
+    const options = Array.isArray(q.options)
+      ? q.options.map((opt) => (typeof opt === "string" ? opt.trim() : "")).filter(Boolean)
+      : [];
+
+    // Optional correct option index for MCQ/dropdown questions
+    let correctOptionIndex;
+    if (["mcq", "dropdown"].includes(questionType)) {
+      if (q.correctOptionIndex !== undefined && q.correctOptionIndex !== null) {
+        const idx = Number(q.correctOptionIndex);
+        if (!Number.isInteger(idx) || idx < 0 || idx >= options.length) {
+          throw new ApiError(400, "Invalid correct option index");
+        }
+        correctOptionIndex = idx;
+      }
+    }
+
+    const imageUrl = typeof q.imageUrl === "string" ? q.imageUrl.trim() : undefined;
+
     const base = {
       questionText: q.questionText,
+      questionType,
       isGlobal,
       createdBy: req.user.id,
     };
+
+    if (options.length && ["mcq", "dropdown"].includes(questionType)) {
+      base.options = options;
+      if (correctOptionIndex !== undefined) {
+        base.correctOptionIndex = correctOptionIndex;
+      }
+    }
+
+    if (imageUrl && questionType === "image") {
+      base.imageUrl = imageUrl;
+    }
 
     // Only attach scoping fields when NOT global
     if (!isGlobal) {

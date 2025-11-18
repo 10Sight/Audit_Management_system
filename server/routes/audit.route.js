@@ -6,6 +6,8 @@ import {
   deleteAudit,
   updateAudit,
   shareAuditByEmail,
+  getAuditEmailSettings,
+  updateAuditEmailSettings,
 } from "../controllers/audit.controller.js";
 import { verifyJWT, authorizeRoles } from "../middlewares/auth.middleware.js";
 import { cache, cacheConfig } from "../middlewares/cache.middleware.js";
@@ -16,6 +18,10 @@ const router = express.Router();
 router.get("/", verifyJWT, authorizeRoles("admin", "employee"), cache(cacheConfig.short), getAudits);
 // Auditor submits audit (with photo upload support)
 router.post("/", verifyJWT, authorizeRoles("employee", "manager", "admin"), uploadFields, createAudit);
+
+// Email settings (admin only)
+router.get("/email-settings", verifyJWT, authorizeRoles("admin"), getAuditEmailSettings);
+router.put("/email-settings", verifyJWT, authorizeRoles("admin"), updateAuditEmailSettings);
 
 // Admin (or manager) can view all audits
 

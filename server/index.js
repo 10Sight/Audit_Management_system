@@ -18,6 +18,7 @@ import processRoutes from "./routes/process.route.js";
 import unitRoutes from "./routes/unit.route.js";
 import auditRoutes from "./routes/audit.route.js";
 import questionRoutes from "./routes/question.route.js";
+import questionCategoryRoutes from "./routes/questionCategory.route.js";
 import departmentRoutes from "./routes/department.route.js";
 import uploadRoutes from "./routes/upload.route.js";
 import errorHandler from "./middlewares/error.middleware.js";
@@ -94,6 +95,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/questions", questionRoutes);
+app.use("/api/question-categories", questionCategoryRoutes);
 app.use("/api/machines", machineRoutes);
 app.use("/api/lines", lineRoutes);
 app.use("/api/processes", processRoutes);

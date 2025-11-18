@@ -36,6 +36,10 @@ export default function EmployeeFillInspectionPage() {
   const [unit, setUnit] = useState("");
   const [lineLeader, setLineLeader] = useState("");   
   const [shiftIncharge, setShiftIncharge] = useState("");
+  const [lineRating, setLineRating] = useState("");
+  const [machineRating, setMachineRating] = useState("");
+  const [processRating, setProcessRating] = useState("");
+  const [unitRating, setUnitRating] = useState("");
 
   const [questions, setQuestions] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -48,6 +52,21 @@ export default function EmployeeFillInspectionPage() {
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [sharing, setSharing] = useState(false);
+
+  const describeRating = (val) => {
+    const num = Number(val);
+    if (!Number.isFinite(num)) return "Select a score between 1 and 10";
+    if (num <= 3) return "Poor";
+    if (num <= 7) return "Average";
+    return "Excellent";
+  };
+
+  const getDepartmentName = (dept) => {
+    if (!dept) return "Department";
+    if (typeof dept === "string") return dept;
+    if (typeof dept === "object" && dept?.name) return dept.name;
+    return "Department";
+  };
 
   const { data: linesRes } = useGetLinesQuery();
   const { data: machinesRes } = useGetMachinesQuery();
@@ -172,9 +191,25 @@ export default function EmployeeFillInspectionPage() {
     e.preventDefault();
     if (submitting) return; // prevent double submit
 
-    if (!line || !machine || !process || !unit || !lineLeader || !shiftIncharge) {
+    if (!line || !machine || !process || !unit || !lineLeader || !shiftIncharge || !lineRating || !machineRating || !processRating || !unitRating) {
       toast.error("Please fill all required fields");
       return;
+    }
+
+    // Validate rating values (1-10)
+    const ratingFields = [
+      { label: 'Line rating', value: lineRating },
+      { label: 'Machine rating', value: machineRating },
+      { label: 'Process rating', value: processRating },
+      { label: 'Unit rating', value: unitRating },
+    ];
+
+    for (const field of ratingFields) {
+      const num = Number(field.value);
+      if (!Number.isFinite(num) || num < 1 || num > 10) {
+        toast.error(`${field.label} must be a number between 1 and 10`);
+        return;
+      }
     }
 
     // Validate each 'No' answer has remark and at least one photo
@@ -203,8 +238,13 @@ export default function EmployeeFillInspectionPage() {
         machine,
         process,
         unit,
+        department: currentUser?.department?._id || currentUser?.department || undefined,
         lineLeader,
         shiftIncharge,
+        lineRating: Number(lineRating),
+        machineRating: Number(machineRating),
+        processRating: Number(processRating),
+        unitRating: Number(unitRating),
         auditor: currentUser?._id,
         answers: questions.map((q) => ({
           question: q._id,
@@ -233,13 +273,11 @@ export default function EmployeeFillInspectionPage() {
 
   const handleShareAudit = async () => {
     if (!submittedAuditId) return;
-    const email = window.prompt("Enter email address to share this audit result:");
-    if (!email) return;
 
     try {
       setSharing(true);
       toast.info("Sending audit result...");
-      await api.post(`/api/audits/${submittedAuditId}/share`, { email });
+      await api.post(`/api/audits/${submittedAuditId}/share`);
       toast.success("Audit result shared successfully!");
     } catch (error) {
       const msg =
@@ -316,6 +354,16 @@ export default function EmployeeFillInspectionPage() {
             <input type="text" placeholder="Shift Incharge" value={shiftIncharge} onChange={(e) => setShiftIncharge(e.target.value)} className="p-2 bg-white border rounded-md w-full" required />
           </div>
 
+          <div>
+            <label className="block mb-1 font-semibold">Department</label>
+            <input
+              type="text"
+              value={getDepartmentName(currentUser?.department)}
+              disabled
+              className="p-2 bg-gray-200 rounded-md w-full"
+            />
+          </div>
+
           <div className="sm:col-span-2">
             <label className="block mb-1 font-semibold">Auditor</label>
             <input type="text" value={currentUser?.fullName || "Unknown"} disabled className="p-2 bg-gray-200 rounded-md w-full" />
@@ -326,71 +374,305 @@ export default function EmployeeFillInspectionPage() {
         <div className="space-y-4">
           <h2 className="text-xl font-semibold mb-2">Inspection Questions</h2>
           {questions.length > 0 ? (
-            questions.map((q, idx) => (
-              <div key={q._id} className="bg-gray-100 p-4 rounded-lg border shadow space-y-2">
-                <p className="font-medium break-words">{q.questionText}</p>
-                <select value={q.answer} onChange={(e) => handleAnswerChange(idx, e.target.value)} className="p-2 bg-white border rounded-md w-full" required>
-                  <option value="">Select</option>
-                  <option value="Yes">Yes</option>
-                  <option value="No">No</option>
-                </select>
-                {q.answer === "No" && (
-                  <div className="space-y-3">
-                    <input 
-                      type="text" 
-                      placeholder="Remark" 
-                      value={q.remark} 
-                      onChange={(e) => handleRemarkChange(idx, e.target.value)} 
-                      className="p-2 rounded-md border bg-white w-full" 
-                      required 
-                    />
-                    
-                    {/* Photo Upload Section */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <label className="text-sm font-medium text-gray-700">
-                          Photos (Optional)
-                        </label>
-                        <button
-                          type="button"
-                          onClick={() => handleCameraOpen(q)}
-                          disabled={uploading}
-                          className="flex items-center gap-1 px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 transition"
-                        >
-                          <FiCamera className="w-4 h-4" />
-                          {uploading ? 'Uploading...' : 'Add Photo'}
-                        </button>
-                      </div>
-                      
-                      {/* Photo Previews */}
-                      {questionPhotos[q._id]?.length > 0 && (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
-                          {questionPhotos[q._id].map((photo, photoIdx) => (
-                            <div key={photoIdx} className="relative group">
-                              <img
-                                src={photo.url}
-                                alt={`Photo ${photoIdx + 1}`}
-                                className="w-full h-20 object-cover rounded-md border"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => handlePhotoRemove(q._id, photoIdx)}
-                                className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                              >
-                                <FiX />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+            questions.map((q, idx) => {
+              const type = q.questionType || "yes_no";
+              const isYesNoType = type === "yes_no" || type === "image";
+              const isChoiceType = type === "mcq" || type === "dropdown";
+
+              return (
+                <div key={q._id} className="bg-gray-100 p-4 rounded-lg border shadow space-y-3">
+                  <p className="font-medium break-words">{q.questionText}</p>
+
+                  {type === "image" && q.imageUrl && (
+                    <div className="mb-2">
+                      <img
+                        src={q.imageUrl}
+                        alt="Question context"
+                        className="max-h-48 w-full rounded-md object-contain border"
+                      />
                     </div>
-                  </div>
-                )}
-              </div>
-            ))
+                  )}
+
+                  {isYesNoType && (
+                    <select
+                      value={q.answer}
+                      onChange={(e) => handleAnswerChange(idx, e.target.value)}
+                      className="p-2 bg-white border rounded-md w-full"
+                      required
+                    >
+                      <option value="">Select</option>
+                      <option value="Yes">Yes</option>
+                      <option value="No">No</option>
+                    </select>
+                  )}
+
+                  {isChoiceType && (
+                    <select
+                      value={q.answer}
+                      onChange={(e) => handleAnswerChange(idx, e.target.value)}
+                      className="p-2 bg-white border rounded-md w-full"
+                      required
+                    >
+                      <option value="">Select</option>
+                      {(q.options || []).map((opt, optIdx) => (
+                        <option key={optIdx} value={opt}>
+                          {opt}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+
+                  {type === "short_text" && (
+                    <input
+                      type="text"
+                      placeholder="Enter answer"
+                      value={q.answer}
+                      onChange={(e) => handleAnswerChange(idx, e.target.value)}
+                      className="p-2 rounded-md border bg-white w-full"
+                      required
+                    />
+                  )}
+
+                  {isYesNoType && q.answer === "No" && (
+                    <div className="space-y-3">
+                      <input
+                        type="text"
+                        placeholder="Remark"
+                        value={q.remark}
+                        onChange={(e) => handleRemarkChange(idx, e.target.value)}
+                        className="p-2 rounded-md border bg-white w-full"
+                        required
+                      />
+
+                      {/* Photo Upload Section */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <label className="text-sm font-medium text-gray-700">
+                            Photos (Required for "No" answers)
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => handleCameraOpen(q)}
+                            disabled={uploading}
+                            className="flex items-center gap-1 px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 transition"
+                          >
+                            <FiCamera className="w-4 h-4" />
+                            {uploading ? "Uploading..." : "Add Photo"}
+                          </button>
+                        </div>
+
+                        {/* Photo Previews */}
+                        {questionPhotos[q._id]?.length > 0 && (
+                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+                            {questionPhotos[q._id].map((photo, photoIdx) => (
+                              <div key={photoIdx} className="relative group">
+                                <img
+                                  src={photo.url}
+                                  alt={`Photo ${photoIdx + 1}`}
+                                  className="w-full h-20 object-cover rounded-md border"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handlePhotoRemove(q._id, photoIdx)}
+                                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <FiX />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })
           ) : (
             <p className="text-red-500 text-center sm:text-left">No questions available for the selected filters.</p>
           )}
+        </div>
+
+        {/* Ratings Section */}
+        <div className="bg-gray-100 p-4 sm:p-6 rounded-lg grid grid-cols-1 sm:grid-cols-2 gap-4 shadow">
+          <div className="sm:col-span-2">
+            <h2 className="text-xl font-semibold mb-2">Overall Ratings (1-10)</h2>
+            <p className="text-sm text-gray-600">
+              Please provide overall ratings for the selected line, machine, process, and unit after answering the questions above.
+            </p>
+          </div>
+
+          <div>
+            <label className="block mb-1 font-semibold">Line Rating (1-10)</label>
+            <div className="flex flex-wrap gap-1 mb-2">
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
+                const selected = Number(lineRating) === score;
+                let colorClass = "bg-white text-gray-700 border-gray-300 hover:bg-blue-50";
+                if (score <= 3) {
+                  colorClass = selected
+                    ? "bg-red-600 text-white border-red-600"
+                    : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
+                } else if (score <= 7) {
+                  colorClass = selected
+                    ? "bg-yellow-500 text-white border-yellow-500"
+                    : "bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100";
+                } else {
+                  colorClass = selected
+                    ? "bg-green-600 text-white border-green-600"
+                    : "bg-green-50 text-green-800 border-green-200 hover:bg-green-100";
+                }
+                return (
+                  <button
+                    key={score}
+                    type="button"
+                    onClick={() => setLineRating(String(score))}
+                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${colorClass}`}
+                  >
+                    {score}
+                  </button>
+                );
+              })}
+            </div>
+            <input
+              type="number"
+              min={1}
+              max={10}
+              value={lineRating}
+              onChange={(e) => setLineRating(e.target.value)}
+              className="p-2 bg-white border rounded-md w-full text-sm"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">{describeRating(lineRating)}</p>
+          </div>
+
+          <div>
+            <label className="block mb-1 font-semibold">Machine Rating (1-10)</label>
+            <div className="flex flex-wrap gap-1 mb-2">
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
+                const selected = Number(machineRating) === score;
+                let colorClass = "bg-white text-gray-700 border-gray-300 hover:bg-blue-50";
+                if (score <= 3) {
+                  colorClass = selected
+                    ? "bg-red-600 text-white border-red-600"
+                    : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
+                } else if (score <= 7) {
+                  colorClass = selected
+                    ? "bg-yellow-500 text-white border-yellow-500"
+                    : "bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100";
+                } else {
+                  colorClass = selected
+                    ? "bg-green-600 text-white border-green-600"
+                    : "bg-green-50 text-green-800 border-green-200 hover:bg-green-100";
+                }
+                return (
+                  <button
+                    key={score}
+                    type="button"
+                    onClick={() => setMachineRating(String(score))}
+                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${colorClass}`}
+                  >
+                    {score}
+                  </button>
+                );
+              })}
+            </div>
+            <input
+              type="number"
+              min={1}
+              max={10}
+              value={machineRating}
+              onChange={(e) => setMachineRating(e.target.value)}
+              className="p-2 bg-white border rounded-md w-full text-sm"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">{describeRating(machineRating)}</p>
+          </div>
+
+          <div>
+            <label className="block mb-1 font-semibold">Process Rating (1-10)</label>
+            <div className="flex flex-wrap gap-1 mb-2">
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
+                const selected = Number(processRating) === score;
+                let colorClass = "bg-white text-gray-700 border-gray-300 hover:bg-blue-50";
+                if (score <= 3) {
+                  colorClass = selected
+                    ? "bg-red-600 text-white border-red-600"
+                    : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
+                } else if (score <= 7) {
+                  colorClass = selected
+                    ? "bg-yellow-500 text-white border-yellow-500"
+                    : "bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100";
+                } else {
+                  colorClass = selected
+                    ? "bg-green-600 text-white border-green-600"
+                    : "bg-green-50 text-green-800 border-green-200 hover:bg-green-100";
+                }
+                return (
+                  <button
+                    key={score}
+                    type="button"
+                    onClick={() => setProcessRating(String(score))}
+                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${colorClass}`}
+                  >
+                    {score}
+                  </button>
+                );
+              })}
+            </div>
+            <input
+              type="number"
+              min={1}
+              max={10}
+              value={processRating}
+              onChange={(e) => setProcessRating(e.target.value)}
+              className="p-2 bg-white border rounded-md w-full text-sm"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">{describeRating(processRating)}</p>
+          </div>
+
+          <div>
+            <label className="block mb-1 font-semibold">Unit Rating (1-10)</label>
+            <div className="flex flex-wrap gap-1 mb-2">
+              {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
+                const selected = Number(unitRating) === score;
+                let colorClass = "bg-white text-gray-700 border-gray-300 hover:bg-blue-50";
+                if (score <= 3) {
+                  colorClass = selected
+                    ? "bg-red-600 text-white border-red-600"
+                    : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
+                } else if (score <= 7) {
+                  colorClass = selected
+                    ? "bg-yellow-500 text-white border-yellow-500"
+                    : "bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100";
+                } else {
+                  colorClass = selected
+                    ? "bg-green-600 text-white border-green-600"
+                    : "bg-green-50 text-green-800 border-green-200 hover:bg-green-100";
+                }
+                return (
+                  <button
+                    key={score}
+                    type="button"
+                    onClick={() => setUnitRating(String(score))}
+                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${colorClass}`}
+                  >
+                    {score}
+                  </button>
+                );
+              })}
+            </div>
+            <input
+              type="number"
+              min={1}
+              max={10}
+              value={unitRating}
+              onChange={(e) => setUnitRating(e.target.value)}
+              className="p-2 bg-white border rounded-md w-full text-sm"
+              required
+            />
+            <p className="text-xs text-gray-500 mt-1">{describeRating(unitRating)}</p>
+          </div>
         </div>
 
         <button

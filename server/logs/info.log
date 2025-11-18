@@ -2631,3 +2631,152 @@
 [18 Nov, 2025 - 11:20:15:2015] [34minfo[39m: [34mUnit created: Unit 4[39m
 [18 Nov, 2025 - 11:20:23:2023] [34minfo[39m: [34mUnit created: Unit 5[39m
 [18 Nov, 2025 - 11:28:49:2849] [33mwarn[39m: [33mMongoDB disconnected[39m
+[18 Nov, 2025 - 11:39:33:3933] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 11:39:33:3933] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 11:44:22:4422] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 11:44:22:4422] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 11:44:25:4425] [34minfo[39m: [34mEmployee logged out[39m
+[18 Nov, 2025 - 11:45:15:4515] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 11:45:47:4547] [34minfo[39m: [34mAudit 691c0ef1a761d5a3ada63372 shared via email to mrsumit2005s@gmail.com by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 12:36:42:3642] [33mwarn[39m: [33mMongoDB disconnected[39m
+[18 Nov, 2025 - 12:38:43:3843] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 12:41:49:4149] [34minfo[39m: [34mAudit 691c1b7aa761d5a3ada633a9 shared via email to jatinnagar563@gmail.com by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 12:42:09:429] [34minfo[39m: [34mEmployee logged out[39m
+[18 Nov, 2025 - 12:51:22:5122] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 12:51:37:5137] [34minfo[39m: [34mAudit 691c1e71a761d5a3ada633fa shared via email to jatinnagar563@gmail.com by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 12:56:32:5632] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 12:56:34:5634] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 12:57:46:5746] [34minfo[39m: [34mAudit 691c1e71a761d5a3ada633fa shared via email to jatinnagar563@gmail.com by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 13:02:55:255] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:02:55:255] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:07:54:754] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:07:54:754] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:08:25:825] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:08:25:825] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:32:48:3248] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:32:48:3248] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:32:51:3251] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:32:51:3251] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:33:46:3346] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 13:33:47:3347] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 13:33:57:3357] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:33:57:3357] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:34:43:3443] [34minfo[39m: [34mEmployee logged out[39m
+[18 Nov, 2025 - 13:44:10:4410] [34minfo[39m: [34mEmployee logged out[39m
+[18 Nov, 2025 - 13:44:20:4420] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:44:21:4421] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:45:37:4537] [34minfo[39m: [34mEmployee logged out[39m
+[18 Nov, 2025 - 13:46:14:4614] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 13:46:26:4626] [34minfo[39m: [34mEmployee logged out[39m
+[18 Nov, 2025 - 13:46:37:4637] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:46:37:4637] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:48:37:4837] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 13:48:59:4859] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:48:59:4859] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 13:52:23:5223] [33mwarn[39m: [33mMongoDB disconnected[39m
+[18 Nov, 2025 - 14:09:33:933] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:09:33:933] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:11:20:1120] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:11:20:1120] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:11:21:1121] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:14:00:140] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:14:00:140] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:14:00:140] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:23:11:2311] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 14:23:30:2330] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:23:30:2330] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:25:38:2538] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:25:38:2538] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:35:21:3521] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 14:35:23:3523] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 14:36:32:3632] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 14:36:33:3633] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 14:39:31:3931] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 14:39:36:3936] [34minfo[39m: [34mAudit 691c37cac7c284cb42441389 shared via email to jatinnagar563@gmail.com (cc: mirzashahhuusain63@gmail.com) by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 14:40:48:4048] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:40:48:4048] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:41:19:4119] [34minfo[39m: [34mAudit 691c37cac7c284cb42441389 shared via email to jatinnagar563@gmail.com (cc: mirzashahhussain63@gmail.com) by 68af3a678dc2fc711b2a155f[39m
+[18 Nov, 2025 - 14:42:44:4244] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 14:42:51:4251] [34minfo[39m: [34mAudit 691c388cc7c284cb424413e7 shared via email to jatinnagar563@gmail.com (cc: mirzashahhussain63@gmail.com, mirza_shah@ndiit.org) by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 14:43:42:4342] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:43:42:4342] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:45:46:4546] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 14:46:08:468] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:46:08:468] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:46:25:4625] [34minfo[39m: [34mAudit 691c3942c7c284cb4244145d shared via email to jatinnagar563@gmail.com (cc: mirzashahhussain63@gmail.com, mirza_shah@ndiit.org) by 68af3a678dc2fc711b2a155f[39m
+[18 Nov, 2025 - 14:47:29:4729] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:47:29:4729] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:49:47:4947] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:49:47:4947] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:50:23:5023] [34minfo[39m: [34mCreated 1 questions by user 68af3a678dc2fc711b2a155f[39m
+[18 Nov, 2025 - 14:51:42:5142] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:51:42:5142] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:56:29:5629] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:56:29:5629] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:56:31:5631] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 14:56:31:5631] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:13:00:130] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:13:00:130] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:13:02:132] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:13:02:132] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:23:10:2310] [34minfo[39m: [34mEmployee logged out[39m
+[18 Nov, 2025 - 15:28:56:2856] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:28:56:2856] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:29:01:291] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:29:01:291] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:29:08:298] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:29:08:298] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:29:39:2939] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:29:39:2939] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:30:25:3025] [34minfo[39m: [34mLine created: jhejd[39m
+[18 Nov, 2025 - 15:30:33:3033] [34minfo[39m: [34mLine deleted: 691c43b9c7c284cb42441601[39m
+[18 Nov, 2025 - 15:30:56:3056] [34minfo[39m: [34mEmployee logged out[39m
+[18 Nov, 2025 - 15:39:56:3956] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 15:39:57:3957] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 15:40:29:4029] [34minfo[39m: [34mEmployee logged out[39m
+[18 Nov, 2025 - 15:40:42:4042] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:40:42:4042] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:51:25:5125] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 15:51:27:5127] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 15:53:54:5354] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:53:55:5355] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:56:57:5657] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 15:56:59:5659] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 15:57:03:573] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 15:57:04:574] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 15:57:13:5713] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:57:13:5713] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:57:18:5718] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 15:57:18:5718] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:07:40:740] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 16:07:41:741] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 16:11:29:1129] [34minfo[39m: [34mCreated 1 questions by user 68af3a678dc2fc711b2a155f[39m
+[18 Nov, 2025 - 16:13:10:1310] [34minfo[39m: [34mAudit created by 68abd6c39fcdf3ae99ba1f95[39m
+[18 Nov, 2025 - 16:13:27:1327] [34minfo[39m: [34mEmployee logged out[39m
+[18 Nov, 2025 - 16:13:37:1337] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:13:37:1337] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:18:12:1812] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 16:18:14:1814] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 16:19:13:1913] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:19:13:1913] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:22:13:2213] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 16:22:14:2214] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 16:22:58:2258] [34minfo[39m: [34mQuestion category created: 691c500a988b377790fdb15b by user 68af3a678dc2fc711b2a155f[39m
+[18 Nov, 2025 - 16:23:13:2313] [34minfo[39m: [34mQuestion category updated: 691c500a988b377790fdb15b by user 68af3a678dc2fc711b2a155f[39m
+[18 Nov, 2025 - 16:29:15:2915] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:29:15:2915] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:42:14:4214] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:42:14:4214] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:43:09:439] [34minfo[39m: [34mCreated 1 questions by user 68af3a678dc2fc711b2a155f[39m
+[18 Nov, 2025 - 16:43:35:4335] [34minfo[39m: [34mEmployee logged out[39m
+[18 Nov, 2025 - 16:50:53:5053] [34minfo[39m: [34mEmployee logged out[39m
+[18 Nov, 2025 - 16:51:20:5120] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:51:20:5120] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:51:41:5141] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:51:41:5141] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:54:27:5427] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 16:54:27:5427] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 17:01:26:126] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 17:01:26:126] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 17:01:50:150] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 22:03:55:355] [33mwarn[39m: [33mMongoDB disconnected[39m

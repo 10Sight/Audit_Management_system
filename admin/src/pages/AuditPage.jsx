@@ -30,6 +30,25 @@ import {
 
 export default function AuditsPage() {
   const [audits, setAudits] = useState([]);
+
+  const getAverageRatingPercent = (audit) => {
+    const values = [
+      audit.lineRating,
+      audit.machineRating,
+      audit.processRating,
+      audit.unitRating,
+    ].filter((v) => typeof v === 'number');
+    if (!values.length) return null;
+    const avg = values.reduce((sum, v) => sum + v, 0) / values.length;
+    return Math.round((avg / 10) * 100);
+  };
+
+  const getRatingColor = (percent) => {
+    if (percent == null) return '#9ca3af'; // gray
+    if (percent < 40) return '#ef4444';    // red
+    if (percent < 75) return '#f59e0b';    // amber
+    return '#22c55e';                      // green
+  };
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -120,11 +139,13 @@ export default function AuditsPage() {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between gap-4 flex-wrap">
-            <div>
-              <CardTitle className="text-lg">Audit List</CardTitle>
-              <CardDescription>Click a row to view details. Use actions to edit or delete.</CardDescription>
-            </div>
+            <div className="flex items-center justify-between gap-4 flex-wrap">
+              <div>
+                <CardTitle className="text-lg">Audit List</CardTitle>
+                <CardDescription>
+                  Click a row to view details. Ratings show overall performance (10/10 = 100%).
+                </CardDescription>
+              </div>
             {/* Filters */}
             <div className="grid gap-3 md:grid-cols-5 w-full md:w-auto">
               <div className="space-y-1">
@@ -200,6 +221,7 @@ export default function AuditsPage() {
                   <TableHead>Process</TableHead>
                   <TableHead>Unit</TableHead>
                   <TableHead>Auditor</TableHead>
+                  <TableHead className="text-center">Rating</TableHead>
                   <TableHead className="text-center">Answers</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -212,20 +234,103 @@ export default function AuditsPage() {
                   const no = Array.isArray(audit.answers)
                     ? audit.answers.filter(a => a.answer === 'No').length
                     : 0;
+                  const total = yes + no;
+                  const ratingPercent = getAverageRatingPercent(audit);
+                  const ratingColor = getRatingColor(ratingPercent);
+                  const hasIssues = no > 0;
+                  const ratingTooltipParts = [];
+                  if (typeof audit.lineRating === 'number') ratingTooltipParts.push(`Line: ${audit.lineRating}/10`);
+                  if (typeof audit.machineRating === 'number') ratingTooltipParts.push(`Machine: ${audit.machineRating}/10`);
+                  if (typeof audit.processRating === 'number') ratingTooltipParts.push(`Process: ${audit.processRating}/10`);
+                  if (typeof audit.unitRating === 'number') ratingTooltipParts.push(`Unit: ${audit.unitRating}/10`);
+                  if (ratingPercent !== null) ratingTooltipParts.push(`Average: ${ratingPercent}%`);
+                  if (total > 0) ratingTooltipParts.push(`Answers - Yes: ${yes}, No: ${no}`);
+                  const ratingTooltip = ratingTooltipParts.join(' | ');
                   return (
-                    <TableRow key={audit._id} className="cursor-pointer" onClick={() => navigate(`/admin/audits/${audit._id}`)}>
-                      <TableCell className="whitespace-nowrap">
+                    <TableRow
+                      key={audit._id}
+                      className="cursor-pointer hover:bg-gray-50 transition-colors"
+                      onClick={() => navigate(`/admin/audits/${audit._id}`)}
+                    >
+                      <TableCell className="whitespace-nowrap text-sm text-gray-700">
                         {audit.date ? new Date(audit.date).toLocaleDateString() : 'N/A'}
                       </TableCell>
-                      <TableCell className="font-medium">{audit.line?.name || 'N/A'}</TableCell>
+                      <TableCell className="font-medium text-sm">
+                        {audit.line?.name || 'N/A'}
+                      </TableCell>
                       <TableCell>{audit.machine?.name || 'N/A'}</TableCell>
                       <TableCell>{audit.process?.name || 'N/A'}</TableCell>
                       <TableCell>{audit.unit?.name || 'N/A'}</TableCell>
-                      <TableCell>{audit.auditor?.fullName || 'N/A'}</TableCell>
+                      <TableCell className="text-sm">
+                        {audit.auditor?.fullName || 'N/A'}
+                      </TableCell>
                       <TableCell className="text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <Badge variant="secondary">Yes {yes}</Badge>
-                          <Badge variant={no > 0 ? "destructive" : "secondary"}>No {no}</Badge>
+                        {ratingPercent !== null ? (
+                          <div
+                            className="flex flex-col items-center justify-center gap-1"
+                            title={ratingTooltip}
+                          >
+                            <div className="relative w-12 h-12">
+                              {(() => {
+                                const radius = 18;
+                                const circumference = 2 * Math.PI * radius;
+                                const offset = circumference - (ratingPercent / 100) * circumference;
+                                return (
+                                  <svg
+                                    className="w-12 h-12 rotate-[-90deg]"
+                                    viewBox="0 0 50 50"
+                                  >
+                                    <circle
+                                      cx="25"
+                                      cy="25"
+                                      r={radius}
+                                      stroke="#e5e7eb"
+                                      strokeWidth="4"
+                                      fill="transparent"
+                                    />
+                                    <circle
+                                      cx="25"
+                                      cy="25"
+                                      r={radius}
+                                      stroke={ratingColor}
+                                      strokeWidth="4"
+                                      fill="transparent"
+                                      strokeDasharray={circumference}
+                                      strokeDashoffset={offset}
+                                      strokeLinecap="round"
+                                    />
+                                  </svg>
+                                );
+                              })()}
+                              <div className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-gray-800">
+                                {ratingPercent}%
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <span className="text-[10px] text-gray-500">Avg rating</span>
+                              <span
+                                className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${
+                                  hasIssues
+                                    ? 'bg-red-50 text-red-700 border-red-200'
+                                    : 'bg-green-50 text-green-700 border-green-200'
+                                }`}
+                              >
+                                {hasIssues ? 'Issues' : 'OK'}
+                              </span>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-gray-400">No rating</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="inline-flex items-center justify-center gap-2 rounded-full bg-gray-50 px-3 py-1 text-xs">
+                          <span className="font-medium text-gray-700">Yes {yes}</span>
+                          <span className={hasIssues ? "font-semibold text-red-600" : "text-gray-500"}>
+                            No {no}
+                          </span>
+                          <span className="text-gray-400">·</span>
+                          <span className="text-gray-500">Total {total}</span>
                         </div>
                       </TableCell>
                       <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>

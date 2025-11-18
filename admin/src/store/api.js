@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const baseUrl = import.meta.env.VITE_SERVER_URL || 'https://audit-management-system-server.onrender.com';
+const baseUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
 
 export const api = createApi({
   reducerPath: 'api',
@@ -21,6 +21,7 @@ export const api = createApi({
     'Process',
     'Unit',
     'Question',
+    'QuestionCategory',
     'Audit',
   ],
   endpoints: (builder) => ({
@@ -158,6 +159,27 @@ export const api = createApi({
       invalidatesTags: ['Question'],
     }),
 
+    // Question categories
+    getQuestionCategories: builder.query({
+      query: () => ({ url: '/api/question-categories' }),
+      providesTags: [{ type: 'QuestionCategory', id: 'LIST' }],
+    }),
+    createQuestionCategory: builder.mutation({
+      query: (body) => ({ url: '/api/question-categories', method: 'POST', body }),
+      invalidatesTags: ['QuestionCategory'],
+    }),
+    updateQuestionCategory: builder.mutation({
+      query: ({ id, ...body }) => ({ url: `/api/question-categories/${id}`, method: 'PUT', body }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: 'QuestionCategory', id },
+        { type: 'QuestionCategory', id: 'LIST' },
+      ],
+    }),
+    deleteQuestionCategory: builder.mutation({
+      query: (id) => ({ url: `/api/question-categories/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['QuestionCategory'],
+    }),
+
     // Audits
     getAudits: builder.query({
       query: ({ page = 1, limit = 20, auditor, startDate, endDate, line, machine, process, unit, result } = {}) => ({
@@ -271,6 +293,10 @@ export const {
   useGetQuestionsQuery,
   useCreateQuestionsMutation,
   useDeleteQuestionMutation,
+  useGetQuestionCategoriesQuery,
+  useCreateQuestionCategoryMutation,
+  useUpdateQuestionCategoryMutation,
+  useDeleteQuestionCategoryMutation,
   useGetAuditsQuery,
   useGetAuditByIdQuery,
   useCreateAuditMutation,

@@ -52,10 +52,14 @@ export default function LoginPage() {
   const brandTitle = useMemo(() => "Audit Management System", []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
+      style={{ backgroundImage: "url('/marelli-motherson.webp')" }}
+    >
       <div className="w-full max-w-md px-4 sm:px-6 md:px-8">
-        <Card className="relative z-10 border bg-white shadow-2xl">
+        <Card className="relative z-10 border bg-white/95 shadow-2xl backdrop-blur-sm">
           <CardHeader className="pb-2 text-center">
+            <img src="/motherson+marelli.png" className="max-h-14 max-w-14" />
             <div className="mx-auto mb-3 grid size-14 place-items-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white shadow-lg ring-4 ring-blue-100">
               <ShieldCheck className="size-7" />
             </div>
@@ -159,8 +163,6 @@ export default function LoginPage() {
             </form>
           </CardContent>
         </Card>
-
-        <p className="mt-6 text-center text-sm text-muted-foreground">Secure access to automobile parts inspection system</p>
       </div>
     </div>
   );

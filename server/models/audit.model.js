@@ -12,6 +12,31 @@ const AuditSchema = new mongoose.Schema(
     process: { type: Schema.Types.ObjectId, ref: "Process", required: true, index: true },
     unit: { type: Schema.Types.ObjectId, ref: "Unit", required: false, index: true },
 
+    // Employee department at time of audit (optional)
+    department: { type: Schema.Types.ObjectId, ref: "Department", required: false, index: true },
+
+    // Ratings for key entities (1-10)
+    lineRating: {
+      type: Number,
+      min: 1,
+      max: 10,
+    },
+    machineRating: {
+      type: Number,
+      min: 1,
+      max: 10,
+    },
+    processRating: {
+      type: Number,
+      min: 1,
+      max: 10,
+    },
+    unitRating: {
+      type: Number,
+      min: 1,
+      max: 10,
+    },
+
     lineLeader: {
       type: String,
       required: true,
@@ -28,16 +53,15 @@ const AuditSchema = new mongoose.Schema(
     answers: [
       {
         question: { type: Schema.Types.ObjectId, ref: "Question", required: true },
+        // For historical data this will be "Yes" / "No".
+        // For new question types this can be any string value (e.g. selected option or text answer).
         answer: {
           type: String,
-          enum: ["Yes", "No"],
           required: true,
         },
+        // Remark is primarily required when the answer is "No" (enforced at controller level).
         remark: {
           type: String,
-          required: function () {
-            return this.answer === "No";
-          },
         },
         photos: [{
           url: {

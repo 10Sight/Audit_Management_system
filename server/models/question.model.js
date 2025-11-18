@@ -7,6 +7,34 @@ const QuestionSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    // Type of question determines how it should be rendered and answered
+    // - "yes_no": simple Yes/No question
+    // - "mcq": single-choice question with predefined options
+    // - "short_text": free text / short description answer
+    // - "image": question that also includes an image (still typically answered Yes/No)
+    // - "dropdown": single-choice answer from a dropdown list
+    questionType: {
+      type: String,
+      enum: ["yes_no", "mcq", "short_text", "image", "dropdown"],
+      default: "yes_no",
+    },
+    // Optional options used for MCQ and dropdown questions
+    options: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+    // Index of the correct option for MCQ/dropdown questions (0-based)
+    correctOptionIndex: {
+      type: Number,
+      default: null,
+    },
+    // Optional image URL for image-based questions
+    imageUrl: {
+      type: String,
+      trim: true,
+    },
     isGlobal: {
       type: Boolean,
       default: false,

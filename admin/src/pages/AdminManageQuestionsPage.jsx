@@ -19,6 +19,7 @@ import {
   useGetProcessesQuery,
   useGetUnitsQuery,
   useGetQuestionsQuery,
+  useGetQuestionCategoriesQuery,
   useDeleteQuestionMutation,
 } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -76,6 +77,7 @@ export default function AdminManageQuestionsPage() {
   const { data: machinesRes } = useGetMachinesQuery();
   const { data: processesRes } = useGetProcessesQuery();
   const { data: unitsRes } = useGetUnitsQuery();
+  const { data: categoriesRes } = useGetQuestionCategoriesQuery();
   const [deleteQuestion] = useDeleteQuestionMutation();
 
   useEffect(() => {
@@ -115,6 +117,23 @@ export default function AdminManageQuestionsPage() {
     const query = searchTerm.toLowerCase();
     return questions.filter((q) => q.questionText?.toLowerCase().includes(query));
   }, [questions, searchTerm]);
+
+  // Map questionId -> [category names]
+  const questionCategoriesMap = useMemo(() => {
+    const map = {};
+    const cats = Array.isArray(categoriesRes?.data) ? categoriesRes.data : [];
+    for (const cat of cats) {
+      const name = cat.name || "Unnamed";
+      const qs = Array.isArray(cat.questions) ? cat.questions : [];
+      for (const q of qs) {
+        const id = q._id;
+        if (!id) continue;
+        if (!map[id]) map[id] = [];
+        map[id].push(name);
+      }
+    }
+    return map;
+  }, [categoriesRes]);
 
   const total = filteredQuestions.length;
   const totalGlobal = useMemo(
@@ -442,18 +461,46 @@ export default function AdminManageQuestionsPage() {
                           </div>
                         </TableCell>
                         <TableCell className="hidden md:table-cell align-top">
-                          <Badge
-                            variant={q.isGlobal ? "secondary" : "outline"}
-                            className="flex w-fit items-center gap-1"
-                          >
-                            {q.isGlobal ? (
-                              <>
-                                <Globe className="h-3 w-3" /> Global
-                              </>
-                            ) : (
-                              <>Scoped</>
+                          <div className="space-y-1">
+                            <Badge
+                              variant={q.isGlobal ? "secondary" : "outline"}
+                              className="flex w-fit items-center gap-1"
+                            >
+                              {q.isGlobal ? (
+                                <>
+                                  <Globe className="h-3 w-3" /> Global
+                                </>
+                              ) : (
+                                <>Scoped</>
+                              )}
+                            </Badge>
+                            {Array.isArray(questionCategoriesMap[q._id]) && questionCategoriesMap[q._id].length > 0 && (
+                              <div className="flex flex-wrap gap-1 pt-1">
+                                {questionCategoriesMap[q._id].map((name) => (
+                                  <Badge key={name} variant="outline" className="text-[10px]">
+                                    {name}
+                                  </Badge>
+                                ))}
+                              </div>
                             )}
-                          </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell align-top text-xs text-muted-foreground">
+                          {(() => {
+                            const type = q.questionType || "yes_no";
+                            switch (type) {
+                              case "mcq":
+                                return "MCQ";
+                              case "dropdown":
+                                return "Dropdown";
+                              case "short_text":
+                                return "Short description";
+                              case "image":
+                                return "Image + Yes/No";
+                              default:
+                                return "Yes/No";
+                            }
+                          })()}
                         </TableCell>
                         <TableCell className="hidden md:table-cell align-top text-xs text-muted-foreground">
                           {q.createdAt
