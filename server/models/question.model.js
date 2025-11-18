@@ -14,6 +14,7 @@ const QuestionSchema = new mongoose.Schema(
     machines: [{ type: Schema.Types.ObjectId, ref: "Machine" }],
     lines: [{ type: Schema.Types.ObjectId, ref: "Line" }],
     processes: [{ type: Schema.Types.ObjectId, ref: "Process" }],
+    units: [{ type: Schema.Types.ObjectId, ref: "Unit" }],
     createdBy: { type: Schema.Types.ObjectId, ref: "Employee" }, // Admin
   },
   { timestamps: true, versionKey: false }

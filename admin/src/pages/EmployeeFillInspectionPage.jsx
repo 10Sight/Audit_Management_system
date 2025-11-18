@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FiCheckCircle, FiHome, FiBarChart2, FiCamera, FiX } from "react-icons/fi";
+import { FiCheckCircle, FiHome, FiBarChart2, FiCamera, FiX, FiShare2 } from "react-icons/fi";
 import "react-toastify/dist/ReactToastify.css";
 import { 
   useGetLinesQuery,
   useGetMachinesQuery,
   useGetProcessesQuery,
+  useGetUnitsQuery,
   useGetQuestionsQuery,
   useCreateAuditMutation,
   useUploadImageMutation,
@@ -27,10 +28,12 @@ export default function EmployeeFillInspectionPage() {
   const [lines, setLines] = useState([]);
   const [machines, setMachines] = useState([]);
   const [processes, setProcesses] = useState([]);
+  const [units, setUnits] = useState([]);
 
   const [line, setLine] = useState("");
   const [machine, setMachine] = useState("");
   const [process, setProcess] = useState("");
+  const [unit, setUnit] = useState("");
   const [lineLeader, setLineLeader] = useState("");   
   const [shiftIncharge, setShiftIncharge] = useState("");
 
@@ -43,10 +46,13 @@ export default function EmployeeFillInspectionPage() {
   const [currentQuestionForPhoto, setCurrentQuestionForPhoto] = useState(null);
   const [questionPhotos, setQuestionPhotos] = useState({}); // questionId -> array of photos
   const [uploading, setUploading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   const { data: linesRes } = useGetLinesQuery();
   const { data: machinesRes } = useGetMachinesQuery();
   const { data: processesRes } = useGetProcessesQuery();
+  const { data: unitsRes } = useGetUnitsQuery();
   const [createAudit] = useCreateAuditMutation();
   const [uploadImage] = useUploadImageMutation();
   const [deleteUpload] = useDeleteUploadMutation();
@@ -55,17 +61,19 @@ export default function EmployeeFillInspectionPage() {
     setLines(linesRes?.data || []);
     setMachines(machinesRes?.data || []);
     setProcesses(processesRes?.data || []);
+    setUnits(unitsRes?.data || []);
     setLoading(false);
-  }, [linesRes, machinesRes, processesRes]);
+  }, [linesRes, machinesRes, processesRes, unitsRes]);
 
   // Fetch questions when line/machine/process changes via RTK Query
   const questionParams = {
     ...(line ? { lineId: line } : {}),
     ...(machine ? { machineId: machine } : {}),
     ...(process ? { processId: process } : {}),
+    ...(unit ? { unitId: unit } : {}),
     includeGlobal: 'true',
   };
-  const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery(questionParams, { skip: !(line && machine && process) });
+  const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery(questionParams, { skip: !(line && machine && process && unit) });
   useEffect(() => {
     if (questionsLoading) return;
     const list = Array.isArray(questionsRes?.data) ? questionsRes.data : [];
@@ -162,7 +170,9 @@ export default function EmployeeFillInspectionPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!line || !machine || !process || !lineLeader || !shiftIncharge) {
+    if (submitting) return; // prevent double submit
+
+    if (!line || !machine || !process || !unit || !lineLeader || !shiftIncharge) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -186,11 +196,13 @@ export default function EmployeeFillInspectionPage() {
     }
 
     try {
+      setSubmitting(true);
       const payload = {
         date: new Date(),
         line,
         machine,
         process,
+        unit,
         lineLeader,
         shiftIncharge,
         auditor: currentUser?._id,
@@ -214,6 +226,29 @@ export default function EmployeeFillInspectionPage() {
     } catch (err) {
       const msg = err?.data?.message || err?.response?.data?.message || err?.message || 'Failed to submit inspection';
       toast.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleShareAudit = async () => {
+    if (!submittedAuditId) return;
+    const email = window.prompt("Enter email address to share this audit result:");
+    if (!email) return;
+
+    try {
+      setSharing(true);
+      toast.info("Sending audit result...");
+      await api.post(`/api/audits/${submittedAuditId}/share`, { email });
+      toast.success("Audit result shared successfully!");
+    } catch (error) {
+      const msg =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Failed to share audit result";
+      toast.error(msg);
+    } finally {
+      setSharing(false);
     }
   };
 
@@ -260,6 +295,14 @@ export default function EmployeeFillInspectionPage() {
             <select value={process} onChange={(e) => setProcess(e.target.value)} className="p-2 bg-white border rounded-md w-full" required>
               <option value="">Select Process</option>
               {processes.map((p) => (<option key={p._id} value={p._id}>{p.name}</option>))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block mb-1 font-semibold">Unit</label>
+            <select value={unit} onChange={(e) => setUnit(e.target.value)} className="p-2 bg-white border rounded-md w-full" required>
+              <option value="">Select Unit</option>
+              {units.map((u) => (<option key={u._id} value={u._id}>{u.name}</option>))}
             </select>
           </div>
 
@@ -350,24 +393,61 @@ export default function EmployeeFillInspectionPage() {
           )}
         </div>
 
-        <button type="submit" className="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
-          Submit Audit
+        <button
+          type="submit"
+          disabled={submitting || uploading}
+          className={`w-full sm:w-auto px-6 py-2 rounded-md transition flex items-center justify-center gap-2 ${
+            submitting || uploading
+              ? 'bg-blue-400 cursor-not-allowed opacity-80'
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
+          }`}
+        >
+          {submitting ? (
+            <>
+              <span className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              Submitting...
+            </>
+          ) : (
+            'Submit Audit'
+          )}
         </button>
       </form>
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 animate-fadeIn p-4">
-          <div className="bg-white p-6 rounded-xl max-w-sm w-full text-center space-y-4 shadow-lg transform transition-all duration-300 scale-100 animate-scaleIn">
-            <FiCheckCircle className="mx-auto text-green-600 text-5xl" />
-            <h2 className="text-2xl font-bold text-gray-800">Audit Submitted!</h2>
-            <p className="text-gray-600">Choose an option to proceed:</p>
-            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-4">
-              <button onClick={() => navigate("/employee/dashboard")} className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition w-full sm:w-auto">
-                <FiHome /> Back to Home
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fadeIn px-4">
+          <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-6 text-center shadow-2xl transition-all duration-300 animate-scaleIn sm:p-7">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-green-50 text-green-600">
+              <FiCheckCircle className="text-3xl" />
+            </div>
+            <h2 className="mt-4 text-xl font-semibold text-gray-900 sm:text-2xl">Audit submitted successfully</h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Your inspection has been saved. You can return to your dashboard, review the detailed results,
+              or share the audit via email.
+            </p>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+              <button
+                onClick={() => navigate("/employee/dashboard")}
+                className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 sm:w-auto"
+              >
+                <FiHome className="h-4 w-4" />
+                Back to Home
               </button>
-              <button onClick={() => navigate(`/employee/results/${submittedAuditId}`)} className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition w-full sm:w-auto">
-                <FiBarChart2 /> Show Results
+              <button
+                onClick={() => navigate(`/employee/results/${submittedAuditId}`)}
+                className="flex w-full items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700 sm:w-auto"
+              >
+                <FiBarChart2 className="h-4 w-4" />
+                Show Results
+              </button>
+              <button
+                type="button"
+                onClick={handleShareAudit}
+                disabled={sharing}
+                className="flex w-full items-center justify-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-700 disabled:opacity-60 sm:w-auto"
+              >
+                <FiShare2 className="h-4 w-4" />
+                {sharing ? "Sharing..." : "Share via Email"}
               </button>
             </div>
           </div>

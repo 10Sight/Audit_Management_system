@@ -4,7 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../context/AuthContext";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
-import { useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useCreateQuestionsMutation } from "@/store/api";
+import { useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useGetUnitsQuery, useCreateQuestionsMutation } from "@/store/api";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,22 +20,26 @@ export default function AdminCreateTemplatePage() {
   const [lines, setLines] = useState([]);
   const [machines, setMachines] = useState([]);
   const [processes, setProcesses] = useState([]);
+  const [units, setUnits] = useState([]);
 
   const [selectedLine, setSelectedLine] = useState("");
   const [selectedMachine, setSelectedMachine] = useState("");
   const [selectedProcess, setSelectedProcess] = useState("");
+  const [selectedUnit, setSelectedUnit] = useState("");
 
   const [questions, setQuestions] = useState([{ questionText: "", isGlobal: false }]);
 
   const { data: linesRes } = useGetLinesQuery();
   const { data: machinesRes } = useGetMachinesQuery();
   const { data: processesRes } = useGetProcessesQuery();
+  const { data: unitsRes } = useGetUnitsQuery();
   const [createQuestions] = useCreateQuestionsMutation();
   useEffect(() => {
     setLines(linesRes?.data || []);
     setMachines(machinesRes?.data || []);
     setProcesses(processesRes?.data || []);
-  }, [linesRes, machinesRes, processesRes]);
+    setUnits(unitsRes?.data || []);
+  }, [linesRes, machinesRes, processesRes, unitsRes]);
 
   const addQuestion = () =>
     setQuestions([...questions, { questionText: "", isGlobal: false }]);
@@ -57,8 +61,8 @@ export default function AdminCreateTemplatePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!questions.length) return toast.error("Add at least one question!");
-    if (!selectedLine || !selectedMachine || !selectedProcess) {
-      return toast.error("Select a Line, Machine, and Process before adding questions!");
+    if (!selectedLine || !selectedMachine || !selectedProcess || !selectedUnit) {
+      return toast.error("Select a Line, Machine, Process, and Unit before adding questions!");
     }
 
     try {
@@ -69,6 +73,7 @@ export default function AdminCreateTemplatePage() {
         line: selectedLine,
         machine: selectedMachine,
         process: selectedProcess,
+        unit: selectedUnit,
       }));
 
       await createQuestions(payload).unwrap();
@@ -96,7 +101,7 @@ export default function AdminCreateTemplatePage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Select Options */}
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-4">
               <div className="space-y-2">
                 <Label>Production Line</Label>
                 <Select value={selectedLine} onValueChange={setSelectedLine}>
@@ -132,6 +137,19 @@ export default function AdminCreateTemplatePage() {
                   <SelectContent>
                     {processes.map((p) => (
                       <SelectItem key={p._id} value={p._id}>{p.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Unit</Label>
+                <Select value={selectedUnit} onValueChange={setSelectedUnit}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select unit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {units.map((u) => (
+                      <SelectItem key={u._id} value={u._id}>{u.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

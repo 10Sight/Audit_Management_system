@@ -19,6 +19,7 @@ export const api = createApi({
     'Line',
     'Machine',
     'Process',
+    'Unit',
     'Question',
     'Audit',
   ],
@@ -121,6 +122,28 @@ export const api = createApi({
       invalidatesTags: ['Process'],
     }),
 
+    // Units
+    getUnits: builder.query({
+      query: () => '/api/units',
+      providesTags: [{ type: 'Unit', id: 'LIST' }],
+    }),
+    createUnit: builder.mutation({
+      query: (body) => ({ url: '/api/units', method: 'POST', body }),
+      invalidatesTags: ['Unit'],
+    }),
+    updateUnit: builder.mutation({
+      query: ({ id, ...body }) => ({ url: `/api/units/${id}`, method: 'PUT', body }),
+      invalidatesTags: ['Unit'],
+    }),
+    deleteUnit: builder.mutation({
+      query: (id) => ({ url: `/api/units/${id}`, method: 'DELETE' }),
+      invalidatesTags: ['Unit'],
+    }),
+    reorderUnits: builder.mutation({
+      query: (body) => ({ url: '/api/units/reorder', method: 'POST', body }),
+      invalidatesTags: ['Unit'],
+    }),
+
     // Questions
     getQuestions: builder.query({
       query: (params) => ({ url: '/api/questions', params }),
@@ -137,9 +160,9 @@ export const api = createApi({
 
     // Audits
     getAudits: builder.query({
-      query: ({ page = 1, limit = 20, auditor, startDate, endDate, line, machine, process, result } = {}) => ({
+      query: ({ page = 1, limit = 20, auditor, startDate, endDate, line, machine, process, unit, result } = {}) => ({
         url: '/api/audits',
-        params: { page, limit, auditor, startDate, endDate, line, machine, process, result },
+        params: { page, limit, auditor, startDate, endDate, line, machine, process, unit, result },
       }),
       providesTags: [{ type: 'Audit', id: 'LIST' }],
     }),
@@ -240,6 +263,11 @@ export const {
   useCreateProcessMutation,
   useUpdateProcessMutation,
   useDeleteProcessMutation,
+  useGetUnitsQuery,
+  useCreateUnitMutation,
+  useUpdateUnitMutation,
+  useDeleteUnitMutation,
+  useReorderUnitsMutation,
   useGetQuestionsQuery,
   useCreateQuestionsMutation,
   useDeleteQuestionMutation,

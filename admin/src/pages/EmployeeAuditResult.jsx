@@ -37,6 +37,7 @@ export default function EmployeeAuditResult() {
         <div><strong>Line:</strong> {audit.line?.name || audit.line}</div>
         <div><strong>Machine:</strong> {audit.machine?.name || audit.machine}</div>
         <div><strong>Process:</strong> {audit.process?.name || audit.process}</div>
+        <div><strong>Unit:</strong> {audit.unit?.name || audit.unit}</div>
         <div><strong>Line Leader:</strong> {audit.lineLeader}</div>
         <div><strong>Shift Incharge:</strong> {audit.shiftIncharge}</div>
         <div><strong>Auditor:</strong> {audit.auditor?.fullName || "Unknown"}</div>

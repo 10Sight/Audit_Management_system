@@ -10,7 +10,8 @@ import {
   Bell,
   User,
   Briefcase,
-  Activity
+  Activity,
+  CircleUserIcon
 } from "lucide-react";
 import { useLogoutMutation } from "@/store/api";
 import { Button } from "@/components/ui/button";
@@ -38,7 +39,7 @@ export default function EmployeeLayout() {
   const navLinks = [
     { to: "/employee/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/employee/inspections", label: "Inspections", icon: FileText },
-    { to: "/employee/settings", label: "Settings", icon: Settings },
+    { to: "/employee/settings", label: "Profile", icon: CircleUserIcon },
   ];
 
   const handleLogout = async () => {
@@ -49,6 +50,10 @@ export default function EmployeeLayout() {
     } catch (error) {
       console.error("Logout failed:", error);
     }
+  };
+
+  const handleProfile = () => {
+    navigate("/employee/settings");
   };
 
   const getInitials = (name) => {
@@ -236,13 +241,13 @@ export default function EmployeeLayout() {
             {/* Brand */}
             <div className="hidden xs:flex items-center gap-2">
               <img 
-                src="/marelli.svg" 
+                src="/motherson+marelli.png" 
                 alt="Motherson" 
                 className="h-6 w-6 md:h-8 md:w-8 object-contain" 
               />
-              <span className="hidden sm:block font-semibold text-lg">
+              {/* <span className="hidden sm:block font-semibold text-lg">
                 Motherson
-              </span>
+              </span> */}
             </div>
 
             {/* User Menu */}
@@ -269,13 +274,9 @@ export default function EmployeeLayout() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleProfile}>
                   <User className="mr-2 h-4 w-4" />
                   Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-destructive">

@@ -29,6 +29,7 @@ const EmployeeAuditResult = lazy(() => import("@/pages/EmployeeAuditResult"));
 const LinesPage = lazy(() => import("@/pages/LinesPage"));
 const MachinesPage = lazy(() => import("@/pages/MachinesPage"));
 const ProcessesPage = lazy(() => import("@/pages/ProcessesPage"));
+const UnitsPage = lazy(() => import("@/pages/UnitsPage"));
 const SuperAdminDashboard = lazy(() => import("@/pages/SuperAdminDashboard"));
 const SuperAdminUsersPage = lazy(() => import("@/pages/SuperAdminUsersPage"));
 
@@ -77,6 +78,7 @@ export default function AppRoutes() {
           <Route path="lines" element={<LinesPage />} />
           <Route path="machines" element={<MachinesPage />} />
           <Route path="processes" element={<ProcessesPage />} />
+          <Route path="units" element={<UnitsPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="audits/edit/:id" element={<AdminEditAuditPage />} />
           <Route path="employee/edit/:id" element={<EditEmployeePage />} />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Profiler, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import { 
   ChevronRight, 
@@ -15,7 +15,10 @@ import {
   Shield,
   Zap,
   Wrench,
-  Cog
+  Cog,
+  UsbIcon,
+  User2Icon,
+  CircleUserIcon
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useLogoutMutation } from "@/store/api";
@@ -54,16 +57,25 @@ export default function AdminLayout() {
     }
   };
 
+  const handleProfile = async () => {
+    try {
+      navigate("/admin/settings");
+    } catch (error) {
+      console.error("Profile Error:", error);
+    }
+  }
+
   const navLinks = [
     { to: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { to: "/admin/employees", label: "Employees", icon: Users },
+    { to: "/admin/employees", label: "Auditors", icon: Users },
     { to: "/admin/audits", label: "Audits", icon: ClipboardCheck },
     { to: "/admin/questions", label: "Questions", icon: HelpCircle },
     { to: "/admin/departments", label: "Departments", icon: Building2 },
     { to: "/admin/lines", label: "Lines", icon: Zap },
     { to: "/admin/machines", label: "Machines", icon: Wrench },
     { to: "/admin/processes", label: "Processes", icon: Cog },
-    { to: "/admin/settings", label: "Settings", icon: Settings },
+    { to: "/admin/units", label: "Units", icon: UsbIcon },
+    { to: "/admin/settings", label: "Profile", icon: CircleUserIcon },
   ];
 
   const getInitials = (name) =>
@@ -125,13 +137,9 @@ export default function AdminLayout() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleProfile}>
               <User className="mr-2 h-4 w-4" />
               Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} className="text-destructive">
@@ -206,13 +214,9 @@ export default function AdminLayout() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleProfile}>
               <User className="mr-2 h-4 w-4" />
               Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout} className="text-destructive">
@@ -278,13 +282,13 @@ export default function AdminLayout() {
             {/* Brand Logo */}
             <div className="hidden sm:flex items-center gap-2">
               <img 
-                src="/marelli.svg" 
+                src="/motherson+marelli.png" 
                 alt="Motherson" 
-                className="h-6 w-6 md:h-8 md:w-8 object-contain" 
+                className="h-8 w-8 md:h-8 md:w-30 object-contain" 
               />
-              <span className="hidden md:block font-semibold text-lg">
+              {/* <span className="hidden md:block font-semibold text-lg">
                 Motherson
-              </span>
+              </span> */}
             </div>
 
             {/* User Menu */}
@@ -311,13 +315,9 @@ export default function AdminLayout() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={handleProfile}>
                   <User className="mr-2 h-4 w-4" />
                   Profile
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout} className="text-destructive">

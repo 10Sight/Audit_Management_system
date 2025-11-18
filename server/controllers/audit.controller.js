@@ -4,9 +4,10 @@ import { ApiError } from "../utils/ApiError.js";
 import logger from "../logger/winston.logger.js";
 import {asyncHandler} from "../utils/asyncHandler.js";
 import { invalidateCache } from "../middlewares/cache.middleware.js";
+import sendMail from "../utils/mail.util.js";
 
 export const createAudit = asyncHandler(async (req, res) => {
-  const { date, line, machine, process, lineLeader, shiftIncharge, answers } = req.body;
+  const { date, line, machine, process, unit, lineLeader, shiftIncharge, answers } = req.body;
 
   if (!date || !line || !machine || !process || !lineLeader || !shiftIncharge) {
     throw new ApiError(400, "All required fields must be filled");
@@ -72,6 +73,7 @@ export const createAudit = asyncHandler(async (req, res) => {
     line,
     machine,
     process,
+    unit,
     lineLeader,
     shiftIncharge,
     auditor: req.user.id,     
@@ -82,16 +84,32 @@ export const createAudit = asyncHandler(async (req, res) => {
   // Invalidate related cache
   await invalidateCache('/api/audits');
   
+  // Load related docs to get human-readable names for notification
+  const populatedAudit = await Audit.findById(audit._id)
+    .populate('line', 'name')
+    .populate('machine', 'name')
+    .populate('process', 'name')
+    .populate('unit', 'name')
+    .populate('auditor', 'fullName');
+
+  const lineName = populatedAudit?.line?.name || line;
+  const machineName = populatedAudit?.machine?.name || machine;
+  const processName = populatedAudit?.process?.name || process;
+  const unitName = populatedAudit?.unit?.name || unit;
+  const auditorName = populatedAudit?.auditor?.fullName || req.user.fullName;
+
   // Send real-time notification
   const io = req.app.get('io');
   if (io) {
     io.emit('audit-created', {
       auditId: audit._id,
-      auditor: req.user.fullName,
-      line: line,
-      machine: machine,
+      auditor: auditorName,
+      line: { id: audit.line, name: lineName },
+      machine: { id: audit.machine, name: machineName },
+      process: { id: audit.process, name: processName },
+      unit: unit ? { id: audit.unit, name: unitName } : undefined,
       timestamp: new Date().toISOString(),
-      message: 'New audit submitted'
+      message: `Audit created for Line: ${lineName} Employee: ${auditorName}`,
     });
   }
 
@@ -135,10 +153,11 @@ export const getAudits = asyncHandler(async (req, res) => {
     };
   }
 
-  // Optional filters: line, machine, process
+  // Optional filters: line, machine, process, unit
   if (req.query.line) query.line = req.query.line;
   if (req.query.machine) query.machine = req.query.machine;
   if (req.query.process) query.process = req.query.process;
+  if (req.query.unit) query.unit = req.query.unit;
 
   // Result filter: allYes or allNo
   if (req.query.result === 'allYes') {
@@ -150,10 +169,11 @@ export const getAudits = asyncHandler(async (req, res) => {
   let audits;
   try {
     audits = await Audit.find(query)
-      .select('date line machine process lineLeader shiftIncharge auditor createdBy createdAt answers')
+      .select('date line machine process unit lineLeader shiftIncharge auditor createdBy createdAt answers')
       .populate("line", "name")
       .populate("machine", "name")
       .populate("process", "name")
+      .populate("unit", "name")
       .populate("auditor", "fullName emailId")
       .populate("createdBy", "fullName employeeId")
       .populate({ path: "answers.question", select: "questionText", options: { lean: true } })
@@ -165,10 +185,11 @@ export const getAudits = asyncHandler(async (req, res) => {
     if (err?.name === 'CastError') {
       // Fallback without populating nested answers if legacy data shape
       audits = await Audit.find(query)
-        .select('date line machine process lineLeader shiftIncharge auditor createdBy createdAt answers')
+        .select('date line machine process unit lineLeader shiftIncharge auditor createdBy createdAt answers')
         .populate("line", "name")
         .populate("machine", "name")
         .populate("process", "name")
+        .populate("unit", "name")
         .populate("auditor", "fullName emailId")
         .populate("createdBy", "fullName employeeId")
         .sort({ createdAt: -1 })
@@ -200,6 +221,7 @@ export const getAuditById = asyncHandler(async (req, res) => {
     .populate("line", "name")
     .populate("machine", "name")
     .populate("process", "name")
+    .populate("unit", "name")
     .populate("auditor", "fullName emailId")
     .populate("answers.question", "questionText")
     .populate("createdBy", "fullName employeeId"); 
@@ -209,9 +231,147 @@ export const getAuditById = asyncHandler(async (req, res) => {
   return res.json(new ApiResponse(200, audit, "Audit fetched"));
 });
 
+export const shareAuditByEmail = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { email, note } = req.body || {};
+
+  if (!email) {
+    throw new ApiError(400, "Email is required");
+  }
+
+  const audit = await Audit.findById(id)
+    .populate("line", "name")
+    .populate("machine", "name")
+    .populate("process", "name")
+    .populate("unit", "name")
+    .populate("auditor", "fullName emailId")
+    .populate("createdBy", "fullName employeeId");
+
+  if (!audit) {
+    throw new ApiError(404, "Audit not found");
+  }
+
+  // Only allow the auditor or admins/superadmins to share
+  if (
+    req.user.role === "employee" &&
+    audit.auditor &&
+    audit.auditor._id &&
+    audit.auditor._id.toString() !== req.user._id.toString()
+  ) {
+    throw new ApiError(403, "You are not allowed to share this audit");
+  }
+
+  const dateStr = audit.date
+    ? new Date(audit.date).toISOString().split("T")[0]
+    : "N/A";
+  const lineName = audit.line?.name || "N/A";
+  const machineName = audit.machine?.name || "N/A";
+  const processName = audit.process?.name || "N/A";
+  const unitName = audit.unit?.name || "N/A";
+  const auditorName = audit.auditor?.fullName || "N/A";
+
+  const totalQuestions = Array.isArray(audit.answers) ? audit.answers.length : 0;
+  const noCount = Array.isArray(audit.answers)
+    ? audit.answers.filter((a) => a.answer === "No").length
+    : 0;
+  const yesCount = totalQuestions - noCount;
+
+  const subject = `Audit Result - ${dateStr} - ${lineName}`;
+
+  const rowsHtml = (audit.answers || [])
+    .map((ans, idx) => {
+      const qText = ans.question?.questionText || ans.questionText || `Q${idx + 1}`;
+      const remark = ans.remark || "-";
+      const answer = ans.answer || "-";
+      const photos = Array.isArray(ans.photos) ? ans.photos : [];
+      const photosHtml = photos.length
+        ? photos
+            .map(
+              (p, photoIdx) =>
+                `<a href="${p.url}" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-right:4px;margin-bottom:4px;">
+                  <img src="${p.url}" alt="Photo ${photoIdx + 1}" style="width:56px;height:56px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb;" />
+                </a>`
+            )
+            .join("")
+        : "-";
+
+      return `<tr>
+        <td style="padding:8px;border:1px solid #e5e7eb;font-size:13px;">${idx + 1}</td>
+        <td style="padding:8px;border:1px solid #e5e7eb;font-size:13px;">${qText}</td>
+        <td style="padding:8px;border:1px solid #e5e7eb;font-size:13px;">${answer}</td>
+        <td style="padding:8px;border:1px solid #e5e7eb;font-size:13px;">${remark}</td>
+        <td style="padding:8px;border:1px solid #e5e7eb;font-size:13px;max-width:220px;">${photosHtml}</td>
+      </tr>`;
+    })
+    .join("");
+
+  const extraNote = note ? `<p style="margin:0 0 16px 0;font-size:13px;"><strong>Note from ${
+    auditorName || "auditor"
+  }:</strong> ${note}</p>` : "";
+
+  const html = `
+    <div style="font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111827;">
+      <h2 style="margin-bottom:4px;font-size:20px;">Audit Result Shared</h2>
+      <p style="margin:0 0 16px 0;font-size:14px;color:#4b5563;">
+        An audit has been completed and shared with you. Below are the details.
+      </p>
+
+      <div style="margin-bottom:16px;padding:12px 14px;border-radius:8px;background:#f9fafb;border:1px solid #e5e7eb;">
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Date:</strong> ${dateStr}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Line:</strong> ${lineName}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Machine:</strong> ${machineName}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Process:</strong> ${processName}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Unit:</strong> ${unitName}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Line Leader:</strong> ${
+          audit.lineLeader || "N/A"
+        }</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Shift Incharge:</strong> ${
+          audit.shiftIncharge || "N/A"
+        }</p>
+        <p style="margin:0;font-size:13px;"><strong>Auditor:</strong> ${auditorName}</p>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Total Questions:</strong> ${
+          totalQuestions
+        }</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>YES:</strong> ${yesCount}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>NO:</strong> ${noCount}</p>
+      </div>
+
+      ${extraNote}
+
+      <table style="border-collapse:collapse;width:100%;margin-top:12px;">
+        <thead>
+          <tr style="background:#f3f4f6;">
+            <th style="padding:8px;border:1px solid #e5e7eb;font-size:13px;text-align:left;">#</th>
+            <th style="padding:8px;border:1px solid #e5e7eb;font-size:13px;text-align:left;">Question</th>
+            <th style="padding:8px;border:1px solid #e5e7eb;font-size:13px;text-align:left;">Answer</th>
+            <th style="padding:8px;border:1px solid #e5e7eb;font-size:13px;text-align:left;">Remark</th>
+            <th style="padding:8px;border:1px solid #e5e7eb;font-size:13px;text-align:left;">Photos</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rowsHtml}
+        </tbody>
+      </table>
+
+      <p style="margin-top:16px;font-size:12px;color:#9ca3af;">
+        This email was sent automatically by the Audit Management System.
+      </p>
+    </div>
+  `;
+
+  await sendMail(email, subject, html);
+
+  logger.info(`Audit ${id} shared via email to ${email} by ${req.user._id}`);
+
+  return res.json(new ApiResponse(200, null, "Audit shared via email"));
+});
+
 export const updateAudit = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { line, machine, process, lineLeader, shiftIncharge, answers } = req.body;
+  const { line, machine, process, unit, lineLeader, shiftIncharge, answers } = req.body;
 
   const audit = await Audit.findById(id);
   if (!audit) throw new ApiError(404, "Audit not found");
@@ -223,6 +383,7 @@ export const updateAudit = asyncHandler(async (req, res) => {
   if (line) audit.line = line;
   if (machine) audit.machine = machine;
   if (process) audit.process = process;
+  if (unit) audit.unit = unit;
   if (lineLeader) audit.lineLeader = lineLeader;
   if (shiftIncharge) audit.shiftIncharge = shiftIncharge;
 

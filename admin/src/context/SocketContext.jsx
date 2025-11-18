@@ -54,11 +54,16 @@ export const SocketProvider = ({ children }) => {
     // Audit event handlers
     newSocket.on('audit-created', (data) => {
       console.log('📝 New audit created:', data);
-      toast.success(`New audit submitted by ${data.auditor}`, {
-        description: `Line: ${data.line}, Machine: ${data.machine}`,
+
+      const auditorName = data?.auditor?.fullName || data?.auditor?.name || data?.auditor || 'Unknown auditor';
+      const lineName = data?.line?.name || data?.line || 'Unknown line';
+      const machineName = data?.machine?.name || data?.machine || 'Unknown machine';
+
+      toast.success(`New audit submitted by ${auditorName}`, {
+        description: `Line: ${lineName}, Machine: ${machineName}`,
         action: {
           label: 'View',
-          onClick: () => window.location.href = '/admin/audits',
+          onClick: () => (window.location.href = '/admin/audits'),
         },
       });
       setNotifications(prev => [{ ...data, type: 'audit-created' }, ...prev.slice(0, 49)]);

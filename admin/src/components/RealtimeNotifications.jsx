@@ -39,10 +39,20 @@ const RealtimeNotifications = () => {
       case 'audit-updated':
         return 'border-l-blue-500 bg-blue-50';
       case 'audit-deleted':
-        return 'border-l-red-500 bg-red-50';
+        return 'border-l-red-50 bg-red-50';
       default:
         return 'border-l-yellow-500 bg-yellow-50';
     }
+  };
+
+  const getEntityLabel = (entity, fallback = 'N/A') => {
+    if (!entity) return fallback;
+    if (typeof entity === 'string' || typeof entity === 'number') return String(entity);
+    if (typeof entity === 'object') {
+      if (entity.name) return entity.name;
+      if (entity.id) return String(entity.id);
+    }
+    return fallback;
   };
 
   const formatTimestamp = (timestamp) => {
@@ -156,9 +166,15 @@ const RealtimeNotifications = () => {
                             Updated by: {notification.updatedBy}
                           </p>
                         )}
-                        {notification.line && notification.machine && (
-                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                            Line: {notification.line} | Machine: {notification.machine}
+                        {(notification.line || notification.machine) && (
+                          <p className="mt-1 text-xs text-gray-600 dark:text-gray-400">
+                            {notification.line && (
+                              <>Line: {getEntityLabel(notification.line, 'Unknown line')}</>
+                            )}
+                            {notification.line && notification.machine && ' | '}
+                            {notification.machine && (
+                              <>Machine: {getEntityLabel(notification.machine, 'Unknown machine')}</>
+                            )}
                           </p>
                         )}
                       </div>

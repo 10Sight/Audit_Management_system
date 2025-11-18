@@ -28,6 +28,7 @@ export const createQuestion = asyncHandler(async (req, res) => {
       if (q.machine) base.machines = [q.machine];
       if (q.line) base.lines = [q.line];
       if (q.process) base.processes = [q.process];
+      if (q.unit) base.units = [q.unit];
     }
 
     const question = await Question.create(base);
@@ -46,15 +47,17 @@ export const getQuestions = asyncHandler(async (req, res) => {
   const lineId = req.query.lineId || req.query.line;
   const machineId = req.query.machineId || req.query.machine;
   const processId = req.query.processId || req.query.process;
+  const unitId = req.query.unitId || req.query.unit;
   const includeGlobal = req.query.includeGlobal;
 
   const orConditions = [];
   const andConditions = [];
 
-  // Line/Machine/Process filters
+  // Line/Machine/Process/Unit filters
   if (lineId) andConditions.push({ lines: lineId });
   if (machineId) andConditions.push({ machines: machineId });
   if (processId) andConditions.push({ processes: processId });
+  if (unitId) andConditions.push({ units: unitId });
 
   // Include global questions only if explicitly true (default: true)
   if (includeGlobal === undefined || includeGlobal === "true") {
@@ -70,7 +73,7 @@ export const getQuestions = asyncHandler(async (req, res) => {
   const filter = orConditions.length > 0 ? { $or: orConditions } : {};
 
   const questions = await Question.find(filter)
-    .populate("lines machines processes", "name")
+    .populate("lines machines processes units", "name")
     .lean(); // lean() makes objects simple JS objects, easier for frontend
 
   return res.json({ status: "success", data: questions });

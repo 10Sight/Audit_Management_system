@@ -4,7 +4,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../context/AuthContext";
 import { FiPlus, FiEdit, FiTrash2, FiArrowLeft, FiArrowRight } from "react-icons/fi";
-import { useGetAuditsQuery, useDeleteAuditMutation, useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery } from "@/store/api";
+import { useGetAuditsQuery, useDeleteAuditMutation, useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useGetUnitsQuery } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,7 @@ export default function AuditsPage() {
   const [selectedLine, setSelectedLine] = useState('all');
   const [selectedMachine, setSelectedMachine] = useState('all');
   const [selectedProcess, setSelectedProcess] = useState('all');
+  const [selectedUnit, setSelectedUnit] = useState('all');
   const [resultFilter, setResultFilter] = useState('any');
   const navigate = useNavigate();
   const { user: currentUser, loading: authLoading } = useAuth();
@@ -46,12 +47,14 @@ export default function AuditsPage() {
   const { data: linesRes } = useGetLinesQuery();
   const { data: machinesRes } = useGetMachinesQuery();
   const { data: processesRes } = useGetProcessesQuery();
+  const { data: unitsRes } = useGetUnitsQuery();
   const { data: auditsRes, isLoading: auditsLoading } = useGetAuditsQuery({
     page: currentPage,
     limit: auditsPerPage,
     line: selectedLine !== 'all' ? selectedLine : undefined,
     machine: selectedMachine !== 'all' ? selectedMachine : undefined,
     process: selectedProcess !== 'all' ? selectedProcess : undefined,
+    unit: selectedUnit !== 'all' ? selectedUnit : undefined,
     result: resultFilter !== 'any' ? resultFilter : undefined,
   });
   const [deleteAudit] = useDeleteAuditMutation();
@@ -123,7 +126,7 @@ export default function AuditsPage() {
               <CardDescription>Click a row to view details. Use actions to edit or delete.</CardDescription>
             </div>
             {/* Filters */}
-            <div className="grid gap-3 md:grid-cols-4 w-full md:w-auto">
+            <div className="grid gap-3 md:grid-cols-5 w-full md:w-auto">
               <div className="space-y-1">
                 <Label>Line</Label>
                 <Select value={selectedLine} onValueChange={(v) => { setSelectedLine(v); setCurrentPage(1); }}>
@@ -161,6 +164,18 @@ export default function AuditsPage() {
                 </Select>
               </div>
               <div className="space-y-1">
+                <Label>Unit</Label>
+                <Select value={selectedUnit} onValueChange={(v) => { setSelectedUnit(v); setCurrentPage(1); }}>
+                  <SelectTrigger className="min-w-[160px]"><SelectValue placeholder="All Units" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Units</SelectItem>
+                    {(unitsRes?.data || []).map((u) => (
+                      <SelectItem key={u._id} value={u._id}>{u.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
                 <Label>Result</Label>
                 <Select value={resultFilter} onValueChange={(v) => { setResultFilter(v); setCurrentPage(1); }}>
                   <SelectTrigger className="min-w-[140px]"><SelectValue placeholder="Any" /></SelectTrigger>
@@ -183,6 +198,7 @@ export default function AuditsPage() {
                   <TableHead>Line</TableHead>
                   <TableHead>Machine</TableHead>
                   <TableHead>Process</TableHead>
+                  <TableHead>Unit</TableHead>
                   <TableHead>Auditor</TableHead>
                   <TableHead className="text-center">Answers</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -204,6 +220,7 @@ export default function AuditsPage() {
                       <TableCell className="font-medium">{audit.line?.name || 'N/A'}</TableCell>
                       <TableCell>{audit.machine?.name || 'N/A'}</TableCell>
                       <TableCell>{audit.process?.name || 'N/A'}</TableCell>
+                      <TableCell>{audit.unit?.name || 'N/A'}</TableCell>
                       <TableCell>{audit.auditor?.fullName || 'N/A'}</TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-2">

@@ -24,7 +24,7 @@ import {
   Calendar,
   Filter
 } from "lucide-react";
-import { useGetAuditsQuery, useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useGetAllUsersQuery, useGetEmployeesQuery } from "@/store/api";
+import { useGetAuditsQuery, useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useGetUnitsQuery, useGetAllUsersQuery, useGetEmployeesQuery } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -35,12 +35,14 @@ export default function AdminDashboard() {
   const [lines, setLines] = useState([]);
   const [machines, setMachines] = useState([]);
   const [processes, setProcesses] = useState([]);
+  const [units, setUnits] = useState([]);
   const [employees, setEmployees] = useState([]);
 
   const [answerType, setAnswerType] = useState("all");
   const [selectedLine, setSelectedLine] = useState("all");
   const [selectedMachine, setSelectedMachine] = useState("all");
   const [selectedProcess, setSelectedProcess] = useState("all");
+  const [selectedUnit, setSelectedUnit] = useState("all");
   const [timeframe, setTimeframe] = useState("daily");
 
   const [lineData, setLineData] = useState([]);
@@ -76,6 +78,7 @@ export default function AdminDashboard() {
   const { data: linesRes } = useGetLinesQuery();
   const { data: machinesRes } = useGetMachinesQuery();
   const { data: processesRes } = useGetProcessesQuery();
+  const { data: unitsRes } = useGetUnitsQuery();
   const { data: usersRes } = useGetAllUsersQuery({ page: 1, limit: 1000 });
   // Query only employees to get accurate total count from backend
   const { data: employeesCountRes } = useGetEmployeesQuery({ page: 1, limit: 1 });
@@ -86,8 +89,9 @@ export default function AdminDashboard() {
     setLines(linesRes?.data || []);
     setMachines(machinesRes?.data || []);
     setProcesses(processesRes?.data || []);
+    setUnits(unitsRes?.data || []);
     setEmployees(Array.isArray(usersRes?.data?.users) ? usersRes.data.users : []);
-  }, [auditsRes, linesRes, machinesRes, processesRes, usersRes]);
+  }, [auditsRes, linesRes, machinesRes, processesRes, usersRes, unitsRes]);
 
   // RTK Query polling handles refresh; no manual interval needed
 
@@ -102,6 +106,7 @@ export default function AdminDashboard() {
       if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return;
       if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return;
       if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return;
+      if (selectedUnit && selectedUnit !== "all" && audit.unit?._id !== selectedUnit) return;
 
       const key = getTimeframeKey(audit.date, timeframe);
       if (!countsByPeriod[key]) countsByPeriod[key] = { Yes: 0, No: 0 };
@@ -117,7 +122,7 @@ export default function AdminDashboard() {
       .sort((a, b) => new Date(a) - new Date(b))
       .map((period) => ({ date: period, ...countsByPeriod[period] }));
     setLineData(lineChartData);
-  }, [audits, timeframe, selectedLine, selectedMachine, selectedProcess]);
+  }, [audits, timeframe, selectedLine, selectedMachine, selectedProcess, selectedUnit]);
 
   // Bar Chart Data
   useEffect(() => {
@@ -129,6 +134,7 @@ export default function AdminDashboard() {
         if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return;
         if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return;
         if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return;
+        if (selectedUnit && selectedUnit !== "all" && audit.unit?._id !== selectedUnit) return;
 
         const lineName = audit.line?.name || "N/A";
         if (!counts[lineName]) counts[lineName] = { Yes: 0, No: 0 };
@@ -138,7 +144,7 @@ export default function AdminDashboard() {
     });
 
     setBarData(Object.keys(counts).map((k) => ({ name: k, ...counts[k] })));
-  }, [audits, selectedLine, selectedMachine, selectedProcess]);
+  }, [audits, selectedLine, selectedMachine, selectedProcess, selectedUnit]);
 
   // Pie Chart Data
   useEffect(() => {
@@ -151,6 +157,7 @@ export default function AdminDashboard() {
       if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return;
       if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return;
       if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return;
+      if (selectedUnit && selectedUnit !== "all" && audit.unit?._id !== selectedUnit) return;
 
       audit.answers?.forEach((ans) => {
         if (ans.answer === "Yes") yesCount++;
@@ -162,7 +169,7 @@ export default function AdminDashboard() {
       { name: "Yes", value: yesCount },
       { name: "No", value: noCount },
     ]);
-  }, [audits, selectedLine, selectedMachine, selectedProcess]);
+  }, [audits, selectedLine, selectedMachine, selectedProcess, selectedUnit]);
 
   const totalEmployees = useMemo(
     () => {
@@ -181,6 +188,7 @@ export default function AdminDashboard() {
         lines: lines.length,
         machines: machines.length,
         processes: processes.length,
+        units: units.length,
       };
     }
     
@@ -188,6 +196,7 @@ export default function AdminDashboard() {
       if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return false;
       if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return false;
       if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return false;
+      if (selectedUnit && selectedUnit !== "all" && audit.unit?._id !== selectedUnit) return false;
       return true;
     });
 
@@ -201,8 +210,9 @@ export default function AdminDashboard() {
       lines: selectedLine && selectedLine !== "all" ? 1 : lines.length,
       machines: selectedMachine && selectedMachine !== "all" ? 1 : machines.length,
       processes: selectedProcess && selectedProcess !== "all" ? 1 : processes.length,
+      units: selectedUnit && selectedUnit !== "all" ? 1 : units.length,
     };
-  }, [audits, selectedLine, selectedMachine, selectedProcess, lines, machines, processes]);
+  }, [audits, selectedLine, selectedMachine, selectedProcess, selectedUnit, lines, machines, processes, units]);
 
   return (
     <div className="space-y-8">
@@ -250,6 +260,13 @@ export default function AdminDashboard() {
             description: "Total machinery",
             trend: "Stable"
           },
+          { 
+            title: "Units", 
+            value: filteredCounts.units, 
+            icon: Building2,
+            description: "Logical units",
+            trend: "New dimension"
+          },
         ].map((metric) => {
           const Icon = metric.icon;
           return (
@@ -278,13 +295,21 @@ export default function AdminDashboard() {
           <CardDescription>Filter data to focus on specific metrics</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-            {["Answer Type", "Line", "Machine", "Process", "Timeframe"].map((label) => {
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+            {[
+              "Answer Type",
+              "Line",
+              "Machine",
+              "Process",
+              "Unit",
+              "Timeframe",
+            ].map((label) => {
               const valueMap = {
                 "Answer Type": answerType,
                 Line: selectedLine,
                 Machine: selectedMachine,
                 Process: selectedProcess,
+                Unit: selectedUnit,
                 Timeframe: timeframe,
               };
               const setValueMap = {
@@ -292,6 +317,7 @@ export default function AdminDashboard() {
                 Line: setSelectedLine,
                 Machine: setSelectedMachine,
                 Process: setSelectedProcess,
+                Unit: setSelectedUnit,
                 Timeframe: setTimeframe,
               };
               const optionsMap = {
@@ -299,6 +325,7 @@ export default function AdminDashboard() {
                 Line: lines,
                 Machine: machines,
                 Process: processes,
+                Unit: units,
                 Timeframe: ["daily", "weekly", "monthly", "yearly"],
               };
 
@@ -309,8 +336,8 @@ export default function AdminDashboard() {
                   </label>
                   <Select value={valueMap[label]} onValueChange={setValueMap[label]}>
                     <SelectTrigger>
-                      <SelectValue 
-                        placeholder={label === "Answer Type" ? "Select Answer" : `All ${label}s`} 
+                      <SelectValue
+                        placeholder={label === "Answer Type" ? "Select Answer" : `All ${label}s`}
                       />
                     </SelectTrigger>
                     <SelectContent>

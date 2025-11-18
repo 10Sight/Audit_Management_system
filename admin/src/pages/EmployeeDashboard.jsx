@@ -97,6 +97,7 @@ export default function EmployeeDashboard() {
       Line: audit.line?.name || "N/A",
       Machine: audit.machine?.name || "N/A",
       Process: audit.process?.name || "N/A",
+      Unit: audit.unit?.name || "N/A",
       LineLeader: audit.lineLeader || "N/A",
       ShiftIncharge: audit.shiftIncharge || "N/A",
       Status: (audit.answers && Array.isArray(audit.answers) && audit.answers.every((a) => a.answer === "Yes")) ? "Completed" : "Issues Found",
@@ -223,6 +224,7 @@ export default function EmployeeDashboard() {
                         <TableHead className="whitespace-nowrap">Line</TableHead>
                         <TableHead className="hidden md:table-cell whitespace-nowrap">Machine</TableHead>
                         <TableHead className="hidden md:table-cell whitespace-nowrap">Process</TableHead>
+                        <TableHead className="hidden md:table-cell whitespace-nowrap">Unit</TableHead>
                         <TableHead className="whitespace-nowrap">Status</TableHead>
                         <TableHead className="hidden md:table-cell whitespace-nowrap">Score</TableHead>
                         <TableHead className="text-right whitespace-nowrap">Actions</TableHead>
@@ -242,6 +244,7 @@ export default function EmployeeDashboard() {
                           <TableCell className="whitespace-nowrap truncate max-w-[200px]">{audit.line?.name || "N/A"}</TableCell>
                           <TableCell className="hidden md:table-cell whitespace-nowrap truncate max-w-[200px]">{audit.machine?.name || "N/A"}</TableCell>
                           <TableCell className="hidden md:table-cell whitespace-nowrap truncate max-w-[200px]">{audit.process?.name || "N/A"}</TableCell>
+                          <TableCell className="hidden md:table-cell whitespace-nowrap truncate max-w-[200px]">{audit.unit?.name || "N/A"}</TableCell>
                           <TableCell>
                             {statusInfo.isCompleted ? (
                               <Badge className="bg-green-100 text-green-800 border-green-200 px-2.5 py-0.5 text-xs">
@@ -427,6 +430,11 @@ export default function EmployeeDashboard() {
                         <Activity className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium">Process:</span>
                         <Badge variant="outline">{selectedAudit.process?.name || "N/A"}</Badge>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Activity className="h-4 w-4 text-muted-foreground" />
+                        <span className="font-medium">Unit:</span>
+                        <Badge variant="outline">{selectedAudit.unit?.name || "N/A"}</Badge>
                       </div>
                       <div className="flex items-center gap-2">
                         <User className="h-4 w-4 text-muted-foreground" />

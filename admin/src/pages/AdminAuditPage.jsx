@@ -37,6 +37,7 @@ export default function AdminAuditPage() {
     line: "",
     machine: "",
     process: "",
+    unit: "",
     lineLeader: "",
     shiftIncharge: "",
     answers: [],
@@ -53,6 +54,7 @@ useEffect(() => {
       line: auditData?.line?._id || "",
       machine: auditData?.machine?._id || "",
       process: auditData?.process?._id || "",
+      unit: auditData?.unit?._id || "",
       lineLeader: auditData?.lineLeader || "",
       shiftIncharge: auditData?.shiftIncharge || "",
       answers: Array.isArray(auditData?.answers)
@@ -173,6 +175,11 @@ useEffect(() => {
                 <Building2 className="h-4 w-4 text-muted-foreground" />
                 <span className="font-medium">Process:</span>
                 <Badge variant="outline">{audit.process?.name || "N/A"}</Badge>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <Building2 className="h-4 w-4 text-muted-foreground" />
+                <span className="font-medium">Unit:</span>
+                <Badge variant="outline">{audit.unit?.name || "N/A"}</Badge>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <User className="h-4 w-4 text-muted-foreground" />
