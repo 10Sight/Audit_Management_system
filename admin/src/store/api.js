@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const baseUrl = import.meta.env.VITE_SERVER_URL || 'https://audit-management-system-server.onrender.com';
+const baseUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:5000';
 
 export const api = createApi({
   reducerPath: 'api',
@@ -41,6 +41,13 @@ export const api = createApi({
     getUserStats: builder.query({
       query: () => '/api/v1/auth/user-stats',
       providesTags: ['Employee'],
+    }),
+    initiateQrLogin: builder.mutation({
+      query: (body) => ({ url: '/api/v1/auth/qr-login/initiate', method: 'POST', body }),
+    }),
+    verifyQrLoginOtp: builder.mutation({
+      query: (body) => ({ url: '/api/v1/auth/qr-login/verify', method: 'POST', body }),
+      invalidatesTags: ['Auth'],
     }),
 
     // Employees
@@ -270,6 +277,8 @@ export const {
   useLoginMutation,
   useLogoutMutation,
   useGetMeQuery,
+  useInitiateQrLoginMutation,
+  useVerifyQrLoginOtpMutation,
   useGetEmployeesQuery,
   useGetAllUsersQuery,
   useGetLinesQuery,

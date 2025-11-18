@@ -2780,3 +2780,48 @@
 [18 Nov, 2025 - 17:01:26:126] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
 [18 Nov, 2025 - 17:01:50:150] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
 [18 Nov, 2025 - 22:03:55:355] [33mwarn[39m: [33mMongoDB disconnected[39m
+[18 Nov, 2025 - 22:20:16:2016] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 22:20:16:2016] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 22:20:50:2050] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 22:20:54:2054] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 22:21:51:2151] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 22:31:24:3124] [33mwarn[39m: [33mMongoDB disconnected[39m
+[18 Nov, 2025 - 22:40:04:404] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 22:40:06:406] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 22:40:48:4048] [34minfo[39m: [34mQuestion category created: 691ca89713a1ae69d3f485d3 by user 68af3a678dc2fc711b2a155f[39m
+[18 Nov, 2025 - 22:41:04:414] [34minfo[39m: [34mQuestion category updated: 691ca89713a1ae69d3f485d3 by user 68af3a678dc2fc711b2a155f[39m
+[18 Nov, 2025 - 22:41:20:4120] [34minfo[39m: [34mQuestion category updated: 691c500a988b377790fdb15b by user 68af3a678dc2fc711b2a155f[39m
+[18 Nov, 2025 - 22:41:37:4137] [34minfo[39m: [34mQuestion category created: 691ca8c913a1ae69d3f485e4 by user 68af3a678dc2fc711b2a155f[39m
+[18 Nov, 2025 - 22:42:53:4253] [34minfo[39m: [34mQuestion category updated: 691c500a988b377790fdb15b by user 68af3a678dc2fc711b2a155f[39m
+[18 Nov, 2025 - 22:48:34:4834] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 22:48:36:4836] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 22:49:01:491] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[18 Nov, 2025 - 22:49:04:494] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[18 Nov, 2025 - 23:00:10:010] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 23:00:10:010] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 23:00:10:010] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 23:07:30:730] [33mwarn[39m: [33mMongoDB disconnected[39m
+[18 Nov, 2025 - 23:57:34:5734] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 23:57:34:5734] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 23:57:34:5734] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[18 Nov, 2025 - 23:58:05:585] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 00:04:02:42] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[19 Nov, 2025 - 00:04:03:43] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[19 Nov, 2025 - 00:07:43:743] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[19 Nov, 2025 - 00:07:44:744] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[19 Nov, 2025 - 00:23:40:2340] [34minfo[39m: [34mEmployee logged out[39m
+[19 Nov, 2025 - 00:23:52:2352] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 00:23:53:2353] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 00:24:19:2419] [34minfo[39m: [34mQuestion category deleted: 691c500a988b377790fdb15b by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 00:29:50:2950] [33mwarn[39m: [33mMongoDB disconnected[39m
+[19 Nov, 2025 - 01:24:39:2439] [33mwarn[39m: [33mMongoDB disconnected[39m
+[19 Nov, 2025 - 01:34:31:3431] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 01:34:31:3431] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 01:36:06:366] [33mwarn[39m: [33mMongoDB disconnected[39m
+[19 Nov, 2025 - 01:37:16:3716] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 01:37:16:3716] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 01:37:16:3716] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 01:42:40:4240] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[19 Nov, 2025 - 01:42:41:4241] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[19 Nov, 2025 - 01:43:16:4316] [33mwarn[39m: [33mMongoDB disconnected[39m
+[19 Nov, 2025 - 01:43:24:4324] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m

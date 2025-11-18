@@ -87,6 +87,16 @@ export const getQuestions = asyncHandler(async (req, res) => {
   const processId = req.query.processId || req.query.process;
   const unitId = req.query.unitId || req.query.unit;
   const includeGlobal = req.query.includeGlobal;
+  const fetchAll = req.query.fetchAll === "true";
+
+  // Fast path: explicitly request all questions (global + scoped), ignoring filters
+  if (fetchAll) {
+    const questions = await Question.find({})
+      .populate("lines machines processes units", "name")
+      .lean();
+
+    return res.json({ status: "success", data: questions });
+  }
 
   const orConditions = [];
   const andConditions = [];

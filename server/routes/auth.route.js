@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerEmployee, loginEmployee, logoutEmployee, getEmployees, deleteEmployee, getSingleEmployee, getCurrentUser, updateEmployee, getAllUsers, populateUsernames, bootstrapSuperAdmin, getUserStats } from "../controllers/auth.controller.js";
+import { registerEmployee, loginEmployee, logoutEmployee, getEmployees, deleteEmployee, getSingleEmployee, getCurrentUser, updateEmployee, getAllUsers, populateUsernames, bootstrapSuperAdmin, getUserStats, initiateQrLogin, verifyQrLoginOtp } from "../controllers/auth.controller.js";
 import { verifyJWT, authorizeRoles } from '../middlewares/auth.middleware.js';
 import { loginLimiter } from '../middlewares/rateLimiters.middleware.js';
 import { validate } from '../middlewares/validte.middleware.js';
@@ -13,6 +13,11 @@ router.post("/bootstrap-superadmin", bootstrapSuperAdmin);
 router.post("/register", verifyJWT, authorizeRoles("admin"), validate(registerSchema), registerEmployee);
 router.post("/login", loginLimiter, validate(loginSchema), loginEmployee);
 router.post("/logout", verifyJWT, logoutEmployee);
+
+// QR + OTP login (no JWT required)
+router.post("/qr-login/initiate", loginLimiter, initiateQrLogin);
+router.post("/qr-login/verify", loginLimiter, verifyQrLoginOtp);
+
 router.get("/get-employee", verifyJWT, authorizeRoles("admin"), getEmployees);
 router.get("/get-all-users", verifyJWT, authorizeRoles("admin"), getAllUsers);
 router.get("/user-stats", verifyJWT, authorizeRoles("admin"), getUserStats);

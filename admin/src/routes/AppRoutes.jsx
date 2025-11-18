@@ -34,6 +34,7 @@ const SuperAdminDashboard = lazy(() => import("@/pages/SuperAdminDashboard"));
 const SuperAdminUsersPage = lazy(() => import("@/pages/SuperAdminUsersPage"));
 const AuditEmailSettingsPage = lazy(() => import("@/pages/AuditEmailSettingsPage"));
 const AdminQuestionCategoriesPage = lazy(() => import("@/pages/AdminQuestionCategoriesPage"));
+const AdminQuestionCategoryDetailPage = lazy(() => import("@/pages/AdminQuestionCategoryDetailPage"));
 
 export default function AppRoutes() {
   return (
@@ -74,6 +75,7 @@ export default function AppRoutes() {
           <Route path="audits" element={<AuditsPage />} />
           <Route path="questions" element={<AdminManageQuestionsPage />} />
           <Route path="question-categories" element={<AdminQuestionCategoriesPage />} />
+          <Route path="question-categories/:id" element={<AdminQuestionCategoryDetailPage />} />
           <Route path="audits/:id" element={<AuditDetailPage />} />
           <Route path="audits/create" element={<AdminCreateTemplatePage />} />
           <Route path="departments" element={<DepartmentPage />} />

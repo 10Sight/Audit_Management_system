@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   useGetQuestionsQuery,
@@ -15,19 +16,23 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
-import { Search, FolderPlus, Trash2 } from "lucide-react";
+import { Search, FolderPlus, Trash2, ArrowRight } from "lucide-react";
 import Loader from "@/components/ui/Loader";
-
 export default function AdminQuestionCategoriesPage() {
   const { user: currentUser } = useAuth();
+  const navigate = useNavigate();
 
   const [selectedCategoryId, setSelectedCategoryId] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [selectedQuestions, setSelectedQuestions] = useState([]); // array of question ids
   const [searchTerm, setSearchTerm] = useState("");
+  const [initialized, setInitialized] = useState(false);
 
-  const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery({ includeGlobal: "true" });
+  const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery({
+    includeGlobal: "true",
+    fetchAll: "true",
+  });
   const { data: categoriesRes, isLoading: categoriesLoading, refetch: refetchCategories } =
     useGetQuestionCategoriesQuery();
 
@@ -45,15 +50,18 @@ export default function AdminQuestionCategoriesPage() {
   );
 
   useEffect(() => {
-    // When categories load, if none selected, select first
-    if (!selectedCategoryId && categories.length > 0) {
+    // When categories load for the first time, auto-select the first one.
+    // After that, respect the user's manual selection / "New Category" state.
+    if (initialized) return;
+    if (categories.length > 0) {
       const first = categories[0];
       setSelectedCategoryId(first._id);
       setName(first.name || "");
       setDescription(first.description || "");
       setSelectedQuestions((first.questions || []).map((q) => q._id));
+      setInitialized(true);
     }
-  }, [categories, selectedCategoryId]);
+  }, [categories, initialized]);
 
   const resetForm = () => {
     setSelectedCategoryId(null);
@@ -75,6 +83,9 @@ export default function AdminQuestionCategoriesPage() {
     );
   };
 
+  const handleViewCategory = (id) => {
+    navigate(`/admin/question-categories/${id}`);
+  };
   const filteredQuestions = useMemo(() => {
     if (!searchTerm.trim()) return questions;
     const q = searchTerm.toLowerCase();
@@ -137,7 +148,7 @@ export default function AdminQuestionCategoriesPage() {
   if (loading) return <Loader />;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Question Categories</h1>
@@ -151,45 +162,82 @@ export default function AdminQuestionCategoriesPage() {
         </Button>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[280px,1fr]">
-        {/* Category list */}
-        <Card className="h-full">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,3fr),minmax(0,2fr)]">
+        {/* Category cards */}
+        <Card className="h-full border-none bg-muted/40">
           <CardHeader>
             <CardTitle className="text-base">Categories</CardTitle>
             <CardDescription>
-              Select a category to edit its details and questions.
+              Browse your categories and open a dedicated page to see their questions.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3 max-h-[480px] overflow-y-auto pr-1">
-            {categories.length === 0 && (
+          <CardContent className="space-y-3">
+            {categories.length === 0 ? (
               <p className="text-xs text-muted-foreground">
                 No categories yet. Create one to start grouping questions.
               </p>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
+                {categories.map((cat) => {
+                  const count = cat.questions?.length || 0;
+                  const isActive = selectedCategoryId === cat._id;
+                  return (
+                    <div
+                      key={cat._id}
+                      className={`flex h-full flex-col justify-between rounded-lg border bg-background/80 p-5 text-sm shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${
+                        isActive ? "border-primary ring-1 ring-primary/30" : "border-border"
+                      }`}
+                      onClick={() => handleSelectCategory(cat)}
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <h2 className="line-clamp-2 text-sm font-semibold">
+                          {cat.name}
+                        </h2>
+                        <Badge variant="outline" className="shrink-0 text-[11px]">
+                          {count} {count === 1 ? "question" : "questions"}
+                        </Badge>
+                      </div>
+                      {cat.description && (
+                        <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+                          {cat.description}
+                        </p>
+                      )}
+                      <div className="mt-4 flex items-center justify-between gap-2">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="px-0 text-xs text-muted-foreground hover:text-foreground"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectCategory(cat);
+                          }}
+                        >
+                          Edit details
+                        </Button>
+                        <Button
+                          type="button"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewCategory(cat._id);
+                          }}
+                          className="ml-auto inline-flex items-center gap-1"
+                        >
+                          View questions
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             )}
-            {categories.map((cat) => {
-              const count = cat.questions?.length || 0;
-              const isActive = selectedCategoryId === cat._id;
-              return (
-                <button
-                  key={cat._id}
-                  type="button"
-                  onClick={() => handleSelectCategory(cat)}
-                  className={`w-full text-left rounded-md border px-3 py-2 text-sm transition hover:bg-accent hover:text-accent-foreground flex items-center justify-between gap-2 ${
-                    isActive ? "border-primary bg-primary/5" : "border-border"
-                  }`}
-                >
-                  <span className="truncate font-medium">{cat.name}</span>
-                  <Badge variant="outline" className="shrink-0 text-[11px]">
-                    {count} questions
-                  </Badge>
-                </button>
-              );
-            })}
           </CardContent>
         </Card>
 
         {/* Category detail & question selection */}
-        <Card>
+        <Card className="border-none bg-muted/40">
           <CardHeader>
             <CardTitle className="text-base">
               {selectedCategoryId ? "Edit Category" : "New Category"}
@@ -238,14 +286,14 @@ export default function AdminQuestionCategoriesPage() {
                       placeholder="Search questions..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-8 h-9 text-sm"
+                      className="h-9 pl-8 text-sm"
                     />
                   </div>
                 </div>
 
-                <div className="max-h-[360px] overflow-y-auto rounded-md border bg-muted/40 p-2 space-y-2">
+                <div className="max-h-[360px] space-y-2 overflow-y-auto rounded-md border bg-muted/40 p-2">
                   {filteredQuestions.length === 0 ? (
-                    <p className="text-xs text-muted-foreground px-1 py-2">
+                    <p className="px-1 py-2 text-xs text-muted-foreground">
                       No questions match your search.
                     </p>
                   ) : (
@@ -261,8 +309,8 @@ export default function AdminQuestionCategoriesPage() {
                             checked={checked}
                             onCheckedChange={() => handleToggleQuestion(q._id)}
                           />
-                          <div className="flex-1 min-w-0 space-y-1">
-                            <p className="font-medium leading-snug break-words">
+                          <div className="min-w-0 flex-1 space-y-1">
+                            <p className="break-words font-medium leading-snug">
                               {q.questionText}
                             </p>
                             <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">

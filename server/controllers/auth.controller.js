@@ -6,6 +6,10 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import logger from "../logger/winston.logger.js";
 import {asyncHandler} from "../utils/asyncHandler.js";
 import EVN from "../config/env.config.js";
+import { getRedisClient } from "../config/redis.config.js";
+import { sendLoginOtpSms } from "../services/twilio.service.js";
+
+const redisClient = getRedisClient();
 
 // Bootstrap: create initial superadmin if none exists
 export const bootstrapSuperAdmin = asyncHandler(async (req, res) => {
@@ -398,4 +402,115 @@ export const getUserStats = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, {
     total, admins, employees, superadmins, recentUsers
   }, 'User stats fetched successfully'));
+});
+
+// ===== QR + OTP LOGIN FLOW =====
+
+const QR_LOGIN_TTL_SECONDS = 300; // 5 minutes
+
+const buildEmployeeFromQrData = async (qrData) => {
+  if (!qrData) return null;
+
+  // Try treat QR data as username (case-insensitive)
+  let employee = await Employee.findOne({ username: qrData.toLowerCase() })
+    .populate('department', 'name description');
+
+  if (!employee) {
+    // Fallback: treat as employeeId (case-insensitive)
+    employee = await Employee.findOne({ employeeId: qrData.toUpperCase() })
+      .populate('department', 'name description');
+  }
+
+  return employee;
+};
+
+export const initiateQrLogin = asyncHandler(async (req, res) => {
+  const { qrData } = req.body || {};
+
+  if (!qrData) {
+    throw new ApiError(400, "QR data is required");
+  }
+
+  const employee = await buildEmployeeFromQrData(qrData);
+  if (!employee) {
+    throw new ApiError(404, "Employee not found for scanned QR");
+  }
+
+  if (!employee.phoneNumber) {
+    throw new ApiError(400, "Employee does not have a registered phone number");
+  }
+
+  // Generate 6-digit numeric OTP
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+  // Store OTP in Redis with TTL
+  const cacheKey = `login_otp:${employee._id.toString()}`;
+  if (redisClient && redisClient.status === 'ready') {
+    await redisClient.setex(cacheKey, QR_LOGIN_TTL_SECONDS, JSON.stringify({ otp }));
+  } else {
+    console.warn("⚠️ Redis is not available; QR login OTPs will not persist.");
+  }
+
+  // Send OTP via Twilio
+  await sendLoginOtpSms(employee.phoneNumber, otp);
+
+  const maskedPhone = employee.phoneNumber.replace(/(\d{2})\d{6}(\d{2})/, '$1******$2');
+
+  return res.status(200).json(new ApiResponse(200, {
+    employeeId: employee._id,
+    maskedPhone,
+  }, "OTP sent successfully"));
+});
+
+export const verifyQrLoginOtp = asyncHandler(async (req, res) => {
+  const { employeeId, otp } = req.body || {};
+
+  if (!employeeId || !otp) {
+    throw new ApiError(400, "Employee ID and OTP are required");
+  }
+
+  const employee = await Employee.findById(employeeId)
+    .populate('department', 'name description')
+    .select('+password');
+
+  if (!employee) {
+    throw new ApiError(404, "Employee not found");
+  }
+
+  let isValid = false;
+  const cacheKey = `login_otp:${employee._id.toString()}`;
+
+  if (redisClient && redisClient.status === 'ready') {
+    const cached = await redisClient.get(cacheKey);
+    if (!cached) {
+      throw new ApiError(400, "OTP expired or not found");
+    }
+    const { otp: storedOtp } = JSON.parse(cached);
+    isValid = storedOtp === otp;
+  } else {
+    console.warn("⚠️ Redis is not available; cannot verify OTP from cache.");
+    throw new ApiError(500, "OTP verification service unavailable");
+  }
+
+  if (!isValid) {
+    throw new ApiError(400, "Invalid OTP");
+  }
+
+  // Invalidate OTP after successful verification
+  if (redisClient && redisClient.status === 'ready') {
+    await redisClient.del(cacheKey);
+  }
+
+  // Generate JWT and set cookie (same as loginEmployee)
+  const token = employee.generateJWT();
+  const isProd = EVN.NODE_ENV === 'production';
+
+  res.cookie("accessToken", token, {
+    httpOnly: true,
+    secure: isProd,
+    sameSite: isProd ? "None" : "Lax",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  return res.status(200).json(new ApiResponse(200, { employee }, "Login successful"));
 });

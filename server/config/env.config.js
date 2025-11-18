@@ -22,6 +22,10 @@ const EVN = {
 
     SMTP_USERNAME: process.env.SMTP_USERNAME,
     SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+
+    TWILIO_SID: process.env.TWILIO_SID,
+    TWILIO_AUTH: process.env.TWILIO_AUTH,
+    TWILIO_NUMBER: process.env.TWILIO_NUMBER,
 }
 
 export default EVN;

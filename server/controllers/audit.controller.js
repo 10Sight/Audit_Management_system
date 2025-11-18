@@ -7,6 +7,15 @@ import {asyncHandler} from "../utils/asyncHandler.js";
 import { invalidateCache } from "../middlewares/cache.middleware.js";
 import sendMail from "../utils/mail.util.js";
 
+// Normalize a comma-separated email string into a clean list
+const normalizeEmailList = (raw) => {
+  return (raw || "")
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean)
+    .join(", ");
+};
+
 export const createAudit = asyncHandler(async (req, res) => {
   const { date, line, machine, process, unit, lineLeader, shiftIncharge, answers, lineRating, machineRating, processRating, unitRating, department } = req.body;
 
@@ -261,14 +270,11 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { note } = req.body || {};
 
-  // Load global email settings configured by admin
+  // Load email settings configured by admin (global + optional per-department overrides)
   const emailSetting = await AuditEmailSetting.findOne().sort({ createdAt: -1 }).lean();
-  if (!emailSetting || !emailSetting.to) {
+  if (!emailSetting) {
     throw new ApiError(400, "Audit email recipients are not configured. Please contact your administrator.");
   }
-
-  const primaryRecipients = emailSetting.to;
-  const ccRecipients = emailSetting.cc || undefined;
 
   const audit = await Audit.findById(id)
     .populate("line", "name")
@@ -283,6 +289,30 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
   if (!audit) {
     throw new ApiError(404, "Audit not found");
   }
+
+  // Determine recipients based on audit department (if configured)
+  const departmentId = audit.department?._id?.toString?.() || audit.department?.toString?.();
+  let primaryRecipients = emailSetting.to || "";
+  let ccRecipients = emailSetting.cc || "";
+
+  if (departmentId && Array.isArray(emailSetting.departmentRecipients) && emailSetting.departmentRecipients.length) {
+    const deptConfig = emailSetting.departmentRecipients.find((cfg) => {
+      const cfgDeptId = cfg.department?._id?.toString?.() || cfg.department?.toString?.();
+      return cfgDeptId === departmentId;
+    });
+
+    if (deptConfig) {
+      primaryRecipients = deptConfig.to || primaryRecipients;
+      ccRecipients = deptConfig.cc || ccRecipients;
+    }
+  }
+
+  if (!primaryRecipients || !primaryRecipients.trim()) {
+    throw new ApiError(400, "Audit email recipients are not configured for this department. Please contact your administrator.");
+  }
+
+  const normalizedPrimaryRecipients = normalizeEmailList(primaryRecipients);
+  const normalizedCcRecipients = normalizeEmailList(ccRecipients) || undefined;
 
   // Only allow the auditor or admins/superadmins to share
   if (
@@ -433,46 +463,54 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
   // Respond immediately and send the email in the background
   res.json(new ApiResponse(200, null, "Audit share request received. Email will be sent shortly."));
 
-  sendMail(primaryRecipients, subject, html, ccRecipients)
+  sendMail(normalizedPrimaryRecipients, subject, html, normalizedCcRecipients)
     .then(() => {
-      logger.info(`Audit ${id} shared via email to ${primaryRecipients}${ccRecipients ? ` (cc: ${ccRecipients})` : ""} by ${req.user._id}`);
+      logger.info(`Audit ${id} shared via email to ${normalizedPrimaryRecipients}${normalizedCcRecipients ? ` (cc: ${normalizedCcRecipients})` : ""} by ${req.user._id}`);
     })
     .catch((error) => {
-      logger.error(`Failed to send audit ${id} email to ${primaryRecipients}${ccRecipients ? ` (cc: ${ccRecipients})` : ""}: ${error?.message || error}`);
+      logger.error(`Failed to send audit ${id} email to ${normalizedPrimaryRecipients}${normalizedCcRecipients ? ` (cc: ${normalizedCcRecipients})` : ""}: ${error?.message || error}`);
     });
 });
 
 // ===== Audit Email Settings (Admin) =====
 
 export const getAuditEmailSettings = asyncHandler(async (req, res) => {
-  const setting = await AuditEmailSetting.findOne().sort({ createdAt: -1 }).lean();
+  const setting = await AuditEmailSetting.findOne()
+    .sort({ createdAt: -1 })
+    .populate("departmentRecipients.department", "name")
+    .lean();
+
   return res.json(new ApiResponse(200, setting, "Audit email settings fetched"));
 });
 
 export const updateAuditEmailSettings = asyncHandler(async (req, res) => {
-  const { to, cc } = req.body || {};
+  const { to, cc, departmentRecipients } = req.body || {};
 
   if (!to || !to.trim()) {
     throw new ApiError(400, "Primary recipient email(s) are required");
   }
 
-  const normalizedTo = to
-    .split(",")
-    .map((e) => e.trim())
-    .filter(Boolean)
-    .join(", ");
+  const normalizedTo = normalizeEmailList(to);
+  const normalizedCc = normalizeEmailList(cc);
 
-  const normalizedCc = (cc || "")
-    .split(",")
-    .map((e) => e.trim())
-    .filter(Boolean)
-    .join(", ");
+  let normalizedDepartmentRecipients = [];
+  if (Array.isArray(departmentRecipients)) {
+    normalizedDepartmentRecipients = departmentRecipients
+      .filter((item) => item && item.department && item.to && String(item.to).trim())
+      .map((item) => ({
+        department: item.department,
+        to: normalizeEmailList(item.to),
+        cc: normalizeEmailList(item.cc),
+      }));
+  }
 
   const setting = await AuditEmailSetting.findOneAndUpdate(
     {},
-    { to: normalizedTo, cc: normalizedCc },
+    { to: normalizedTo, cc: normalizedCc, departmentRecipients: normalizedDepartmentRecipients },
     { new: true, upsert: true, setDefaultsOnInsert: true }
-  ).lean();
+  )
+    .populate("departmentRecipients.department", "name")
+    .lean();
 
   return res.json(new ApiResponse(200, setting, "Audit email settings updated"));
 });

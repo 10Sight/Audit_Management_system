@@ -183,12 +183,12 @@ export default function AdminManageQuestionsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 md:space-y-8">
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Manage Questions</h1>
-          <p className="text-muted-foreground">
+          <p className="mt-1 text-sm text-muted-foreground">
             Browse, filter and maintain your audit question library
           </p>
         </div>
@@ -221,10 +221,10 @@ export default function AdminManageQuestionsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-            <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
             {/* Dropdown Filters */}
-            <div className="space-y-4">
-              <div className="grid gap-4 md:grid-cols-3">
+            <div className="space-y-4 rounded-lg border bg-muted/40 p-4">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <Building2 className="h-4 w-4" />
@@ -323,33 +323,41 @@ export default function AdminManageQuestionsPage() {
             </div>
 
             {/* Checkbox Options */}
-            <div className="space-y-4">
+            <div className="space-y-4 rounded-lg border bg-muted/40 p-4">
               <div className="space-y-3">
-                <Label>Display Options</Label>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="includeGlobal"
-                    checked={includeGlobal}
-                    onCheckedChange={setIncludeGlobal}
-                  />
-                  <Label
-                    htmlFor="includeGlobal"
-                    className="flex items-center gap-2"
-                  >
-                    <Globe className="h-4 w-4" />
-                    Include Global Questions
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="fetchAll"
-                    checked={fetchAll}
-                    onCheckedChange={setFetchAll}
-                  />
-                  <Label htmlFor="fetchAll" className="flex items-center gap-2">
-                    <Search className="h-4 w-4" />
-                    Fetch All Questions
-                  </Label>
+                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                  Display Options
+                </Label>
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="includeGlobal"
+                      checked={includeGlobal}
+                      onCheckedChange={setIncludeGlobal}
+                    />
+                    <Label
+                      htmlFor="includeGlobal"
+                      className="flex items-center gap-2"
+                    >
+                      <Globe className="h-4 w-4" />
+                      Include Global Questions
+                    </Label>
+                  </div>
+                  <Separator className="my-2" />
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="fetchAll"
+                      checked={fetchAll}
+                      onCheckedChange={setFetchAll}
+                    />
+                    <Label
+                      htmlFor="fetchAll"
+                      className="flex items-center gap-2"
+                    >
+                      <Search className="h-4 w-4" />
+                      Fetch All Questions
+                    </Label>
+                  </div>
                 </div>
               </div>
             </div>
@@ -399,7 +407,7 @@ export default function AdminManageQuestionsPage() {
             <>
               <div className="border-t">
                 <Table>
-                  <TableHeader>
+                  <TableHeader className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm">
                     <TableRow>
                       <TableHead>Question</TableHead>
                       <TableHead className="hidden lg:table-cell">
@@ -418,7 +426,7 @@ export default function AdminManageQuestionsPage() {
                     {paginatedQuestions.map((q) => (
                       <TableRow
                         key={q._id}
-                        className={q.isGlobal ? "bg-amber-50/40" : undefined}
+                        className={q.isGlobal ? "bg-amber-50/60" : undefined}
                       >
                         <TableCell className="align-top">
                           <div className="space-y-1">
@@ -485,27 +493,33 @@ export default function AdminManageQuestionsPage() {
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="hidden md:table-cell align-top text-xs text-muted-foreground">
-                          {(() => {
-                            const type = q.questionType || "yes_no";
-                            switch (type) {
-                              case "mcq":
-                                return "MCQ";
-                              case "dropdown":
-                                return "Dropdown";
-                              case "short_text":
-                                return "Short description";
-                              case "image":
-                                return "Image + Yes/No";
-                              default:
-                                return "Yes/No";
-                            }
-                          })()}
+                        <TableCell className="hidden md:table-cell align-top">
+                          <Badge variant="outline" className="px-2 py-0.5 text-[11px] font-normal">
+                            {(() => {
+                              const type = q.questionType || "yes_no";
+                              switch (type) {
+                                case "mcq":
+                                  return "MCQ";
+                                case "dropdown":
+                                  return "Dropdown";
+                                case "short_text":
+                                  return "Short description";
+                                case "image":
+                                  return "Image + Yes/No";
+                                default:
+                                  return "Yes/No";
+                              }
+                            })()}
+                          </Badge>
                         </TableCell>
                         <TableCell className="hidden md:table-cell align-top text-xs text-muted-foreground">
-                          {q.createdAt
-                            ? new Date(q.createdAt).toLocaleDateString()
-                            : "—"}
+                          {q.createdAt ? (
+                            <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5">
+                              {new Date(q.createdAt).toLocaleDateString()}
+                            </span>
+                          ) : (
+                            "—"
+                          )}
                         </TableCell>
                         <TableCell className="w-[80px] text-right align-top">
                           <AlertDialog>
