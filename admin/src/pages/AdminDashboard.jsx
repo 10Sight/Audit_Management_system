@@ -51,15 +51,15 @@ export default function AdminDashboard() {
   const [barData, setBarData] = useState([]);
   const [pieData, setPieData] = useState([]);
 
-  // Modern vibrant color palette for charts
+  // Blue + red palette for charts to match app theme
   const CHART_COLORS = {
-    success: '#10B981',     // Emerald green
-    warning: '#F59E0B',     // Amber
-    error: '#EF4444',       // Red
-    info: '#3B82F6',        // Blue
-    primary: '#8B5CF6',     // Purple
-    secondary: '#06B6D4',   // Cyan
-    accent: '#EC4899',      // Pink
+    success: '#2563EB',     // Blue for "Yes" / positive
+    warning: '#F97316',     // Soft orange for warnings
+    error: '#DC2626',       // Red for "No" / negative
+    info: '#1D4ED8',        // Deeper blue
+    primary: '#2563EB',     // Primary blue
+    secondary: '#60A5FA',   // Lighter blue
+    accent: '#DC2626',      // Red accent
     neutral: '#6B7280'      // Gray
   };
   
@@ -251,10 +251,10 @@ export default function AdminDashboard() {
             trend: "All time"
           },
           { 
-            title: "Total Employees", 
+            title: "Total Auditors", 
             value: totalEmployees, 
             icon: Users,
-            description: "Active users in system",
+            description: "Active auditors in system",
             trend: "+2.1% from last month"
           },
           { 

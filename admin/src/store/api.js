@@ -259,7 +259,10 @@ export const api = createApi({
     }),
     deleteEmployeeById: builder.mutation({
       query: (id) => ({ url: `/api/v1/auth/employee/${id}`, method: 'DELETE' }),
-      invalidatesTags: [{ type: 'Employee', id: 'LIST' }],
+      invalidatesTags: [
+        { type: 'Employee', id: 'LIST' },
+        'Department',
+      ],
     }),
     registerEmployee: builder.mutation({
       query: (body) => ({ url: '/api/v1/auth/register', method: 'POST', body }),

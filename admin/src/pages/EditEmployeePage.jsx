@@ -52,10 +52,10 @@ export default function EditEmployeePage() {
     setSaving(true);
     try {
       await updateEmployeeMutation({ id, ...employee, department: departmentId }).unwrap();
-      alert("Employee updated successfully!");
+      alert("Auditor updated successfully!");
       navigate(`/admin/employee/${id}`);
     } catch (err) {
-      alert(err?.data?.message || err?.message || "Failed to update employee");
+      alert(err?.data?.message || err?.message || "Failed to update auditor");
     } finally {
       setSaving(false);
     }
@@ -68,7 +68,7 @@ export default function EditEmployeePage() {
     <div className="p-4 sm:p-6 max-w-3xl mx-auto">
       <Card>
         <CardHeader>
-          <CardTitle>Edit Employee</CardTitle>
+          <CardTitle>Edit Auditor</CardTitle>
           <CardDescription>Update profile information and access level.</CardDescription>
         </CardHeader>
         <CardContent>
@@ -137,7 +137,7 @@ export default function EditEmployeePage() {
 
             {/* Employee ID */}
             <div className="space-y-1">
-              <Label>Employee ID</Label>
+              <Label>Auditor ID</Label>
               <Input name="employeeId" value={employee.employeeId} disabled />
             </div>
 

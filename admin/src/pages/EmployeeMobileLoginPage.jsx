@@ -73,9 +73,9 @@ export default function EmployeeMobileLoginPage() {
       const employee = res?.data?.employee;
       if (!employee) throw new Error("Invalid login response");
 
-      // Only allow employees to proceed via this flow
+      // Only allow auditors (employee role) to proceed via this flow
       if (employee.role !== "employee") {
-        throw new Error("Only employees can login with mobile OTP");
+        throw new Error("Only auditors can login with mobile OTP");
       }
 
       setUser(employee);
@@ -108,7 +108,7 @@ export default function EmployeeMobileLoginPage() {
               <ShieldCheck className="size-7" />
             </div>
             <CardTitle className="text-2xl font-bold tracking-tight">
-              Employee mobile login
+              Auditor mobile login
             </CardTitle>
             <CardDescription className="text-balance">
               {step === 1

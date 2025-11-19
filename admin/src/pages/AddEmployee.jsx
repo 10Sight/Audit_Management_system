@@ -244,7 +244,7 @@ export default function AddEmployeePage() {
                         </SelectContent>
                       </Select>
                       <FormDescription>
-                        Select the department this employee will belong to
+                        Select the department this auditor will belong to
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -268,7 +268,7 @@ export default function AddEmployeePage() {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="employee">Employee</SelectItem>
+                          <SelectItem value="employee">Auditor</SelectItem>
                           {user?.role === "superadmin" && (
                             <SelectItem value="admin">Administrator</SelectItem>
                           )}

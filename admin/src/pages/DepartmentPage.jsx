@@ -93,6 +93,42 @@ export default function DepartmentPage() {
     setStats(statsRes?.data || {});
   }, [deptRes, usersRes, statsRes]);
 
+  const statusSummary = useMemo(() => {
+    const total = stats.summary?.totalDepartments || 0;
+    const active = stats.summary?.activeDepartments || 0;
+
+    if (!total) {
+      return {
+        label: 'No data',
+        colorClass: 'text-muted-foreground',
+        description: 'No departments configured yet',
+      };
+    }
+
+    const ratio = active / total;
+    if (ratio >= 0.9) {
+      return {
+        label: 'Healthy',
+        colorClass: 'text-green-600',
+        description: `${active} of ${total} departments active`,
+      };
+    }
+
+    if (ratio >= 0.6) {
+      return {
+        label: 'Attention',
+        colorClass: 'text-amber-600',
+        description: `${active} of ${total} departments active`,
+      };
+    }
+
+    return {
+      label: 'Critical',
+      colorClass: 'text-red-600',
+      description: `Only ${active} of ${total} departments active`,
+    };
+  }, [stats]);
+
   const { unassignedEmployees, assignedEmployees } = useMemo(() => {
     const onlyEmployees = (employees || []).filter((u) => (u.role?.toLowerCase?.() || "") === "employee");
     return {
@@ -278,7 +314,7 @@ export default function DepartmentPage() {
                   <div className="flex items-center space-x-2">
                     <Users className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm font-medium">{department.employeeCount || 0}</span>
-                    <span className="text-sm text-muted-foreground">employees</span>
+                    <span className="text-sm text-muted-foreground">auditors</span>
                   </div>
                   
                   <Badge variant={department.isActive ? "default" : "secondary"}>
@@ -303,12 +339,12 @@ export default function DepartmentPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Department Management</h1>
-          <p className="text-muted-foreground">Create and manage company departments, assign employees</p>
+          <p className="text-muted-foreground">Create and manage company departments, assign auditors</p>
         </div>
         <div className="flex items-center space-x-2">
           <Button onClick={() => setOpenAssignDialog(true)} variant="outline">
             <UserCheck className="mr-2 h-4 w-4" />
-            Assign Employee
+            Assign Auditor
           </Button>
           <Button onClick={() => setOpenCreateDialog(true)}>
             <Plus className="mr-2 h-4 w-4" />
@@ -333,12 +369,12 @@ export default function DepartmentPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Employees</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Auditors</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.summary?.employeeRoleCount ?? stats.summary?.totalEmployees ?? 0}</div>
-            <p className="text-xs text-muted-foreground">Employees</p>
+            <p className="text-xs text-muted-foreground">Auditors</p>
           </CardContent>
         </Card>
         <Card>
@@ -352,7 +388,7 @@ export default function DepartmentPage() {
                 ? Math.round((stats.summary?.totalEmployees || 0) / stats.summary.totalDepartments)
                 : 0}
             </div>
-            <p className="text-xs text-muted-foreground">Employees per dept</p>
+            <p className="text-xs text-muted-foreground">Auditors per dept</p>
           </CardContent>
         </Card>
         <Card>
@@ -361,8 +397,12 @@ export default function DepartmentPage() {
             <Settings className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">Good</div>
-            <p className="text-xs text-muted-foreground">All systems operational</p>
+            <div className={`text-2xl font-bold ${statusSummary.colorClass}`}>
+              {statusSummary.label}
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              {statusSummary.description}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -471,16 +511,16 @@ export default function DepartmentPage() {
       <Dialog open={openAssignDialog} onOpenChange={setOpenAssignDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Assign Employee to Department</DialogTitle>
+            <DialogTitle>Assign Auditor to Department</DialogTitle>
             <DialogDescription>
-              Unassigned employees are shown by default. Enable the option below to reassign employees already in a department.
+              Unassigned auditors are shown by default. Enable the option below to reassign auditors already in a department.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="flex items-center justify-between rounded-md border p-3 bg-muted/30">
               <div className="space-y-0.5">
                 <p className="text-sm font-medium">Include already-assigned</p>
-                <p className="text-xs text-muted-foreground">Allows reassigning employees who already belong to a department</p>
+                <p className="text-xs text-muted-foreground">Allows reassigning auditors who already belong to a department</p>
               </div>
               <label className="inline-flex items-center gap-2 text-sm text-muted-foreground select-none">
                 <Checkbox
@@ -493,10 +533,10 @@ export default function DepartmentPage() {
             </div>
 
             <div className="grid gap-2">
-              <Label>Select Employee</Label>
+              <Label>Select Auditor</Label>
               <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Choose an employee" />
+                  <SelectValue placeholder="Choose an auditor" />
                 </SelectTrigger>
                 <SelectContent>
                   {(includeAssigned ? unassignedEmployees.concat(assignedEmployees) : unassignedEmployees).map((employee) => (
@@ -509,7 +549,7 @@ export default function DepartmentPage() {
                   ))}
                   {(!unassignedEmployees.length && !includeAssigned) && (
                     <SelectItem value="__none__" disabled>
-                      All employees are already assigned to a department
+                      All auditors are already assigned to a department
                     </SelectItem>
                   )}
                 </SelectContent>
@@ -525,7 +565,7 @@ export default function DepartmentPage() {
                 <SelectContent>
                   {departments.map((department) => (
                     <SelectItem key={department._id} value={department._id}>
-                      {department.name} ({department.employeeCount || 0} employees)
+                      {department.name} ({department.employeeCount || 0} auditors)
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -558,14 +598,14 @@ export default function DepartmentPage() {
                     <div className="flex items-center mb-2">
                       <AlertTriangle className="h-4 w-4 text-yellow-600 mr-2" />
                       <span className="font-medium text-yellow-800">
-                        This department has {departmentToDelete.employeeCount} employee(s)
+                        This department has {departmentToDelete.employeeCount} auditor(s)
                       </span>
                     </div>
                     <div className="space-y-2">
-                      <Label>Transfer employees to:</Label>
+                      <Label>Transfer auditors to:</Label>
                       <Select value={selectedTransferDepartment} onValueChange={setSelectedTransferDepartment}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select department to transfer employees" />
+                          <SelectValue placeholder="Select department to transfer auditors" />
                         </SelectTrigger>
                         <SelectContent>
                           {departments

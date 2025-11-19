@@ -50,14 +50,14 @@ export default function EmployeeDetailPage() {
   const handleBack = () => navigate("/admin/employees");
   const handleEdit = () => navigate(`/admin/employee/edit/${id}`);
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this employee?")) return;
+    if (!window.confirm("Are you sure you want to delete this auditor?")) return;
 
     try {
       await deleteEmployee(id).unwrap();
-      alert("Employee deleted successfully!");
+      alert("Auditor deleted successfully!");
       navigate("/admin/employees");
     } catch (err) {
-      alert(err?.data?.message || err?.message || "Failed to delete employee");
+      alert(err?.data?.message || err?.message || "Failed to delete auditor");
     }
   };
 
@@ -66,7 +66,7 @@ export default function EmployeeDetailPage() {
   if (loading) return <Loader />;
   if (error) return <div className="text-red-500 p-6 text-center">{error}</div>;
   if (!employee)
-    return <div className="text-gray-500 p-6 text-center">Employee not found</div>;
+    return <div className="text-gray-500 p-6 text-center">Auditor not found</div>;
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
@@ -77,7 +77,7 @@ export default function EmployeeDetailPage() {
         onClick={handleBack}
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to Employees
+        Back to Auditors
       </Button>
       <Card>
         <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -112,7 +112,7 @@ export default function EmployeeDetailPage() {
             <div className="flex items-center gap-3">
               <IdCard className="h-4 w-4 text-muted-foreground" />
               <div>
-                <p className="text-xs text-muted-foreground">Employee ID</p>
+                <p className="text-xs text-muted-foreground">Auditor ID</p>
                 <p className="font-medium">{employee.employeeId}</p>
               </div>
             </div>
@@ -148,7 +148,7 @@ export default function EmployeeDetailPage() {
               <Activity className="h-5 w-5 text-muted-foreground" />
               <div>
                 <CardTitle className="text-lg">Audit History & Scores</CardTitle>
-                <CardDescription>All audits performed by this employee and their scores.</CardDescription>
+                <CardDescription>All audits performed by this auditor and their scores.</CardDescription>
               </div>
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function EmployeeDetailPage() {
           {auditsLoading ? (
             <Loader />
           ) : audits.length === 0 ? (
-            <p className="text-sm text-muted-foreground">No audits found for this employee.</p>
+            <p className="text-sm text-muted-foreground">No audits found for this auditor.</p>
           ) : (
             <div className="w-full overflow-x-auto">
               <Table className="min-w-[640px]">

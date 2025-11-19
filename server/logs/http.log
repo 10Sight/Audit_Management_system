@@ -3082,3 +3082,236 @@
 [19 Nov, 2025 - 15:19:00:190] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
 [19 Nov, 2025 - 15:19:44:1944] [34minfo[39m: [34mAudit created by 691d8486eb38507bb1afa65b[39m
 [19 Nov, 2025 - 15:19:55:1955] [34minfo[39m: [34mAudit 691d92b727ffc168792a021d shared via email to jatinnagar563@gmail.com (cc: mirzashahhussain63@gmail.com, mirza_shah@ndiit.org) by 691d8486eb38507bb1afa65b[39m
+[19 Nov, 2025 - 15:36:08:368] [34minfo[39m: [34mEmployee logged out[39m
+[19 Nov, 2025 - 15:36:22:3622] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:36:23:3623] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:36:23:3623] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:36:34:3634] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:37:41:3741] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:37:41:3741] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:40:00:400] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:40:30:4030] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:40:47:4047] [34minfo[39m: [34mNew department created: Molding by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:40:47:4047] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:40:47:4047] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:40:51:4051] [34minfo[39m: [34mDepartment deleted: Testing by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:40:51:4051] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:40:51:4051] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:40:59:4059] [34minfo[39m: [34mDepartment deleted: Unity Vr Developmemnt by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:40:59:4059] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:40:59:4059] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:41:26:4126] [34minfo[39m: [34mDepartment updated: Coating by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:41:26:4126] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:41:26:4126] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:41:34:4134] [34minfo[39m: [34mDepartment updated: Assembaly by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:41:34:4134] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:41:35:4135] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:41:45:4145] [34minfo[39m: [34mDepartment updated: Assemblly by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:41:45:4145] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:41:45:4145] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:41:50:4150] [34minfo[39m: [34mDepartment updated: Assembly by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:41:50:4150] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:41:51:4151] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:42:05:425] [34minfo[39m: [34mDepartment updated: Quality by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:42:06:426] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:42:06:426] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:42:23:4223] [34minfo[39m: [34mNew department created: Safety by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:42:23:4223] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:42:23:4223] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:42:51:4251] [34minfo[39m: [34mNew department created: Logistic by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:42:51:4251] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:42:51:4251] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:43:59:4359] [34minfo[39m: [34mMachine created: Engel 2000 T[39m
+[19 Nov, 2025 - 15:44:15:4415] [34minfo[39m: [34mMachine created: Engel 2700 T[39m
+[19 Nov, 2025 - 15:44:37:4437] [34minfo[39m: [34mMachine created: Engel 1700 T[39m
+[19 Nov, 2025 - 15:44:46:4446] [34minfo[39m: [34mMachine created: Engel 900 T[39m
+[19 Nov, 2025 - 15:45:02:452] [34minfo[39m: [34mMachine updated: Engel 900 T - 1[39m
+[19 Nov, 2025 - 15:45:17:4517] [34minfo[39m: [34mMachine created: 900 T - 2[39m
+[19 Nov, 2025 - 15:45:25:4525] [34minfo[39m: [34mMachine updated: 900 T - 1[39m
+[19 Nov, 2025 - 15:45:45:4545] [34minfo[39m: [34mMachine updated: Engel 2000 T - 1[39m
+[19 Nov, 2025 - 15:45:59:4559] [34minfo[39m: [34mMachine updated: Engel 2700 T - 1[39m
+[19 Nov, 2025 - 15:46:05:465] [34minfo[39m: [34mMachine created: Engel 2700 T - 2[39m
+[19 Nov, 2025 - 15:46:16:4616] [34minfo[39m: [34mMachine created: Engel 2000 T - 2[39m
+[19 Nov, 2025 - 15:46:48:4648] [34minfo[39m: [34mMachine created: Yizumi 500 T - 1[39m
+[19 Nov, 2025 - 15:46:54:4654] [34minfo[39m: [34mMachine created: Yizumi 500 T - 2[39m
+[19 Nov, 2025 - 15:47:02:472] [34minfo[39m: [34mMachine created: Yizumi 500 T - 3[39m
+[19 Nov, 2025 - 15:47:58:4758] [34minfo[39m: [34mMachine created: 650 T[39m
+[19 Nov, 2025 - 15:48:55:4855] [34minfo[39m: [34mMachine created: Hard Coating[39m
+[19 Nov, 2025 - 15:49:16:4916] [34minfo[39m: [34mMachine created: Anti Fog[39m
+[19 Nov, 2025 - 15:49:25:4925] [34minfo[39m: [34mMachine created: Metalizing[39m
+[19 Nov, 2025 - 15:50:18:5018] [34minfo[39m: [34mLine updated: M310 Head Lamp[39m
+[19 Nov, 2025 - 15:50:35:5035] [34minfo[39m: [34mLine updated: Skoda Head Lamp[39m
+[19 Nov, 2025 - 15:51:00:510] [34minfo[39m: [34mLine updated: VW Head Lamp[39m
+[19 Nov, 2025 - 15:52:17:5217] [34minfo[39m: [34mLine updated: Head Lamp 1[39m
+[19 Nov, 2025 - 15:52:24:5224] [34minfo[39m: [34mLine updated: Head Lamp 2[39m
+[19 Nov, 2025 - 15:52:32:5232] [34minfo[39m: [34mLine updated: Head Lamp 3[39m
+[19 Nov, 2025 - 15:52:51:5251] [34minfo[39m: [34mLine created: Tail Lamp 1[39m
+[19 Nov, 2025 - 15:53:01:531] [34minfo[39m: [34mLine created: Tail Lamp 2[39m
+[19 Nov, 2025 - 15:53:06:536] [34minfo[39m: [34mLine created: Tail Lamp 3[39m
+[19 Nov, 2025 - 15:53:12:5312] [34minfo[39m: [34mLine created: Tail Lamp 4[39m
+[19 Nov, 2025 - 15:53:18:5318] [34minfo[39m: [34mLine created: Tail Lamp 5[39m
+[19 Nov, 2025 - 15:53:25:5325] [34minfo[39m: [34mLine created: Tail Lamp 6[39m
+[19 Nov, 2025 - 15:56:05:565] [34minfo[39m: [34mQuestion deleted: 68adc9c48dc2fc711b2a03dd by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 15:56:08:568] [34minfo[39m: [34mQuestion deleted: 691c4d597c44938f917c19b3 by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 15:56:13:5613] [34minfo[39m: [34mQuestion deleted: 68d8e10dd740792d2be943be by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 15:56:16:5616] [34minfo[39m: [34mQuestion deleted: 68d9180cd740792d2be945cb by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 15:56:19:5619] [34minfo[39m: [34mQuestion deleted: 68fe00c09b4b37ebe9754464 by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 15:56:22:5622] [34minfo[39m: [34mQuestion deleted: 690ef7e22c731ae68bfd6e3e by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 15:56:25:5625] [34minfo[39m: [34mQuestion deleted: 691c3a57c7c284cb424414fb by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 15:56:28:5628] [34minfo[39m: [34mQuestion deleted: 691c54c5988b377790fdb2c2 by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 15:56:33:5633] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:56:39:5639] [34minfo[39m: [34mQuestion category deleted: 691ca89713a1ae69d3f485d3 by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 15:56:46:5646] [34minfo[39m: [34mQuestion category deleted: 691ca8c913a1ae69d3f485e4 by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 15:56:51:5651] [34minfo[39m: [34mQuestion category deleted: 691d73a87655c6cdd1e136f6 by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 15:56:59:5659] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 15:56:59:5659] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:01:07:17] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:01:57:157] [34minfo[39m: [34mQuestion category created: 691d9c9d27ffc168792a04a7 by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 16:04:30:430] [34minfo[39m: [34mProcess deleted: 68adc8008dc2fc711b2a0344[39m
+[19 Nov, 2025 - 16:04:45:445] [34minfo[39m: [34mProcess updated: Head Lamp[39m
+[19 Nov, 2025 - 16:04:53:453] [34minfo[39m: [34mProcess updated: Tail Lamp[39m
+[19 Nov, 2025 - 16:05:04:54] [34minfo[39m: [34mProcess updated: Manifold Assembly[39m
+[19 Nov, 2025 - 16:05:09:59] [34minfo[39m: [34mProcess deleted: 68adc7c08dc2fc711b2a032c[39m
+[19 Nov, 2025 - 16:05:14:514] [34minfo[39m: [34mProcess deleted: 68adc7b38dc2fc711b2a0326[39m
+[19 Nov, 2025 - 16:05:19:519] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:06:50:650] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:06:50:650] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:06:50:650] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:09:58:958] [33mwarn[39m: [33mMongoDB disconnected[39m
+[19 Nov, 2025 - 16:13:31:1331] [33mwarn[39m: [33mMongoDB disconnected[39m
+[19 Nov, 2025 - 16:13:44:1344] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:13:44:1344] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:13:44:1344] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:18:52:1852] [34minfo[39m: [34mCreated 4 questions by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 16:19:14:1914] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:19:25:1925] [34minfo[39m: [34mQuestion category updated: 691d9c9d27ffc168792a04a7 by user 68af3a678dc2fc711b2a155f[39m
+[19 Nov, 2025 - 16:19:29:1929] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:20:19:2019] [34minfo[39m: [34mNew employee registered: Jatin New (ASM001)[39m
+[19 Nov, 2025 - 16:20:20:2020] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:20:25:2025] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:21:24:2124] [34minfo[39m: [34mEmployee logged out[39m
+[19 Nov, 2025 - 16:22:43:2243] [34minfo[39m: [34mAudit created by 691da0ea27ffc168792a0580[39m
+[19 Nov, 2025 - 16:22:52:2252] [34minfo[39m: [34mAudit 691da17a27ffc168792a05b2 shared via email to rahul.patil@marelli.motherson.com (cc: jatinnagar563@gmail.com) by 691da0ea27ffc168792a0580[39m
+[19 Nov, 2025 - 16:25:44:2544] [34minfo[39m: [34mEmployee logged out[39m
+[19 Nov, 2025 - 16:26:38:2638] [34minfo[39m: [34mEmployee logged out[39m
+[19 Nov, 2025 - 16:26:47:2647] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:26:47:2647] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:26:47:2647] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 16:28:00:280] [34minfo[39m: [34mEmployee logged out[39m
+[19 Nov, 2025 - 21:57:00:570] [33mwarn[39m: [33mMongoDB disconnected[39m
+[19 Nov, 2025 - 21:57:26:5726] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 21:57:26:5726] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 21:57:26:5726] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:03:47:347] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:03:47:347] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:03:47:347] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:04:49:449] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:04:52:452] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:09:03:93] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:25:38:2538] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:28:13:2813] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:32:57:3257] [34minfo[39m: [34mEmployee logged out[39m
+[19 Nov, 2025 - 22:33:42:3342] [34minfo[39m: [34mAudit created by 691d8486eb38507bb1afa65b[39m
+[19 Nov, 2025 - 22:36:07:367] [34minfo[39m: [34mEmployee logged out[39m
+[19 Nov, 2025 - 22:58:57:5857] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:58:57:5857] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:58:57:5857] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:59:09:599] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 22:59:12:5912] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 23:06:50:650] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 23:07:20:720] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 23:08:05:85] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 23:08:29:829] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 23:27:23:2723] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 23:27:23:2723] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 23:27:23:2723] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[19 Nov, 2025 - 23:56:41:5641] [33mwarn[39m: [33mMongoDB disconnected[39m
+[20 Nov, 2025 - 00:08:43:843] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:08:44:844] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:08:44:844] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:12:16:1216] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:12:16:1216] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:12:16:1216] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:12:34:1234] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:19:55:1955] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:20:00:200] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:20:43:2043] [34minfo[39m: [34mNew employee registered: fff (FFF)[39m
+[20 Nov, 2025 - 00:20:44:2044] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:23:48:2348] [34minfo[39m: [34mEmployee deleted: fff (FFF) by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:23:49:2349] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:23:54:2354] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:23:55:2355] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:25:21:2521] [34minfo[39m: [34mEmployee Mirza Shah Hussain (PRO002) assigned to department Molding by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:25:21:2521] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:25:21:2521] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:25:21:2521] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:29:31:2931] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[20 Nov, 2025 - 00:29:32:2932] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[20 Nov, 2025 - 00:29:56:2956] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:29:56:2956] [34minfo[39m: [34mEmployees fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:29:56:2956] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:30:00:300] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:30:12:3012] [34minfo[39m: [34mDepartment statistics fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:30:12:3012] [34minfo[39m: [34mDepartments fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:30:12:3012] [34minfo[39m: [34mAll users fetched by Jatin (EMP001)[39m
+[20 Nov, 2025 - 00:34:47:3447] [34minfo[39m: [34mEmployee logged out[39m
+[20 Nov, 2025 - 00:35:43:3543] [34minfo[39m: [34mAudit created by 691d8486eb38507bb1afa65b[39m
+[20 Nov, 2025 - 00:44:32:4432] [34minfo[39m: [34mEmployee logged out[39m
+[20 Nov, 2025 - 00:45:31:4531] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:45:31:4531] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:45:40:4540] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:45:52:4552] [34minfo[39m: [34mEmployee deleted: Vikram Thakur (1040) by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:45:52:4552] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:45:56:4556] [34minfo[39m: [34mEmployee deleted: Kavita Menon (1039) by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:45:56:4556] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:45:59:4559] [34minfo[39m: [34mEmployee deleted: Ashok Thakur (1038) by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:45:59:4559] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:02:462] [34minfo[39m: [34mEmployee deleted: Gaurav Patel (1037) by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:02:462] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:05:465] [34minfo[39m: [34mEmployee deleted: Jyoti Sharma (1036) by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:05:465] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:09:469] [34minfo[39m: [34mEmployee deleted: Simran Chopra (1027) by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:09:469] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:12:4612] [34minfo[39m: [34mEmployee deleted: New (EMP123) by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:13:4613] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:16:4616] [34minfo[39m: [34mEmployee deleted: Rajesh Patel (1026) by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:16:4616] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:19:4619] [34minfo[39m: [34mEmployee deleted: Jatin (EMP001) by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:20:4620] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:23:4623] [34minfo[39m: [34mEmployee deleted: Jatin Kumar Nagar (EMP002) by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:24:4624] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:28:4628] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:28:4628] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:46:28:4628] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:47:08:478] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:47:09:479] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:47:37:4737] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:47:42:4742] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:47:42:4742] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:47:42:4742] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:48:31:4831] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:48:32:4832] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:48:32:4832] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:48:33:4833] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:50:04:504] [34minfo[39m: [34mNew employee registered: Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:50:05:505] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:51:32:5132] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:51:34:5134] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:51:36:5136] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 00:51:42:5142] [34minfo[39m: [34mEmployee logged out[39m
+[20 Nov, 2025 - 00:52:00:520] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:52:00:520] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:52:00:520] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:53:05:535] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:53:05:535] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:53:05:535] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:53:23:5323] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:53:23:5323] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:53:23:5323] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:53:46:5346] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:53:46:5346] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:53:46:5346] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:55:42:5542] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:55:43:5543] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:55:55:5555] [34minfo[39m: [34mDepartment statistics fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 00:55:56:5556] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m

@@ -109,7 +109,7 @@ export default function EmployeesPage() {
     const data = employees.map((emp) => ({
       "Full Name": emp.fullName,
       Email: emp.emailId,
-      "Employee ID": emp.employeeId,
+      "Auditor ID": emp.employeeId,
       Department: getDepartmentName(emp.department),
       Phone: emp.phoneNumber,
       Role: emp.role,
@@ -118,10 +118,10 @@ export default function EmployeesPage() {
 
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Employees");
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Auditors");
     const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
-    saveAs(blob, `employees_page_${page}.xlsx`);
+    saveAs(blob, `auditors_page_${page}.xlsx`);
   };
 
   if (loading)
@@ -132,7 +132,7 @@ export default function EmployeesPage() {
       {/* Header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Employees</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Auditors</h1>
           <p className="text-muted-foreground">Manage your team members and their access</p>
         </div>
         <div className="flex items-center gap-2">
@@ -142,7 +142,7 @@ export default function EmployeesPage() {
           </Button>
           <Button onClick={() => navigate("/admin/add-employee")} size="sm">
             <Plus className="mr-2 h-4 w-4" />
-            Add Employee
+            Add Auditor
           </Button>
         </div>
       </div>
@@ -151,12 +151,12 @@ export default function EmployeesPage() {
       <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Employees</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Auditors</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{total}</div>
-            <p className="text-xs text-muted-foreground">Regular employees only</p>
+            <p className="text-xs text-muted-foreground">Auditors only</p>
           </CardContent>
         </Card>
         <Card>
@@ -174,9 +174,9 @@ export default function EmployeesPage() {
       {/* Search and Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Employee Directory</CardTitle>
+          <CardTitle>Auditor Directory</CardTitle>
           <CardDescription>
-            Search and manage employee information
+            Search and manage auditor information
           </CardDescription>
         </CardHeader>
         <CardContent className="p-0">
@@ -186,7 +186,7 @@ export default function EmployeesPage() {
               <div className="relative flex-1 max-w-sm">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search employees..."
+                  placeholder="Search auditors..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-8"
@@ -200,7 +200,7 @@ export default function EmployeesPage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Employee</TableHead>
+                  <TableHead>Auditor</TableHead>
                   <TableHead>Contact</TableHead>
                   <TableHead className="hidden md:table-cell">Department</TableHead>
                   <TableHead className="hidden md:table-cell">Role</TableHead>
@@ -261,7 +261,7 @@ export default function EmployeesPage() {
                               onClick={() => navigate(`/admin/employee/edit/${emp._id}`)}
                             >
                               <Edit className="mr-2 h-4 w-4" />
-                              Edit employee
+                              Edit auditor
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               className="text-destructive focus:text-destructive"
@@ -269,7 +269,7 @@ export default function EmployeesPage() {
                               onClick={() => handleDelete(emp)}
                             >
                               <Trash2 className="mr-2 h-4 w-4" />
-                              Delete employee
+                              Delete auditor
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -282,12 +282,12 @@ export default function EmployeesPage() {
                       {searchTerm ? (
                         <div className="flex flex-col items-center justify-center">
                           <Search className="h-8 w-8 text-muted-foreground mb-2" />
-                          <p className="text-muted-foreground">No employees found matching "{searchTerm}"</p>
+                          <p className="text-muted-foreground">No auditors found matching "{searchTerm}"</p>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center justify-center">
                           <Users className="h-8 w-8 text-muted-foreground mb-2" />
-                          <p className="text-muted-foreground">No employees found</p>
+                          <p className="text-muted-foreground">No auditors found</p>
                         </div>
                       )}
                     </TableCell>

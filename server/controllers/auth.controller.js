@@ -276,6 +276,19 @@ export const deleteEmployee = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Only superadmin can delete admin/superadmin accounts");
   }
 
+  // If this employee belongs to a department, decrement that department's employee count
+  if (employee.department) {
+    try {
+      const dept = await Department.findById(employee.department);
+      if (dept) {
+        await dept.decrementEmployeeCount();
+      }
+    } catch (err) {
+      // Log and continue deletion even if counter update fails
+      logger.error(`Failed to decrement employeeCount for department ${employee.department}:`, err);
+    }
+  }
+
   await Employee.findByIdAndDelete(id);
 
   logger.info(

@@ -84,6 +84,13 @@ export default function AdminLayout() {
   const getInitials = (name) =>
     name ? name.split(" ").map((n) => n[0]).join("").toUpperCase() : "AD";
 
+  const getDepartmentName = (dept) => {
+    if (!dept) return "Admin";
+    if (typeof dept === "string") return dept;
+    if (typeof dept === "object" && dept?.name) return dept.name;
+    return "Admin";
+  };
+
   // Desktop collapsed sidebar content
   const CollapsedSidebarContent = () => (
     <div className="flex h-full flex-col">
@@ -135,7 +142,7 @@ export default function AdminLayout() {
                   {user?.fullName || "Administrator"}
                 </p>
                 <p className="text-xs leading-none text-muted-foreground">
-                  {user?.department || "Admin"}
+                  {getDepartmentName(user?.department)}
                 </p>
               </div>
             </DropdownMenuLabel>
@@ -209,7 +216,7 @@ export default function AdminLayout() {
                   {user?.fullName || "Administrator"}
                 </span>
                 <span className="text-xs text-muted-foreground truncate">
-                  {user?.department || "Admin"}
+                  {getDepartmentName(user?.department)}
                 </span>
               </div>
             </Button>
@@ -233,7 +240,7 @@ export default function AdminLayout() {
   );
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex min-h-screen bg-background">
       {/* Desktop Sidebar */}
       <motion.aside
         initial={{ width: sidebarOpen ? 280 : 64 }}
@@ -313,7 +320,7 @@ export default function AdminLayout() {
                       {user?.fullName || "Administrator"}
                     </p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      {user?.department || "Admin"}
+                      {getDepartmentName(user?.department)}
                     </p>
                   </div>
                 </DropdownMenuLabel>
@@ -333,11 +340,9 @@ export default function AdminLayout() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-auto bg-muted/10">
-          <div className="h-full">
-            <div className="mx-auto max-w-7xl w-full p-4 md:p-6">
-              <Outlet />
-            </div>
+        <main className="flex-1 bg-muted/10">
+          <div className="mx-auto max-w-7xl w-full p-4 md:p-6">
+            <Outlet />
           </div>
         </main>
       </div>

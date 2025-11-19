@@ -78,7 +78,7 @@ export default function SuperAdminDashboard() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle className="text-sm">Employees</CardTitle>
+            <CardTitle className="text-sm">Auditors</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{employees}</div>

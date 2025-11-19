@@ -302,13 +302,13 @@ export default function AuditEmailSettingsPage() {
               <span>How this works</span>
             </CardTitle>
             <CardDescription className="text-xs">
-              These settings control the recipients for all "Share via Email" actions on the employee audit submission page.
+              These settings control the recipients for all "Share via Email" actions on the auditor audit submission page.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 pt-4 text-xs text-muted-foreground">
             <ul className="list-disc space-y-1 pl-4">
               <li>
-                Employees do <span className="font-semibold">not</span> choose emails manually; reports always go to these
+                Auditors do <span className="font-semibold">not</span> choose emails manually; reports always go to these
                 configured addresses.
               </li>
               <li>
