@@ -1,8 +1,12 @@
 import axios from "axios";
 
+// Environment helpers
+const isDev = import.meta.env?.DEV ?? process.env.NODE_ENV === "development";
+const ENABLE_API_PERF_LOGS = import.meta.env?.VITE_ENABLE_API_PERF_LOGS === "true";
+
 // Create axios instance with optimized configuration
 const api = axios.create({
-    baseURL: import.meta.env.VITE_SERVER_URL || 'http://https://audit-management-system-server.onrender.com',
+    baseURL: import.meta.env.VITE_SERVER_URL || 'https://audit-management-system-server.onrender.com',
     withCredentials: true,
     timeout: 30000, // 30 second default timeout
     headers: {
@@ -50,20 +54,24 @@ api.interceptors.request.use(
 // Response interceptor for caching and error handling
 api.interceptors.response.use(
     (response) => {
-        // Performance logging in development
-        if (process.env.NODE_ENV === 'development' && response.config.metadata) {
+        // Performance logging in development (opt-in via VITE_ENABLE_API_PERF_LOGS)
+        if (isDev && ENABLE_API_PERF_LOGS && response.config.metadata) {
             const endTime = new Date();
             const duration = endTime - response.config.metadata.startTime;
+
+            const url = response.config.url || '';
             // Adjust warning threshold based on endpoint complexity
             let threshold = 1000; // Default 1 second
-            if (response.config.url.includes('/stats') || 
-                response.config.url.includes('/aggregate') ||
-                response.config.url.includes('/audit')) {
+            if (url.includes('/stats') || url.includes('/aggregate') || url.includes('/audit')) {
                 threshold = 2000; // 2 seconds for complex queries
+            }
+            // Allow slower uploads / large payload operations
+            if (url.includes('/upload') || url.includes('/share')) {
+                threshold = 5000; // 5 seconds for uploads/sharing
             }
             
             if (duration > threshold) {
-                console.warn(`Slow API request: ${response.config.url} took ${duration}ms (threshold: ${threshold}ms)`);
+                console.warn(`Slow API request: ${url} took ${duration}ms (threshold: ${threshold}ms)`);
             }
         }
         
@@ -90,8 +98,8 @@ api.interceptors.response.use(
     (error) => {
         // Handle common error scenarios
         if (error.code === 'ECONNABORTED') {
-            if (process.env.NODE_ENV === 'development') {
-                console.error('Request timeout:', error.config.url);
+            if (isDev) {
+                console.error('Request timeout:', error.config?.url);
             }
         }
         

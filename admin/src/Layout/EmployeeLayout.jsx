@@ -80,7 +80,7 @@ export default function EmployeeLayout() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-2 p-2">
+      <nav className="flex-1 space-y-2 p-2 overflow-y-auto">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = location.pathname === link.to;
@@ -146,7 +146,7 @@ export default function EmployeeLayout() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-2 p-4">
+      <nav className="flex-1 space-y-2 p-4 overflow-y-auto">
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = location.pathname === link.to;

@@ -526,7 +526,14 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
 
   const rowsHtml = (audit.answers || [])
     .map((ans, idx) => {
-      const rawQuestionText = ans.question?.questionText || ans.questionText || `Q${idx + 1}`;
+      // Prefer populated question text, then any raw question string stored in the answer,
+      // and only fall back to Q1/Q2 labels as a last resort.
+      const rawQuestionText =
+        ans.question?.questionText ||
+        (typeof ans.question === "string" ? ans.question : "") ||
+        ans.questionText ||
+        `Q${idx + 1}`;
+
       const qType = ans.question?.questionType;
       let typeLabel = "";
       if (qType === "mcq") typeLabel = "MCQ";
