@@ -404,7 +404,7 @@ export const getUserStats = asyncHandler(async (req, res) => {
   }, 'User stats fetched successfully'));
 });
 
-// ===== QR + OTP LOGIN FLOW =====
+// ===== QR + OTP + MOBILE OTP LOGIN FLOW =====
 
 const QR_LOGIN_TTL_SECONDS = 300; // 5 minutes
 
@@ -424,18 +424,8 @@ const buildEmployeeFromQrData = async (qrData) => {
   return employee;
 };
 
-export const initiateQrLogin = asyncHandler(async (req, res) => {
-  const { qrData } = req.body || {};
-
-  if (!qrData) {
-    throw new ApiError(400, "QR data is required");
-  }
-
-  const employee = await buildEmployeeFromQrData(qrData);
-  if (!employee) {
-    throw new ApiError(404, "Employee not found for scanned QR");
-  }
-
+// Shared helper to create and cache OTP for an employee and send via Twilio
+const createAndSendLoginOtp = async (employee) => {
   if (!employee.phoneNumber) {
     throw new ApiError(400, "Employee does not have a registered phone number");
   }
@@ -448,13 +438,57 @@ export const initiateQrLogin = asyncHandler(async (req, res) => {
   if (redisClient && redisClient.status === 'ready') {
     await redisClient.setex(cacheKey, QR_LOGIN_TTL_SECONDS, JSON.stringify({ otp }));
   } else {
-    console.warn("⚠️ Redis is not available; QR login OTPs will not persist.");
+    console.warn("⚠️ Redis is not available; login OTPs will not persist.");
   }
 
   // Send OTP via Twilio
   await sendLoginOtpSms(employee.phoneNumber, otp);
 
   const maskedPhone = employee.phoneNumber.replace(/(\d{2})\d{6}(\d{2})/, '$1******$2');
+
+  return { maskedPhone };
+};
+
+export const initiateQrLogin = asyncHandler(async (req, res) => {
+  const { qrData } = req.body || {};
+
+  if (!qrData) {
+    throw new ApiError(400, "QR data is required");
+  }
+
+  const employee = await buildEmployeeFromQrData(qrData);
+  if (!employee) {
+    throw new ApiError(404, "Employee not found for scanned QR");
+  }
+
+  const { maskedPhone } = await createAndSendLoginOtp(employee);
+
+  return res.status(200).json(new ApiResponse(200, {
+    employeeId: employee._id,
+    maskedPhone,
+  }, "OTP sent successfully"));
+});
+
+// Mobile login by phone number (no QR)
+export const initiateMobileLogin = asyncHandler(async (req, res) => {
+  const { phoneNumber } = req.body || {};
+
+  if (!phoneNumber) {
+    throw new ApiError(400, "Phone number is required");
+  }
+
+  // Normalize phone number if needed (basic trim). You can extend this to add country code handling.
+  const cleanedPhone = String(phoneNumber).trim();
+
+  // Only allow employees to login via this endpoint
+  const employee = await Employee.findOne({ phoneNumber: cleanedPhone, role: 'employee' })
+    .populate('department', 'name description');
+
+  if (!employee) {
+    throw new ApiError(404, "Employee not found for this phone number");
+  }
+
+  const { maskedPhone } = await createAndSendLoginOtp(employee);
 
   return res.status(200).json(new ApiResponse(200, {
     employeeId: employee._id,
@@ -514,3 +548,6 @@ export const verifyQrLoginOtp = asyncHandler(async (req, res) => {
 
   return res.status(200).json(new ApiResponse(200, { employee }, "Login successful"));
 });
+
+// Mobile OTP verification reuses the same logic as QR OTP verification
+export const verifyMobileLoginOtp = verifyQrLoginOtp;

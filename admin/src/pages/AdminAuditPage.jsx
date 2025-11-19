@@ -39,6 +39,7 @@ export default function AdminAuditPage() {
     process: "",
     unit: "",
     lineLeader: "",
+    shift: "",
     shiftIncharge: "",
     answers: [],
   });
@@ -56,6 +57,7 @@ useEffect(() => {
       process: auditData?.process?._id || "",
       unit: auditData?.unit?._id || "",
       lineLeader: auditData?.lineLeader || "",
+      shift: auditData?.shift || "",
       shiftIncharge: auditData?.shiftIncharge || "",
       answers: Array.isArray(auditData?.answers)
         ? auditData.answers.map((a) => ({
@@ -204,7 +206,7 @@ useEffect(() => {
                   Update personnel details for this audit
                 </CardDescription>
               </CardHeader>
-              <CardContent className="grid gap-4 md:grid-cols-2">
+              <CardContent className="grid gap-4 md:grid-cols-3">
                 <div className="space-y-2">
                   <Label htmlFor="lineLeader">Line Leader</Label>
                   <Input
@@ -214,6 +216,24 @@ useEffect(() => {
                     onChange={handleChange}
                     placeholder="Enter line leader name"
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="shift">Shift</Label>
+                  <Select
+                    value={formData.shift}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, shift: value }))
+                    }
+                  >
+                    <SelectTrigger id="shift">
+                      <SelectValue placeholder="Select shift" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Shift 1">Shift 1</SelectItem>
+                      <SelectItem value="Shift 2">Shift 2</SelectItem>
+                      <SelectItem value="Shift 3">Shift 3</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="shiftIncharge">Shift Incharge</Label>

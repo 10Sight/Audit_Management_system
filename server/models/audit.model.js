@@ -42,6 +42,13 @@ const AuditSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    shift: {
+      type: String,
+      enum: ["Shift 1", "Shift 2", "Shift 3"],
+      required: true,
+      trim: true,
+      index: true,
+    },
     shiftIncharge: {
       type: String,
       required: true,

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Question from "../models/question.model.js";
+import QuestionCategory from "../models/questionCategory.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import logger from "../logger/winston.logger.js";
@@ -88,6 +89,7 @@ export const getQuestions = asyncHandler(async (req, res) => {
   const unitId = req.query.unitId || req.query.unit;
   const includeGlobal = req.query.includeGlobal;
   const fetchAll = req.query.fetchAll === "true";
+  const departmentId = req.query.departmentId || req.query.department;
 
   // Fast path: explicitly request all questions (global + scoped), ignoring filters
   if (fetchAll) {
@@ -117,12 +119,41 @@ export const getQuestions = asyncHandler(async (req, res) => {
     orConditions.push({ $and: andConditions });
   }
 
-  // If no filters, return all questions
-  const filter = orConditions.length > 0 ? { $or: orConditions } : {};
+  // Base filter for scoped/global questions
+  const baseFilter = orConditions.length > 0 ? { $or: orConditions } : {};
 
-  const questions = await Question.find(filter)
+  let questions = await Question.find(baseFilter)
     .populate("lines machines processes units", "name")
-    .lean(); // lean() makes objects simple JS objects, easier for frontend
+    .lean();
+
+  // Department-based categories: include any questions that belong to a category assigned to this department
+  if (departmentId && mongoose.Types.ObjectId.isValid(departmentId)) {
+    const categories = await QuestionCategory.find({ departments: departmentId })
+      .select("questions")
+      .lean();
+
+    const departmentQuestionIds = [
+      ...new Set(
+        categories.flatMap((cat) =>
+          Array.isArray(cat.questions) ? cat.questions.map((q) => q.toString()) : []
+        )
+      ),
+    ];
+
+    if (departmentQuestionIds.length > 0) {
+      const extraQuestions = await Question.find({ _id: { $in: departmentQuestionIds } })
+        .populate("lines machines processes units", "name")
+        .lean();
+
+      const seen = new Set(questions.map((q) => q._id.toString()));
+      for (const q of extraQuestions) {
+        if (!seen.has(q._id.toString())) {
+          seen.add(q._id.toString());
+          questions.push(q);
+        }
+      }
+    }
+  }
 
   return res.json({ status: "success", data: questions });
 });

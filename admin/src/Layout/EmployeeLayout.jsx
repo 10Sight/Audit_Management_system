@@ -121,7 +121,7 @@ export default function EmployeeLayout() {
       <div className="flex h-16 items-center border-b px-6">
         <div className="flex items-center gap-2">
           <Briefcase className="h-8 w-8 text-primary" />
-          <span className="text-xl font-bold">Employee Panel</span>
+          <span className="text-xl font-bold">Auditor Panel</span>
         </div>
       </div>
 
@@ -136,7 +136,7 @@ export default function EmployeeLayout() {
           </Avatar>
           <div className="flex flex-col min-w-0">
             <span className="text-sm font-medium truncate">
-              {user?.fullName || "Employee"}
+              {user?.fullName || "Auditor"}
             </span>
             <Badge variant="secondary" className="w-fit text-xs truncate">
               {getDepartmentName(user?.department)}
@@ -266,10 +266,10 @@ export default function EmployeeLayout() {
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium leading-none">
-                      {user?.fullName || "Employee"}
+                      {user?.fullName || "Auditor"}
                     </p>
                     <p className="text-xs leading-none text-muted-foreground">
-                      {user?.employeeId || "Employee ID"}
+                      {user?.employeeId || "Auditor ID"}
                     </p>
                   </div>
                 </DropdownMenuLabel>

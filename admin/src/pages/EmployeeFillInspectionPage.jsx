@@ -35,6 +35,7 @@ export default function EmployeeFillInspectionPage() {
   const [process, setProcess] = useState("");
   const [unit, setUnit] = useState("");
   const [lineLeader, setLineLeader] = useState("");   
+  const [shift, setShift] = useState("");
   const [shiftIncharge, setShiftIncharge] = useState("");
   const [lineRating, setLineRating] = useState("");
   const [machineRating, setMachineRating] = useState("");
@@ -91,6 +92,7 @@ export default function EmployeeFillInspectionPage() {
     ...(process ? { processId: process } : {}),
     ...(unit ? { unitId: unit } : {}),
     includeGlobal: 'true',
+    ...(currentUser?.department ? { departmentId: currentUser.department._id || currentUser.department } : {}),
   };
   const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery(questionParams, { skip: !(line && machine && process && unit) });
   useEffect(() => {
@@ -191,7 +193,7 @@ export default function EmployeeFillInspectionPage() {
     e.preventDefault();
     if (submitting) return; // prevent double submit
 
-    if (!line || !machine || !process || !unit || !lineLeader || !shiftIncharge || !lineRating || !machineRating || !processRating || !unitRating) {
+    if (!line || !machine || !process || !unit || !lineLeader || !shift || !shiftIncharge || !lineRating || !machineRating || !processRating || !unitRating) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -240,6 +242,7 @@ export default function EmployeeFillInspectionPage() {
         unit,
         department: currentUser?.department?._id || currentUser?.department || undefined,
         lineLeader,
+        shift,
         shiftIncharge,
         lineRating: Number(lineRating),
         machineRating: Number(machineRating),
@@ -347,6 +350,21 @@ export default function EmployeeFillInspectionPage() {
           <div>
             <label className="block mb-1 font-semibold">Line Leader</label>
             <input type="text" placeholder="Line Leader" value={lineLeader} onChange={(e) => setLineLeader(e.target.value)} className="p-2 bg-white border rounded-md w-full" required />
+          </div>
+
+          <div>
+            <label className="block mb-1 font-semibold">Shift</label>
+            <select
+              value={shift}
+              onChange={(e) => setShift(e.target.value)}
+              className="p-2 bg-white border rounded-md w-full"
+              required
+            >
+              <option value="">Select Shift</option>
+              <option value="Shift 1">Shift 1</option>
+              <option value="Shift 2">Shift 2</option>
+              <option value="Shift 3">Shift 3</option>
+            </select>
           </div>
 
           <div>

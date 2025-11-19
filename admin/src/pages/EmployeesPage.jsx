@@ -9,11 +9,11 @@ import {
   ChevronLeft, 
   ChevronRight,
   MoreHorizontal,
-  Eye,
   Edit,
+  Trash2,
   Users
 } from "lucide-react";
-import { useGetDepartmentsQuery, useGetEmployeesQuery } from "@/store/api";
+import { useDeleteEmployeeByIdMutation, useGetDepartmentsQuery, useGetEmployeesQuery } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,7 +32,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -67,8 +66,9 @@ export default function EmployeesPage() {
     return () => clearTimeout(id);
   }, [searchTerm]);
 
-  const { data, isFetching, isLoading: queryLoading } = useGetEmployeesQuery({ page, limit, search: debouncedSearch });
+  const { data, isFetching, isLoading: queryLoading, refetch } = useGetEmployeesQuery({ page, limit, search: debouncedSearch });
   const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
+  const [deleteEmployee, { isLoading: deleting }] = useDeleteEmployeeByIdMutation();
 
   useEffect(() => {
     setLoading(queryLoading);
@@ -90,6 +90,17 @@ export default function EmployeesPage() {
     if (typeof dept === 'object' && dept?.name) return dept.name;
     if (typeof dept === 'string') return departmentMap.get(dept) || 'N/A';
     return 'N/A';
+  };
+
+  const handleDelete = async (emp) => {
+    if (!window.confirm(`Delete ${emp.fullName}?`)) return;
+    try {
+      await deleteEmployee(emp._id).unwrap();
+      alert('Employee deleted successfully');
+      refetch();
+    } catch (err) {
+      alert(err?.data?.message || err?.message || 'Failed to delete employee');
+    }
   };
 
   const downloadExcel = () => {
@@ -200,7 +211,11 @@ export default function EmployeesPage() {
               <TableBody>
                 {employees.length > 0 ? (
                   employees.map((emp) => (
-                    <TableRow key={emp._id} className="cursor-pointer hover:bg-muted/50">
+                    <TableRow
+                      key={emp._id}
+                      className="cursor-pointer hover:bg-muted/50"
+                      onClick={() => navigate(`/admin/employee/${emp._id}`)}
+                    >
                       <TableCell className="font-medium">
                         <div className="flex items-center space-x-2">
                           <Avatar className="h-8 w-8">
@@ -232,7 +247,7 @@ export default function EmployeesPage() {
                       <TableCell className="hidden md:table-cell text-muted-foreground">
                         {new Date(emp.createdAt).toLocaleDateString()}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="h-8 w-8 p-0">
@@ -243,16 +258,18 @@ export default function EmployeesPage() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem
-                              onClick={() => navigate(`/admin/employee/${emp._id}`)}
-                            >
-                              <Eye className="mr-2 h-4 w-4" />
-                              View details
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
                               onClick={() => navigate(`/admin/employee/edit/${emp._id}`)}
                             >
                               <Edit className="mr-2 h-4 w-4" />
                               Edit employee
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive"
+                              disabled={deleting}
+                              onClick={() => handleDelete(emp)}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete employee
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

@@ -102,8 +102,8 @@ export default function AddEmployeePage() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Add New Employee</h1>
-            <p className="text-muted-foreground">Create a new employee account in the system</p>
+            <h1 className="text-3xl font-bold tracking-tight">Add New Auditor</h1>
+            <p className="text-muted-foreground">Create a new auditor account in the system</p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -115,10 +115,10 @@ export default function AddEmployeePage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            Employee Information
+            Auditor Information
           </CardTitle>
           <CardDescription>
-            Fill in the details below to create a new employee account
+            Fill in the details below to create a new auditor account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -137,7 +137,7 @@ export default function AddEmployeePage() {
                       </FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Enter employee's full name" 
+                          placeholder="Enter auditor's full name" 
                           {...field} 
                         />
                       </FormControl>
@@ -154,11 +154,11 @@ export default function AddEmployeePage() {
                     <FormItem>
                       <FormLabel className="flex items-center gap-2">
                         <Shield className="h-4 w-4" />
-                        Employee ID
+                        Auditor ID
                       </FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Enter unique employee ID" 
+                          placeholder="Enter unique auditor ID" 
                           {...field} 
                         />
                       </FormControl>
@@ -313,7 +313,7 @@ export default function AddEmployeePage() {
                       </div>
                     </FormControl>
                     <FormDescription>
-                      Password will be used for initial login. Employee can change it later.
+                      Password will be used for initial login. Auditor can change it later.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -338,7 +338,7 @@ export default function AddEmployeePage() {
                   ) : (
                     <>
                       <UserPlus className="mr-2 h-4 w-4" />
-                      Create Employee
+                      Create Auditor
                     </>
                   )}
                 </Button>

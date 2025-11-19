@@ -17,10 +17,15 @@ const normalizeEmailList = (raw) => {
 };
 
 export const createAudit = asyncHandler(async (req, res) => {
-  const { date, line, machine, process, unit, lineLeader, shiftIncharge, answers, lineRating, machineRating, processRating, unitRating, department } = req.body;
+  const { date, line, machine, process, unit, lineLeader, shift, shiftIncharge, answers, lineRating, machineRating, processRating, unitRating, department } = req.body;
 
-  if (!date || !line || !machine || !process || !lineLeader || !shiftIncharge) {
+  if (!date || !line || !machine || !process || !lineLeader || !shift || !shiftIncharge) {
     throw new ApiError(400, "All required fields must be filled");
+  }
+
+  const allowedShifts = ["Shift 1", "Shift 2", "Shift 3"];
+  if (!allowedShifts.includes(shift)) {
+    throw new ApiError(400, "Shift must be one of Shift 1, Shift 2, or Shift 3");
   }
 
   const today = new Date().toISOString().split("T")[0];
@@ -103,6 +108,7 @@ export const createAudit = asyncHandler(async (req, res) => {
     unit,
     department: department || req.user.department || undefined,
     lineLeader,
+    shift,
     shiftIncharge,
     lineRating: normalizedLineRating,
     machineRating: normalizedMachineRating,
@@ -185,11 +191,13 @@ export const getAudits = asyncHandler(async (req, res) => {
     };
   }
 
-  // Optional filters: line, machine, process, unit
+  // Optional filters: line, machine, process, unit, shift, department
   if (req.query.line) query.line = req.query.line;
   if (req.query.machine) query.machine = req.query.machine;
   if (req.query.process) query.process = req.query.process;
   if (req.query.unit) query.unit = req.query.unit;
+  if (req.query.shift) query.shift = req.query.shift;
+  if (req.query.department) query.department = req.query.department;
 
   // Result filter: allYes or allNo
   if (req.query.result === 'allYes') {
@@ -201,7 +209,7 @@ export const getAudits = asyncHandler(async (req, res) => {
   let audits;
   try {
     audits = await Audit.find(query)
-      .select('date line machine process unit department lineLeader shiftIncharge lineRating machineRating processRating unitRating auditor createdBy createdAt answers')
+      .select('date line machine process unit department lineLeader shift shiftIncharge lineRating machineRating processRating unitRating auditor createdBy createdAt answers')
       .populate("line", "name")
       .populate("machine", "name")
       .populate("process", "name")
@@ -218,7 +226,7 @@ export const getAudits = asyncHandler(async (req, res) => {
     if (err?.name === 'CastError') {
       // Fallback without populating nested answers if legacy data shape
       audits = await Audit.find(query)
-        .select('date line machine process unit department lineLeader shiftIncharge lineRating machineRating processRating unitRating auditor createdBy createdAt answers')
+        .select('date line machine process unit department lineLeader shift shiftIncharge lineRating machineRating processRating unitRating auditor createdBy createdAt answers')
         .populate("line", "name")
         .populate("machine", "name")
         .populate("process", "name")
@@ -246,6 +254,168 @@ export const getAudits = asyncHandler(async (req, res) => {
       totalRecords: total
     }
   }, "Audits fetched successfully"));
+});
+
+const buildAuditQueryForExport = (req) => {
+  let query = {};
+
+  if (req.user.role === "employee") {
+    query = { auditor: req.user._id };
+  } else if (req.query.auditor) {
+    query = { auditor: req.query.auditor };
+  }
+
+  if (req.query.startDate || req.query.endDate) {
+    const start = req.query.startDate ? new Date(req.query.startDate) : null;
+    const end = req.query.endDate ? new Date(req.query.endDate) : null;
+
+    const dateRange = {};
+    const createdAtRange = {};
+    if (start) { dateRange.$gte = start; createdAtRange.$gte = start; }
+    if (end) { dateRange.$lte = end; createdAtRange.$lte = end; }
+
+    const base = Object.keys(query).length ? [query] : [];
+    query = {
+      $and: [
+        ...base,
+        { $or: [
+          Object.keys(dateRange).length ? { date: dateRange } : {},
+          Object.keys(createdAtRange).length ? { createdAt: createdAtRange } : {}
+        ]}
+      ]
+    };
+  }
+
+  if (req.query.line) query.line = req.query.line;
+  if (req.query.machine) query.machine = req.query.machine;
+  if (req.query.process) query.process = req.query.process;
+  if (req.query.unit) query.unit = req.query.unit;
+  if (req.query.shift) query.shift = req.query.shift;
+  if (req.query.department) query.department = req.query.department;
+
+  if (req.query.result === 'allYes') {
+    query.answers = { $not: { $elemMatch: { answer: 'No' } } };
+  } else if (req.query.result === 'allNo') {
+    query.answers = { $not: { $elemMatch: { answer: 'Yes' } } };
+  }
+
+  return query;
+};
+
+const escapeCsv = (value) => {
+  if (value === null || value === undefined) return '';
+  const str = String(value);
+  if (/[",\n]/.test(str)) {
+    return '"' + str.replace(/"/g, '""') + '"';
+  }
+  return str;
+};
+
+export const exportAudits = asyncHandler(async (req, res) => {
+  const query = buildAuditQueryForExport(req);
+
+  const limit = Math.min(parseInt(req.query.limit) || 100000, 200000);
+
+  let audits;
+  try {
+    audits = await Audit.find(query)
+      .select('date line machine process unit department lineLeader shift shiftIncharge lineRating machineRating processRating unitRating auditor createdBy createdAt answers')
+      .populate("line", "name")
+      .populate("machine", "name")
+      .populate("process", "name")
+      .populate("unit", "name")
+      .populate("department", "name")
+      .populate("auditor", "fullName emailId")
+      .populate("createdBy", "fullName employeeId")
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+  } catch (err) {
+    if (err?.name === 'CastError') {
+      audits = await Audit.find(query)
+        .select('date line machine process unit department lineLeader shift shiftIncharge lineRating machineRating processRating unitRating auditor createdBy createdAt answers')
+        .populate("line", "name")
+        .populate("machine", "name")
+        .populate("process", "name")
+        .populate("unit", "name")
+        .populate("department", "name")
+        .populate("auditor", "fullName emailId")
+        .populate("createdBy", "fullName employeeId")
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .lean();
+    } else {
+      throw err;
+    }
+  }
+
+  const headers = [
+    'Date',
+    'Created At',
+    'Department',
+    'Line',
+    'Machine',
+    'Process',
+    'Unit',
+    'Shift',
+    'Line Leader',
+    'Shift Incharge',
+    'Auditor Name',
+    'Auditor Email',
+    'Created By',
+    'Line Rating',
+    'Machine Rating',
+    'Process Rating',
+    'Unit Rating',
+    'Yes Count',
+    'No Count',
+    'Total Answers',
+  ];
+
+  const rows = audits.map((audit) => {
+    const dateStr = audit.date ? new Date(audit.date).toISOString().split('T')[0] : '';
+    const createdAtStr = audit.createdAt ? new Date(audit.createdAt).toISOString() : '';
+
+    const answers = Array.isArray(audit.answers) ? audit.answers : [];
+    const yes = answers.filter((a) => a.answer === 'Yes').length;
+    const no = answers.filter((a) => a.answer === 'No').length;
+    const total = answers.length;
+
+    return [
+      dateStr,
+      createdAtStr,
+      audit.department?.name || '',
+      audit.line?.name || '',
+      audit.machine?.name || '',
+      audit.process?.name || '',
+      audit.unit?.name || '',
+      audit.shift || '',
+      audit.lineLeader || '',
+      audit.shiftIncharge || '',
+      audit.auditor?.fullName || '',
+      audit.auditor?.emailId || '',
+      audit.createdBy?.fullName || '',
+      audit.lineRating ?? '',
+      audit.machineRating ?? '',
+      audit.processRating ?? '',
+      audit.unitRating ?? '',
+      yes,
+      no,
+      total,
+    ];
+  });
+
+  const csvLines = [];
+  csvLines.push(headers.map(escapeCsv).join(','));
+  for (const row of rows) {
+    csvLines.push(row.map(escapeCsv).join(','));
+  }
+
+  const csv = csvLines.join('\n');
+
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', `attachment; filename="audits_export_${new Date().toISOString().slice(0, 10)}.csv"`);
+  return res.status(200).send(csv);
 });
 
 export const getAuditById = asyncHandler(async (req, res) => {
@@ -408,6 +578,9 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
         <p style="margin:0 0 4px 0;font-size:13px;"><strong>Machine:</strong> ${machineName}</p>
         <p style="margin:0 0 4px 0;font-size:13px;"><strong>Process:</strong> ${processName}</p>
         <p style="margin:0 0 4px 0;font-size:13px;"><strong>Unit:</strong> ${unitName}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Shift:</strong> ${
+          audit.shift || "N/A"
+        }</p>
         <p style="margin:0 0 4px 0;font-size:13px;"><strong>Line Rating:</strong> ${
           lineRatingValue !== null ? `${lineRatingValue}/10` : "N/A"
         }</p>
@@ -517,7 +690,7 @@ export const updateAuditEmailSettings = asyncHandler(async (req, res) => {
 
 export const updateAudit = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { line, machine, process, unit, lineLeader, shiftIncharge, answers, lineRating, machineRating, processRating, unitRating } = req.body;
+  const { line, machine, process, unit, lineLeader, shift, shiftIncharge, answers, lineRating, machineRating, processRating, unitRating } = req.body;
 
   const audit = await Audit.findById(id);
   if (!audit) throw new ApiError(404, "Audit not found");
@@ -545,6 +718,13 @@ export const updateAudit = asyncHandler(async (req, res) => {
   if (process) audit.process = process;
   if (unit) audit.unit = unit;
   if (lineLeader) audit.lineLeader = lineLeader;
+  if (shift) {
+    const allowedShifts = ["Shift 1", "Shift 2", "Shift 3"];
+    if (!allowedShifts.includes(shift)) {
+      throw new ApiError(400, "Shift must be one of Shift 1, Shift 2, or Shift 3");
+    }
+    audit.shift = shift;
+  }
   if (shiftIncharge) audit.shiftIncharge = shiftIncharge;
   if (updatedLineRating !== undefined) audit.lineRating = updatedLineRating;
   if (updatedMachineRating !== undefined) audit.machineRating = updatedMachineRating;

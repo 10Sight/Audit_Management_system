@@ -2,6 +2,7 @@ import express from "express";
 import {
   createAudit,
   getAudits,
+  exportAudits,
   getAuditById,
   deleteAudit,
   updateAudit,
@@ -16,6 +17,7 @@ import { uploadFields } from "../middlewares/upload.middleware.js";
 const router = express.Router();
 
 router.get("/", verifyJWT, authorizeRoles("admin", "employee"), cache(cacheConfig.short), getAudits);
+router.get("/export", verifyJWT, authorizeRoles("admin", "manager"), exportAudits);
 // Auditor submits audit (with photo upload support)
 router.post("/", verifyJWT, authorizeRoles("employee", "manager", "admin"), uploadFields, createAudit);
 

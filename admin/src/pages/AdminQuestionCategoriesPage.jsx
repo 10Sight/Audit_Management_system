@@ -7,6 +7,7 @@ import {
   useCreateQuestionCategoryMutation,
   useUpdateQuestionCategoryMutation,
   useDeleteQuestionCategoryMutation,
+  useGetDepartmentsQuery,
 } from "@/store/api";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ export default function AdminQuestionCategoriesPage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [selectedQuestions, setSelectedQuestions] = useState([]); // array of question ids
+  const [selectedDepartments, setSelectedDepartments] = useState([]); // array of department ids
   const [searchTerm, setSearchTerm] = useState("");
   const [initialized, setInitialized] = useState(false);
 
@@ -35,6 +37,7 @@ export default function AdminQuestionCategoriesPage() {
   });
   const { data: categoriesRes, isLoading: categoriesLoading, refetch: refetchCategories } =
     useGetQuestionCategoriesQuery();
+  const { data: departmentsRes, isLoading: departmentsLoading } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
 
   const [createCategory, { isLoading: creating }] = useCreateQuestionCategoryMutation();
   const [updateCategory, { isLoading: updating }] = useUpdateQuestionCategoryMutation();
@@ -49,6 +52,11 @@ export default function AdminQuestionCategoriesPage() {
     [categoriesRes]
   );
 
+  const departments = useMemo(
+    () => (Array.isArray(departmentsRes?.data?.departments) ? departmentsRes.data.departments : []),
+    [departmentsRes]
+  );
+
   useEffect(() => {
     // When categories load for the first time, auto-select the first one.
     // After that, respect the user's manual selection / "New Category" state.
@@ -59,6 +67,7 @@ export default function AdminQuestionCategoriesPage() {
       setName(first.name || "");
       setDescription(first.description || "");
       setSelectedQuestions((first.questions || []).map((q) => q._id));
+      setSelectedDepartments((first.departments || []).map((d) => d._id || d));
       setInitialized(true);
     }
   }, [categories, initialized]);
@@ -68,6 +77,7 @@ export default function AdminQuestionCategoriesPage() {
     setName("");
     setDescription("");
     setSelectedQuestions([]);
+    setSelectedDepartments([]);
   };
 
   const handleSelectCategory = (cat) => {
@@ -75,11 +85,18 @@ export default function AdminQuestionCategoriesPage() {
     setName(cat.name || "");
     setDescription(cat.description || "");
     setSelectedQuestions((cat.questions || []).map((q) => q._id));
+    setSelectedDepartments((cat.departments || []).map((d) => d._id || d));
   };
 
   const handleToggleQuestion = (id) => {
     setSelectedQuestions((prev) =>
       prev.includes(id) ? prev.filter((qId) => qId !== id) : [...prev, id]
+    );
+  };
+
+  const handleToggleDepartment = (id) => {
+    setSelectedDepartments((prev) =>
+      prev.includes(id) ? prev.filter((dId) => dId !== id) : [...prev, id]
     );
   };
 
@@ -105,6 +122,7 @@ export default function AdminQuestionCategoriesPage() {
       name: name.trim(),
       description: description.trim(),
       questionIds: selectedQuestions,
+      departmentIds: selectedDepartments,
     };
 
     try {
@@ -143,7 +161,7 @@ export default function AdminQuestionCategoriesPage() {
     return <div>Access Denied</div>;
   }
 
-  const loading = questionsLoading || categoriesLoading;
+  const loading = questionsLoading || categoriesLoading || departmentsLoading;
 
   if (loading) return <Loader />;
 
@@ -272,62 +290,95 @@ export default function AdminQuestionCategoriesPage() {
 
               <Separator />
 
-              <div className="space-y-3">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <Label>Questions in this category</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Use the checkboxes to include or remove questions from this category.
-                    </p>
-                  </div>
-                  <div className="relative w-full max-w-xs">
-                    <Search className="pointer-events-none absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      placeholder="Search questions..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="h-9 pl-8 text-sm"
-                    />
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label>Departments using this category</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Select one or more departments where these questions should appear in the inspection form.
+                  </p>
+                  <div className="max-h-40 space-y-1 overflow-y-auto rounded-md border bg-muted/40 p-2">
+                    {departments.length === 0 ? (
+                      <p className="px-1 py-2 text-xs text-muted-foreground">
+                        No departments found. Create departments first.
+                      </p>
+                    ) : (
+                      departments.map((dept) => {
+                        const checked = selectedDepartments.includes(dept._id);
+                        return (
+                          <label
+                            key={dept._id}
+                            className="flex cursor-pointer items-center gap-2 rounded-md bg-background px-2 py-1 text-xs sm:text-sm hover:bg-accent hover:text-accent-foreground"
+                          >
+                            <Checkbox
+                              className="mt-0.5"
+                              checked={checked}
+                              onCheckedChange={() => handleToggleDepartment(dept._id)}
+                            />
+                            <span className="truncate">{dept.name}</span>
+                          </label>
+                        );
+                      })
+                    )}
                   </div>
                 </div>
 
-                <div className="max-h-[360px] space-y-2 overflow-y-auto rounded-md border bg-muted/40 p-2">
-                  {filteredQuestions.length === 0 ? (
-                    <p className="px-1 py-2 text-xs text-muted-foreground">
-                      No questions match your search.
-                    </p>
-                  ) : (
-                    filteredQuestions.map((q) => {
-                      const checked = selectedQuestions.includes(q._id);
-                      return (
-                        <label
-                          key={q._id}
-                          className="flex cursor-pointer items-start gap-2 rounded-md bg-background px-2 py-2 text-xs sm:text-sm hover:bg-accent hover:text-accent-foreground"
-                        >
-                          <Checkbox
-                            className="mt-0.5"
-                            checked={checked}
-                            onCheckedChange={() => handleToggleQuestion(q._id)}
-                          />
-                          <div className="min-w-0 flex-1 space-y-1">
-                            <p className="break-words font-medium leading-snug">
-                              {q.questionText}
-                            </p>
-                            <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                              <Badge variant="outline" className="text-[10px]">
-                                {q.questionType || "yes_no"}
-                              </Badge>
-                              {q.isGlobal && (
-                                <Badge variant="secondary" className="text-[10px]">
-                                  Global
+                <div className="space-y-3">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <Label>Questions in this category</Label>
+                      <p className="text-xs text-muted-foreground">
+                        Use the checkboxes to include or remove questions from this category.
+                      </p>
+                    </div>
+                    <div className="relative w-full max-w-xs">
+                      <Search className="pointer-events-none absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        placeholder="Search questions..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="h-9 pl-8 text-sm"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="max-h-[360px] space-y-2 overflow-y-auto rounded-md border bg-muted/40 p-2">
+                    {filteredQuestions.length === 0 ? (
+                      <p className="px-1 py-2 text-xs text-muted-foreground">
+                        No questions match your search.
+                      </p>
+                    ) : (
+                      filteredQuestions.map((q) => {
+                        const checked = selectedQuestions.includes(q._id);
+                        return (
+                          <label
+                            key={q._id}
+                            className="flex cursor-pointer items-start gap-2 rounded-md bg-background px-2 py-2 text-xs sm:text-sm hover:bg-accent hover:text-accent-foreground"
+                          >
+                            <Checkbox
+                              className="mt-0.5"
+                              checked={checked}
+                              onCheckedChange={() => handleToggleQuestion(q._id)}
+                            />
+                            <div className="min-w-0 flex-1 space-y-1">
+                              <p className="break-words font-medium leading-snug">
+                                {q.questionText}
+                              </p>
+                              <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                                <Badge variant="outline" className="text-[10px]">
+                                  {q.questionType || "yes_no"}
                                 </Badge>
-                              )}
+                                {q.isGlobal && (
+                                  <Badge variant="secondary" className="text-[10px]">
+                                    Global
+                                  </Badge>
+                                )}
+                              </div>
                             </div>
-                          </div>
-                        </label>
-                      );
-                    })
-                  )}
+                          </label>
+                        );
+                      })
+                    )}
+                  </div>
                 </div>
               </div>
 

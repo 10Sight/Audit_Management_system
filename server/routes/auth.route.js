@@ -1,5 +1,5 @@
 import express from 'express';
-import { registerEmployee, loginEmployee, logoutEmployee, getEmployees, deleteEmployee, getSingleEmployee, getCurrentUser, updateEmployee, getAllUsers, populateUsernames, bootstrapSuperAdmin, getUserStats, initiateQrLogin, verifyQrLoginOtp } from "../controllers/auth.controller.js";
+import { registerEmployee, loginEmployee, logoutEmployee, getEmployees, deleteEmployee, getSingleEmployee, getCurrentUser, updateEmployee, getAllUsers, populateUsernames, bootstrapSuperAdmin, getUserStats, initiateQrLogin, verifyQrLoginOtp, initiateMobileLogin, verifyMobileLoginOtp } from "../controllers/auth.controller.js";
 import { verifyJWT, authorizeRoles } from '../middlewares/auth.middleware.js';
 import { loginLimiter } from '../middlewares/rateLimiters.middleware.js';
 import { validate } from '../middlewares/validte.middleware.js';
@@ -17,6 +17,10 @@ router.post("/logout", verifyJWT, logoutEmployee);
 // QR + OTP login (no JWT required)
 router.post("/qr-login/initiate", loginLimiter, initiateQrLogin);
 router.post("/qr-login/verify", loginLimiter, verifyQrLoginOtp);
+
+// Mobile number + OTP login (no JWT required)
+router.post("/mobile-login/initiate", loginLimiter, initiateMobileLogin);
+router.post("/mobile-login/verify", loginLimiter, verifyMobileLoginOtp);
 
 router.get("/get-employee", verifyJWT, authorizeRoles("admin"), getEmployees);
 router.get("/get-all-users", verifyJWT, authorizeRoles("admin"), getAllUsers);

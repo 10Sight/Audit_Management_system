@@ -24,7 +24,7 @@ import {
   Calendar,
   Filter
 } from "lucide-react";
-import { useGetAuditsQuery, useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useGetUnitsQuery, useGetAllUsersQuery, useGetEmployeesQuery } from "@/store/api";
+import { useGetAuditsQuery, useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useGetUnitsQuery, useGetAllUsersQuery, useGetEmployeesQuery, useGetDepartmentsQuery } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -36,9 +36,11 @@ export default function AdminDashboard() {
   const [machines, setMachines] = useState([]);
   const [processes, setProcesses] = useState([]);
   const [units, setUnits] = useState([]);
+  const [departments, setDepartments] = useState([]);
   const [employees, setEmployees] = useState([]);
 
   const [answerType, setAnswerType] = useState("all");
+  const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedLine, setSelectedLine] = useState("all");
   const [selectedMachine, setSelectedMachine] = useState("all");
   const [selectedProcess, setSelectedProcess] = useState("all");
@@ -74,11 +76,15 @@ export default function AdminDashboard() {
   };
 
   // Fetch data with RTK Query (poll audits every 30s)
-  const { data: auditsRes } = useGetAuditsQuery({ page: 1, limit: 1000 }, { pollingInterval: 30000 });
+  const { data: auditsRes } = useGetAuditsQuery(
+    { page: 1, limit: 1000, department: selectedDepartment !== "all" ? selectedDepartment : undefined },
+    { pollingInterval: 30000 }
+  );
   const { data: linesRes } = useGetLinesQuery();
   const { data: machinesRes } = useGetMachinesQuery();
   const { data: processesRes } = useGetProcessesQuery();
   const { data: unitsRes } = useGetUnitsQuery();
+  const { data: departmentsRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
   const { data: usersRes } = useGetAllUsersQuery({ page: 1, limit: 1000 });
   // Query only employees to get accurate total count from backend
   const { data: employeesCountRes } = useGetEmployeesQuery({ page: 1, limit: 1 });
@@ -90,8 +96,9 @@ export default function AdminDashboard() {
     setMachines(machinesRes?.data || []);
     setProcesses(processesRes?.data || []);
     setUnits(unitsRes?.data || []);
+    setDepartments(departmentsRes?.data?.departments || []);
     setEmployees(Array.isArray(usersRes?.data?.users) ? usersRes.data.users : []);
-  }, [auditsRes, linesRes, machinesRes, processesRes, usersRes, unitsRes]);
+  }, [auditsRes, linesRes, machinesRes, processesRes, usersRes, unitsRes, departmentsRes]);
 
   // RTK Query polling handles refresh; no manual interval needed
 
@@ -192,7 +199,11 @@ export default function AdminDashboard() {
       };
     }
     
-    const filteredAudits = audits.filter((audit) => {
+      const filteredAudits = audits.filter((audit) => {
+      if (selectedDepartment && selectedDepartment !== "all") {
+        const deptId = audit.department?._id || audit.department;
+        if (deptId !== selectedDepartment) return false;
+      }
       if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return false;
       if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return false;
       if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return false;
@@ -212,7 +223,7 @@ export default function AdminDashboard() {
       processes: selectedProcess && selectedProcess !== "all" ? 1 : processes.length,
       units: selectedUnit && selectedUnit !== "all" ? 1 : units.length,
     };
-  }, [audits, selectedLine, selectedMachine, selectedProcess, selectedUnit, lines, machines, processes, units]);
+  }, [audits, selectedDepartment, selectedLine, selectedMachine, selectedProcess, selectedUnit, lines, machines, processes, units]);
 
   return (
     <div className="space-y-8">
@@ -295,9 +306,10 @@ export default function AdminDashboard() {
           <CardDescription>Filter data to focus on specific metrics</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
             {[
               "Answer Type",
+              "Department",
               "Line",
               "Machine",
               "Process",
@@ -306,6 +318,7 @@ export default function AdminDashboard() {
             ].map((label) => {
               const valueMap = {
                 "Answer Type": answerType,
+                Department: selectedDepartment,
                 Line: selectedLine,
                 Machine: selectedMachine,
                 Process: selectedProcess,
@@ -314,6 +327,7 @@ export default function AdminDashboard() {
               };
               const setValueMap = {
                 "Answer Type": setAnswerType,
+                Department: setSelectedDepartment,
                 Line: setSelectedLine,
                 Machine: setSelectedMachine,
                 Process: setSelectedProcess,
@@ -322,6 +336,7 @@ export default function AdminDashboard() {
               };
               const optionsMap = {
                 "Answer Type": ["Yes", "No"],
+                Department: departments,
                 Line: lines,
                 Machine: machines,
                 Process: processes,

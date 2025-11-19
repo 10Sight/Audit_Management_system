@@ -39,6 +39,7 @@ export default function EmployeeAuditResult() {
         <div><strong>Machine:</strong> {audit.machine?.name || audit.machine}</div>
         <div><strong>Process:</strong> {audit.process?.name || audit.process}</div>
         <div><strong>Unit:</strong> {audit.unit?.name || audit.unit}</div>
+        <div><strong>Shift:</strong> {audit.shift || "N/A"}</div>
         <div><strong>Line Rating:</strong> {audit.lineRating != null ? `${audit.lineRating}/10` : "N/A"}</div>
         <div><strong>Machine Rating:</strong> {audit.machineRating != null ? `${audit.machineRating}/10` : "N/A"}</div>
         <div><strong>Process Rating:</strong> {audit.processRating != null ? `${audit.processRating}/10` : "N/A"}</div>

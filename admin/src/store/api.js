@@ -49,6 +49,13 @@ export const api = createApi({
       query: (body) => ({ url: '/api/v1/auth/qr-login/verify', method: 'POST', body }),
       invalidatesTags: ['Auth'],
     }),
+    initiateMobileLogin: builder.mutation({
+      query: (body) => ({ url: '/api/v1/auth/mobile-login/initiate', method: 'POST', body }),
+    }),
+    verifyMobileLoginOtp: builder.mutation({
+      query: (body) => ({ url: '/api/v1/auth/mobile-login/verify', method: 'POST', body }),
+      invalidatesTags: ['Auth'],
+    }),
 
     // Employees
     getEmployees: builder.query({
@@ -189,9 +196,9 @@ export const api = createApi({
 
     // Audits
     getAudits: builder.query({
-      query: ({ page = 1, limit = 20, auditor, startDate, endDate, line, machine, process, unit, result } = {}) => ({
+      query: ({ page = 1, limit = 20, auditor, startDate, endDate, line, machine, process, unit, shift, department, result } = {}) => ({
         url: '/api/audits',
-        params: { page, limit, auditor, startDate, endDate, line, machine, process, unit, result },
+        params: { page, limit, auditor, startDate, endDate, line, machine, process, unit, shift, department, result },
       }),
       providesTags: [{ type: 'Audit', id: 'LIST' }],
     }),
@@ -279,6 +286,8 @@ export const {
   useGetMeQuery,
   useInitiateQrLoginMutation,
   useVerifyQrLoginOtpMutation,
+  useInitiateMobileLoginMutation,
+  useVerifyMobileLoginOtpMutation,
   useGetEmployeesQuery,
   useGetAllUsersQuery,
   useGetLinesQuery,

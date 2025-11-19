@@ -13,6 +13,8 @@ const QuestionCategorySchema = new mongoose.Schema(
     },
     // Questions that belong to this category
     questions: [{ type: Schema.Types.ObjectId, ref: "Question" }],
+    // Departments where this category applies
+    departments: [{ type: Schema.Types.ObjectId, ref: "Department" }],
     createdBy: { type: Schema.Types.ObjectId, ref: "Employee" },
   },
   { timestamps: true, versionKey: false }

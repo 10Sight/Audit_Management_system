@@ -53,7 +53,7 @@ export default function LoginPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
+      className="min-h-screen flex items-center justify-left bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: "url('/marelli-motherson.webp')" }}
     >
       <div className="w-full max-w-md px-4 sm:px-6 md:px-8">

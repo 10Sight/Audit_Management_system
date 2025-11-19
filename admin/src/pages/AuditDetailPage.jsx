@@ -62,7 +62,7 @@ export default function AuditDetailPage() {
           {audit.date ? new Date(audit.date).toLocaleDateString() : "N/A"})
         </h2>
         <p className="text-gray-600 mb-1">
-          Department: {audit.department?.name || "N/A"} | Process: {audit.process?.name || "N/A"} | Unit: {audit.unit?.name || "N/A"} | Auditor:{" "}
+          Department: {audit.department?.name || "N/A"} | Process: {audit.process?.name || "N/A"} | Unit: {audit.unit?.name || "N/A"} | Shift: {audit.shift || "N/A"} | Auditor:{" "}
           {audit.auditor?.fullName || "N/A"} | Shift Incharge:{" "}
           {audit.shiftIncharge || "N/A"} | Line Leader: {audit.lineLeader || "N/A"}
         </p>

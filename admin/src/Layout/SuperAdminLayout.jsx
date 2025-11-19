@@ -28,7 +28,7 @@ export default function SuperAdminLayout() {
     { to: "/superadmin/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/superadmin/users", label: "Users", icon: Users },
     { to: "/admin/dashboard", label: "Admin", icon: ShieldCheck },
-    { to: "/employee/dashboard", label: "Employee", icon: Settings },
+    { to: "/employee/dashboard", label: "Auditor", icon: Settings },
   ];
 
   const handleLogout = async () => {

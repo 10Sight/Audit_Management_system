@@ -4,13 +4,16 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../context/AuthContext";
 import { FiPlus, FiEdit, FiTrash2, FiArrowLeft, FiArrowRight } from "react-icons/fi";
-import { useGetAuditsQuery, useDeleteAuditMutation, useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useGetUnitsQuery } from "@/store/api";
+import * as XLSX from "xlsx";
+import api from "@/utils/axios";
+import { useGetAuditsQuery, useDeleteAuditMutation, useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useGetUnitsQuery, useGetDepartmentsQuery } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableHeader,
@@ -55,11 +58,15 @@ export default function AuditsPage() {
   const [pagination, setPagination] = useState({ total: 0, totalRecords: 0, count: 0 });
   const auditsPerPage = 10;
   // Filters
+  const [selectedDepartment, setSelectedDepartment] = useState('all');
   const [selectedLine, setSelectedLine] = useState('all');
   const [selectedMachine, setSelectedMachine] = useState('all');
   const [selectedProcess, setSelectedProcess] = useState('all');
   const [selectedUnit, setSelectedUnit] = useState('all');
+  const [selectedShift, setSelectedShift] = useState('all');
   const [resultFilter, setResultFilter] = useState('any');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const navigate = useNavigate();
   const { user: currentUser, loading: authLoading } = useAuth();
 
@@ -67,14 +74,19 @@ export default function AuditsPage() {
   const { data: machinesRes } = useGetMachinesQuery();
   const { data: processesRes } = useGetProcessesQuery();
   const { data: unitsRes } = useGetUnitsQuery();
+  const { data: departmentsRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
   const { data: auditsRes, isLoading: auditsLoading } = useGetAuditsQuery({
     page: currentPage,
     limit: auditsPerPage,
+    department: selectedDepartment !== 'all' ? selectedDepartment : undefined,
     line: selectedLine !== 'all' ? selectedLine : undefined,
     machine: selectedMachine !== 'all' ? selectedMachine : undefined,
     process: selectedProcess !== 'all' ? selectedProcess : undefined,
     unit: selectedUnit !== 'all' ? selectedUnit : undefined,
+    shift: selectedShift !== 'all' ? selectedShift : undefined,
     result: resultFilter !== 'any' ? resultFilter : undefined,
+    startDate: startDate || undefined,
+    endDate: endDate || undefined,
   });
   const [deleteAudit] = useDeleteAuditMutation();
 
@@ -116,6 +128,73 @@ export default function AuditsPage() {
     setCurrentPage(page);
   };
 
+  const handleExport = async () => {
+    try {
+      setProcessing(true);
+
+      const params = {
+        page: 1,
+        limit: 100000,
+        department: selectedDepartment !== 'all' ? selectedDepartment : undefined,
+        line: selectedLine !== 'all' ? selectedLine : undefined,
+        machine: selectedMachine !== 'all' ? selectedMachine : undefined,
+        process: selectedProcess !== 'all' ? selectedProcess : undefined,
+        unit: selectedUnit !== 'all' ? selectedUnit : undefined,
+        shift: selectedShift !== 'all' ? selectedShift : undefined,
+        result: resultFilter !== 'any' ? resultFilter : undefined,
+        startDate: startDate || undefined,
+        endDate: endDate || undefined,
+      };
+
+      const res = await api.get('/api/audits', { params });
+      const exportAudits = res?.data?.data?.audits || [];
+
+      if (!exportAudits.length) {
+        toast.info('No audits to export for selected filters');
+        return;
+      }
+
+      const data = exportAudits.map((audit) => {
+        const answers = Array.isArray(audit.answers) ? audit.answers : [];
+        const yes = answers.filter((a) => a.answer === 'Yes').length;
+        const no = answers.filter((a) => a.answer === 'No').length;
+        const total = answers.length;
+
+        return {
+          Date: audit.date ? new Date(audit.date).toLocaleDateString() : 'N/A',
+          CreatedAt: audit.createdAt ? new Date(audit.createdAt).toLocaleString() : 'N/A',
+          Department: audit.department?.name || 'N/A',
+          Line: audit.line?.name || 'N/A',
+          Machine: audit.machine?.name || 'N/A',
+          Process: audit.process?.name || 'N/A',
+          Unit: audit.unit?.name || 'N/A',
+          Shift: audit.shift || 'N/A',
+          LineLeader: audit.lineLeader || 'N/A',
+          ShiftIncharge: audit.shiftIncharge || 'N/A',
+          Auditor: audit.auditor?.fullName || 'N/A',
+          AuditorEmail: audit.auditor?.emailId || 'N/A',
+          LineRating: typeof audit.lineRating === 'number' ? audit.lineRating : '',
+          MachineRating: typeof audit.machineRating === 'number' ? audit.machineRating : '',
+          ProcessRating: typeof audit.processRating === 'number' ? audit.processRating : '',
+          UnitRating: typeof audit.unitRating === 'number' ? audit.unitRating : '',
+          YesCount: yes,
+          NoCount: no,
+          TotalAnswers: total,
+        };
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Audits');
+      XLSX.writeFile(workbook, `audits_export_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || 'Failed to export audits');
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   if (loading || authLoading)
     return <Loader />;
 
@@ -138,16 +217,29 @@ export default function AuditsPage() {
       </div>
 
       <Card>
-        <CardHeader>
-            <div className="flex items-center justify-between gap-4 flex-wrap">
+        <CardHeader className="space-y-4 border-b pb-4">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
-                <CardTitle className="text-lg">Audit List</CardTitle>
+                <CardTitle className="text-lg font-semibold tracking-tight">Audit List</CardTitle>
                 <CardDescription>
                   Click a row to view details. Ratings show overall performance (10/10 = 100%).
                 </CardDescription>
               </div>
             {/* Filters */}
-            <div className="grid gap-3 md:grid-cols-5 w-full md:w-auto">
+            <div className="flex flex-col gap-3 w-full md:w-auto bg-slate-50/80 dark:bg-slate-900/40 border rounded-lg p-3 md:p-4">
+              <div className="grid gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 2xl:grid-cols-9">
+              <div className="space-y-1">
+                <Label>Department</Label>
+                <Select value={selectedDepartment} onValueChange={(v) => { setSelectedDepartment(v); setCurrentPage(1); }}>
+                  <SelectTrigger className="min-w-[160px]"><SelectValue placeholder="All Departments" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Departments</SelectItem>
+                    {(departmentsRes?.data?.departments || []).map((d) => (
+                      <SelectItem key={d._id} value={d._id}>{d.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-1">
                 <Label>Line</Label>
                 <Select value={selectedLine} onValueChange={(v) => { setSelectedLine(v); setCurrentPage(1); }}>
@@ -160,6 +252,7 @@ export default function AuditsPage() {
                   </SelectContent>
                 </Select>
               </div>
+              {/* Machine Filter */}
               <div className="space-y-1">
                 <Label>Machine</Label>
                 <Select value={selectedMachine} onValueChange={(v) => { setSelectedMachine(v); setCurrentPage(1); }}>
@@ -172,6 +265,7 @@ export default function AuditsPage() {
                   </SelectContent>
                 </Select>
               </div>
+              {/* Process Filter */}
               <div className="space-y-1">
                 <Label>Process</Label>
                 <Select value={selectedProcess} onValueChange={(v) => { setSelectedProcess(v); setCurrentPage(1); }}>
@@ -184,6 +278,7 @@ export default function AuditsPage() {
                   </SelectContent>
                 </Select>
               </div>
+              {/* Unit Filter */}
               <div className="space-y-1">
                 <Label>Unit</Label>
                 <Select value={selectedUnit} onValueChange={(v) => { setSelectedUnit(v); setCurrentPage(1); }}>
@@ -193,6 +288,19 @@ export default function AuditsPage() {
                     {(unitsRes?.data || []).map((u) => (
                       <SelectItem key={u._id} value={u._id}>{u.name}</SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {/* Shift Filter */}
+              <div className="space-y-1">
+                <Label>Shift</Label>
+                <Select value={selectedShift} onValueChange={(v) => { setSelectedShift(v); setCurrentPage(1); }}>
+                  <SelectTrigger className="min-w-[140px]"><SelectValue placeholder="All Shifts" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Shifts</SelectItem>
+                    <SelectItem value="Shift 1">Shift 1</SelectItem>
+                    <SelectItem value="Shift 2">Shift 2</SelectItem>
+                    <SelectItem value="Shift 3">Shift 3</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -207,15 +315,48 @@ export default function AuditsPage() {
                   </SelectContent>
                 </Select>
               </div>
+              {/* Date range */}
+              <div className="space-y-1">
+                <Label>From Date</Label>
+                <Input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => { setStartDate(e.target.value); setCurrentPage(1); }}
+                  className="min-w-[160px]"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label>To Date</Label>
+                <Input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => { setEndDate(e.target.value); setCurrentPage(1); }}
+                  className="min-w-[160px]"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 shadow-sm hover:shadow-md transition-shadow"
+                onClick={handleExport}
+                disabled={processing || loading}
+              >
+                <span>Export Excel</span>
+              </Button>
             </div>
           </div>
+        </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
           {audits.length > 0 ? (
-            <Table>
+            <div className="w-full overflow-x-auto rounded-md border bg-white shadow-sm">
+            <Table className="min-w-[960px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Date</TableHead>
+                  <TableHead>Shift</TableHead>
                   <TableHead>Line</TableHead>
                   <TableHead>Machine</TableHead>
                   <TableHead>Process</TableHead>
@@ -254,6 +395,9 @@ export default function AuditsPage() {
                     >
                       <TableCell className="whitespace-nowrap text-sm text-gray-700">
                         {audit.date ? new Date(audit.date).toLocaleDateString() : 'N/A'}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap text-sm text-gray-700">
+                        {audit.shift || 'N/A'}
                       </TableCell>
                       <TableCell className="font-medium text-sm">
                         {audit.line?.name || 'N/A'}
@@ -358,6 +502,7 @@ export default function AuditsPage() {
                 })}
               </TableBody>
             </Table>
+            </div>
           ) : (
             <p className="text-sm text-muted-foreground">No audits found.</p>
           )}
