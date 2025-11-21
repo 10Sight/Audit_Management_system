@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import Joi from "joi";
 import { ArrowLeft, UserPlus, Eye, EyeOff, Building2, Mail, Phone, User, Key, Shield } from "lucide-react";
-import { useRegisterEmployeeMutation, useGetDepartmentsQuery } from "@/store/api";
+import { useRegisterEmployeeMutation, useGetDepartmentsQuery, useGetUnitsQuery } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,45 +20,15 @@ export default function AddEmployeePage() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [departments, setDepartments] = useState([]);
+  const [units, setUnits] = useState([]);
 
-  const allowedRoles = useMemo(() => (user?.role === "superadmin" ? ["employee", "admin"] : ["employee"]), [user]);
+  const allowedRoles = useMemo(
+    () => (user?.role === "superadmin" ? ["employee", "admin"] : ["employee"]),
+    [user]
+  );
 
-  const schema = useMemo(() => Joi.object({
-    fullName: Joi.string()
-      .required()
-      .messages({ "string.empty": "Full Name is required" }),
-    emailId: Joi.string()
-      .email({ tlds: { allow: false } })
-      .required()
-      .messages({
-        "string.empty": "Email is required",
-        "string.email": "Invalid email format",
-      }),
-    department: Joi.string()
-      .required()
-      .messages({ "string.empty": "Department is required" }),
-    employeeId: Joi.string()
-      .required()
-      .messages({ "string.empty": "Employee ID is required" }),
-    phoneNumber: Joi.string()
-      .pattern(/^\d{10}$/)
-      .required()
-      .messages({
-        "string.empty": "Phone Number is required",
-        "string.pattern.base": "Phone Number must be 10 digits",
-      }),
-    password: Joi.string().min(6).required().messages({
-      "string.empty": "Password is required",
-      "string.min": "Password must be at least 6 characters",
-    }),
-    role: Joi.string().valid(...allowedRoles).required().messages({
-      "any.only": "Role must be selected",
-      "string.empty": "Role is required",
-    }),
-  }), [allowedRoles]);
-
+  // NOTE: We rely mainly on backend validation; do light checks in onSubmit.
   const form = useForm({
-    resolver: joiResolver(schema),
     defaultValues: {
       fullName: "",
       emailId: "",
@@ -66,22 +36,81 @@ export default function AddEmployeePage() {
       employeeId: "",
       phoneNumber: "",
       password: "",
-      role: "",
+      role: user?.role === "admin" ? "employee" : "",
+      unit: "",
     },
   });
 
+  const selectedRole = form.watch("role");
+
   const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
+  const { data: unitsRes } = useGetUnitsQuery();
   const [registerEmployee] = useRegisterEmployeeMutation();
+
   useEffect(() => {
     setDepartments(deptRes?.data?.departments || []);
   }, [deptRes]);
 
+  useEffect(() => {
+    setUnits(unitsRes?.data || []);
+  }, [unitsRes]);
+
   const onSubmit = async (data) => {
+    // Basic frontend validation; backend will enforce full business rules
+    if (!data.fullName?.trim()) {
+      toast.error("Full Name is required");
+      return;
+    }
+    if (!data.emailId?.trim()) {
+      toast.error("Email is required");
+      return;
+    }
+    if (!data.employeeId?.trim()) {
+      toast.error("Employee ID is required");
+      return;
+    }
+    if (!data.password?.trim()) {
+      toast.error("Password is required");
+      return;
+    }
+
+    const effectiveRole = user?.role === "admin" ? "employee" : data.role;
+
+    if (user?.role === "superadmin" && !effectiveRole) {
+      toast.error("Please select a role");
+      return;
+    }
+
+    if (effectiveRole === "admin" && !data.unit) {
+      toast.error("Please select a unit for the admin");
+      return;
+    }
+
+    if (effectiveRole === "employee" && !data.department) {
+      toast.error("Please select a department for the auditor");
+      return;
+    }
+
+    // For admin users, ensure we don't send any stray department value
+    if (effectiveRole === "admin") {
+      data.department = undefined;
+    }
+
     setLoading(true);
     try {
-      const res = await registerEmployee(data).unwrap();
+      let payload = { ...data, role: effectiveRole };
+
+      if (user?.role === "admin") {
+        // Admins can only create auditors (employees);
+        // unit is derived from admin on backend
+        delete payload.unit;
+      }
+
+      const res = await registerEmployee(payload).unwrap();
       toast.success(res?.message || "User registered successfully!");
-      setTimeout(() => navigate(user?.role === "superadmin" ? "/superadmin/users" : "/admin/employees"), 800);
+      setTimeout(() =>
+        navigate(user?.role === "superadmin" ? "/superadmin/users" : "/admin/employees"),
+      800);
     } catch (error) {
       toast.error(error?.data?.message || error?.message || "Failed to register user");
     } finally {
@@ -102,8 +131,8 @@ export default function AddEmployeePage() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Add New Auditor</h1>
-            <p className="text-muted-foreground">Create a new auditor account in the system</p>
+            <h1 className="text-3xl font-bold tracking-tight">Add New User</h1>
+            <p className="text-muted-foreground">Create a new admin or auditor account in the system</p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -115,10 +144,10 @@ export default function AddEmployeePage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <User className="h-5 w-5" />
-            Auditor Information
+            User Information
           </CardTitle>
           <CardDescription>
-            Fill in the details below to create a new auditor account
+            Fill in the details below to create a new user account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -213,71 +242,113 @@ export default function AddEmployeePage() {
                   )}
                 />
 
-                {/* Department */}
-                <FormField
-                  control={form.control}
-                  name="department"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4" />
-                        Department
-                      </FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select department" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {departments.length > 0 ? (
-                            departments.map((department) => (
-                              <SelectItem key={department._id} value={department._id}>
-                                {department.name}{department.description ? ` - ${department.description}` : ''}
+                {/* Department - required for auditors (employees), not for admins */}
+                {(user?.role === "admin" || selectedRole === "employee") && (
+                  <FormField
+                    control={form.control}
+                    name="department"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Building2 className="h-4 w-4" />
+                          Department
+                        </FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select department" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {departments.length > 0 ? (
+                              departments.map((department) => (
+                                <SelectItem key={department._id} value={department._id}>
+                                  {department.name}{department.description ? ` - ${department.description}` : ''}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem disabled value="no-departments">
+                                No departments available
                               </SelectItem>
-                            ))
-                          ) : (
-                            <SelectItem disabled value="no-departments">
-                              No departments available
-                            </SelectItem>
-                          )}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        Select the department this auditor will belong to
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Select the department this auditor will belong to
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
 
-{/* Role */}
-                <FormField
-                  control={form.control}
-                  name="role"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-2">
-                        <Shield className="h-4 w-4" />
-                        Role
-                      </FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select user role" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="employee">Auditor</SelectItem>
-                          {user?.role === "superadmin" && (
+                {/* Unit - only needed when superadmin is creating an admin */}
+                {user?.role === "superadmin" && selectedRole === "admin" && (
+                  <FormField
+                    control={form.control}
+                    name="unit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Building2 className="h-4 w-4" />
+                          Unit
+                        </FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select unit" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {units.length > 0 ? (
+                              units.map((unit) => (
+                                <SelectItem key={unit._id} value={unit._id}>
+                                  {unit.name}{unit.description ? ` - ${unit.description}` : ''}
+                                </SelectItem>
+                              ))
+                            ) : (
+                              <SelectItem disabled value="no-units">
+                                No units available
+                              </SelectItem>
+                            )}
+                          </SelectContent>
+                        </Select>
+                        <FormDescription>
+                          Select the unit this admin will belong to
+                        </FormDescription>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {/* Role */}
+                {user?.role === "superadmin" && (
+                  <FormField
+                    control={form.control}
+                    name="role"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="flex items-center gap-2">
+                          <Shield className="h-4 w-4" />
+                          Role
+                        </FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select user role" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="employee">Auditor</SelectItem>
                             <SelectItem value="admin">Administrator</SelectItem>
-                          )}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
               </div>
 
               {/* Password */}
@@ -325,11 +396,18 @@ export default function AddEmployeePage() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate("/admin/employees")}
+                  onClick={() =>
+                    navigate(user?.role === "superadmin" ? "/superadmin/users" : "/admin/employees")
+                  }
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={loading} className="min-w-32">
+                <Button
+                  type="button"
+                  disabled={loading}
+                  className="min-w-32"
+                  onClick={form.handleSubmit(onSubmit)}
+                >
                   {loading ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
@@ -338,7 +416,7 @@ export default function AddEmployeePage() {
                   ) : (
                     <>
                       <UserPlus className="mr-2 h-4 w-4" />
-                      Create Auditor
+                      Create User
                     </>
                   )}
                 </Button>

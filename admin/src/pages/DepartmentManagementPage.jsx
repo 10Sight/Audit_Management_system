@@ -8,7 +8,8 @@ import {
   Users,
   AlertTriangle,
   UserCheck,
-  BarChart3
+  BarChart3,
+  Grid3X3,
 } from "lucide-react"; 
 import { 
   useGetDepartmentsQuery,
@@ -261,6 +262,17 @@ export default function DepartmentManagementPage() {
                 <h3 className="font-semibold text-lg">{department.name}</h3>
                 {department.description && (
                   <p className="text-sm text-muted-foreground">{department.description}</p>
+                )}
+
+                {department.unit && (
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <Grid3X3 className="h-4 w-4" />
+                    <span>
+                      {typeof department.unit === "string"
+                        ? department.unit
+                        : department.unit?.name || "N/A"}
+                    </span>
+                  </div>
                 )}
                 
                 <div className="flex items-center justify-between pt-4">

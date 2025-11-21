@@ -25,10 +25,18 @@ const EmployeeSchema = new Schema(
     department: {
       type: Schema.Types.ObjectId,
       ref: "Department",
-      required: function() {
-        // Allow superadmin without department
-        return this.role !== "superadmin";
+      required: function () {
+        // Department is required only for employee (auditor) users
+        return this.role === "employee";
       },
+    },
+
+    // Optional reference to a Unit (e.g. Unit 1, Unit 2)
+    // Business rules for when this is required are enforced in the controller
+    unit: {
+      type: Schema.Types.ObjectId,
+      ref: "Unit",
+      required: false,
     },
 
     username: {
@@ -47,7 +55,7 @@ const EmployeeSchema = new Schema(
 
     phoneNumber: {
       type: String,
-      required: [true, "Phone number is required"],
+      required: false,
       match: [/^[0-9]{10}$/, "Phone number must be 10 digits"],
     },
 
@@ -60,8 +68,32 @@ const EmployeeSchema = new Schema(
 
     role: {
       type: String,
-      enum: ["superadmin", "admin", "employee"],
+      enum: ["SuperSuperadmin","superadmin", "admin", "employee"],
       default: "employee",
+    },
+
+    // Optional audit target configuration for this employee (auditor)
+    targetAudit: {
+      total: {
+        type: Number,
+        min: 1,
+      },
+      startDate: {
+        type: Date,
+      },
+      endDate: {
+        type: Date,
+      },
+      // Optional daily reminder time in "HH:mm" (24h) used by the reminder service
+      reminderTime: {
+        type: String,
+        match: [/^([01]\d|2[0-3]):[0-5]\d$/, "reminderTime must be in HH:mm format"],
+      },
+      // Tracks the last calendar date on which a target reminder was sent,
+      // used so we only send one reminder per day within the target window.
+      lastReminderDate: {
+        type: Date,
+      },
     },
   },
   {
@@ -101,12 +133,12 @@ EmployeeSchema.methods.toJSON = function () {
 // Create indexes for better query performance
 EmployeeSchema.index({ emailId: 1 }, { unique: true });
 EmployeeSchema.index({ employeeId: 1 }, { unique: true });
-EmployeeSchema.index({ username: 1 }, { unique: false, sparse: true }); // Made non-unique for migration
+EmployeeSchema.index({ username: 1 }, { unique: false, sparse: true });
 EmployeeSchema.index({ phoneNumber: 1 }, { unique: true });
 EmployeeSchema.index({ role: 1 });
 EmployeeSchema.index({ department: 1 });
-EmployeeSchema.index({ username: 1, department: 1 }); // Compound index for login queries
-EmployeeSchema.index({ createdAt: -1 }); // For sorting by creation date
+EmployeeSchema.index({ username: 1, department: 1 }); 
+EmployeeSchema.index({ createdAt: -1 }); 
 
 const Employee = model("Employee", EmployeeSchema);
 

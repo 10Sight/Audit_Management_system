@@ -20,8 +20,10 @@ const EmployeeFillInspectionPage = lazy(() => import("@/pages/EmployeeFillInspec
 const AuditsPage = lazy(() => import("@/pages/AuditPage"));
 const DepartmentPage = lazy(() => import("@/pages/DepartmentPage"));
 const DepartmentDetailPage = lazy(() => import("@/pages/DepartmentDetailPage"));
+const DepartmentLineMachinesPage = lazy(() => import("@/pages/DepartmentLineMachinesPage"));
 const AuditDetailPage = lazy(() => import("@/pages/AuditDetailPage"));
 const AdminManageQuestionsPage = lazy(() => import("@/pages/AdminManageQuestionsPage"));
+const AdminTemplateQuestionsPage = lazy(() => import("@/pages/AdminTemplateQuestionsPage"));
 const EmployeeDashboard = lazy(() => import("@/pages/EmployeeDashboard"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const AdminEditAuditPage = lazy(() => import("@/pages/AdminAuditPage"));
@@ -57,6 +59,7 @@ export default function AppRoutes() {
           <Route index element={<SuperAdminDashboard />} />
           <Route path="dashboard" element={<SuperAdminDashboard />} />
           <Route path="users" element={<SuperAdminUsersPage />} />
+          <Route path="units" element={<UnitsPage />} />
           <Route path="add-user" element={<AddEmployeePage />} />
         </Route>
 
@@ -76,16 +79,17 @@ export default function AppRoutes() {
           <Route path="employee/:id" element={<EmployeeDetailPage />} />
           <Route path="audits" element={<AuditsPage />} />
           <Route path="questions" element={<AdminManageQuestionsPage />} />
+          <Route path="questions/template/:title" element={<AdminTemplateQuestionsPage />} />
           <Route path="question-categories" element={<AdminQuestionCategoriesPage />} />
           <Route path="question-categories/:id" element={<AdminQuestionCategoryDetailPage />} />
           <Route path="audits/:id" element={<AuditDetailPage />} />
           <Route path="audits/create" element={<AdminCreateTemplatePage />} />
           <Route path="departments" element={<DepartmentPage />} />
           <Route path="departments/:id" element={<DepartmentDetailPage />} />
+          <Route path="departments/:id/lines/:lineId" element={<DepartmentLineMachinesPage />} />
           <Route path="lines" element={<LinesPage />} />
           <Route path="machines" element={<MachinesPage />} />
           <Route path="processes" element={<ProcessesPage />} />
-          <Route path="units" element={<UnitsPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="email-settings" element={<AuditEmailSettingsPage />} />
           <Route path="audits/edit/:id" element={<AdminEditAuditPage />} />

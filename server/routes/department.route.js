@@ -18,20 +18,20 @@ router.get("/public", getDepartments);
 // Get all departments (accessible to all authenticated users)
 router.get("/", verifyJWT, getDepartments);
 
-// Get department statistics (admin only)
-router.get("/stats", verifyJWT, authorizeRoles("admin"), getDepartmentStats);
+// Get department statistics (admin and superadmin)
+router.get("/stats", verifyJWT, authorizeRoles("admin", "superadmin"), getDepartmentStats);
 
 // Get single department (accessible to all authenticated users)
 router.get("/:id", verifyJWT, getSingleDepartment);
 
-// Create department (admin only)
-router.post("/", verifyJWT, authorizeRoles("admin"), createDepartment);
+// Create department (admin and superadmin)
+router.post("/", verifyJWT, authorizeRoles("admin", "superadmin"), createDepartment);
 
-// Update department (admin only)
-router.put("/:id", verifyJWT, authorizeRoles("admin"), updateDepartment);
+// Update department (admin and superadmin)
+router.put("/:id", verifyJWT, authorizeRoles("admin", "superadmin"), updateDepartment);
 
-// Delete department (admin only)
-router.delete("/:id", verifyJWT, authorizeRoles("admin"), deleteDepartment);
+// Delete department (admin and superadmin)
+router.delete("/:id", verifyJWT, authorizeRoles("admin", "superadmin"), deleteDepartment);
 
 // Assign employee to department (admin only)
 router.post("/assign-employee", verifyJWT, authorizeRoles("admin", "superadmin"), assignEmployeeToDepartment);

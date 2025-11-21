@@ -34,8 +34,20 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import OptimizedLoader from "@/components/ui/OptimizedLoader";
+import { useAuth, getRoleBasedRedirect } from "@/context/AuthContext.jsx";
+import { Navigate } from "react-router-dom";
 
 export default function UnitsPage() {
+  const { user, loading: authLoading } = useAuth();
+
+  if (authLoading) return <OptimizedLoader />;
+
+  if (!user || user.role !== "superadmin") {
+    const redirectTo = getRoleBasedRedirect(user?.role);
+    return <Navigate to={redirectTo} replace />;
+  }
+
   const [units, setUnits] = useState([]);
   const [unitName, setUnitName] = useState("");
   const [unitDescription, setUnitDescription] = useState("");

@@ -5,8 +5,13 @@ const LineSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
+    },
+    // Optional reference to the department this line belongs to
+    department: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Department",
+      required: false,
     },
     order: {
       type: Number,
@@ -23,6 +28,18 @@ const LineSchema = new mongoose.Schema(
     },
   },
   { timestamps: true, versionKey: false }
+);
+
+// Ensure fast lookups by department
+LineSchema.index({ department: 1 });
+// Enforce unique line names *within* a department (same name can exist in other departments)
+LineSchema.index(
+  { department: 1, name: 1 },
+  {
+    unique: true,
+    // Only apply when a department is set
+    partialFilterExpression: { department: { $exists: true, $ne: null } },
+  }
 );
 
 const Line = mongoose.models.Line || mongoose.model("Line", LineSchema);

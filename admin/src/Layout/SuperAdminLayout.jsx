@@ -10,6 +10,7 @@ import {
   Menu,
   LogOut,
   User as UserIcon,
+  UsbIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -27,6 +28,7 @@ export default function SuperAdminLayout() {
   const navLinks = [
     { to: "/superadmin/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { to: "/superadmin/users", label: "Users", icon: Users },
+    { to: "/superadmin/units", label: "Units", icon: UsbIcon },
     { to: "/admin/dashboard", label: "Admin", icon: ShieldCheck },
     { to: "/employee/dashboard", label: "Auditor", icon: Settings },
   ];

@@ -7,6 +7,13 @@ const QuestionSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    // Optional human-friendly title for a group/template of questions
+    templateTitle: {
+      type: String,
+      trim: true,
+    },
+    // Optional department association for this question/template
+    department: { type: Schema.Types.ObjectId, ref: "Department" },
     // Type of question determines how it should be rendered and answered
     // - "yes_no": simple Yes/No question
     // - "mcq": single-choice question with predefined options

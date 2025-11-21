@@ -184,7 +184,7 @@ export default function EmployeeLayout() {
   );
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex min-h-screen bg-background">
       {/* Desktop Sidebar */}
       <motion.aside
         initial={{ width: sidebarOpen ? 280 : 64 }}
@@ -289,7 +289,7 @@ export default function EmployeeLayout() {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto bg-muted/10">
+        <main className="flex-1 bg-muted/10 overflow-y-visible">
           <div className="mx-auto max-w-7xl w-full p-4 md:p-6">
             <Outlet />
           </div>

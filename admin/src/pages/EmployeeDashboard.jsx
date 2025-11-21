@@ -40,6 +40,14 @@ export default function EmployeeDashboard() {
     return name ? name.split(" ").map((n) => n[0]).join("").toUpperCase() : "?";
   };
 
+  const normalizeAnswer = (value) => {
+    const val = (value || "").toString().toLowerCase();
+    if (val === "yes" || val === "pass") return "Pass";
+    if (val === "no" || val === "fail") return "Fail";
+    if (val === "na" || val === "not applicable") return "Not Applicable";
+    return null;
+  };
+
   const getStatusInfo = (audit) => {
     // Safety check for answers array
     if (!audit.answers || !Array.isArray(audit.answers)) {
@@ -47,19 +55,33 @@ export default function EmployeeDashboard() {
         isCompleted: false,
         completedCount: 0,
         totalCount: 0,
-        percentage: 0
+        percentage: 0,
       };
     }
-    
-    const completedCount = audit.answers.filter((a) => a.answer === "Yes").length;
+
+    let pass = 0;
+    let fail = 0;
+    let na = 0;
+
+    audit.answers.forEach((a) => {
+      const normalized = normalizeAnswer(a.answer);
+      if (normalized === "Pass") pass += 1;
+      else if (normalized === "Fail") fail += 1;
+      else if (normalized === "Not Applicable") na += 1;
+    });
+
     const totalCount = audit.answers.length;
-    const isCompleted = completedCount === totalCount;
-    
+    const considered = pass + fail; // ignore NA in percentage
+    const isCompleted = totalCount > 0 && fail === 0;
+
     return {
       isCompleted,
-      completedCount,
+      completedCount: pass,
       totalCount,
-      percentage: totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0
+      percentage: considered > 0 ? Math.round((pass / considered) * 100) : 0,
+      pass,
+      fail,
+      na,
     };
   };
 
@@ -92,16 +114,18 @@ export default function EmployeeDashboard() {
       return;
     }
 
-    const data = audits.map((audit) => ({
-      Date: new Date(audit.date).toLocaleDateString(),
-      Line: audit.line?.name || "N/A",
-      Machine: audit.machine?.name || "N/A",
-      Process: audit.process?.name || "N/A",
-      Unit: audit.unit?.name || "N/A",
-      LineLeader: audit.lineLeader || "N/A",
-      ShiftIncharge: audit.shiftIncharge || "N/A",
-      Status: (audit.answers && Array.isArray(audit.answers) && audit.answers.every((a) => a.answer === "Yes")) ? "Completed" : "Issues Found",
-    }));
+    const data = audits.map((audit) => {
+      const statusInfo = getStatusInfo(audit);
+      return {
+        Date: new Date(audit.date).toLocaleDateString(),
+        Line: audit.line?.name || "N/A",
+        Machine: audit.machine?.name || "N/A",
+        Unit: audit.unit?.name || "N/A",
+        LineLeader: audit.lineLeader || "N/A",
+        ShiftIncharge: audit.shiftIncharge || "N/A",
+        Status: statusInfo.isCompleted ? "Completed" : "Issues Found",
+      };
+    });
 
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
@@ -113,9 +137,7 @@ export default function EmployeeDashboard() {
 
   // Statistics calculations
   const totalAudits = audits.length;
-  const completedAudits = audits.filter(audit => {
-    return audit.answers && Array.isArray(audit.answers) && audit.answers.every(a => a.answer === "Yes");
-  }).length;
+  const completedAudits = audits.filter((audit) => getStatusInfo(audit).isCompleted).length;
   const issuesFound = totalAudits - completedAudits;
   const thisMonthAudits = audits.filter(audit => {
     const auditDate = new Date(audit.date);
@@ -223,7 +245,6 @@ export default function EmployeeDashboard() {
                         <TableHead className="whitespace-nowrap">Date</TableHead>
                         <TableHead className="whitespace-nowrap">Line</TableHead>
                         <TableHead className="hidden md:table-cell whitespace-nowrap">Machine</TableHead>
-                        <TableHead className="hidden md:table-cell whitespace-nowrap">Process</TableHead>
                         <TableHead className="hidden md:table-cell whitespace-nowrap">Unit</TableHead>
                         <TableHead className="whitespace-nowrap">Status</TableHead>
                         <TableHead className="hidden md:table-cell whitespace-nowrap">Score</TableHead>
@@ -243,7 +264,6 @@ export default function EmployeeDashboard() {
                           </TableCell>
                           <TableCell className="whitespace-nowrap truncate max-w-[200px]">{audit.line?.name || "N/A"}</TableCell>
                           <TableCell className="hidden md:table-cell whitespace-nowrap truncate max-w-[200px]">{audit.machine?.name || "N/A"}</TableCell>
-                          <TableCell className="hidden md:table-cell whitespace-nowrap truncate max-w-[200px]">{audit.process?.name || "N/A"}</TableCell>
                           <TableCell className="hidden md:table-cell whitespace-nowrap truncate max-w-[200px]">{audit.unit?.name || "N/A"}</TableCell>
                           <TableCell>
                             {statusInfo.isCompleted ? (
@@ -428,11 +448,6 @@ export default function EmployeeDashboard() {
                       </div>
                       <div className="flex items-center gap-2">
                         <Activity className="h-4 w-4 text-muted-foreground" />
-                        <span className="font-medium">Process:</span>
-                        <Badge variant="outline">{selectedAudit.process?.name || "N/A"}</Badge>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Activity className="h-4 w-4 text-muted-foreground" />
                         <span className="font-medium">Unit:</span>
                         <Badge variant="outline">{selectedAudit.unit?.name || "N/A"}</Badge>
                       </div>
@@ -460,7 +475,9 @@ export default function EmployeeDashboard() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {(selectedAudit.answers || []).map((answer, idx) => (
+                      {(selectedAudit.answers || []).map((answer, idx) => {
+                        const normalized = normalizeAnswer(answer.answer);
+                        return (
                         <div key={idx} className="border rounded-lg p-4">
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex-1">
@@ -468,19 +485,29 @@ export default function EmployeeDashboard() {
                                 {idx + 1}. {answer.question?.questionText || "N/A"}
                               </p>
                               <div className="flex items-center gap-2">
-                                {answer.answer === "Yes" ? (
+                                {normalized === "Pass" && (
                                   <Badge className="bg-green-100 text-green-800 border-green-200">
                                     <CheckCircle2 className="mr-1 h-3 w-3" />
-                                    Yes
-                                  </Badge>
-                                ) : (
-                                  <Badge variant="destructive">
-                                    <XCircle className="mr-1 h-3 w-3" />
-                                    No
+                                    Pass
                                   </Badge>
                                 )}
+                                {normalized === "Fail" && (
+                                  <Badge variant="destructive">
+                                    <XCircle className="mr-1 h-3 w-3" />
+                                    Fail
+                                  </Badge>
+                                )}
+                                {normalized === "Not Applicable" && (
+                                  <Badge className="bg-amber-100 text-amber-800 border-amber-200">
+                                    <Clock className="mr-1 h-3 w-3" />
+                                    Not Applicable
+                                  </Badge>
+                                )}
+                                {!normalized && (
+                                  <Badge variant="outline">{answer.answer || "N/A"}</Badge>
+                                )}
                               </div>
-                              {answer.answer === "No" && answer.remark && (
+                              {(normalized === "Fail" || normalized === "Not Applicable") && answer.remark && (
                                 <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded">
                                   <p className="text-sm">
                                     <span className="font-medium text-red-800">Remark:</span>
@@ -491,7 +518,8 @@ export default function EmployeeDashboard() {
                             </div>
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </CardContent>
                 </Card>

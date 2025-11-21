@@ -15,16 +15,17 @@ import {
   Cell,
 } from "recharts";
 import { startOfWeek, startOfMonth, startOfYear, format } from "date-fns";
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Users, 
-  Building2, 
-  Cog, 
+import {
+  BarChart3,
+  TrendingUp,
+  Users,
+  Building2,
+  Cog,
   Calendar,
   Filter
 } from "lucide-react";
-import { useGetAuditsQuery, useGetLinesQuery, useGetMachinesQuery, useGetProcessesQuery, useGetUnitsQuery, useGetAllUsersQuery, useGetEmployeesQuery, useGetDepartmentsQuery } from "@/store/api";
+import { useGetAuditsQuery, useGetLinesQuery, useGetMachinesQuery, useGetUnitsQuery, useGetEmployeesQuery, useGetDepartmentsQuery } from "@/store/api";
+import { useAuth } from "../context/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -34,22 +35,31 @@ export default function AdminDashboard() {
   const [audits, setAudits] = useState([]);
   const [lines, setLines] = useState([]);
   const [machines, setMachines] = useState([]);
-  const [processes, setProcesses] = useState([]);
   const [units, setUnits] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [employees, setEmployees] = useState([]);
 
-  const [answerType, setAnswerType] = useState("all");
+  const [answerType, setAnswerType] = useState("all"); // all | pass | fail
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedLine, setSelectedLine] = useState("all");
   const [selectedMachine, setSelectedMachine] = useState("all");
-  const [selectedProcess, setSelectedProcess] = useState("all");
   const [selectedUnit, setSelectedUnit] = useState("all");
   const [timeframe, setTimeframe] = useState("daily");
 
   const [lineData, setLineData] = useState([]);
-  const [barData, setBarData] = useState([]);
+  const [lineBarData, setLineBarData] = useState([]);
+  const [machineBarData, setMachineBarData] = useState([]);
   const [pieData, setPieData] = useState([]);
+  const [auditCountData, setAuditCountData] = useState([]);
+
+  const { user: currentUser } = useAuth();
+  const unitId = currentUser?.unit?._id || currentUser?.unit || '';
+  const role = currentUser?.role;
+
+  // Effective unit used for queries & client-side filtering
+  const effectiveUnitId = role === 'superadmin'
+    ? (selectedUnit !== 'all' ? selectedUnit : undefined)
+    : (unitId || undefined);
 
   // Blue + red palette for charts to match app theme
   const CHART_COLORS = {
@@ -62,8 +72,19 @@ export default function AdminDashboard() {
     accent: '#DC2626',      // Red accent
     neutral: '#6B7280'      // Gray
   };
-  
-  const PIE_COLORS = [CHART_COLORS.success, CHART_COLORS.error];
+
+  const PIE_COLORS = [
+    CHART_COLORS.success,   // Pass
+    CHART_COLORS.error,     // Fail
+  ];
+
+  const normalizeAnswer = (value) => {
+    const val = (value || '').toString().toLowerCase();
+    if (val === 'yes' || val === 'pass') return 'Pass';
+    if (val === 'no' || val === 'fail') return 'Fail';
+    if (val === 'na' || val === 'not applicable') return 'NA';
+    return null;
+  };
 
   const getTimeframeKey = (date, timeframe) => {
     const d = new Date(date);
@@ -77,153 +98,265 @@ export default function AdminDashboard() {
 
   // Fetch data with RTK Query (poll audits every 30s)
   const { data: auditsRes } = useGetAuditsQuery(
-    { page: 1, limit: 1000, department: selectedDepartment !== "all" ? selectedDepartment : undefined },
+    {
+      page: 1,
+      limit: 1000,
+      department: selectedDepartment !== "all" ? selectedDepartment : undefined,
+      unit: effectiveUnitId,
+      line: selectedLine !== 'all' ? selectedLine : undefined,
+      machine: selectedMachine !== 'all' ? selectedMachine : undefined,
+    },
     { pollingInterval: 30000 }
   );
   const { data: linesRes } = useGetLinesQuery();
   const { data: machinesRes } = useGetMachinesQuery();
-  const { data: processesRes } = useGetProcessesQuery();
   const { data: unitsRes } = useGetUnitsQuery();
   const { data: departmentsRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
-  const { data: usersRes } = useGetAllUsersQuery({ page: 1, limit: 1000 });
-  // Query only employees to get accurate total count from backend
-  const { data: employeesCountRes } = useGetEmployeesQuery({ page: 1, limit: 1 });
+  const { data: employeesRes } = useGetEmployeesQuery({ page: 1, limit: 1000, unit: effectiveUnitId });
 
   useEffect(() => {
     const auditData = auditsRes?.data?.audits || auditsRes?.data || [];
     setAudits(Array.isArray(auditData) ? auditData : []);
-    setLines(linesRes?.data || []);
-    setMachines(machinesRes?.data || []);
-    setProcesses(processesRes?.data || []);
-    setUnits(unitsRes?.data || []);
-    setDepartments(departmentsRes?.data?.departments || []);
-    setEmployees(Array.isArray(usersRes?.data?.users) ? usersRes.data.users : []);
-  }, [auditsRes, linesRes, machinesRes, processesRes, usersRes, unitsRes, departmentsRes]);
 
+    const allLines = linesRes?.data || [];
+    const allMachines = machinesRes?.data || [];
+    const allUnits = unitsRes?.data || [];
+    const allDepartments = departmentsRes?.data?.departments || [];
+
+    // Ensure departments are limited to the effective unit (selected by superadmin or fixed for admin)
+    const deptInUnit = allDepartments.filter((d) => {
+      const du = d.unit?._id || d.unit;
+      if (!effectiveUnitId) return true;
+      return du && String(du) === String(effectiveUnitId);
+    });
+    const deptIds = new Set(deptInUnit.map((d) => String(d._id)));
+
+    const linesInUnit = allLines.filter((l) => {
+      const ld = l.department?._id || l.department;
+      return ld && deptIds.has(String(ld));
+    });
+
+    const machinesInUnit = allMachines.filter((m) => {
+      const md = m.department?._id || m.department;
+      return md && deptIds.has(String(md));
+    });
+
+    const unitsForView = allUnits.filter((u) => {
+      // Admins are restricted to their own unit; superadmins can see all units
+      if (role === 'superadmin' || !unitId) return true;
+      return String(u._id) === String(unitId);
+    });
+
+    // Ensure non-superadmin users see their unit selected in the Unit filter
+    if (role !== 'superadmin' && unitId) {
+      setSelectedUnit((prev) => (prev === 'all' ? String(unitId) : prev));
+    }
+
+    setLines(linesInUnit);
+    setMachines(machinesInUnit);
+    setUnits(unitsForView);
+    setDepartments(deptInUnit);
+    setEmployees(Array.isArray(employeesRes?.data?.employees) ? employeesRes.data.employees : []);
+  }, [auditsRes, linesRes, machinesRes, employeesRes, unitsRes, departmentsRes, unitId, effectiveUnitId, role]);
   // RTK Query polling handles refresh; no manual interval needed
 
 
-  // Line Chart Data
+  // Line Chart Data (Pass/Fail audits over time)
+  // Each audit is counted once per period based on overall result:
+  // - Pass: at least one Pass answer and no Fail answers
+  // - Fail: at least one Fail answer (NA answers are ignored)
   useEffect(() => {
     if (!Array.isArray(audits)) return;
-    
-    const countsByPeriod = {};
-    audits.forEach((audit) => {
-      
-      if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return;
-      if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return;
-      if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return;
-      if (selectedUnit && selectedUnit !== "all" && audit.unit?._id !== selectedUnit) return;
 
-      const key = getTimeframeKey(audit.date, timeframe);
-      if (!countsByPeriod[key]) countsByPeriod[key] = { Yes: 0, No: 0 };
-      
+    const countsByPeriod = {};
+
+    audits.forEach((audit) => {
+      const key = getTimeframeKey(audit.date || audit.createdAt, timeframe);
+      if (!countsByPeriod[key]) countsByPeriod[key] = { Pass: 0, Fail: 0 };
+
+      let hasPass = false;
+      let hasFail = false;
+
       audit.answers?.forEach((ans) => {
-        if (ans.answer === 'Yes' || ans.answer === 'No') {
-          countsByPeriod[key][ans.answer] = (countsByPeriod[key][ans.answer] || 0) + 1;
+        const normalized = normalizeAnswer(ans.answer);
+        if (!normalized) return;
+
+        if (normalized === 'Fail') {
+          hasFail = true;
+        } else if (normalized === 'Pass') {
+          hasPass = true;
         }
       });
+
+      let overallStatus = null;
+      if (hasFail) overallStatus = 'Fail';
+      else if (hasPass) overallStatus = 'Pass';
+
+      if (!overallStatus) return; // skip audits with only NA or no answers
+
+      // Apply Answer Type filter (audit-level)
+      if (answerType !== 'all' && overallStatus.toLowerCase() !== answerType) return;
+
+      countsByPeriod[key][overallStatus] = (countsByPeriod[key][overallStatus] || 0) + 1;
     });
 
     const lineChartData = Object.keys(countsByPeriod)
       .sort((a, b) => new Date(a) - new Date(b))
       .map((period) => ({ date: period, ...countsByPeriod[period] }));
-    setLineData(lineChartData);
-  }, [audits, timeframe, selectedLine, selectedMachine, selectedProcess, selectedUnit]);
 
-  // Bar Chart Data
+    setLineData(lineChartData);
+  }, [audits, timeframe, answerType]);
+
+  // Total audits over time (count of audits per period)
   useEffect(() => {
     if (!Array.isArray(audits)) return;
-    
-    const counts = {};
-    audits.forEach((audit) => {
-      audit.answers?.forEach((ans) => {
-        if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return;
-        if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return;
-        if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return;
-        if (selectedUnit && selectedUnit !== "all" && audit.unit?._id !== selectedUnit) return;
 
-        const lineName = audit.line?.name || "N/A";
-        if (!counts[lineName]) counts[lineName] = { Yes: 0, No: 0 };
-        counts[lineName][ans.answer] =
-          (counts[lineName][ans.answer] || 0) + 1;
+    const countsByPeriod = {};
+    audits.forEach((audit) => {
+      const key = getTimeframeKey(audit.date || audit.createdAt, timeframe);
+      countsByPeriod[key] = (countsByPeriod[key] || 0) + 1;
+    });
+
+    const totalAuditsSeries = Object.keys(countsByPeriod)
+      .sort((a, b) => new Date(a) - new Date(b))
+      .map((period) => ({ date: period, total: countsByPeriod[period] }));
+
+    setAuditCountData(totalAuditsSeries);
+  }, [audits, timeframe]);
+
+  // Bar Chart Data
+  // Line-wise Bar Chart Data (Pass/Fail answers, NA excluded)
+  useEffect(() => {
+    if (!Array.isArray(audits)) return;
+
+    const countsByLine = {};
+    audits.forEach((audit) => {
+      const lineName = audit.line?.name || "N/A";
+      if (!countsByLine[lineName]) countsByLine[lineName] = { Pass: 0, Fail: 0 };
+
+      audit.answers?.forEach((ans) => {
+        const normalized = normalizeAnswer(ans.answer);
+        if (!normalized || normalized === 'NA') return;
+
+        if (answerType !== 'all' && normalized.toLowerCase() !== answerType) return;
+
+        countsByLine[lineName][normalized] = (countsByLine[lineName][normalized] || 0) + 1;
       });
     });
 
-    setBarData(Object.keys(counts).map((k) => ({ name: k, ...counts[k] })));
-  }, [audits, selectedLine, selectedMachine, selectedProcess, selectedUnit]);
+    setLineBarData(Object.keys(countsByLine).map((k) => ({ name: k, ...countsByLine[k] })));
+  }, [audits, answerType]);
 
   // Pie Chart Data
+  // Machine-wise Bar Chart Data (Pass/Fail answers, NA excluded)
   useEffect(() => {
     if (!Array.isArray(audits)) return;
-    
-    let yesCount = 0;
-    let noCount = 0;
 
+    const countsByMachine = {};
     audits.forEach((audit) => {
-      if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return;
-      if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return;
-      if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return;
-      if (selectedUnit && selectedUnit !== "all" && audit.unit?._id !== selectedUnit) return;
+      const machineName = audit.machine?.name || "N/A";
+      if (!countsByMachine[machineName]) countsByMachine[machineName] = { Pass: 0, Fail: 0 };
 
       audit.answers?.forEach((ans) => {
-        if (ans.answer === "Yes") yesCount++;
-        if (ans.answer === "No") noCount++;
+        const normalized = normalizeAnswer(ans.answer);
+        if (!normalized || normalized === 'NA') return;
+
+        if (answerType !== 'all' && normalized.toLowerCase() !== answerType) return;
+
+        countsByMachine[machineName][normalized] = (countsByMachine[machineName][normalized] || 0) + 1;
       });
+    });
+
+    setMachineBarData(Object.keys(countsByMachine).map((k) => ({ name: k, ...countsByMachine[k] })));
+  }, [audits, answerType]);
+
+  // Pie Chart Data (overall Pass/Fail audits, NA excluded)
+  // Each audit is counted once based on overall result (same logic as trend):
+  // - Fail if any answer is Fail
+  // - Pass if at least one Pass and no Fail
+  useEffect(() => {
+    if (!Array.isArray(audits)) return;
+
+    let passCount = 0;
+    let failCount = 0;
+
+    audits.forEach((audit) => {
+      let hasPass = false;
+      let hasFail = false;
+
+      audit.answers?.forEach((ans) => {
+        const normalized = normalizeAnswer(ans.answer);
+        if (!normalized) return;
+
+        if (normalized === 'Fail') {
+          hasFail = true;
+        } else if (normalized === 'Pass') {
+          hasPass = true;
+        }
+      });
+
+      let overallStatus = null;
+      if (hasFail) overallStatus = 'Fail';
+      else if (hasPass) overallStatus = 'Pass';
+
+      if (!overallStatus) return; // skip audits with only NA or no answers
+
+      if (answerType !== 'all' && overallStatus.toLowerCase() !== answerType) return;
+
+      if (overallStatus === 'Pass') passCount++;
+      else if (overallStatus === 'Fail') failCount++;
     });
 
     setPieData([
-      { name: "Yes", value: yesCount },
-      { name: "No", value: noCount },
+      { name: "Pass", value: passCount },
+      { name: "Fail", value: failCount },
     ]);
-  }, [audits, selectedLine, selectedMachine, selectedProcess, selectedUnit]);
+  }, [audits, answerType]);
 
   const totalEmployees = useMemo(
     () => {
-      const backendTotal = employeesCountRes?.data?.total;
+      const backendTotal = employeesRes?.data?.total;
       if (typeof backendTotal === 'number') return backendTotal;
-      // Fallback: filter current users list
-      return Array.isArray(employees) ? employees.filter(u => u.role === 'employee').length : 0;
+      // Fallback: count employees array length
+      return Array.isArray(employees) ? employees.length : 0;
     },
-    [employeesCountRes, employees]
+    [employeesRes, employees]
   );
 
-  const filteredCounts = useMemo(() => {
-    if (!Array.isArray(audits)) {
-      return {
-        filteredEmployees: 0,
-        lines: lines.length,
-        machines: machines.length,
-        processes: processes.length,
-        units: units.length,
-      };
-    }
-    
-      const filteredAudits = audits.filter((audit) => {
-      if (selectedDepartment && selectedDepartment !== "all") {
-        const deptId = audit.department?._id || audit.department;
-        if (deptId !== selectedDepartment) return false;
-      }
-      if (selectedLine && selectedLine !== "all" && audit.line?._id !== selectedLine) return false;
-      if (selectedMachine && selectedMachine !== "all" && audit.machine?._id !== selectedMachine) return false;
-      if (selectedProcess && selectedProcess !== "all" && audit.process?._id !== selectedProcess) return false;
-      if (selectedUnit && selectedUnit !== "all" && audit.unit?._id !== selectedUnit) return false;
-      return true;
+  const aggregatedCounts = useMemo(() => {
+    // Departments are already filtered to effective unit in state.
+    const deptIds = new Set((departments || []).map((d) => String(d._id)));
+
+    const linesInUnit = (lines || []).filter((l) => {
+      const ld = l.department?._id || l.department;
+      return ld && deptIds.has(String(ld));
     });
 
-    const employeeIds = new Set();
-    filteredAudits.forEach((audit) => {
-      if (audit.auditor?._id) employeeIds.add(audit.auditor._id);
+    const machinesInUnit = (machines || []).filter((m) => {
+      const md = m.department?._id || m.department;
+      return md && deptIds.has(String(md));
     });
+
+    const totalTargetAudits = (employees || []).reduce((sum, emp) => {
+      const target = emp.targetAudit?.total;
+      return sum + (typeof target === 'number' ? target : 0);
+    }, 0);
+
+    const totalActualAudits = Array.isArray(audits) ? audits.length : 0;
+
+    const completionPercent = totalTargetAudits > 0
+      ? Math.round((totalActualAudits / totalTargetAudits) * 100)
+      : 0;
 
     return {
-      filteredEmployees: employeeIds.size,
-      lines: selectedLine && selectedLine !== "all" ? 1 : lines.length,
-      machines: selectedMachine && selectedMachine !== "all" ? 1 : machines.length,
-      processes: selectedProcess && selectedProcess !== "all" ? 1 : processes.length,
-      units: selectedUnit && selectedUnit !== "all" ? 1 : units.length,
+      departments: departments.length,
+      lines: linesInUnit.length,
+      machines: machinesInUnit.length,
+      targetAudits: totalTargetAudits,
+      actualAudits: totalActualAudits,
+      completionPercent,
     };
-  }, [audits, selectedDepartment, selectedLine, selectedMachine, selectedProcess, selectedUnit, lines, machines, processes, units]);
+  }, [departments, lines, machines, employees, audits]);
 
   return (
     <div className="space-y-8">
@@ -241,45 +374,56 @@ export default function AdminDashboard() {
 
 
       {/* Metrics Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-6">
         {[
-          { 
-            title: "Total Audits", 
-            value: audits.length, 
+          {
+            title: "Total Audits",
+            value: audits.length,
             icon: BarChart3,
-            description: "Total audit records",
-            trend: "All time"
+            description: "Actual audits for selected filters",
+            trend: timeframe.charAt(0).toUpperCase() + timeframe.slice(1),
           },
-          { 
-            title: "Total Auditors", 
-            value: totalEmployees, 
+          {
+            title: "Total Target Audits",
+            value: aggregatedCounts.targetAudits,
+            icon: TrendingUp,
+            description: "Target audits for auditors in this unit",
+            trend: "Configured",
+          },
+          {
+            title: "Total Auditors",
+            value: totalEmployees,
             icon: Users,
-            description: "Active auditors in system",
-            trend: "+2.1% from last month"
+            description: "Auditors in your unit",
+            trend: "Active",
           },
-          { 
-            title: "Production Lines", 
-            value: filteredCounts.lines, 
+          {
+            title: "Total Departments",
+            value: aggregatedCounts.departments,
             icon: Building2,
-            description: "Operational lines",
-            trend: "2 new lines added"
+            description: "Departments in your unit",
+            trend: "",
           },
-          { 
-            title: "Machines", 
-            value: filteredCounts.machines, 
+          {
+            title: "Total Lines",
+            value: aggregatedCounts.lines,
+            icon: Building2,
+            description: "Lines under your departments",
+            trend: "",
+          },
+          {
+            title: "Total Machines",
+            value: aggregatedCounts.machines,
             icon: Cog,
-            description: "Total machinery",
-            trend: "Stable"
-          },
-          { 
-            title: "Units", 
-            value: filteredCounts.units, 
-            icon: Building2,
-            description: "Logical units",
-            trend: "New dimension"
+            description: "Machines under your departments",
+            trend: "",
           },
         ].map((metric) => {
           const Icon = metric.icon;
+          const isTargetMetric = metric.title === "Total Target Audits";
+          const completionPercent = aggregatedCounts.completionPercent ?? 0;
+          const clampedCompletion = Math.max(0, Math.min(100, completionPercent));
+
           return (
             <Card key={metric.title} className="">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -290,6 +434,24 @@ export default function AdminDashboard() {
                 <div className="text-2xl font-bold">{metric.value}</div>
                 <p className="text-xs text-muted-foreground">{metric.description}</p>
                 <p className="text-xs text-green-600 mt-1">{metric.trend}</p>
+
+                {isTargetMetric && (
+                  <div className="mt-2 space-y-1">
+                    <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                      <span>Actual vs Target</span>
+                      <span className="font-medium">{clampedCompletion}%</span>
+                    </div>
+                    <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-blue-500 transition-all"
+                        style={{ width: `${clampedCompletion}%` }}
+                      />
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      {aggregatedCounts.actualAudits} actual / {aggregatedCounts.targetAudits || 0} target audits
+                    </p>
+                  </div>
+                )}
               </CardContent>
             </Card>
           );
@@ -307,104 +469,159 @@ export default function AdminDashboard() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            {[
-              "Answer Type",
-              "Department",
-              "Line",
-              "Machine",
-              "Process",
-              "Unit",
-              "Timeframe",
-            ].map((label) => {
-              const valueMap = {
-                "Answer Type": answerType,
-                Department: selectedDepartment,
-                Line: selectedLine,
-                Machine: selectedMachine,
-                Process: selectedProcess,
-                Unit: selectedUnit,
-                Timeframe: timeframe,
-              };
-              const setValueMap = {
-                "Answer Type": setAnswerType,
-                Department: setSelectedDepartment,
-                Line: setSelectedLine,
-                Machine: setSelectedMachine,
-                Process: setSelectedProcess,
-                Unit: setSelectedUnit,
-                Timeframe: setTimeframe,
-              };
-              const optionsMap = {
-                "Answer Type": ["Yes", "No"],
-                Department: departments,
-                Line: lines,
-                Machine: machines,
-                Process: processes,
-                Unit: units,
-                Timeframe: ["daily", "weekly", "monthly", "yearly"],
-              };
+            {/* Unit comes first: admin sees view-only, superadmin can change */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Unit
+              </label>
+              <Select
+                value={selectedUnit}
+                onValueChange={setSelectedUnit}
+                disabled={role !== 'superadmin'}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={role === 'superadmin' ? 'All Units' : 'Unit'} />
+                </SelectTrigger>
+                <SelectContent>
+                  {role === 'superadmin' && (
+                    <SelectItem value="all">All Units</SelectItem>
+                  )}
+                  {units.map((u) => (
+                    <SelectItem key={u._id} value={u._id}>
+                      {u.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-              return (
-                <div key={label} className="space-y-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    {label}
-                  </label>
-                  <Select value={valueMap[label]} onValueChange={setValueMap[label]}>
-                    <SelectTrigger>
-                      <SelectValue
-                        placeholder={label === "Answer Type" ? "Select Answer" : `All ${label}s`}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">
-                        {label === "Answer Type" ? "Select Answer" : `All ${label}s`}
-                      </SelectItem>
-                      {optionsMap[label].map((opt) => (
-                        <SelectItem key={opt._id || opt} value={opt._id || opt}>
-                          {opt.name || opt}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              );
-            })}
+            {/* Answer Type */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Answer Type
+              </label>
+              <Select value={answerType} onValueChange={setAnswerType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Answer Types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Answer Types</SelectItem>
+                  <SelectItem value="pass">Pass</SelectItem>
+                  <SelectItem value="fail">Fail</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Department */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Department
+              </label>
+              <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Departments" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Departments</SelectItem>
+                  {departments.map((d) => (
+                    <SelectItem key={d._id} value={d._id}>
+                      {d.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Line */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Line
+              </label>
+              <Select value={selectedLine} onValueChange={setSelectedLine}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Lines" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Lines</SelectItem>
+                  {lines.map((l) => (
+                    <SelectItem key={l._id} value={l._id}>
+                      {l.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Machine */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Machine
+              </label>
+              <Select value={selectedMachine} onValueChange={setSelectedMachine}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Machines" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Machines</SelectItem>
+                  {machines.map((m) => (
+                    <SelectItem key={m._id} value={m._id}>
+                      {m.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Timeframe */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                Timeframe
+              </label>
+              <Select value={timeframe} onValueChange={setTimeframe}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Daily" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Charts */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Line Chart */}
+        {/* Audit Result Trend (Pass/Fail/NA) */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5" />
-              Trend Over Time
+              Audit Result Trend
             </CardTitle>
-            <CardDescription>
-              Tracking {answerType || 'all'} responses over selected timeframe
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={lineData}>
-                  <CartesianGrid 
-                    strokeDasharray="3 3" 
-                    stroke="hsl(var(--muted))" 
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--muted))"
                     opacity={0.3}
                   />
-                  <XAxis 
-                    dataKey="date" 
+                  <XAxis
+                    dataKey="date"
                     tick={{ fontSize: 12 }}
                     tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
                   />
-                  <YAxis 
+                  <YAxis
                     tick={{ fontSize: 12 }}
                     tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
                   />
-                  <Tooltip 
+                  <Tooltip
                     formatter={(value, name) => [`${value} audits`, name]}
                     contentStyle={{
                       backgroundColor: 'hsl(var(--background))',
@@ -414,18 +631,18 @@ export default function AdminDashboard() {
                     }}
                   />
                   <Legend />
-                  <Line 
-                    type="monotone" 
-                    dataKey="Yes" 
-                    stroke={CHART_COLORS.success} 
+                  <Line
+                    type="monotone"
+                    dataKey="Pass"
+                    stroke={CHART_COLORS.success}
                     strokeWidth={3}
                     dot={{ r: 5, fill: CHART_COLORS.success }}
                     activeDot={{ r: 7, fill: CHART_COLORS.success }}
                   />
-                  <Line 
-                    type="monotone" 
-                    dataKey="No" 
-                    stroke={CHART_COLORS.error} 
+                  <Line
+                    type="monotone"
+                    dataKey="Fail"
+                    stroke={CHART_COLORS.error}
                     strokeWidth={3}
                     dot={{ r: 5, fill: CHART_COLORS.error }}
                     activeDot={{ r: 7, fill: CHART_COLORS.error }}
@@ -436,16 +653,13 @@ export default function AdminDashboard() {
           </CardContent>
         </Card>
 
-        {/* Pie Chart */}
+        {/* Overall Distribution */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5" />
               Overall Distribution
             </CardTitle>
-            <CardDescription>
-              Yes/No response ratio across all filtered data
-            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-80">
@@ -463,13 +677,13 @@ export default function AdminDashboard() {
                     dataKey="value"
                   >
                     {pieData.map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={PIE_COLORS[index]} 
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={PIE_COLORS[index]}
                       />
                     ))}
                   </Pie>
-                  <Tooltip 
+                  <Tooltip
                     contentStyle={{
                       backgroundColor: 'hsl(var(--background))',
                       border: '1px solid hsl(var(--border))',
@@ -485,36 +699,35 @@ export default function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Bar Chart Full Width */}
+      {/* Total audits over time (uses same timeframe filter) */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
-            Performance by Production Line
+            <TrendingUp className="h-5 w-5" />
+            Total Audits Over Time
           </CardTitle>
-          <CardDescription>
-            Comparison of Yes/No responses across different production lines
-          </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="h-96">
+          <div className="h-80">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={barData}>
-                <CartesianGrid 
-                  strokeDasharray="3 3" 
-                  stroke="hsl(var(--muted))" 
+              <LineChart data={auditCountData}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="hsl(var(--muted))"
                   opacity={0.3}
                 />
-                <XAxis 
-                  dataKey="name" 
+                <XAxis
+                  dataKey="date"
                   tick={{ fontSize: 12 }}
                   tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
                 />
-                <YAxis 
+                <YAxis
+                  allowDecimals={false}
                   tick={{ fontSize: 12 }}
                   tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
                 />
-                <Tooltip 
+                <Tooltip
+                  formatter={(value) => [`${value} audits`, 'Audits']}
                   contentStyle={{
                     backgroundColor: 'hsl(var(--background))',
                     border: '1px solid hsl(var(--border))',
@@ -522,22 +735,132 @@ export default function AdminDashboard() {
                     boxShadow: '0 4px 12px hsl(var(--foreground) / 0.15)'
                   }}
                 />
-                <Legend />
-                <Bar 
-                  dataKey="Yes" 
-                  fill={CHART_COLORS.success} 
-                  radius={[4, 4, 0, 0]}
+                <Line
+                  type="monotone"
+                  dataKey="total"
+                  stroke={CHART_COLORS.primary}
+                  strokeWidth={3}
+                  dot={{ r: 5, fill: CHART_COLORS.primary }}
+                  activeDot={{ r: 7, fill: CHART_COLORS.primary }}
                 />
-                <Bar 
-                  dataKey="No" 
-                  fill={CHART_COLORS.error} 
-                  radius={[4, 4, 0, 0]}
-                />
-              </BarChart>
+              </LineChart>
             </ResponsiveContainer>
           </div>
         </CardContent>
       </Card>
+
+
+
+      {/* Line & Machine Performance Charts */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Line-wise performance */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Performance by Line
+            </CardTitle>
+            <CardDescription>
+              Pass / Fail across production lines
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-96">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={lineBarData}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--muted))"
+                    opacity={0.3}
+                  />
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fontSize: 12 }}
+                    tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 12 }}
+                    tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--background))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px hsl(var(--foreground) / 0.15)'
+                    }}
+                  />
+                  <Legend />
+                  <Bar
+                    dataKey="Pass"
+                    fill={CHART_COLORS.success}
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="Fail"
+                    fill={CHART_COLORS.error}
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Machine-wise performance */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Performance by Machine
+            </CardTitle>
+            <CardDescription>
+              Pass / Fail across machines
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-96">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={machineBarData}>
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="hsl(var(--muted))"
+                    opacity={0.3}
+                  />
+                  <XAxis
+                    dataKey="name"
+                    tick={{ fontSize: 12 }}
+                    tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 12 }}
+                    tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'hsl(var(--background))',
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 12px hsl(var(--foreground) / 0.15)'
+                    }}
+                  />
+                  <Legend />
+                  <Bar
+                    dataKey="Pass"
+                    fill={CHART_COLORS.success}
+                    radius={[4, 4, 0, 0]}
+                  />
+                  <Bar
+                    dataKey="Fail"
+                    fill={CHART_COLORS.error}
+                    radius={[4, 4, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

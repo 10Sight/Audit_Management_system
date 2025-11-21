@@ -21,6 +21,13 @@ const DepartmentSchema = new Schema(
       type: Boolean,
       default: true,
     },
+
+    // Reference to the Unit this department belongs to
+    unit: {
+      type: Schema.Types.ObjectId,
+      ref: "Unit",
+      required: false, // enforced via controller to avoid breaking existing data
+    },
     
     createdBy: {
       type: Schema.Types.ObjectId,
@@ -43,6 +50,7 @@ const DepartmentSchema = new Schema(
 // Create indexes for better query performance
 DepartmentSchema.index({ name: 1 }, { unique: true });
 DepartmentSchema.index({ isActive: 1 });
+DepartmentSchema.index({ unit: 1 });
 DepartmentSchema.index({ createdAt: -1 });
 
 // Pre-save middleware to ensure name is properly formatted

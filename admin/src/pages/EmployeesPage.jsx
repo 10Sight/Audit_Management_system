@@ -11,10 +11,12 @@ import {
   MoreHorizontal,
   Edit,
   Trash2,
-  Users
+  Users,
+  Target
 } from "lucide-react";
-import { useDeleteEmployeeByIdMutation, useGetDepartmentsQuery, useGetEmployeesQuery } from "@/store/api";
+import { useDeleteEmployeeByIdMutation, useGetDepartmentsQuery, useGetEmployeesQuery, useGetAuditsQuery } from "@/store/api";
 import Loader from "@/components/ui/Loader";
+import { useAuth } from "../context/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -35,16 +37,68 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const CircularProgress = ({ value }) => {
+  const clamped = Math.max(0, Math.min(100, value || 0));
+  const size = 36;
+  const strokeWidth = 4;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (clamped / 100) * circumference;
+
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox={`0 0 ${size} ${size}`}
+      className="mx-auto"
+    >
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        stroke="#E5E7EB" // gray-200
+        strokeWidth={strokeWidth}
+        fill="none"
+      />
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={radius}
+        stroke={clamped >= 100 ? "#10B981" : "#3B82F6"} // emerald-500 : blue-500
+        strokeWidth={strokeWidth}
+        fill="none"
+        strokeDasharray={circumference}
+        strokeDashoffset={offset}
+        strokeLinecap="round"
+      />
+      <text
+        x="50%"
+        y="50%"
+        dominantBaseline="middle"
+        textAnchor="middle"
+        fontSize="10"
+        fill="#111827" // gray-900
+      >
+        {clamped}%
+      </text>
+    </svg>
+  );
+};
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [total, setTotal] = useState(0);
 
   const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
+  const unitId = currentUser?.unit?._id || currentUser?.unit || '';
 
   const getInitials = (name) => {
     return name ? name.split(" ").map((n) => n[0]).join("").toUpperCase() : "?";
@@ -66,8 +120,36 @@ export default function EmployeesPage() {
     return () => clearTimeout(id);
   }, [searchTerm]);
 
-  const { data, isFetching, isLoading: queryLoading, refetch } = useGetEmployeesQuery({ page, limit, search: debouncedSearch });
+  // Reset to first page when search or department filter changes
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, selectedDepartment]);
+
+  const { data, isFetching, isLoading: queryLoading, refetch } = useGetEmployeesQuery({
+    page,
+    limit,
+    search: debouncedSearch,
+    unit: unitId || undefined,
+    department: selectedDepartment !== "all" ? selectedDepartment : undefined,
+  });
   const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
+
+  // Fetch audits for this unit to compute "actual" counts per employee.
+  // Use polling so that when auditors submit new audits (possibly from other devices),
+  // the actual count and progress update automatically on this page.
+  const { data: auditsRes } = useGetAuditsQuery(
+    {
+      page: 1,
+      limit: 100000,
+      unit: unitId || undefined,
+    },
+    {
+      // Re-fetch periodically so admin view stays in sync with new audits.
+      pollingInterval: 60_000, // 60 seconds
+      refetchOnReconnect: true,
+      refetchOnFocus: true,
+    }
+  );
   const [deleteEmployee, { isLoading: deleting }] = useDeleteEmployeeByIdMutation();
 
   useEffect(() => {
@@ -78,18 +160,51 @@ export default function EmployeesPage() {
     }
   }, [data, queryLoading]);
 
-  const departmentMap = useMemo(() => {
+  const departments = useMemo(() => {
     const list = deptRes?.data?.departments || [];
+    if (!unitId) return list;
+
+    return list.filter((d) => {
+      const du = d.unit?._id || d.unit;
+      return du && String(du) === String(unitId);
+    });
+  }, [deptRes, unitId]);
+
+  const departmentMap = useMemo(() => {
     const map = new Map();
-    for (const d of list) map.set(d._id, d.name);
+    for (const d of departments) map.set(d._id, d.name);
     return map;
-  }, [deptRes]);
+  }, [departments]);
 
   const getDepartmentName = (dept) => {
     if (!dept) return 'N/A';
     if (typeof dept === 'object' && dept?.name) return dept.name;
     if (typeof dept === 'string') return departmentMap.get(dept) || 'N/A';
     return 'N/A';
+  };
+
+  const audits = auditsRes?.data?.audits || auditsRes?.data || [];
+
+  const getTargetAndActual = (emp) => {
+    const target = emp?.targetAudit;
+    if (!target || !target.total || !target.startDate || !target.endDate) {
+      return { hasTarget: false, targetTotal: 0, actual: 0 };
+    }
+
+    const start = new Date(target.startDate);
+    const end = new Date(target.endDate);
+    const actual = Array.isArray(audits)
+      ? audits.filter((a) => {
+          if (!a.date) return false;
+          if (!a.auditor) return false;
+          const auditorId = a.auditor._id || a.auditor;
+          if (String(auditorId) !== String(emp._id)) return false;
+          const d = new Date(a.date);
+          return d >= start && d <= end;
+        }).length
+      : 0;
+
+    return { hasTarget: true, targetTotal: target.total, actual };
   };
 
   const handleDelete = async (emp) => {
@@ -106,15 +221,20 @@ export default function EmployeesPage() {
   const downloadExcel = () => {
     if (!employees.length) return;
 
-    const data = employees.map((emp) => ({
-      "Full Name": emp.fullName,
-      Email: emp.emailId,
-      "Auditor ID": emp.employeeId,
-      Department: getDepartmentName(emp.department),
-      Phone: emp.phoneNumber,
-      Role: emp.role,
-      Created: new Date(emp.createdAt).toLocaleDateString(),
-    }));
+    const data = employees.map((emp) => {
+      const { hasTarget, targetTotal, actual } = getTargetAndActual(emp);
+      return {
+        "Full Name": emp.fullName,
+        Email: emp.emailId,
+        "Auditor ID": emp.employeeId,
+        Department: getDepartmentName(emp.department),
+        Phone: emp.phoneNumber,
+        Role: emp.role,
+        "Target Audits": hasTarget ? targetTotal : "-",
+        "Actual Audits (in target)": hasTarget ? actual : "-",
+        Created: new Date(emp.createdAt).toLocaleDateString(),
+      };
+    });
 
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
@@ -148,7 +268,7 @@ export default function EmployeesPage() {
       </div>
 
       {/* Stats Card */}
-      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Auditors</CardTitle>
@@ -169,6 +289,18 @@ export default function EmployeesPage() {
             <p className="text-xs text-muted-foreground">Showing on current page</p>
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">With Targets Set</CardTitle>
+            <Target className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {employees.filter((e) => e.targetAudit && e.targetAudit.total).length}
+            </div>
+            <p className="text-xs text-muted-foreground">Auditors having target audits</p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Search and Table */}
@@ -182,7 +314,7 @@ export default function EmployeesPage() {
         <CardContent className="p-0">
           {/* Search Bar */}
           <div className="p-6 pb-4">
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:space-x-3">
               <div className="relative flex-1 max-w-sm">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -192,93 +324,135 @@ export default function EmployeesPage() {
                   className="pl-8"
                 />
               </div>
+              <div className="w-full sm:w-56">
+                <Select
+                  value={selectedDepartment}
+                  onValueChange={(v) => setSelectedDepartment(v)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Filter by department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All departments</SelectItem>
+                    {departments.map((d) => (
+                      <SelectItem key={d._id} value={d._id}>
+                        {d.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 
           {/* Table Container */}
-          <div className="border-t">
+          <div className="border-t px-4">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Auditor</TableHead>
-                  <TableHead>Contact</TableHead>
                   <TableHead className="hidden md:table-cell">Department</TableHead>
-                  <TableHead className="hidden md:table-cell">Role</TableHead>
+                  <TableHead className="hidden lg:table-cell text-center">Target Audits</TableHead>
+                  <TableHead className="hidden lg:table-cell text-center">Actual (in target)</TableHead>
+                  <TableHead className="hidden lg:table-cell text-center">Progress</TableHead>
                   <TableHead className="hidden md:table-cell">Joined</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {employees.length > 0 ? (
-                  employees.map((emp) => (
-                    <TableRow
-                      key={emp._id}
-                      className="cursor-pointer hover:bg-muted/50"
-                      onClick={() => navigate(`/admin/employee/${emp._id}`)}
-                    >
-                      <TableCell className="font-medium">
-                        <div className="flex items-center space-x-2">
-                          <Avatar className="h-8 w-8">
-                            <AvatarImage src="" />
-                            <AvatarFallback className="text-xs">
-                              {getInitials(emp.fullName)}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <div className="font-medium">{emp.fullName}</div>
-                            <div className="text-sm text-muted-foreground">ID: {emp.employeeId}</div>
+                  employees.map((emp) => {
+                    const { hasTarget, targetTotal, actual } = getTargetAndActual(emp);
+                    const progressPercent = hasTarget && targetTotal > 0
+                      ? Math.round((actual / targetTotal) * 100)
+                      : 0;
+                    return (
+                      <TableRow
+                        key={emp._id}
+                        className="cursor-pointer hover:bg-muted/50"
+                        onClick={() => navigate(`/admin/employee/${emp._id}`)}
+                      >
+                        <TableCell className="font-medium">
+                          <div className="flex items-center space-x-2">
+                            <Avatar className="h-8 w-8">
+                              <AvatarImage src="" />
+                              <AvatarFallback className="text-xs">
+                                {getInitials(emp.fullName)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="font-medium">{emp.fullName}</div>
+                              <div className="text-sm text-muted-foreground">ID: {emp.employeeId}</div>
+                            </div>
                           </div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm">
-                          <div>{emp.emailId}</div>
-                          <div className="text-muted-foreground">{emp.phoneNumber}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        <Badge variant="outline">{getDepartmentName(emp.department)}</Badge>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        <Badge variant={getRoleBadgeVariant(emp.role)}>
-                          {emp.role}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell text-muted-foreground">
-                        {new Date(emp.createdAt).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0">
-                              <span className="sr-only">Open menu</span>
-                              <MoreHorizontal className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem
-                              onClick={() => navigate(`/admin/employee/edit/${emp._id}`)}
-                            >
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit auditor
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="text-destructive focus:text-destructive"
-                              disabled={deleting}
-                              onClick={() => handleDelete(emp)}
-                            >
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete auditor
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <Badge variant="outline">{getDepartmentName(emp.department)}</Badge>
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell text-center text-xs">
+                          {hasTarget ? (
+                            <span className="inline-flex items-center justify-center rounded-full bg-blue-50 px-2 py-0.5 text-blue-700 border border-blue-200">
+                              {targetTotal}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground">-</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell text-center text-xs">
+                          {hasTarget ? (
+                            <span className="inline-flex items-center justify-center rounded-full bg-emerald-50 px-2 py-0.5 text-emerald-700 border border-emerald-200">
+                              {actual}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground">-</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell text-center">
+                          {hasTarget ? (
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <CircularProgress value={progressPercent} />
+                              <span className="text-[10px] text-muted-foreground">{progressPercent}%</span>
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground">-</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell text-muted-foreground">
+                          {new Date(emp.createdAt).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" className="h-8 w-8 p-0">
+                                <span className="sr-only">Open menu</span>
+                                <MoreHorizontal className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuItem
+                                onClick={() => navigate(`/admin/employee/edit/${emp._id}`)}
+                              >
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit auditor
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="text-destructive focus:text-destructive"
+                                disabled={deleting}
+                                onClick={() => handleDelete(emp)}
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete auditor
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
+                    <TableCell colSpan={7} className="h-24 text-center">
                       {searchTerm ? (
                         <div className="flex flex-col items-center justify-center">
                           <Search className="h-8 w-8 text-muted-foreground mb-2" />

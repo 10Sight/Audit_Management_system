@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FiImage, FiEye, FiX } from "react-icons/fi";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { useGetAuditByIdQuery } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 
@@ -40,6 +41,35 @@ export default function AuditDetailPage() {
       <div className="p-6 text-gray-700 text-center">Audit not found.</div>
     );
 
+  const answers = Array.isArray(audit.answers) ? audit.answers : [];
+  const yesCount = answers.filter((a) => a.answer === "Yes" || a.answer === "Pass").length;
+  const noCount = answers.filter((a) => a.answer === "No" || a.answer === "Fail").length;
+  const naCount = answers.filter((a) => a.answer === "NA" || a.answer === "Not Applicable").length;
+  const totalQuestions = answers.length;
+  const consideredQuestions = yesCount + noCount; // exclude NA from percentage
+  const passPercentage = consideredQuestions > 0 ? Math.round((yesCount / consideredQuestions) * 100) : 0;
+
+  let overallStatus = "Not Applicable";
+  let statusColor = "bg-gray-100 text-gray-800 border-gray-200";
+  if (noCount > 0) {
+    overallStatus = "Fail Audit";
+    statusColor = "bg-red-50 text-red-800 border-red-200";
+  } else if (yesCount > 0) {
+    overallStatus = "Audit Pass";
+    statusColor = "bg-emerald-50 text-emerald-800 border-emerald-200";
+  } else if (naCount > 0) {
+    overallStatus = "Not Applicable";
+    statusColor = "bg-amber-50 text-amber-800 border-amber-200";
+  }
+
+  const chartData = [
+    { name: "Pass", value: yesCount },
+    { name: "Fail", value: noCount },
+    { name: "Not Applicable", value: naCount },
+  ].filter((item) => item.value > 0);
+
+  const chartColors = ["#22c55e", "#ef4444", "#f97316"]; // green, red, orange
+
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-4xl mx-auto text-gray-800">
       <ToastContainer position="top-right" autoClose={3000} />
@@ -62,7 +92,7 @@ export default function AuditDetailPage() {
           {audit.date ? new Date(audit.date).toLocaleDateString() : "N/A"})
         </h2>
         <p className="text-gray-600 mb-1">
-          Department: {audit.department?.name || "N/A"} | Process: {audit.process?.name || "N/A"} | Unit: {audit.unit?.name || "N/A"} | Shift: {audit.shift || "N/A"} | Auditor:{" "}
+          Department: {audit.department?.name || "N/A"} | Unit: {audit.unit?.name || "N/A"} | Shift: {audit.shift || "N/A"} | Auditor:{" "}
           {audit.auditor?.fullName || "N/A"} | Shift Incharge:{" "}
           {audit.shiftIncharge || "N/A"} | Line Leader: {audit.lineLeader || "N/A"}
         </p>
@@ -70,11 +100,99 @@ export default function AuditDetailPage() {
           Line Rating: {audit.lineRating != null ? `${audit.lineRating}/10` : "N/A"} | Machine Rating: {audit.machineRating != null ? `${audit.machineRating}/10` : "N/A"}
         </p>
         <p className="text-gray-600 mb-1">
-          Process Rating: {audit.processRating != null ? `${audit.processRating}/10` : "N/A"} | Unit Rating: {audit.unitRating != null ? `${audit.unitRating}/10` : "N/A"}
+          Unit Rating: {audit.unitRating != null ? `${audit.unitRating}/10` : "N/A"}
         </p>
         <p className="text-gray-600">
           Created by: {audit.createdBy?.fullName || "N/A"}
         </p>
+      </div>
+
+      {/* Audit Summary */}
+      <div className="grid gap-4 md:grid-cols-3 mb-6">
+        {/* Overall status & percentage */}
+        <div className={`md:col-span-1 border rounded-xl p-4 shadow-sm ${statusColor}`}>
+          <p className="text-xs font-semibold uppercase tracking-wide mb-1 text-gray-500">
+            Overall Result
+          </p>
+          <p className="text-xl font-bold mb-3">{overallStatus}</p>
+          <div className="space-y-2">
+            <div className="flex items-baseline justify-between">
+              <span className="text-sm text-gray-600">Pass percentage</span>
+              <span className="text-2xl font-semibold">
+                {consideredQuestions > 0 ? `${passPercentage}%` : "N/A"}
+              </span>
+            </div>
+            <div className="h-2 rounded-full bg-gray-200 overflow-hidden">
+              <div
+                className="h-2 rounded-full bg-emerald-500 transition-all"
+                style={{ width: `${consideredQuestions > 0 ? passPercentage : 0}%` }}
+              ></div>
+            </div>
+            <p className="text-xs text-gray-500 mt-1">
+              Based on {consideredQuestions} Pass/Fail questions
+              {naCount ? `, ${naCount} Not Applicable` : ""}.
+            </p>
+          </div>
+        </div>
+
+        {/* Chart */}
+        <div className="md:col-span-2 border rounded-xl p-4 bg-white shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                Question Breakdown
+              </p>
+              <p className="text-sm text-gray-600">
+                Total Questions: <span className="font-medium">{totalQuestions}</span>
+              </p>
+            </div>
+          </div>
+
+          {chartData.length > 0 ? (
+            <div className="h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={chartData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={70}
+                    innerRadius={40}
+                    paddingAngle={4}
+                  >
+                    {chartData.map((entry, index) => (
+                      <Cell key={`cell-${entry.name}`} fill={chartColors[index % chartColors.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip
+                    formatter={(value, name) => [value, name]}
+                    contentStyle={{ fontSize: 12 }}
+                  />
+                  <Legend verticalAlign="bottom" height={24} iconType="circle" wrapperStyle={{ fontSize: 12 }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">No data available for chart.</p>
+          )}
+
+          <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-gray-600">
+            <div className="flex flex-col">
+              <span className="font-medium">Pass</span>
+              <span>{yesCount}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="font-medium">Fail</span>
+              <span>{noCount}</span>
+            </div>
+            <div className="flex flex-col">
+              <span className="font-medium">Not Applicable</span>
+              <span>{naCount}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Questions & Answers */}

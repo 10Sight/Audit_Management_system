@@ -9,7 +9,8 @@ const AuditSchema = new mongoose.Schema(
     },
     line: { type: Schema.Types.ObjectId, ref: "Line", required: true, index: true },
     machine: { type: Schema.Types.ObjectId, ref: "Machine", required: true, index: true },
-    process: { type: Schema.Types.ObjectId, ref: "Process", required: true, index: true },
+    // Process is now optional for audits (kept for historical data)
+    process: { type: Schema.Types.ObjectId, ref: "Process", required: false, index: true },
     unit: { type: Schema.Types.ObjectId, ref: "Unit", required: false, index: true },
 
     // Employee department at time of audit (optional)

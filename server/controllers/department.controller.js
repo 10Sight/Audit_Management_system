@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Department from "../models/department.model.js";
+import Unit from "../models/unit.model.js";
 import Employee from "../models/auth.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -15,14 +16,26 @@ export const getDepartments = asyncHandler(async (req, res) => {
 
   let query = includeInactive ? {} : { isActive: true };
 
+  // For authenticated admins, automatically restrict departments to their unit.
+  // For other callers, allow optional ?unit= filter.
+  if (req.user && req.user.role === 'admin' && req.user.unit) {
+    query.unit = req.user.unit;
+  } else if (req.query.unit) {
+    query.unit = req.query.unit;
+  }
+
   const total = await Department.countDocuments(query);
   const departments = await Department.find(query)
     .populate("createdBy", "fullName employeeId")
+    .populate("unit", "name description")
     .skip(skip)
     .limit(limit)
     .sort({ createdAt: -1 });
 
-  logger.info(`Departments fetched by ${req.user.fullName} (${req.user.employeeId})`);
+  const actor = req.user
+    ? `${req.user.fullName} (${req.user.employeeId})`
+    : "anonymous";
+  logger.info(`Departments fetched by ${actor}`);
   return res
     .status(200)
     .json(new ApiResponse(200, { departments, total, page, limit }, "Departments fetched successfully"));
@@ -50,7 +63,7 @@ export const getSingleDepartment = asyncHandler(async (req, res) => {
 
 // Create new department
 export const createDepartment = asyncHandler(async (req, res) => {
-  const { name, description } = req.body;
+  const { name, description, unit: bodyUnit } = req.body;
 
   // Check if department already exists (case-insensitive)
   const existingDepartment = await Department.findOne({
@@ -61,13 +74,41 @@ export const createDepartment = asyncHandler(async (req, res) => {
     throw new ApiError(409, "Department with this name already exists");
   }
 
+  let unitIdToUse;
+
+  if (req.user.role === "superadmin") {
+    // Superadmin must explicitly choose a unit when creating a department
+    if (!bodyUnit) {
+      throw new ApiError(400, "Unit is required when creating a department as superadmin.");
+    }
+
+    const targetUnit = await Unit.findById(bodyUnit);
+    if (!targetUnit) {
+      throw new ApiError(404, "Selected unit not found");
+    }
+
+    unitIdToUse = targetUnit._id;
+  } else {
+    // Admins are restricted to their own unit
+    if (!req.user.unit) {
+      throw new ApiError(
+        400,
+        "Current user is not associated with any unit. Cannot create department without unit."
+      );
+    }
+
+    unitIdToUse = req.user.unit;
+  }
+
   const department = await Department.create({
     name,
     description,
     createdBy: req.user.id,
+    unit: unitIdToUse,
   });
 
   await department.populate("createdBy", "fullName employeeId");
+  await department.populate("unit", "name description");
 
   logger.info(`New department created: ${department.name} by ${req.user.fullName} (${req.user.employeeId})`);
   return res.status(201).json(new ApiResponse(201, { department }, "Department created successfully"));
@@ -76,7 +117,7 @@ export const createDepartment = asyncHandler(async (req, res) => {
 // Update department
 export const updateDepartment = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, description, isActive } = req.body;
+  const { name, description, isActive, unit: unitId } = req.body;
 
   const department = await Department.findById(id);
   if (!department) throw new ApiError(404, "Department not found");
@@ -93,6 +134,15 @@ export const updateDepartment = asyncHandler(async (req, res) => {
     }
   }
 
+  // Superadmin can reassign a department to a different unit
+  if (req.user.role === "superadmin" && unitId) {
+    const targetUnit = await Unit.findById(unitId);
+    if (!targetUnit) {
+      throw new ApiError(404, "Selected unit not found");
+    }
+    department.unit = targetUnit._id;
+  }
+
   // Update fields
   if (name) department.name = name;
   if (description !== undefined) department.description = description;
@@ -100,6 +150,7 @@ export const updateDepartment = asyncHandler(async (req, res) => {
 
   await department.save();
   await department.populate("createdBy", "fullName employeeId");
+  await department.populate("unit", "name description");
 
   logger.info(
     `Department updated: ${department.name} by ${req.user.fullName} (${req.user.employeeId})`

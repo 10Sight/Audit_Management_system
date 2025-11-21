@@ -18,10 +18,13 @@ import processRoutes from "./routes/process.route.js";
 import unitRoutes from "./routes/unit.route.js";
 import auditRoutes from "./routes/audit.route.js";
 import questionRoutes from "./routes/question.route.js";
+import { setupTargetAuditReminders } from "./services/targetAuditReminder.service.js";
 import questionCategoryRoutes from "./routes/questionCategory.route.js";
 import departmentRoutes from "./routes/department.route.js";
 import uploadRoutes from "./routes/upload.route.js";
 import errorHandler from "./middlewares/error.middleware.js";
+import Line from "./models/line.model.js";
+import Machine from "./models/machine.model.js";
 
 const app = express();
 const httpServer = createServer(app);
@@ -142,6 +145,9 @@ io.on('connection', (socket) => {
 // Make io available globally for controllers
 app.set('io', io);
 
+// Setup in-process daily target audit reminders
+setupTargetAuditReminders(app);
+
 // Attempt to listen on a port, trying subsequent ports if busy
 const listenWithRetry = async (startPort, maxTries = 10) => {
   let port = Number(startPort) || 5000;
@@ -170,6 +176,17 @@ const startServer = async () => {
     const dbConnected = await connectDB();
     if (!dbConnected) {
       console.warn('⚠️ Starting server without MongoDB connection; some routes may be unavailable.');
+    } else {
+      // Ensure MongoDB indexes match the current Mongoose schema definitions
+      try {
+        await Promise.all([
+          Line.syncIndexes(),
+          Machine.syncIndexes(),
+        ]);
+        console.log('✅ Synced indexes for Line and Machine models');
+      } catch (syncErr) {
+        console.warn('⚠️ Failed to sync indexes for Line/Machine models:', syncErr.message);
+      }
     }
     
 // Try to connect Redis if available, but don't fail if it's not

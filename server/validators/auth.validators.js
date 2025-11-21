@@ -3,12 +3,16 @@ import Joi from "joi";
 export const registerSchema = Joi.object({
   fullName: Joi.string().min(3).required(),
   emailId: Joi.string().email().required(),
-  department: Joi.string().required(), // Allow any ObjectId string
+  // Department is required for employees but optional for admins/superadmins (enforced in controller)
+  department: Joi.string().optional(),
   employeeId: Joi.string().trim().uppercase().required(),
   username: Joi.string().trim().lowercase().min(3).optional(),
-  phoneNumber: Joi.string().pattern(/^[0-9]{10}$/).required(),
+  // Phone number is optional; if provided, it must be 10 digits
+  phoneNumber: Joi.string().pattern(/^[0-9]{10}$/).optional(),
   password: Joi.string().min(6).required(),
   role: Joi.string().valid("superadmin", "admin", "employee").required(),
+  // Optional unit reference; required for certain roles in controller logic
+  unit: Joi.string().optional(),
 });
 
 export const loginSchema = Joi.object({
@@ -28,7 +32,9 @@ export const idParamSchema = Joi.object({
 export const updateSchema = Joi.object({
   fullName: Joi.string().min(3),
   emailId: Joi.string().email(),
-  department: Joi.string().valid("Production", "Quality", "HR", "Admin", "Other"),
+  // Allow any department id string; detailed validation happens in controller/DB
+  department: Joi.string(),
   phoneNumber: Joi.string().pattern(/^[0-9]{10}$/),
   role: Joi.string().valid("superadmin", "admin", "employee"),
+  unit: Joi.string(),
 }).min(1);

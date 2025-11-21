@@ -19,6 +19,14 @@ export default function EmployeeAuditResult() {
     setAudit(auditRes?.data);
   }, [auditRes, auditLoading]);
 
+  const normalizeAnswer = (value) => {
+    const val = (value || "").toString().toLowerCase();
+    if (val === "yes" || val === "pass") return "Pass";
+    if (val === "no" || val === "fail") return "Fail";
+    if (val === "na" || val === "not applicable") return "Not Applicable";
+    return value || "";
+  };
+
   if (loading) return <Loader />;
   if (!audit) return <div className="p-6 text-gray-700 text-center">No audit found.</div>;
 
@@ -37,12 +45,10 @@ export default function EmployeeAuditResult() {
         <div><strong>Department:</strong> {audit.department?.name || audit.department || "N/A"}</div>
         <div><strong>Line:</strong> {audit.line?.name || audit.line}</div>
         <div><strong>Machine:</strong> {audit.machine?.name || audit.machine}</div>
-        <div><strong>Process:</strong> {audit.process?.name || audit.process}</div>
         <div><strong>Unit:</strong> {audit.unit?.name || audit.unit}</div>
         <div><strong>Shift:</strong> {audit.shift || "N/A"}</div>
         <div><strong>Line Rating:</strong> {audit.lineRating != null ? `${audit.lineRating}/10` : "N/A"}</div>
         <div><strong>Machine Rating:</strong> {audit.machineRating != null ? `${audit.machineRating}/10` : "N/A"}</div>
-        <div><strong>Process Rating:</strong> {audit.processRating != null ? `${audit.processRating}/10` : "N/A"}</div>
         <div><strong>Unit Rating:</strong> {audit.unitRating != null ? `${audit.unitRating}/10` : "N/A"}</div>
         <div><strong>Line Leader:</strong> {audit.lineLeader}</div>
         <div><strong>Shift Incharge:</strong> {audit.shiftIncharge}</div>
@@ -55,46 +61,61 @@ export default function EmployeeAuditResult() {
       </h2>
       <div className="space-y-4">
         {audit.answers?.length > 0 ? (
-          audit.answers.map((ans, idx) => (
-            <div
-              key={idx}
-              className={`bg-white p-4 sm:p-6 rounded-lg border shadow-sm ${
-                ans.answer === "No" ? "border-red-400 bg-red-50" : "border-gray-300"
-              }`}
-            >
-              <p className="font-medium mb-1 text-sm sm:text-base">
-                {idx + 1}. {ans.question?.questionText || ans.question}
-              </p>
-              <p className="text-sm sm:text-base">
-                <strong>Answer:</strong>{" "}
-                {ans.answer === "Yes" ? (
-                  <span className="text-green-600 font-semibold">Yes</span>
-                ) : (
-                  <span className="text-red-600 font-semibold">No</span>
-                )}
-              </p>
-              {ans.answer === "No" && ans.remark && (
-                <p className="text-sm sm:text-base text-gray-700">
-                  <strong>Remark:</strong> {ans.remark}
+          audit.answers.map((ans, idx) => {
+            const normalized = normalizeAnswer(ans.answer);
+            const isFail = normalized === "Fail";
+            const isNa = normalized === "Not Applicable";
+
+            let cardClasses = "border-gray-300";
+            if (isFail) cardClasses = "border-red-400 bg-red-50";
+            else if (isNa) cardClasses = "border-amber-300 bg-amber-50";
+
+            return (
+              <div
+                key={idx}
+                className={`bg-white p-4 sm:p-6 rounded-lg border shadow-sm ${cardClasses}`}
+              >
+                <p className="font-medium mb-1 text-sm sm:text-base">
+                  {idx + 1}. {ans.question?.questionText || ans.question}
                 </p>
-              )}
-              {ans.photos && ans.photos.length > 0 && (
-                <div className="mt-2">
-                  <p className="font-medium text-sm mb-1">Photos:</p>
-                  <div className="flex gap-2 flex-wrap">
-                    {ans.photos.map((photo, photoIdx) => (
-                      <img
-                        key={photoIdx}
-                        src={photo.url}
-                        alt={`Photo ${photoIdx + 1}`}
-                        className="w-16 h-16 rounded border object-cover"
-                      />
-                    ))}
+                <p className="text-sm sm:text-base">
+                  <strong>Answer:</strong>{" "}
+                  {normalized === "Pass" && (
+                    <span className="text-green-600 font-semibold">Pass</span>
+                  )}
+                  {normalized === "Fail" && (
+                    <span className="text-red-600 font-semibold">Fail</span>
+                  )}
+                  {normalized === "Not Applicable" && (
+                    <span className="text-amber-600 font-semibold">Not Applicable</span>
+                  )}
+                  {!normalized && (
+                    <span className="text-gray-700 font-semibold">{ans.answer || "N/A"}</span>
+                  )}
+                </p>
+                {(normalized === "Fail" || normalized === "Not Applicable") && ans.remark && (
+                  <p className="text-sm sm:text-base text-gray-700">
+                    <strong>Remark:</strong> {ans.remark}
+                  </p>
+                )}
+                {ans.photos && ans.photos.length > 0 && (
+                  <div className="mt-2">
+                    <p className="font-medium text-sm mb-1">Photos:</p>
+                    <div className="flex gap-2 flex-wrap">
+                      {ans.photos.map((photo, photoIdx) => (
+                        <img
+                          key={photoIdx}
+                          src={photo.url}
+                          alt={`Photo ${photoIdx + 1}`}
+                          className="w-16 h-16 rounded border object-cover"
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          ))
+                )}
+              </div>
+            );
+          })
         ) : (
           <p className="text-gray-500 text-sm sm:text-base">
             No questions found for this audit.

@@ -1,132 +1,455 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { useGetDepartmentsQuery, useGetUserStatsQuery, useGetAuditsQuery, useGetAllUsersQuery } from "@/store/api";
+import { 
+  useGetUserStatsQuery,
+  useGetAuditsQuery,
+  useGetAllUsersQuery,
+  useGetUnitsQuery,
+} from "@/store/api";
 import { useNavigate } from "react-router-dom";
-import { Plus, Users, ShieldCheck, ClipboardCheck } from "lucide-react";
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { 
+  Plus,
+  Users,
+  ShieldCheck,
+  ClipboardCheck,
+  BarChart3,
+  Building2,
+  Filter as FilterIcon,
+  TrendingUp,
+  PieChart as PieChartIcon,
+} from "lucide-react";
+import {
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Legend,
+} from "recharts";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useAuth } from "@/context/AuthContext";
+import { format, startOfMonth, startOfWeek, startOfYear } from "date-fns";
 
 export default function SuperAdminDashboard() {
   const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
+
   const { data: statsRes } = useGetUserStatsQuery();
   const { data: usersRes } = useGetAllUsersQuery({ page: 1, limit: 100 });
-  const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1 });
+  const { data: unitsRes } = useGetUnitsQuery();
 
   const usersList = usersRes?.data?.users || [];
-  const fallbackCounts = useMemo(() => ({
-    total: usersRes?.data?.total ?? usersList.length,
-    admins: usersList.filter(u => u.role === 'admin').length,
-    employees: usersList.filter(u => u.role === 'employee').length,
-    superadmins: usersList.filter(u => u.role === 'superadmin').length,
-    recentUsers: usersList.slice(0,5),
-  }), [usersRes, usersList]);
+  const fallbackCounts = useMemo(
+    () => ({
+      total: usersRes?.data?.total ?? usersList.length,
+      admins: usersList.filter((u) => u.role === "admin").length,
+      employees: usersList.filter((u) => u.role === "employee").length,
+      superadmins: usersList.filter((u) => u.role === "superadmin").length,
+      recentUsers: usersList.slice(0, 5),
+    }),
+    [usersRes, usersList]
+  );
 
   const totalUsers = statsRes?.data?.total ?? fallbackCounts.total ?? 0;
   const admins = statsRes?.data?.admins ?? fallbackCounts.admins ?? 0;
   const employees = statsRes?.data?.employees ?? fallbackCounts.employees ?? 0;
   const superadmins = statsRes?.data?.superadmins ?? fallbackCounts.superadmins ?? 0;
   const recentUsers = statsRes?.data?.recentUsers ?? fallbackCounts.recentUsers ?? [];
-  const totalDepartments = deptRes?.data?.total || (deptRes?.data?.departments?.length ?? 0);
 
-  // Audits last 7 days chart
-  const end = new Date();
-  const start = new Date();
-  start.setDate(end.getDate() - 6);
-  const primaryAudits = useGetAuditsQuery({ startDate: start.toISOString(), endDate: end.toISOString(), limit: 100 });
-  const fallbackAudits = useGetAuditsQuery({ limit: 100 }, { skip: (primaryAudits?.data?.data?.audits?.length ?? 0) > 0 });
-  const auditsRes = (primaryAudits?.data?.data?.audits?.length ?? 0) > 0 ? primaryAudits.data : fallbackAudits.data;
-  const chartData = useMemo(() => {
-    const map = new Map();
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
-      const key = d.toISOString().slice(0, 10);
-      map.set(key, 0);
-    }
-    const list = auditsRes?.data?.audits || [];
-    list.forEach((a) => {
-      const ts = a?.createdAt || a?.updatedAt || new Date().toISOString();
-      const key = new Date(ts).toISOString().slice(0, 10);
-      if (map.has(key)) map.set(key, (map.get(key) || 0) + 1);
-    });
-    return Array.from(map.entries()).map(([date, count]) => ({ date, count }));
+  const units = unitsRes?.data || [];
+  const totalUnits = units.length;
+
+  const [selectedUnit, setSelectedUnit] = useState("all");
+  const [timeframe, setTimeframe] = useState("daily"); // daily | weekly | monthly | yearly
+  const [answerType, setAnswerType] = useState("all"); // all | pass | fail | na
+
+  // Fetch audits for analytics (superadmin can view all units)
+  const { data: auditsRes } = useGetAuditsQuery(
+    {
+      page: 1,
+      limit: 1000,
+      unit: selectedUnit !== "all" ? selectedUnit : undefined,
+    },
+    { pollingInterval: 30000 }
+  );
+
+  const [audits, setAudits] = useState([]);
+
+  useEffect(() => {
+    const auditData = auditsRes?.data?.audits || auditsRes?.data || [];
+    setAudits(Array.isArray(auditData) ? auditData : []);
   }, [auditsRes]);
+
+  const totalAudits = useMemo(() => {
+    const backendTotal = auditsRes?.data?.pagination?.totalRecords;
+    if (typeof backendTotal === "number") return backendTotal;
+    return Array.isArray(audits) ? audits.length : 0;
+  }, [auditsRes, audits]);
+
+  const CHART_COLORS = {
+    success: "#2563EB", // Blue for "Pass"
+    error: "#DC2626", // Red for "Fail"
+    neutral: "#6B7280", // Gray for "NA"
+  };
+
+  const PIE_COLORS = [
+    CHART_COLORS.success,
+    CHART_COLORS.error,
+    CHART_COLORS.neutral,
+  ];
+
+  const normalizeAnswer = (value) => {
+    const val = (value || "").toString().toLowerCase();
+    if (val === "yes" || val === "pass") return "Pass";
+    if (val === "no" || val === "fail") return "Fail";
+    if (val === "na" || val === "not applicable") return "NA";
+    return null;
+  };
+
+  const getTimeframeKey = (date, tf) => {
+    const d = date ? new Date(date) : new Date();
+    if (tf === "weekly") return format(startOfWeek(d, { weekStartsOn: 1 }), "yyyy-MM-dd");
+    if (tf === "monthly") return format(startOfMonth(d), "yyyy-MM");
+    if (tf === "yearly") return format(startOfYear(d), "yyyy");
+    return format(d, "yyyy-MM-dd");
+  };
+
+  const lineData = useMemo(() => {
+    if (!Array.isArray(audits)) return [];
+
+    const countsByPeriod = {};
+    audits.forEach((audit) => {
+      const key = getTimeframeKey(audit.date || audit.createdAt, timeframe);
+      if (!countsByPeriod[key]) countsByPeriod[key] = { Pass: 0, Fail: 0, NA: 0 };
+
+      (audit.answers || []).forEach((ans) => {
+        const normalized = normalizeAnswer(ans.answer);
+        if (!normalized) return;
+
+        if (answerType !== "all") {
+          const filterKey =
+            answerType === "na"
+              ? "NA"
+              : answerType.charAt(0).toUpperCase() + answerType.slice(1);
+          if (normalized !== filterKey) return;
+        }
+
+        countsByPeriod[key][normalized] = (countsByPeriod[key][normalized] || 0) + 1;
+      });
+    });
+
+    return Object.keys(countsByPeriod)
+      .sort((a, b) => new Date(a) - new Date(b))
+      .map((period) => ({ date: period, ...countsByPeriod[period] }));
+  }, [audits, timeframe, answerType]);
+
+  // Total audits over time (count of audits per period)
+  const auditCountData = useMemo(() => {
+    if (!Array.isArray(audits)) return [];
+
+    const countsByPeriod = {};
+    audits.forEach((audit) => {
+      const key = getTimeframeKey(audit.date || audit.createdAt, timeframe);
+      countsByPeriod[key] = (countsByPeriod[key] || 0) + 1;
+    });
+
+    return Object.keys(countsByPeriod)
+      .sort((a, b) => new Date(a) - new Date(b))
+      .map((period) => ({ date: period, total: countsByPeriod[period] }));
+  }, [audits, timeframe]);
+
+  const pieData = useMemo(() => {
+    if (!Array.isArray(audits)) return [];
+
+    let passCount = 0;
+    let failCount = 0;
+    let naCount = 0;
+
+    audits.forEach((audit) => {
+      (audit.answers || []).forEach((ans) => {
+        const normalized = normalizeAnswer(ans.answer);
+        if (!normalized) return;
+
+        if (answerType !== "all") {
+          const filterKey =
+            answerType === "na"
+              ? "NA"
+              : answerType.charAt(0).toUpperCase() + answerType.slice(1);
+          if (normalized !== filterKey) return;
+        }
+
+        if (normalized === "Pass") passCount++;
+        else if (normalized === "Fail") failCount++;
+        else if (normalized === "NA") naCount++;
+      });
+    });
+
+    return [
+      { name: "Pass", value: passCount },
+      { name: "Fail", value: failCount },
+      { name: "Not Applicable", value: naCount },
+    ];
+  }, [audits, answerType]);
+
+  const todayLabel = useMemo(() => format(new Date(), "MMM dd, yyyy"), []);
 
   return (
     <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Super Admin Dashboard</h1>
+          <p className="text-muted-foreground">Global overview across all units and roles</p>
+        </div>
+        <div className="text-right text-xs text-muted-foreground">
+          <div>{todayLabel}</div>
+          <div>{currentUser?.fullName || "Super Admin"}</div>
+        </div>
+      </div>
+
       {/* Top stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Total Users</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{totalUsers}</div>
-            <p className="text-xs text-muted-foreground">All roles</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Admins</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{admins}</div>
-            <p className="text-xs text-muted-foreground">Manage system</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Auditors</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{employees}</div>
-            <p className="text-xs text-muted-foreground">Operational users</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Departments</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{totalDepartments}</div>
-            <p className="text-xs text-muted-foreground">Active</p>
-          </CardContent>
-        </Card>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+        {[
+          {
+            title: "Total Users",
+            value: totalUsers,
+            description: "All roles",
+            icon: Users,
+          },
+          {
+            title: "Admins",
+            value: admins,
+            description: "Manage system",
+            icon: ShieldCheck,
+          },
+          {
+            title: "Auditors",
+            value: employees,
+            description: "Operational users",
+            icon: ClipboardCheck,
+          },
+          {
+            title: "Total Audits",
+            value: totalAudits,
+            description: "Across all filters",
+            icon: BarChart3,
+          },
+          {
+            title: "Total Units",
+            value: totalUnits,
+            description: "Configured units",
+            icon: Building2,
+          },
+        ].map((metric) => {
+          const Icon = metric.icon;
+          return (
+            <Card key={metric.title}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{metric.title}</CardTitle>
+                <Icon className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold">{metric.value}</div>
+                <p className="text-xs text-muted-foreground">{metric.description}</p>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Quick actions */}
       <div className="flex flex-wrap gap-2">
-        <Button onClick={() => navigate('/superadmin/add-user')}>
-          <Plus className="h-4 w-4 mr-2"/> Add User
+        <Button onClick={() => navigate("/superadmin/add-user")}>
+          <Plus className="h-4 w-4 mr-2" /> Add User
         </Button>
-        <Button variant="outline" onClick={() => navigate('/superadmin/users')}>
-          <Users className="h-4 w-4 mr-2"/> Manage Users
+        <Button variant="outline" onClick={() => navigate("/superadmin/users")}>
+          <Users className="h-4 w-4 mr-2" /> Manage Users
         </Button>
-        <Button variant="outline" onClick={() => navigate('/admin/dashboard')}>
-          <ShieldCheck className="h-4 w-4 mr-2"/> Open Admin Panel
+        <Button variant="outline" onClick={() => navigate("/admin/dashboard")}>
+          <ShieldCheck className="h-4 w-4 mr-2" /> Open Admin Panel
         </Button>
-        <Button variant="outline" onClick={() => navigate('/admin/audits')}>
-          <ClipboardCheck className="h-4 w-4 mr-2"/> View Audits
+        <Button variant="outline" onClick={() => navigate("/admin/audits")}>
+          <ClipboardCheck className="h-4 w-4 mr-2" /> View Audits
         </Button>
       </div>
 
-      {/* Audits last 7 days */}
+      {/* Analytics filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Audits (last 7 days)</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <FilterIcon className="h-5 w-5" />
+            Audit Analytics Filters
+          </CardTitle>
         </CardHeader>
-        <CardContent className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={chartData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-              <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
-              <Tooltip />
-              <Bar dataKey="count" fill="#6366f1" radius={[4, 4, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {/* Unit filter */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none">Unit</label>
+              <Select value={selectedUnit} onValueChange={setSelectedUnit}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Units" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Units</SelectItem>
+                  {units.map((u) => (
+                    <SelectItem key={u._id} value={u._id}>
+                      {u.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Answer type filter */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none">Answer Type</label>
+              <Select value={answerType} onValueChange={setAnswerType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Answer Types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Answer Types</SelectItem>
+                  <SelectItem value="pass">Pass</SelectItem>
+                  <SelectItem value="fail">Fail</SelectItem>
+                  <SelectItem value="na">Not Applicable</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Timeframe grouping */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none">Timeframe</label>
+              <Select value={timeframe} onValueChange={setTimeframe}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Daily" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="daily">Daily</SelectItem>
+                  <SelectItem value="weekly">Weekly</SelectItem>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="yearly">Yearly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Charts */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        {/* Audit trend over time */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5" />
+              Audit Result Trend
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={lineData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Tooltip formatter={(value, name) => [`${value} answers`, name]} />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="Pass"
+                    stroke={CHART_COLORS.success}
+                    strokeWidth={2}
+                    dot={{ r: 3, fill: CHART_COLORS.success }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="Fail"
+                    stroke={CHART_COLORS.error}
+                    strokeWidth={2}
+                    dot={{ r: 3, fill: CHART_COLORS.error }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="NA"
+                    stroke={CHART_COLORS.neutral}
+                    strokeWidth={2}
+                    dot={{ r: 3, fill: CHART_COLORS.neutral }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Overall distribution */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <PieChartIcon className="h-5 w-5" />
+              Overall Answer Distribution
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={100}
+                    dataKey="value"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={PIE_COLORS[index]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Total audits over time (uses same timeframe filter) */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5" />
+            Total Audits Over Time
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={auditCountData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+                <Tooltip formatter={(value) => [`${value} audits`, 'Audits']} />
+                <Line
+                  type="monotone"
+                  dataKey="total"
+                  stroke={CHART_COLORS.success}
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: CHART_COLORS.success }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </CardContent>
       </Card>
 
@@ -148,14 +471,26 @@ export default function SuperAdminDashboard() {
               </TableHeader>
               <TableBody>
                 {recentUsers.map((u) => (
-                  <TableRow key={u._id} className="cursor-pointer" onClick={() => navigate('/superadmin/users')}>
+                  <TableRow key={u._id} className="cursor-pointer" onClick={() => navigate("/superadmin/users")}>
                     <TableCell>{u.fullName}</TableCell>
                     <TableCell>
-                      <Badge variant={u.role === 'admin' ? 'destructive' : u.role === 'superadmin' ? 'outline' : 'default'}>
+                      <Badge
+                        variant={
+                          u.role === "admin"
+                            ? "destructive"
+                            : u.role === "superadmin"
+                            ? "outline"
+                            : "default"
+                        }
+                      >
                         {u.role}
                       </Badge>
                     </TableCell>
-                    <TableCell>{typeof u.department === 'object' ? (u.department?.name || 'N/A') : (u.department || 'N/A')}</TableCell>
+                    <TableCell>
+                      {typeof u.department === "object"
+                        ? u.department?.name || "N/A"
+                        : u.department || "N/A"}
+                    </TableCell>
                     <TableCell className="text-sm">
                       <div>{u.emailId}</div>
                       <div className="text-muted-foreground">{u.phoneNumber}</div>
@@ -164,7 +499,9 @@ export default function SuperAdminDashboard() {
                 ))}
                 {!recentUsers.length && (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">No users yet</TableCell>
+                    <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
+                      No users yet
+                    </TableCell>
                   </TableRow>
                 )}
               </TableBody>

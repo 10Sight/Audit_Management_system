@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Edit, Trash2, User, Mail, Phone, IdCard, Activity, Calendar, CheckCircle2, XCircle, ArrowLeft } from "lucide-react";
-import { useGetEmployeeByIdQuery, useDeleteEmployeeByIdMutation, useGetAuditsQuery } from "@/store/api";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
+import { useGetEmployeeByIdQuery, useDeleteEmployeeByIdMutation, useGetAuditsQuery, useUpdateEmployeeTargetAuditMutation } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,17 +10,28 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
 
 export default function EmployeeDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error] = useState("");
+
+  const [targetTotal, setTargetTotal] = useState("");
+  const [targetStart, setTargetStart] = useState("");
+  const [targetEnd, setTargetEnd] = useState("");
+  const [targetReminderTime, setTargetReminderTime] = useState("");
+  const [savingTarget, setSavingTarget] = useState(false);
+
+  const [nextReminderAt, setNextReminderAt] = useState(null);
+  const [reminderCountdown, setReminderCountdown] = useState("");
 
   const { data: empRes, isLoading: empLoading } = useGetEmployeeByIdQuery(id, { skip: !id });
-  const { data: auditsRes, isLoading: auditsLoading } = useGetAuditsQuery({ auditor: id, page: 1, limit: 20 }, { skip: !id });
+  const { data: auditsRes, isLoading: auditsLoading } = useGetAuditsQuery({ auditor: id, page: 1, limit: 200 }, { skip: !id });
   const [deleteEmployee] = useDeleteEmployeeByIdMutation();
+  const [updateTargetAudit] = useUpdateEmployeeTargetAuditMutation();
 
   const getAverageRatingPercent = (audit) => {
     const values = [
@@ -34,17 +46,50 @@ export default function EmployeeDetailPage() {
   };
 
   const getAnswersSummary = (audit) => {
-    if (!Array.isArray(audit.answers)) return { yes: 0, no: 0, total: 0, percentage: 0 };
-    const yes = audit.answers.filter((a) => a.answer === "Yes").length;
-    const no = audit.answers.filter((a) => a.answer === "No").length;
+    if (!Array.isArray(audit.answers)) {
+      return {
+        yes: 0,
+        no: 0,
+        na: 0,
+        total: 0,
+        considered: 0,
+        percentage: 0,
+        result: "No data",
+      };
+    }
+
+    const yes = audit.answers.filter((a) => a.answer === "Yes" || a.answer === "Pass").length;
+    const no = audit.answers.filter((a) => a.answer === "No" || a.answer === "Fail").length;
+    const na = audit.answers.filter((a) => a.answer === "NA" || a.answer === "Not Applicable").length;
     const total = audit.answers.length;
-    const percentage = total > 0 ? Math.round((yes / total) * 100) : 0;
-    return { yes, no, total, percentage };
+    const considered = yes + no; // Exclude NA from score
+    const percentage = considered > 0 ? Math.round((yes / considered) * 100) : 0;
+
+    let result = "Not Applicable";
+    if (no > 0) {
+      result = "Fail";
+    } else if (yes > 0) {
+      result = "Pass";
+    } else if (na > 0) {
+      result = "Not Applicable";
+    } else if (total === 0) {
+      result = "No data";
+    }
+
+    return { yes, no, na, total, considered, percentage, result };
   };
 
   useEffect(() => {
     setLoading(empLoading);
-    setEmployee(empRes?.data?.employee || null);
+    const emp = empRes?.data?.employee || null;
+    setEmployee(emp);
+
+    if (emp?.targetAudit) {
+      setTargetTotal(emp.targetAudit.total ?? "");
+      setTargetStart(emp.targetAudit.startDate ? emp.targetAudit.startDate.slice(0, 10) : "");
+      setTargetEnd(emp.targetAudit.endDate ? emp.targetAudit.endDate.slice(0, 10) : "");
+      setTargetReminderTime(emp.targetAudit.reminderTime || "");
+    }
   }, [empRes, empLoading]);
 
   const handleBack = () => navigate("/admin/employees");
@@ -63,13 +108,198 @@ export default function EmployeeDetailPage() {
 
   const audits = auditsRes?.data?.audits || [];
 
+  const auditsSummary = (() => {
+    if (!Array.isArray(audits) || audits.length === 0) return null;
+
+    let totalAudits = audits.length;
+    let passAudits = 0;
+    let failAudits = 0;
+    let naAudits = 0;
+
+    audits.forEach((audit) => {
+      const { result } = getAnswersSummary(audit);
+      if (result === "Pass") passAudits += 1;
+      else if (result === "Fail") failAudits += 1;
+      else if (result === "Not Applicable") naAudits += 1;
+    });
+
+    const chartData = [
+      { name: "Pass", value: passAudits },
+      { name: "Fail", value: failAudits },
+      { name: "Not Applicable", value: naAudits },
+    ].filter((item) => item.value > 0);
+
+    const chartColors = ["#22c55e", "#ef4444", "#f97316"]; // green, red, orange
+
+    return {
+      totalAudits,
+      passAudits,
+      failAudits,
+      naAudits,
+      chartData,
+      chartColors,
+    };
+  })();
+
+  const getTargetProgress = () => {
+    if (!employee?.targetAudit || !Array.isArray(audits)) return null;
+    const { total, startDate, endDate } = employee.targetAudit;
+    if (!total || !startDate || !endDate) return null;
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+
+    const completed = audits.filter((a) => {
+      if (!a.date) return false;
+      const d = new Date(a.date);
+      return d >= start && d <= end;
+    }).length;
+
+    const pending = Math.max(0, total - completed);
+    const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+    return { total, completed, pending, percent, start, end };
+  };
+
+  // Compute the next scheduled reminder date/time (if any) based on
+  // the target window, reminderTime and lastReminderDate.
+  const getNextReminderDate = (targetAudit) => {
+    if (!targetAudit) return null;
+    const { startDate, endDate, reminderTime, lastReminderDate } = targetAudit;
+    if (!startDate || !endDate || !reminderTime) return null;
+
+    const [h, m] = reminderTime.split(":").map((v) => parseInt(v, 10));
+    if (Number.isNaN(h) || Number.isNaN(m)) return null;
+
+    const now = new Date();
+
+    const normalizeDate = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const startDay = normalizeDate(start);
+    const endDay = normalizeDate(end);
+    const todayDay = normalizeDate(now);
+
+    const last = lastReminderDate ? normalizeDate(new Date(lastReminderDate)) : null;
+
+    let candidateDay = null;
+
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+    if (last && last >= startDay) {
+      // We already sent a reminder on `last`, so the next one is the following day.
+      candidateDay = new Date(last.getTime() + ONE_DAY_MS);
+    } else {
+      // No last reminder in this window yet.
+      if (todayDay < startDay) {
+        // Before the window starts: first reminder will be on the start date.
+        candidateDay = startDay;
+      } else if (todayDay > endDay) {
+        // Window is over: no more reminders.
+        return null;
+      } else {
+        // We are inside the window and no reminder has been sent today.
+        const reminderToday = new Date(todayDay.getTime());
+        reminderToday.setHours(h, m, 0, 0);
+        if (now < reminderToday) {
+          // Today's reminder is still in the future.
+          candidateDay = todayDay;
+        } else {
+          // Today's reminder time has passed; schedule for tomorrow.
+          candidateDay = new Date(todayDay.getTime() + ONE_DAY_MS);
+        }
+      }
+    }
+
+    if (!candidateDay || candidateDay > endDay) return null;
+
+    const result = new Date(candidateDay.getTime());
+    result.setHours(h, m, 0, 0);
+    return result;
+  };
+
+  const handleSaveTarget = async (e) => {
+    e.preventDefault();
+    if (!targetTotal || !targetStart || !targetEnd) {
+      alert("Please fill target total and date range");
+      return;
+    }
+    // Optional: basic client-side HH:mm check to help admin
+    if (targetReminderTime && !/^([01]\d|2[0-3]):[0-5]\d$/.test(targetReminderTime.trim())) {
+      alert("Please enter reminder time in HH:mm format (24-hour), e.g. 09:30 or 18:00");
+      return;
+    }
+    try {
+      setSavingTarget(true);
+      const payload = {
+        id,
+        total: Number(targetTotal),
+        startDate: targetStart,
+        endDate: targetEnd,
+      };
+      if (targetReminderTime) {
+        payload.reminderTime = targetReminderTime.trim();
+      }
+      await updateTargetAudit(payload).unwrap();
+      alert("Target audit updated successfully");
+    } catch (err) {
+      alert(err?.data?.message || err?.message || "Failed to update target audit");
+    } finally {
+      setSavingTarget(false);
+    }
+  };
+
+  // Keep "next reminder" and countdown in sync with the latest employee.targetAudit.
+  useEffect(() => {
+    if (!employee?.targetAudit) {
+      setNextReminderAt(null);
+      setReminderCountdown("");
+      return;
+    }
+    const next = getNextReminderDate(employee.targetAudit);
+    setNextReminderAt(next);
+  }, [employee]);
+
+  // Live countdown timer that updates every second.
+  useEffect(() => {
+    if (!nextReminderAt) {
+      setReminderCountdown("");
+      return;
+    }
+
+    const updateCountdown = () => {
+      const now = new Date();
+      const diffMs = nextReminderAt - now;
+      if (diffMs <= 0) {
+        setReminderCountdown("Scheduled now");
+        return;
+      }
+      const totalSeconds = Math.floor(diffMs / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      const parts = [];
+      if (hours > 0) parts.push(`${hours}h`);
+      if (minutes > 0 || hours > 0) parts.push(`${minutes}m`);
+      parts.push(`${seconds}s`);
+
+      setReminderCountdown(parts.join(" "));
+    };
+
+    updateCountdown();
+    const timerId = setInterval(updateCountdown, 1000);
+    return () => clearInterval(timerId);
+  }, [nextReminderAt]);
+
   if (loading) return <Loader />;
   if (error) return <div className="text-red-500 p-6 text-center">{error}</div>;
   if (!employee)
     return <div className="text-gray-500 p-6 text-center">Auditor not found</div>;
 
   return (
-    <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-6xl mx-auto space-y-8 bg-slate-50 min-h-screen">
       <Button
         variant="outline"
         size="sm"
@@ -141,82 +371,306 @@ export default function EmployeeDetailPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      {/* Target Audit Section */}
+      <Card className="shadow-sm border border-slate-200/70">
+        <CardHeader>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Activity className="h-5 w-5 text-muted-foreground" />
+              <div>
+                <CardTitle className="text-lg">Target Audit</CardTitle>
+                <CardDescription>
+                  Set and track this auditor's target number of audits for a time period.
+                </CardDescription>
+              </div>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <form onSubmit={handleSaveTarget} className="grid gap-4 md:grid-cols-4 items-end">
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Number of audits</label>
+              <Input
+                type="number"
+                min={1}
+                value={targetTotal}
+                onChange={(e) => setTargetTotal(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Start date</label>
+              <Input
+                type="date"
+                value={targetStart}
+                onChange={(e) => setTargetStart(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">End date</label>
+              <Input
+                type="date"
+                value={targetEnd}
+                onChange={(e) => setTargetEnd(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-sm font-medium">Daily reminder time (HH:mm)</label>
+              <Input
+                type="time"
+                value={targetReminderTime}
+                onChange={(e) => setTargetReminderTime(e.target.value)}
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Time of day to send reminder email to this auditor within the target period.
+              </p>
+            </div>
+            <div>
+              <Button type="submit" disabled={savingTarget} className="w-full md:w-auto mt-2 md:mt-0">
+                {savingTarget ? "Saving..." : "Save Target"}
+              </Button>
+            </div>
+          </form>
+
+          {(() => {
+            const progress = getTargetProgress();
+            if (!progress) return null;
+
+            const t = employee.targetAudit || {};
+            const lastReminder = t.lastReminderDate ? new Date(t.lastReminderDate) : null;
+
+            return (
+              <div className="text-sm text-muted-foreground space-y-1">
+                <p>
+                  <span className="inline-block w-32 font-medium text-slate-700">Target window</span>
+                  <span>
+                    {progress.start.toLocaleDateString()} 
+                    <span className="mx-1">to</span>
+                    {progress.end.toLocaleDateString()}
+                  </span>
+                </p>
+                <p>
+                  <span className="inline-block w-32 font-medium text-slate-700">Target audits</span>
+                  <span className="font-semibold">{progress.total}</span>
+                </p>
+                <p>
+                  <span className="inline-block w-32 font-medium text-slate-700">Completed</span>
+                  <span className="font-semibold">{progress.completed}</span>
+                  <span className="mx-2 text-slate-400">|</span>
+                  <span className="font-medium text-slate-700">Pending</span>
+                  <span className="ml-1 font-semibold">{progress.pending}</span>
+                  <span className="mx-2 text-slate-400">|</span>
+                  <span className="font-medium text-slate-700">Progress</span>
+                  <span className="ml-1 font-semibold">{progress.percent}%</span>
+                </p>
+
+                {t.reminderTime && (
+                  <p>
+                    <span className="inline-block w-32 font-medium text-slate-700">Daily time</span>
+                    <span className="font-semibold">{t.reminderTime}</span>
+                  </p>
+                )}
+
+                {lastReminder && (
+                  <p>
+                    <span className="inline-block w-32 font-medium text-slate-700">Last reminder</span>
+                    <span className="font-semibold">{lastReminder.toLocaleString()}</span>
+                  </p>
+                )}
+
+                {t.reminderTime && (
+                  <p>
+                    <span className="inline-block w-32 font-medium text-slate-700">Next reminder</span>
+                    <span className="font-semibold">
+                      {nextReminderAt
+                        ? `${nextReminderAt.toLocaleString()}${
+                            reminderCountdown ? `  (in ${reminderCountdown})` : ""
+                          }`
+                        : "No more reminders scheduled for this target"}
+                    </span>
+                  </p>
+                )}
+              </div>
+            );
+          })()}
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-sm border border-slate-200/70">
         <CardHeader>
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Activity className="h-5 w-5 text-muted-foreground" />
               <div>
                 <CardTitle className="text-lg">Audit History & Scores</CardTitle>
-                <CardDescription>All audits performed by this auditor and their scores.</CardDescription>
+                <CardDescription>All audits performed by this auditor and their results.</CardDescription>
               </div>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
           {auditsLoading ? (
             <Loader />
           ) : audits.length === 0 ? (
             <p className="text-sm text-muted-foreground">No audits found for this auditor.</p>
           ) : (
-            <div className="w-full overflow-x-auto">
-              <Table className="min-w-[640px]">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Line</TableHead>
-                    <TableHead>Machine</TableHead>
-                    <TableHead>Shift</TableHead>
-                    <TableHead className="text-center">Rating Score</TableHead>
-                    <TableHead className="text-center">Answers</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {audits.map((audit) => {
-                    const ratingPercent = getAverageRatingPercent(audit);
-                    const { yes, no, total, percentage } = getAnswersSummary(audit);
-                    const hasIssues = no > 0;
-                    return (
-                      <TableRow
-                        key={audit._id}
-                        className="cursor-pointer hover:bg-muted/60"
-                        onClick={() => navigate(`/admin/audits/${audit._id}`)}
-                      >
-                        <TableCell className="whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-4 w-4 text-muted-foreground" />
-                            {audit.date ? new Date(audit.date).toLocaleDateString() : "N/A"}
-                          </div>
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap">{audit.line?.name || "N/A"}</TableCell>
-                        <TableCell className="whitespace-nowrap">{audit.machine?.name || "N/A"}</TableCell>
-                        <TableCell className="whitespace-nowrap">{audit.shift || "N/A"}</TableCell>
-                        <TableCell className="text-center">
-                          {ratingPercent !== null ? (
-                            <Badge variant="outline" className="text-xs">
-                              {ratingPercent}%
+            <>
+              {auditsSummary && (
+                <div className="grid gap-4 md:grid-cols-3">
+                  {/* Summary stats */}
+                  <div className="md:col-span-1 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_8px_30px_rgba(15,23,42,0.03)]">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">
+                      Audit Performance Overview
+                    </p>
+                    <p className="text-2xl font-semibold text-slate-800 mb-3">
+                      {auditsSummary.totalAudits} Audits
+                    </p>
+                    <div className="space-y-2 text-xs text-slate-600">
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-emerald-500" /> Pass
+                        </span>
+                        <span className="font-semibold">{auditsSummary.passAudits}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-red-500" /> Fail
+                        </span>
+                        <span className="font-semibold">{auditsSummary.failAudits}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-amber-500" /> Not Applicable
+                        </span>
+                        <span className="font-semibold">{auditsSummary.naAudits}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Chart */}
+                  <div className="md:col-span-2 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_8px_30px_rgba(15,23,42,0.03)]">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Result Distribution
+                      </p>
+                    </div>
+                    {auditsSummary.chartData.length > 0 ? (
+                      <div className="h-56">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={auditsSummary.chartData}
+                              dataKey="value"
+                              nameKey="name"
+                              cx="50%"
+                              cy="50%"
+                              outerRadius={70}
+                              innerRadius={40}
+                              paddingAngle={4}
+                            >
+                              {auditsSummary.chartData.map((entry, index) => (
+                                <Cell
+                                  key={`cell-${entry.name}`}
+                                  fill={auditsSummary.chartColors[index % auditsSummary.chartColors.length]}
+                                />
+                              ))}
+                            </Pie>
+                            <Tooltip formatter={(value, name) => [value, name]} contentStyle={{ fontSize: 12 }} />
+                            <Legend verticalAlign="bottom" height={24} iconType="circle" wrapperStyle={{ fontSize: 12 }} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">No data available for chart.</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="w-full overflow-x-auto">
+                <Table className="min-w-[880px]">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Unit</TableHead>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Department</TableHead>
+                      <TableHead>Line</TableHead>
+                      <TableHead>Machine</TableHead>
+                      <TableHead>Shift</TableHead>
+                      <TableHead className="text-center">Audit Score</TableHead>
+                      <TableHead className="text-center">Result</TableHead>
+                      <TableHead className="text-right">Action</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {audits.map((audit) => {
+                      const ratingPercent = getAverageRatingPercent(audit);
+                      const { yes, no, na, considered, percentage, result } = getAnswersSummary(audit);
+
+                      let resultClasses = "bg-slate-100 text-slate-800 border-slate-200";
+                      if (result === "Pass") {
+                        resultClasses = "bg-emerald-50 text-emerald-800 border-emerald-200";
+                      } else if (result === "Fail") {
+                        resultClasses = "bg-red-50 text-red-800 border-red-200";
+                      } else if (result === "Not Applicable") {
+                        resultClasses = "bg-amber-50 text-amber-800 border-amber-200";
+                      }
+
+                      return (
+                        <TableRow key={audit._id} className="hover:bg-slate-50/80">
+                          <TableCell className="whitespace-nowrap">
+                            {audit.unit?.name || "N/A"}
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            <div className="flex items-center gap-2">
+                              <Calendar className="h-4 w-4 text-muted-foreground" />
+                              {audit.date ? new Date(audit.date).toLocaleDateString() : "N/A"}
+                            </div>
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">
+                            {audit.department?.name || "N/A"}
+                          </TableCell>
+                          <TableCell className="whitespace-nowrap">{audit.line?.name || "N/A"}</TableCell>
+                          <TableCell className="whitespace-nowrap">{audit.machine?.name || "N/A"}</TableCell>
+                          <TableCell className="whitespace-nowrap">{audit.shift || "N/A"}</TableCell>
+                          <TableCell className="text-center">
+                            {considered > 0 ? (
+                              <div className="flex flex-col items-center gap-1">
+                                <span className="text-sm font-medium">{percentage}%</span>
+                                <span className="text-[11px] text-muted-foreground">
+                                  {yes} Pass / {no} Fail{na ? `, ${na} NA` : ""}
+                                </span>
+                                {ratingPercent !== null && (
+                                  <span className="text-[11px] text-muted-foreground">
+                                    Rating: {ratingPercent}%
+                                  </span>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">N/A</span>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Badge variant="outline" className={`text-xs px-2 py-0.5 border ${resultClasses}`}>
+                              {result}
                             </Badge>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">No rating</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <div className="inline-flex items-center gap-2 text-xs">
-                            <span className="flex items-center gap-1 text-green-700">
-                              <CheckCircle2 className="h-3 w-3" /> {yes}
-                            </span>
-                            <span className={`flex items-center gap-1 ${hasIssues ? "text-red-600" : "text-gray-500"}`}>
-                              <XCircle className="h-3 w-3" /> {no}
-                            </span>
-                            <span className="text-muted-foreground">({percentage}% Yes of {total})</span>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-xs"
+                              onClick={() => navigate(`/admin/audits/${audit._id}`)}
+                            >
+                              View
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>

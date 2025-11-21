@@ -8,7 +8,8 @@ import {
   Users,
   AlertTriangle,
   UserCheck,
-  BarChart3
+  BarChart3,
+  Grid3X3,
 } from "lucide-react"; 
 import { 
   useGetDepartmentsQuery,
@@ -17,7 +18,8 @@ import {
   useCreateDepartmentMutation,
   useUpdateDepartmentMutation,
   useDeleteDepartmentMutation,
-  useAssignEmployeeToDepartmentMutation
+  useAssignEmployeeToDepartmentMutation,
+  useGetUnitsQuery,
 } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -55,12 +57,17 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 export default function DepartmentPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isSuperadmin = user?.role === "superadmin";
+
   const [departments, setDepartments] = useState([]);
   const [employees, setEmployees] = useState([]);
   const [stats, setStats] = useState({});
+  const [units, setUnits] = useState([]);
 
   const [departmentName, setDepartmentName] = useState("");
   const [departmentDescription, setDepartmentDescription] = useState("");
@@ -69,6 +76,7 @@ export default function DepartmentPage() {
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedTransferDepartment, setSelectedTransferDepartment] = useState("");
   const [includeAssigned, setIncludeAssigned] = useState(false);
+  const [selectedUnitId, setSelectedUnitId] = useState("");
 
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -82,6 +90,7 @@ export default function DepartmentPage() {
   const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
   const { data: usersRes } = useGetAllUsersQuery({ page: 1, limit: 1000 });
   const { data: statsRes } = useGetDepartmentStatsQuery();
+  const { data: unitsRes } = useGetUnitsQuery(undefined, { skip: !isSuperadmin });
   const [createDepartmentMutation] = useCreateDepartmentMutation();
   const [updateDepartmentMutation] = useUpdateDepartmentMutation();
   const [deleteDepartmentMutation] = useDeleteDepartmentMutation();
@@ -91,7 +100,13 @@ export default function DepartmentPage() {
     setDepartments(deptRes?.data?.departments || []);
     setEmployees(Array.isArray(usersRes?.data?.users) ? usersRes.data.users : []);
     setStats(statsRes?.data || {});
-  }, [deptRes, usersRes, statsRes]);
+
+    if (isSuperadmin) {
+      setUnits(Array.isArray(unitsRes?.data) ? unitsRes.data : []);
+    } else {
+      setUnits([]);
+    }
+  }, [deptRes, usersRes, statsRes, unitsRes, isSuperadmin]);
 
   const statusSummary = useMemo(() => {
     const total = stats.summary?.totalDepartments || 0;
@@ -139,16 +154,35 @@ export default function DepartmentPage() {
 
   // CRUD Operations
   const createDepartment = async () => {
-    if (!departmentName.trim()) {
+    const trimmedName = departmentName.trim();
+    const trimmedDescription = departmentDescription.trim();
+
+    if (!trimmedName) {
       toast.error("Please enter a department name");
       return;
     }
+
+    if (isSuperadmin && !selectedUnitId) {
+      toast.error("Please select a unit");
+      return;
+    }
+
     setLoading(true);
     try {
-      await createDepartmentMutation({ name: departmentName.trim(), description: departmentDescription.trim() }).unwrap();
+      const payload = {
+        name: trimmedName,
+        description: trimmedDescription,
+      };
+
+      if (isSuperadmin) {
+        payload.unit = selectedUnitId;
+      }
+
+      await createDepartmentMutation(payload).unwrap();
       toast.success("Department created successfully");
       setDepartmentName("");
       setDepartmentDescription("");
+      setSelectedUnitId("");
       setOpenCreateDialog(false);
     } catch (err) {
       toast.error(err?.data?.message || err?.message || "Failed to create department");
@@ -230,6 +264,7 @@ export default function DepartmentPage() {
   const resetCreateForm = () => {
     setDepartmentName("");
     setDepartmentDescription("");
+    setSelectedUnitId("");
     setOpenCreateDialog(false);
   };
 
@@ -308,6 +343,17 @@ export default function DepartmentPage() {
                 <h3 className="font-semibold text-lg">{department.name}</h3>
                 {department.description && (
                   <p className="text-sm text-muted-foreground">{department.description}</p>
+                )}
+
+                {department.unit && (
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <Grid3X3 className="h-4 w-4" />
+                    <span>
+                      {typeof department.unit === "string"
+                        ? department.unit
+                        : department.unit?.name || "N/A"}
+                    </span>
+                  </div>
                 )}
                 
                 <div className="flex items-center justify-between pt-4">
@@ -453,6 +499,27 @@ export default function DepartmentPage() {
                 rows={3}
               />
             </div>
+
+            {isSuperadmin && (
+              <div className="grid gap-2">
+                <Label htmlFor="unit">Unit</Label>
+                <Select
+                  value={selectedUnitId}
+                  onValueChange={setSelectedUnitId}
+                >
+                  <SelectTrigger id="unit">
+                    <SelectValue placeholder="Select unit" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {units.map((unit) => (
+                      <SelectItem key={unit._id} value={unit._id}>
+                        {unit.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={resetCreateForm}>

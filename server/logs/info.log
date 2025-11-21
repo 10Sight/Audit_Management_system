@@ -3315,3 +3315,875 @@
 [20 Nov, 2025 - 00:55:43:5543] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
 [20 Nov, 2025 - 00:55:55:5555] [34minfo[39m: [34mDepartment statistics fetched by Jatin Kumar Nagar (JKN001)[39m
 [20 Nov, 2025 - 00:55:56:5556] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 01:21:51:2151] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 01:21:51:2151] [34minfo[39m: [34mDepartment statistics fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 01:21:51:2151] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 01:26:33:2633] [34minfo[39m: [34mCreated 1 questions by user 691e18639969d28844f0412c[39m
+[20 Nov, 2025 - 01:26:40:2640] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 01:26:57:2657] [34minfo[39m: [34mCreated 1 questions by user 691e18639969d28844f0412c[39m
+[20 Nov, 2025 - 12:44:17:4417] [33mwarn[39m: [33mMongoDB disconnected[39m
+[20 Nov, 2025 - 12:44:27:4427] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 12:44:27:4427] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 12:44:27:4427] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 12:51:32:5132] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (PRO001)[39m
+[20 Nov, 2025 - 13:02:27:227] [34minfo[39m: [34mEmployee logged out[39m
+[20 Nov, 2025 - 13:02:41:241] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 13:02:41:241] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 13:02:51:251] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 13:04:14:414] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 13:04:14:414] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 13:37:06:376] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 13:37:06:376] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 13:37:06:376] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 14:00:00:00] [33mwarn[39m: [33mMongoDB disconnected[39m
+[20 Nov, 2025 - 14:30:55:3055] [33mwarn[39m: [33mMongoDB disconnected[39m
+[20 Nov, 2025 - 14:31:11:3111] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 14:31:11:3111] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 14:31:12:3112] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 14:45:32:4532] [33mwarn[39m: [33mMongoDB disconnected[39m
+[20 Nov, 2025 - 14:52:22:5222] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 14:52:22:5222] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 14:52:22:5222] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 14:52:30:5230] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:01:19:119] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:01:20:120] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:02:53:253] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:02:55:255] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:02:56:256] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:02:57:257] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:03:00:30] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:03:02:32] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:03:18:318] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:03:18:318] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:23:03:233] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:29:31:2931] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:29:31:2931] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 15:36:24:3624] [33mwarn[39m: [33mMongoDB disconnected[39m
+[20 Nov, 2025 - 15:49:58:4958] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[20 Nov, 2025 - 15:49:59:4959] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[20 Nov, 2025 - 15:52:03:523] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[20 Nov, 2025 - 15:52:04:524] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[20 Nov, 2025 - 15:53:44:5344] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[20 Nov, 2025 - 15:53:45:5345] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[20 Nov, 2025 - 15:53:54:5354] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[20 Nov, 2025 - 15:53:55:5355] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[20 Nov, 2025 - 16:01:20:120] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[20 Nov, 2025 - 16:01:21:121] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[20 Nov, 2025 - 16:34:06:346] [33mwarn[39m: [33mMongoDB disconnected[39m
+[20 Nov, 2025 - 16:34:25:3425] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 16:34:26:3426] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 16:34:37:3437] [34minfo[39m: [34mEmployee logged out[39m
+[20 Nov, 2025 - 16:35:12:3512] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 16:35:12:3512] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 16:36:16:3616] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 16:36:20:3620] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 16:36:20:3620] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 16:36:20:3620] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 16:40:58:4058] [34minfo[39m: [34mEmployee logged out[39m
+[20 Nov, 2025 - 16:41:11:4111] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 16:41:11:4111] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[20 Nov, 2025 - 16:42:13:4213] [34minfo[39m: [34mEmployee logged out[39m
+[20 Nov, 2025 - 16:42:25:4225] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 16:42:25:4225] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 16:42:25:4225] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 17:13:07:137] [33mwarn[39m: [33mMongoDB disconnected[39m
+[20 Nov, 2025 - 17:13:42:1342] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 17:13:42:1342] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 17:13:42:1342] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 17:15:24:1524] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 17:18:30:1830] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 17:23:43:2343] [33mwarn[39m: [33mMongoDB disconnected[39m
+[20 Nov, 2025 - 17:24:30:2430] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 17:24:38:2438] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 17:26:10:2610] [33mwarn[39m: [33mMongoDB disconnected[39m
+[20 Nov, 2025 - 17:49:04:494] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 17:53:10:5310] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 17:55:23:5523] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 18:10:10:1010] [33mwarn[39m: [33mMongoDB disconnected[39m
+[20 Nov, 2025 - 18:16:12:1612] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 18:16:12:1612] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 18:16:13:1613] [34minfo[39m: [34mDepartment statistics fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 18:22:14:2214] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 18:37:21:3721] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 18:37:21:3721] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 18:37:21:3721] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 18:37:44:3744] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 18:43:20:4320] [34minfo[39m: [34mEmployee logged out[39m
+[20 Nov, 2025 - 23:18:15:1815] [34minfo[39m: [34mEmployee logged out[39m
+[20 Nov, 2025 - 23:18:31:1831] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 23:18:31:1831] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 23:18:32:1832] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 23:25:57:2557] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 23:27:46:2746] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 23:32:04:324] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 23:32:04:324] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 23:36:31:3631] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 23:44:20:4420] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 23:45:49:4549] [34minfo[39m: [34mDepartment statistics fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 23:45:49:4549] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 23:51:39:5139] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[20 Nov, 2025 - 23:51:49:5149] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 00:01:16:116] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 00:01:16:116] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 00:01:16:116] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 00:07:13:713] [34minfo[39m: [34mDepartment statistics fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 00:39:41:3941] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 00:39:41:3941] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 00:45:09:459] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 00:45:18:4518] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 00:45:18:4518] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 00:45:24:4524] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 00:51:20:5120] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:01:41:141] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 01:01:42:142] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 01:03:05:35] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 01:03:06:36] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 01:03:18:318] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:03:27:327] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:03:31:331] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:03:31:331] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:03:37:337] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:04:02:42] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 01:04:50:450] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 01:04:59:459] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:04:59:459] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:05:11:511] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:05:58:558] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:05:58:558] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:07:27:727] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:08:51:851] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 01:08:52:852] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 01:09:17:917] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:10:21:1021] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:12:57:1257] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:16:14:1614] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 01:16:24:1624] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 01:16:24:1624] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 01:16:25:1625] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 01:18:48:1848] [34minfo[39m: [34mDepartments fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 01:18:56:1856] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 01:19:10:1910] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:19:10:1910] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:20:18:2018] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:20:21:2021] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:20:21:2021] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:20:24:2024] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:23:14:2314] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:28:20:2820] [34minfo[39m: [34mNew employee registered: asdf (ASDF)[39m
+[21 Nov, 2025 - 01:28:21:2821] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:28:34:2834] [34minfo[39m: [34mEmployee deleted: asdf (ASDF) by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:28:34:2834] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:28:38:2838] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:29:49:2949] [34minfo[39m: [34mNew employee registered: Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:29:50:2950] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:30:03:303] [34minfo[39m: [34mEmployee deleted: Admin Testing (ADMIN123) by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:30:03:303] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:30:05:305] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:30:05:305] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:30:07:307] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:32:35:3235] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 01:32:35:3235] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 01:32:41:3241] [34minfo[39m: [34mNew employee registered: Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:32:42:3242] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:32:53:3253] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 01:33:06:336] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:33:06:336] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:33:11:3311] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:33:46:3346] [34minfo[39m: [34mNew employee registered: new Auditor (AUDITOR123)[39m
+[21 Nov, 2025 - 01:33:47:3347] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:35:15:3515] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 01:35:25:3525] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:35:25:3525] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:35:25:3525] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:35:39:3539] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 01:35:50:3550] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:35:50:3550] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:35:53:3553] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:36:41:3641] [33mwarn[39m: [33mMongoDB disconnected[39m
+[21 Nov, 2025 - 01:36:47:3647] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:36:47:3647] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:36:47:3647] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:37:23:3723] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:41:05:415] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 01:41:06:416] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 01:41:26:4126] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:41:27:4127] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:41:31:4131] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:41:31:4131] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 01:42:00:420] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 01:42:57:4257] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:42:57:4257] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:43:00:430] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:43:56:4356] [34minfo[39m: [34mNew department created: New Department by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:43:56:4356] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:43:56:4356] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:44:05:445] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:44:05:445] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:44:05:445] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 01:54:27:5427] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:01:20:120] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 02:01:20:120] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 02:01:48:148] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:01:48:148] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:01:48:148] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:01:50:150] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:02:02:22] [34minfo[39m: [34mLine created: Line 1[39m
+[21 Nov, 2025 - 02:02:09:29] [34minfo[39m: [34mLine created: Line 2[39m
+[21 Nov, 2025 - 02:02:12:212] [34minfo[39m: [34mLine deleted: 691f7ac9fa1e10f4e7c6c8b1[39m
+[21 Nov, 2025 - 02:03:07:37] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 02:03:07:37] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 02:03:13:313] [34minfo[39m: [34mMachine created: Machine 1[39m
+[21 Nov, 2025 - 02:05:18:518] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 02:05:19:519] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 02:05:47:547] [34minfo[39m: [34mMachine created: Machine 2[39m
+[21 Nov, 2025 - 02:06:42:642] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:06:46:646] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:17:20:1720] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:18:23:1823] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 02:18:23:1823] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 02:19:25:1925] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:19:25:1925] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:19:26:1926] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:19:27:1927] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:34:06:346] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 02:34:06:346] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 02:36:59:3659] [34minfo[39m: [34mQuestion deleted: 691da09427ffc168792a0549 by user 691f73e09b30101337bfbd9b[39m
+[21 Nov, 2025 - 02:37:02:372] [34minfo[39m: [34mQuestion deleted: 691da09427ffc168792a054b by user 691f73e09b30101337bfbd9b[39m
+[21 Nov, 2025 - 02:37:05:375] [34minfo[39m: [34mQuestion deleted: 691da09427ffc168792a054d by user 691f73e09b30101337bfbd9b[39m
+[21 Nov, 2025 - 02:37:08:378] [34minfo[39m: [34mQuestion deleted: 691da09427ffc168792a054f by user 691f73e09b30101337bfbd9b[39m
+[21 Nov, 2025 - 02:37:11:3711] [34minfo[39m: [34mQuestion deleted: 691e20f19969d28844f04237 by user 691f73e09b30101337bfbd9b[39m
+[21 Nov, 2025 - 02:37:14:3714] [34minfo[39m: [34mQuestion deleted: 691e21099969d28844f0424b by user 691f73e09b30101337bfbd9b[39m
+[21 Nov, 2025 - 02:37:43:3743] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:37:45:3745] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:42:16:4216] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:42:18:4218] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:45:36:4536] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:46:31:4631] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 02:47:01:471] [34minfo[39m: [34mCreated 1 questions by user 691f73e09b30101337bfbd9b[39m
+[21 Nov, 2025 - 02:54:36:5436] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 02:54:36:5436] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 02:55:11:5511] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:00:39:039] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:03:19:319] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:05:33:533] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:05:38:538] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:05:38:538] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:06:18:618] [34minfo[39m: [34mEmployee Jatin New (ASM001) assigned to department New Department by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:06:18:618] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:06:18:618] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:06:18:618] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:07:52:752] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:08:05:85] [34minfo[39m: [34mLine created: Hello[39m
+[21 Nov, 2025 - 03:08:14:814] [34minfo[39m: [34mMachine created: Hello[39m
+[21 Nov, 2025 - 03:08:19:819] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:09:24:924] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:10:46:1046] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:10:46:1046] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:10:46:1046] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:10:53:1053] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:12:00:120] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 03:12:31:1231] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 03:23:29:2329] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 03:23:42:2342] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:23:42:2342] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:23:42:2342] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:23:46:2346] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:23:55:2355] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 03:24:26:2426] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 03:24:41:2441] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:24:54:2454] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:25:06:256] [34minfo[39m: [34mEmployee new Auditor (AUDITOR123) assigned to department New Department by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:25:06:256] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:25:06:256] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:25:06:256] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:25:11:2511] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 03:28:38:2838] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 03:29:01:291] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:29:01:291] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 03:29:01:291] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:00:19:019] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 04:00:19:019] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 04:00:58:058] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:00:58:058] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:00:58:058] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:02:15:215] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 04:02:24:224] [34minfo[39m: [34mAll users fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 04:02:24:224] [34minfo[39m: [34mEmployees fetched by Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 04:02:30:230] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 04:02:51:251] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:03:34:334] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:06:01:61] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:06:34:634] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:08:05:85] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:08:49:849] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 04:08:49:849] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 04:09:06:96] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:09:06:96] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:09:07:97] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:09:08:98] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:10:20:1020] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:10:21:1021] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:15:36:1536] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 04:15:38:1538] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 04:16:08:168] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:16:12:1612] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:16:13:1613] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:17:47:1747] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:17:48:1748] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:17:51:1751] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:17:56:1756] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:19:26:1926] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:19:26:1926] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:19:34:1934] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:20:15:2015] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:20:15:2015] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:32:45:3245] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 04:32:45:3245] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 04:33:03:333] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:33:03:333] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:33:03:333] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:33:07:337] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:33:07:337] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:33:45:3345] [34minfo[39m: [34mTarget audit updated for new Auditor (AUDITOR123) by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:34:07:347] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:37:14:3714] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:37:14:3714] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:37:34:3734] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 04:38:11:3811] [34minfo[39m: [34mAudit created by 691f74229b30101337bfbdca[39m
+[21 Nov, 2025 - 04:38:15:3815] [34minfo[39m: [34mAudit 691f9f5b6f56778ccba29250 shared via email to jatinnagar563@gmail.com (cc: mirzashahhussain63@gmail.com) by 691f74229b30101337bfbdca[39m
+[21 Nov, 2025 - 04:38:18:3818] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 04:38:30:3830] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:38:30:3830] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:38:30:3830] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:38:32:3832] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:38:33:3833] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:39:50:3950] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:39:52:3952] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:43:49:4349] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:43:49:4349] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:48:20:4820] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:48:20:4820] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:49:18:4918] [34minfo[39m: [34mAudit created by 691f74229b30101337bfbdca[39m
+[21 Nov, 2025 - 04:49:21:4921] [34minfo[39m: [34mAudit 691fa1f66f56778ccba2938b shared via email to jatinnagar563@gmail.com (cc: mirzashahhussain63@gmail.com) by 691f74229b30101337bfbdca[39m
+[21 Nov, 2025 - 04:49:26:4926] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:49:26:4926] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:49:51:4951] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:49:51:4951] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:53:09:539] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:53:09:539] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:53:47:5347] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:53:52:5352] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:54:25:5425] [33mwarn[39m: [33mMongoDB disconnected[39m
+[21 Nov, 2025 - 04:56:55:5655] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:56:56:5656] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:58:31:5831] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:58:31:5831] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:58:34:5834] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 04:58:34:5834] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:03:13:313] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:03:13:313] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:03:13:313] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:10:43:1043] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:10:43:1043] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:10:52:1052] [34minfo[39m: [34mTarget audit updated for new Auditor (AUDITOR123) by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:10:58:1058] [34minfo[39m: [34mTarget audit updated for new Auditor (AUDITOR123) by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:11:03:113] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:11:11:1111] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:12:21:1221] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:12:21:1221] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:14:01:141] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:14:01:141] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:14:01:141] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:25:35:2535] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:27:28:2728] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:27:40:2740] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:29:02:292] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 05:29:12:2912] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:29:12:2912] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:29:15:2915] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:29:24:2924] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:29:31:2931] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:29:44:2944] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:29:49:2949] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:31:16:3116] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:31:29:3129] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:31:34:3134] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:31:38:3138] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:31:48:3148] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:31:48:3148] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:32:02:322] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:32:23:3223] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 05:32:45:3245] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:33:07:337] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:33:08:338] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:33:08:338] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:34:06:346] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:34:51:3451] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:38:06:386] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 05:38:06:386] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 05:38:09:389] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:38:09:389] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:38:10:3810] [34minfo[39m: [34mTarget audit reminder email sent to auditor@gmail.com[39m
+[21 Nov, 2025 - 05:38:13:3813] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:38:21:3821] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:38:22:3822] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:38:22:3822] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:38:28:3828] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:39:51:3951] [34minfo[39m: [34mEmployees fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:39:54:3954] [34minfo[39m: [34mDepartments fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:39:55:3955] [34minfo[39m: [34mDepartment statistics fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:39:55:3955] [34minfo[39m: [34mAll users fetched by Admin Testing (ADMIN123)[39m
+[21 Nov, 2025 - 05:40:24:4024] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 05:41:16:4116] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 05:41:30:4130] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:41:31:4131] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:41:31:4131] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:50:26:5026] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:50:26:5026] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:52:07:527] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 05:52:07:527] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 05:52:16:5216] [34minfo[39m: [34mTarget audit reminder email sent to auditor@gmail.com[39m
+[21 Nov, 2025 - 05:52:17:5217] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:52:21:5221] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:52:36:5236] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:52:47:5247] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:52:47:5247] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:53:39:5339] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:53:39:5339] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:55:58:5558] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:56:00:560] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 05:56:00:560] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:02:05:25] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 06:02:05:25] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 06:02:09:29] [34minfo[39m: [34mTarget audit reminder email sent to auditor@gmail.com[39m
+[21 Nov, 2025 - 06:05:22:522] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:05:22:522] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:07:41:741] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:07:44:744] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:07:44:744] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:08:29:829] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:08:33:833] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:08:35:835] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:08:38:838] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:08:53:853] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:09:38:938] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:14:54:1454] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:15:05:155] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:16:09:169] [34minfo[39m: [34mNew employee registered: Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 06:16:10:1610] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:16:15:1615] [34minfo[39m: [34mEmployee deleted: new Auditor (AUDITOR123) by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:16:15:1615] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:16:21:1621] [34minfo[39m: [34mEmployee deleted: Admin Testing (ADMIN123) by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:16:21:1621] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 06:16:30:1630] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 06:16:46:1646] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 06:16:46:1646] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 06:16:53:1653] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 06:17:15:1715] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 06:17:16:1716] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 06:17:16:1716] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 06:19:02:192] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 06:23:24:2324] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 06:23:24:2324] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:36:29:3629] [33mwarn[39m: [33mMongoDB disconnected[39m
+[21 Nov, 2025 - 13:36:35:3635] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:36:35:3635] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:36:37:3637] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:36:55:3655] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:37:07:377] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:37:07:377] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:37:15:3715] [34minfo[39m: [34mNew department created: Assembly by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:37:15:3715] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:37:15:3715] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:37:28:3728] [34minfo[39m: [34mLine created: Head Lamp[39m
+[21 Nov, 2025 - 13:37:46:3746] [34minfo[39m: [34mMachine created: Engel 900 T[39m
+[21 Nov, 2025 - 13:37:54:3754] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:38:56:3856] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:39:05:395] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:39:05:395] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:39:14:3914] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 13:39:32:3932] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:41:07:417] [34minfo[39m: [34mNew employee registered: Jatin (AUDITOR123)[39m
+[21 Nov, 2025 - 13:41:08:418] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:41:41:4141] [34minfo[39m: [34mTarget audit updated for Jatin (AUDITOR123) by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:41:45:4145] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:41:57:4157] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 13:42:57:4257] [34minfo[39m: [34mAudit created by 69201e9a12bbe9b91ecdb378[39m
+[21 Nov, 2025 - 13:43:01:431] [34minfo[39m: [34mAudit 69201f0912bbe9b91ecdb3a9 shared via email to jatinnagar563@gmail.com (cc: mirzashahhussain63@gmail.com) by 69201e9a12bbe9b91ecdb378[39m
+[21 Nov, 2025 - 13:43:06:436] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 13:43:29:4329] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:43:29:4329] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:43:38:4338] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:44:01:441] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:44:53:4453] [34minfo[39m: [34mCreated 4 questions by user 691fb65012bbe9b91ecdb23f[39m
+[21 Nov, 2025 - 13:45:22:4522] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 13:47:03:473] [34minfo[39m: [34mAudit created by 69201e9a12bbe9b91ecdb378[39m
+[21 Nov, 2025 - 13:47:07:477] [34minfo[39m: [34mAudit 69201fff12bbe9b91ecdb452 shared via email to jatinnagar563@gmail.com (cc: mirzashahhussain63@gmail.com) by 69201e9a12bbe9b91ecdb378[39m
+[21 Nov, 2025 - 13:47:11:4711] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 13:47:27:4727] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:47:27:4727] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:47:31:4731] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:48:44:4844] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:49:22:4922] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:49:31:4931] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:49:31:4931] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:49:36:4936] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 13:49:43:4943] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 13:50:30:5030] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 13:50:33:5033] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 13:50:45:5045] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 13:50:50:5050] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 13:50:56:5056] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 13:50:59:5059] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 13:51:02:512] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 13:51:14:5114] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 13:51:15:5115] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 13:51:54:5154] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 13:52:31:5231] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 13:52:43:5243] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 13:56:43:5643] [33mwarn[39m: [33mMongoDB disconnected[39m
+[21 Nov, 2025 - 14:09:57:957] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 14:09:59:959] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 14:10:03:103] [34minfo[39m: [34mTarget audit reminder email sent to auditor123@gmail.com[39m
+[21 Nov, 2025 - 14:18:13:1813] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:18:13:1813] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:18:20:1820] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:18:20:1820] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:18:28:1828] [34minfo[39m: [34mNew department created: Moulding by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:18:28:1828] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:18:28:1828] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:18:41:1841] [34minfo[39m: [34mNew department created: Coating by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:18:41:1841] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:18:41:1841] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:18:49:1849] [34minfo[39m: [34mNew department created: Pcb by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:18:49:1849] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:18:50:1850] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:19:00:190] [34minfo[39m: [34mDepartment updated: Pcb by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:19:00:190] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:19:00:190] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:19:05:195] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:19:05:195] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:19:05:195] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:19:10:1910] [34minfo[39m: [34mDepartment deleted: Pcb by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:19:10:1910] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:19:10:1910] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:19:19:1919] [34minfo[39m: [34mNew department created: Pcb by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:19:19:1919] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:19:19:1919] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:24:04:244] [34minfo[39m: [34mLine deleted: 69201dc012bbe9b91ecdb314[39m
+[21 Nov, 2025 - 14:24:06:246] [34minfo[39m: [34mMachine deleted: 69201dd212bbe9b91ecdb31a[39m
+[21 Nov, 2025 - 14:24:27:2427] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:24:27:2427] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:26:59:2659] [34minfo[39m: [34mLine created: Head Lamp 1[39m
+[21 Nov, 2025 - 14:27:14:2714] [34minfo[39m: [34mLine created: Head Lamp 2[39m
+[21 Nov, 2025 - 14:27:23:2723] [34minfo[39m: [34mLine created: Head Lamp 3[39m
+[21 Nov, 2025 - 14:27:38:2738] [34minfo[39m: [34mLine created: Ice Cube[39m
+[21 Nov, 2025 - 14:30:55:3055] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:35:56:3556] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 14:35:57:3557] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 14:36:03:363] [34minfo[39m: [34mTarget audit reminder email sent to auditor123@gmail.com[39m
+[21 Nov, 2025 - 14:41:38:4138] [34minfo[39m: [34mMachine created: 1B Hsg +Wire Load on cavity[39m
+[21 Nov, 2025 - 14:41:46:4146] [34minfo[39m: [34mMachine created: 2B Ref , K - Light Loading + HLC-U Scanning[39m
+[21 Nov, 2025 - 14:41:54:4154] [34minfo[39m: [34mMachine created: 2A Wire Routing+ K- Light Fitment+HLC-U Screwing[39m
+[21 Nov, 2025 - 14:42:02:422] [34minfo[39m: [34mMachine created: 3B Ice Cube Load on Cavity+ PCB Scanning[39m
+[21 Nov, 2025 - 14:42:11:4211] [34minfo[39m: [34mMachine created: 4A Ice Cube Fitment & Connection+H Ref Connection[39m
+[21 Nov, 2025 - 14:42:19:4219] [34minfo[39m: [34mMachine created: PCB Screwing[39m
+[21 Nov, 2025 - 14:42:27:4227] [34minfo[39m: [34mMachine created: 6B Main bezel Assembly[39m
+[21 Nov, 2025 - 14:42:34:4234] [34minfo[39m: [34mMachine created: 6A Main bezel & H Ref Screwing[39m
+[21 Nov, 2025 - 14:42:42:4242] [34minfo[39m: [34mMachine created: Pri Aiming[39m
+[21 Nov, 2025 - 14:42:55:4255] [34minfo[39m: [34mMachine created: Vibrator( Antastatic) (Z Station)[39m
+[21 Nov, 2025 - 14:43:03:433] [34minfo[39m: [34mMachine created: Inner Lens Assembly[39m
+[21 Nov, 2025 - 14:43:09:439] [34minfo[39m: [34mMachine created: Gluing +Plasama +Lens Pressing (Z Station)[39m
+[21 Nov, 2025 - 14:43:16:4316] [34minfo[39m: [34mMachine created: Aiming Shaft Assy + Screwing[39m
+[21 Nov, 2025 - 14:43:22:4322] [34minfo[39m: [34mMachine created: Bumper Bracket Assy+ Screwing[39m
+[21 Nov, 2025 - 14:43:29:4329] [34minfo[39m: [34mMachine created: Aiming ( Light Test) (Z Station)[39m
+[21 Nov, 2025 - 14:43:36:4336] [34minfo[39m: [34mMachine created: Leak Test  (Z Station)[39m
+[21 Nov, 2025 - 14:43:43:4343] [34minfo[39m: [34mMachine created: BOP ( Vission )[39m
+[21 Nov, 2025 - 14:43:51:4351] [34minfo[39m: [34mMachine created: Hood seal[39m
+[21 Nov, 2025 - 14:44:01:441] [34minfo[39m: [34mMachine created: Final Inspection (Z Station)[39m
+[21 Nov, 2025 - 14:44:07:447] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:44:27:4427] [34minfo[39m: [34mMachine created: Bezel Ring assy[39m
+[21 Nov, 2025 - 14:44:34:4434] [34minfo[39m: [34mMachine created: Light blae+ main bezel[39m
+[21 Nov, 2025 - 14:44:41:4441] [34minfo[39m: [34mMachine created: material feading[39m
+[21 Nov, 2025 - 14:44:48:4448] [34minfo[39m: [34mMachine created: Fan & Hsg motor assy[39m
+[21 Nov, 2025 - 14:44:58:4458] [34minfo[39m: [34mMachine created: Fan Bracket+ HLCU assembly and screwing with housing[39m
+[21 Nov, 2025 - 14:45:06:456] [34minfo[39m: [34mMachine created: Top & Bottom Heat Sink and K-Light Assembly[39m
+[21 Nov, 2025 - 14:45:13:4513] [34minfo[39m: [34mMachine created: ICE Cube + Top & Bottom Light Guide screwing with Housing[39m
+[21 Nov, 2025 - 14:45:19:4519] [34minfo[39m: [34mMachine created: Antistatic Vibration[39m
+[21 Nov, 2025 - 14:45:26:4526] [34minfo[39m: [34mMachine created: Housing & Main Bezel Assembly[39m
+[21 Nov, 2025 - 14:45:32:4532] [34minfo[39m: [34mMachine created: PreAiming Machine[39m
+[21 Nov, 2025 - 14:45:38:4538] [34minfo[39m: [34mMachine created: Plasma, Gluing +  Lens Pressing[39m
+[21 Nov, 2025 - 14:45:45:4545] [34minfo[39m: [34mMachine created: Bumper Bracket Assembly with housing[39m
+[21 Nov, 2025 - 14:45:56:4556] [34minfo[39m: [34mMachine created: Final Aiming Machine[39m
+[21 Nov, 2025 - 14:46:03:463] [34minfo[39m: [34mMachine created: Leak & Light Testing[39m
+[21 Nov, 2025 - 14:46:09:469] [34minfo[39m: [34mMachine created: BOP Checking Machine[39m
+[21 Nov, 2025 - 14:46:16:4616] [34minfo[39m: [34mMachine created: Final Inspection[39m
+[21 Nov, 2025 - 14:46:29:4629] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:46:34:4634] [34minfo[39m: [34mMachine created: Thermal Gluing & Heat Sink + Light Guide Adapter+ PCBA Assly[39m
+[21 Nov, 2025 - 14:46:41:4641] [34minfo[39m: [34mMachine created: DLC3.5 & 1K-LDM PCB Inspection & Wire Harness + Bracket Assembly[39m
+[21 Nov, 2025 - 14:46:47:4647] [34minfo[39m: [34mMachine created: Snap locking  module bezel  with K-Light module +fog bezel inspection + VAC motor feeding[39m
+[21 Nov, 2025 - 14:46:53:4653] [34minfo[39m: [34mMachine created: Luxeon-Go Master Screwing with Fog Reflector[39m
+[21 Nov, 2025 - 14:46:59:4659] [34minfo[39m: [34mMachine created: Visual Inspection of LG-1 & LG-2 & Assly with LG Extension  & Feeding + 2K-Bezel feeding[39m
+[21 Nov, 2025 - 14:47:05:475] [34minfo[39m: [34mMachine created: 2K Black Bezel & Strip Bezel Assly + Main Bezel Visual Inspection & Main bezel feeding[39m
+[21 Nov, 2025 - 14:47:11:4711] [34minfo[39m: [34mMachine created: DLC 3.5 + 1K-LDM sub Assly with Housing + Wire Harness Connector Fitment[39m
+[21 Nov, 2025 - 14:47:17:4717] [34minfo[39m: [34mMachine created: Heat Sink + Aiming shaft+ Cap Screwing with Housing[39m
+[21 Nov, 2025 - 14:47:23:4723] [34minfo[39m: [34mMachine created: Motor Fitment + Wire routing + Hollow screw Assly with HSG[39m
+[21 Nov, 2025 - 14:47:28:4728] [34minfo[39m: [34mMachine created: Adjuster LR Brkt & Fog UD Brkt Pressing Into Housing[39m
+[21 Nov, 2025 - 14:47:34:4734] [34minfo[39m: [34mMachine created: K-Light Module Assly with Housing[39m
+[21 Nov, 2025 - 14:47:40:4740] [34minfo[39m: [34mMachine created: Fog Ref. SA + Fog Bezel Assembly with Housing[39m
+[21 Nov, 2025 - 14:47:47:4747] [34minfo[39m: [34mMachine created: LG Extension SA Screwing with Housing+ 2K Bezel SA locating  + Vision Inspection[39m
+[21 Nov, 2025 - 14:47:52:4752] [34minfo[39m: [34mMachine created: 2K Bezel SA + Main Bezel Assembly with Housing[39m
+[21 Nov, 2025 - 14:47:58:4758] [34minfo[39m: [34mMachine created: Antistatic & Q-gate[39m
+[21 Nov, 2025 - 14:48:04:484] [34minfo[39m: [34mMachine created: Pre-Aiming[39m
+[21 Nov, 2025 - 14:48:09:489] [34minfo[39m: [34mMachine created: Plasma + Gluing + Lens Pressing[39m
+[21 Nov, 2025 - 14:48:15:4815] [34minfo[39m: [34mMachine created: Curing[39m
+[21 Nov, 2025 - 14:48:20:4820] [34minfo[39m: [34mMachine created: Aiming Test[39m
+[21 Nov, 2025 - 14:48:43:4843] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:49:17:4917] [34minfo[39m: [34mMachine created: Vent Tube Assembly & BOP Checking[39m
+[21 Nov, 2025 - 14:51:19:5119] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:51:30:5130] [34minfo[39m: [34mMachine created: Ice Cube Lens - collimator lens snap loacking ( Fog, Booster, cornering)[39m
+[21 Nov, 2025 - 14:51:37:5137] [34minfo[39m: [34mMachine created: Thermal Guling Operation on Heat sink, PCB 1 & PCB 2 aseembly into heat sink[39m
+[21 Nov, 2025 - 14:51:45:5145] [34minfo[39m: [34mMachine created: Ice Cube+ Heat sink Screwing + LED Counting[39m
+[21 Nov, 2025 - 14:51:51:5151] [34minfo[39m: [34mMachine created: Aiming frame aseembly + EOL checking[39m
+[21 Nov, 2025 - 14:52:12:5212] [34minfo[39m: [34mMachine created: Air  dust assembly[39m
+[21 Nov, 2025 - 14:55:43:5543] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 14:55:45:5545] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 14:55:49:5549] [34minfo[39m: [34mTarget audit reminder email sent to auditor123@gmail.com[39m
+[21 Nov, 2025 - 14:58:18:5818] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 14:58:28:5828] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:00:20:020] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 15:00:22:022] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 15:00:26:026] [34minfo[39m: [34mTarget audit reminder email sent to auditor123@gmail.com[39m
+[21 Nov, 2025 - 15:00:36:036] [34minfo[39m: [34mMachine created: Final Inspection[39m
+[21 Nov, 2025 - 15:00:48:048] [34minfo[39m: [34mMachine created: Final Inspection[39m
+[21 Nov, 2025 - 15:01:05:15] [34minfo[39m: [34mMachine created: Leak & Light Testing[39m
+[21 Nov, 2025 - 15:01:24:124] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:01:59:159] [34minfo[39m: [34mLine created: PCB Line 1[39m
+[21 Nov, 2025 - 15:02:11:211] [34minfo[39m: [34mLine created: PCB Line 2[39m
+[21 Nov, 2025 - 15:02:17:217] [34minfo[39m: [34mLine created: PCB Line 3[39m
+[21 Nov, 2025 - 15:02:22:222] [34minfo[39m: [34mLine created: PCB Line 4[39m
+[21 Nov, 2025 - 15:02:28:228] [34minfo[39m: [34mLine created: PCB Line 5[39m
+[21 Nov, 2025 - 15:02:41:241] [34minfo[39m: [34mMachine created: PCB Destacker[39m
+[21 Nov, 2025 - 15:02:48:248] [34minfo[39m: [34mMachine created: Laser Marking Machine[39m
+[21 Nov, 2025 - 15:02:53:253] [34minfo[39m: [34mMachine created: PCB Stacker[39m
+[21 Nov, 2025 - 15:02:58:258] [34minfo[39m: [34mMachine created: PCB Solder Paste Thawing[39m
+[21 Nov, 2025 - 15:03:04:34] [34minfo[39m: [34mMachine created: PCB Solder Paste Mixing[39m
+[21 Nov, 2025 - 15:03:10:310] [34minfo[39m: [34mMachine created: Vescosity Meter[39m
+[21 Nov, 2025 - 15:03:17:317] [34minfo[39m: [34mMachine created: Stencil Cleaning Machine[39m
+[21 Nov, 2025 - 15:03:24:324] [34minfo[39m: [34mMachine created: Solder Paste Printing[39m
+[21 Nov, 2025 - 15:03:31:331] [34minfo[39m: [34mMachine created: Solder Paste Inspection[39m
+[21 Nov, 2025 - 15:03:38:338] [34minfo[39m: [34mMachine created: Pick and Place[39m
+[21 Nov, 2025 - 15:03:43:343] [34minfo[39m: [34mMachine created: Reflow Oven[39m
+[21 Nov, 2025 - 15:03:49:349] [34minfo[39m: [34mMachine created: AOI[39m
+[21 Nov, 2025 - 15:03:55:355] [34minfo[39m: [34mMachine created: PCB Unloader[39m
+[21 Nov, 2025 - 15:04:01:41] [34minfo[39m: [34mMachine created: ESD[39m
+[21 Nov, 2025 - 15:04:04:44] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:04:14:414] [34minfo[39m: [34mMachine created: Router[39m
+[21 Nov, 2025 - 15:04:20:420] [34minfo[39m: [34mMachine created: ICT[39m
+[21 Nov, 2025 - 15:04:26:426] [34minfo[39m: [34mMachine created: Packaging[39m
+[21 Nov, 2025 - 15:04:32:432] [34minfo[39m: [34mMachine created: ESD[39m
+[21 Nov, 2025 - 15:04:43:443] [34minfo[39m: [34mMachine created: Conformal Coating[39m
+[21 Nov, 2025 - 15:04:49:449] [34minfo[39m: [34mMachine created: Coating Inspection[39m
+[21 Nov, 2025 - 15:04:55:455] [34minfo[39m: [34mMachine created: Glow Test[39m
+[21 Nov, 2025 - 15:05:01:51] [34minfo[39m: [34mMachine created: ESD[39m
+[21 Nov, 2025 - 15:05:09:59] [34minfo[39m: [34mMachine created: Packaging[39m
+[21 Nov, 2025 - 15:05:41:541] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:05:45:545] [34minfo[39m: [34mMachine created: PCB Shield Pressing[39m
+[21 Nov, 2025 - 15:05:51:551] [34minfo[39m: [34mMachine created: Testing[39m
+[21 Nov, 2025 - 15:05:59:559] [34minfo[39m: [34mMachine created: ESD[39m
+[21 Nov, 2025 - 15:06:12:612] [34minfo[39m: [34mMachine created: Robotic Soldering[39m
+[21 Nov, 2025 - 15:06:20:620] [34minfo[39m: [34mMachine created: 2D AOI[39m
+[21 Nov, 2025 - 15:06:26:626] [34minfo[39m: [34mMachine created: Soldering Tuchup[39m
+[21 Nov, 2025 - 15:06:35:635] [34minfo[39m: [34mMachine created: ESD[39m
+[21 Nov, 2025 - 15:06:44:644] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:06:55:655] [34minfo[39m: [34mLine created: Moulding Machine[39m
+[21 Nov, 2025 - 15:07:04:74] [34minfo[39m: [34mMachine created: 2700T[39m
+[21 Nov, 2025 - 15:07:11:711] [34minfo[39m: [34mMachine created: 2700T 2[39m
+[21 Nov, 2025 - 15:07:19:719] [34minfo[39m: [34mMachine created: 1700T[39m
+[21 Nov, 2025 - 15:07:26:726] [34minfo[39m: [34mMachine created: 500T 1[39m
+[21 Nov, 2025 - 15:07:32:732] [34minfo[39m: [34mMachine created: 500T 2[39m
+[21 Nov, 2025 - 15:07:37:737] [34minfo[39m: [34mMachine created: 500T 3[39m
+[21 Nov, 2025 - 15:07:43:743] [34minfo[39m: [34mMachine created: 650 T[39m
+[21 Nov, 2025 - 15:07:49:749] [34minfo[39m: [34mMachine created: 900 T[39m
+[21 Nov, 2025 - 15:07:54:754] [34minfo[39m: [34mMachine created: 900 T 2[39m
+[21 Nov, 2025 - 15:08:12:812] [34minfo[39m: [34mMachine created: 2000 T[39m
+[21 Nov, 2025 - 15:08:27:827] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:08:34:834] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:08:41:841] [34minfo[39m: [34mLine created: HCBC machine[39m
+[21 Nov, 2025 - 15:08:53:853] [34minfo[39m: [34mMachine created: Razuffi 1[39m
+[21 Nov, 2025 - 15:08:59:859] [34minfo[39m: [34mMachine created: Razuffi 2[39m
+[21 Nov, 2025 - 15:09:06:96] [34minfo[39m: [34mMachine created: Hard Coat[39m
+[21 Nov, 2025 - 15:09:16:916] [34minfo[39m: [34mMachine created: Antifog[39m
+[21 Nov, 2025 - 15:09:38:938] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:15:46:1546] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:15:47:1547] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:15:47:1547] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:36:40:3640] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:36:45:3645] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:36:53:3653] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:39:59:3959] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 15:40:01:401] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 15:40:03:403] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:40:06:406] [34minfo[39m: [34mTarget audit reminder email sent to auditor123@gmail.com[39m
+[21 Nov, 2025 - 15:40:24:4024] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 15:45:34:4534] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 15:45:49:4549] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:45:49:4549] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:46:10:4610] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:46:23:4623] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:49:57:4957] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:50:22:5022] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:50:39:5039] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:55:12:5512] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 15:55:34:5534] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:01:26:126] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:01:41:141] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:02:05:25] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:05:23:523] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:05:23:523] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:10:42:1042] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:10:51:1051] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:14:05:145] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:14:25:1425] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 16:14:51:1451] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 16:15:40:1540] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 16:37:54:3754] [33mwarn[39m: [33mMongoDB disconnected[39m
+[21 Nov, 2025 - 16:42:34:4234] [33mwarn[39m: [33mMongoDB disconnected[39m
+[21 Nov, 2025 - 16:42:40:4240] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 16:43:18:4318] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[21 Nov, 2025 - 16:43:27:4327] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 16:43:37:4337] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:47:09:479] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:49:26:4926] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:52:30:5230] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 16:54:41:5441] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:01:36:136] [34minfo[39m: [34mCreated 21 questions by user 691fb65012bbe9b91ecdb23f[39m
+[21 Nov, 2025 - 17:02:32:232] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 17:02:48:248] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:02:48:248] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:02:49:249] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:04:34:434] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:04:34:434] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:04:34:434] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:05:25:525] [34minfo[39m: [34mQuestion deleted: 69201f7d12bbe9b91ecdb41c by user 691fb65012bbe9b91ecdb23f[39m
+[21 Nov, 2025 - 17:05:31:531] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:06:06:66] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:06:06:66] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:06:06:66] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:06:28:628] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:06:34:634] [34minfo[39m: [34mEmployee deleted: Jatin (AUDITOR123) by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:06:35:635] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:06:35:635] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:06:38:638] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:08:37:837] [34minfo[39m: [34mNew employee registered: Rahul Patil (MMM0165)[39m
+[21 Nov, 2025 - 17:08:38:838] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:09:35:935] [34minfo[39m: [34mTarget audit updated for Rahul Patil (MMM0165) by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:09:45:945] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:09:46:946] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:11:51:1151] [34minfo[39m: [34mTarget audit updated for Rahul Patil (MMM0165) by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:11:55:1155] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:51:15:5115] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 17:51:16:5116] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 17:51:21:5121] [34minfo[39m: [34mTarget audit reminder email sent to rahul.patil@marelli.motherson.com[39m
+[21 Nov, 2025 - 17:53:25:5325] [34minfo[39m: [34mAudit created by 69204f3cafa5727149a78a36[39m
+[21 Nov, 2025 - 17:53:30:5330] [34minfo[39m: [34mAudit 692059bde6a0f5a1298d43cc shared via email to jatinnagar563@gmail.com (cc: mirzashahhussain63@gmail.com) by 69204f3cafa5727149a78a36[39m
+[21 Nov, 2025 - 17:53:55:5355] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 17:54:30:5430] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:54:31:5431] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 17:54:37:5437] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 18:04:54:454] [34minfo[39m: [34mAudit created by 69204f3cafa5727149a78a36[39m
+[21 Nov, 2025 - 18:04:59:459] [34minfo[39m: [34mAudit 69205c6ee6a0f5a1298d454c shared via email to jatinnagar563@gmail.com (cc: mirzashahhussain63@gmail.com) by 69204f3cafa5727149a78a36[39m
+[21 Nov, 2025 - 18:10:23:1023] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 18:15:24:1524] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 18:15:24:1524] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:31:27:3127] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:31:27:3127] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:31:36:3136] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:32:29:3229] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:32:37:3237] [34minfo[39m: [34mQuestion deleted: 69201f7d12bbe9b91ecdb41e by user 691fb65012bbe9b91ecdb23f[39m
+[21 Nov, 2025 - 22:32:48:3248] [34minfo[39m: [34mQuestion deleted: 69201f7d12bbe9b91ecdb420 by user 691fb65012bbe9b91ecdb23f[39m
+[21 Nov, 2025 - 22:32:53:3253] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:36:43:3643] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 22:42:10:4210] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 22:42:11:4211] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 22:42:14:4214] [34minfo[39m: [34mTarget audit reminder email sent to rahul.patil@marelli.motherson.com[39m
+[21 Nov, 2025 - 22:43:25:4325] [34minfo[39m: [34mEmployee logged out[39m
+[21 Nov, 2025 - 22:43:42:4342] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:43:42:4342] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:43:51:4351] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:45:15:4515] [34minfo[39m: [34mNew employee registered: Jatin Kumar Nagar (JKN001)[39m
+[21 Nov, 2025 - 22:45:16:4516] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:45:38:4538] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:46:23:4623] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:46:33:4633] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:46:45:4645] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:47:16:4716] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:47:25:4725] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:48:22:4822] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:50:52:5052] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[21 Nov, 2025 - 22:50:53:5053] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[21 Nov, 2025 - 22:51:01:511] [34minfo[39m: [34mTarget audit reminder email sent to rahul.patil@marelli.motherson.com[39m
+[21 Nov, 2025 - 22:51:05:515] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com[39m
+[21 Nov, 2025 - 22:51:08:518] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:51:08:518] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:51:23:5123] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:52:33:5233] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 22:53:54:5354] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:08:38:838] [34minfo[39m: [34mAudit created by 69209e22f21472b73a18f3fb[39m
+[21 Nov, 2025 - 23:08:41:841] [34minfo[39m: [34mAudit 6920a39defef49dfeffac2da shared via email to jatinnagar563@gmail.com (cc: mirzashahhussain63@gmail.com) by 69209e22f21472b73a18f3fb[39m
+[21 Nov, 2025 - 23:11:21:1121] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:11:21:1121] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:11:39:1139] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:11:54:1154] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:13:16:1316] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:13:16:1316] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:14:32:1432] [34minfo[39m: [34mAudit created by 69209e22f21472b73a18f3fb[39m
+[21 Nov, 2025 - 23:14:36:1436] [34minfo[39m: [34mAudit 6920a500efef49dfeffac3d8 shared via email to todaymart1@gmail.com by 69209e22f21472b73a18f3fb[39m
+[21 Nov, 2025 - 23:16:34:1634] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:18:34:1834] [33mwarn[39m: [33mMongoDB disconnected[39m
+[21 Nov, 2025 - 23:33:45:3345] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:41:41:4141] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:44:40:4440] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:45:04:454] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:51:11:5111] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:51:25:5125] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:54:37:5437] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[21 Nov, 2025 - 23:55:19:5519] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:02:56:256] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[22 Nov, 2025 - 00:02:58:258] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[22 Nov, 2025 - 00:08:06:86] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:10:01:101] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com[39m
+[22 Nov, 2025 - 00:10:50:1050] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:12:00:120] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com[39m
+[22 Nov, 2025 - 00:15:42:1542] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[22 Nov, 2025 - 00:15:44:1544] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[22 Nov, 2025 - 00:16:17:1617] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:16:27:1627] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com[39m
+[22 Nov, 2025 - 00:17:23:1723] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:17:37:1737] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com[39m
+[22 Nov, 2025 - 00:19:07:197] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[22 Nov, 2025 - 00:19:09:199] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[22 Nov, 2025 - 00:19:24:1924] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:19:24:1924] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:19:26:1926] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:19:39:1939] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:20:22:2022] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com[39m
+[22 Nov, 2025 - 00:20:43:2043] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:21:24:2124] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com[39m
+[22 Nov, 2025 - 00:21:50:2150] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:21:50:2150] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:21:58:2158] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 00:49:58:4958] [34minfo[39m: [34mAudit created by 69209e22f21472b73a18f3fb[39m
+[22 Nov, 2025 - 00:50:03:503] [34minfo[39m: [34mAudit 6920bb5d6f69c7d9497112f6 shared via email to todaymart1@gmail.com by 69209e22f21472b73a18f3fb[39m
+[22 Nov, 2025 - 01:05:15:515] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 01:06:58:658] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 01:12:27:1227] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 01:12:27:1227] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 01:13:46:1346] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 01:13:46:1346] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 01:15:13:1513] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 01:16:15:1615] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 01:18:34:1834] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 01:19:36:1936] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 01:19:36:1936] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[22 Nov, 2025 - 01:28:03:283] [34minfo[39m: [34mEmployee logged out[39m

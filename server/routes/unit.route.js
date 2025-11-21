@@ -10,10 +10,10 @@ import { verifyJWT, authorizeRoles } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/", verifyJWT, authorizeRoles("admin"), createUnit);
-router.get("/", verifyJWT, getUnits);
-router.put("/:id", verifyJWT, authorizeRoles("admin"), updateUnit);
-router.post("/reorder", verifyJWT, authorizeRoles("admin"), reorderUnits);
-router.delete("/:id", verifyJWT, authorizeRoles("admin"), deleteUnit);
+router.post("/", verifyJWT, authorizeRoles("superadmin"), createUnit);
+router.get("/", verifyJWT, authorizeRoles("superadmin"), getUnits);
+router.put("/:id", verifyJWT, authorizeRoles("superadmin"), updateUnit);
+router.post("/reorder", verifyJWT, authorizeRoles("superadmin"), reorderUnits);
+router.delete("/:id", verifyJWT, authorizeRoles("superadmin"), deleteUnit);
 
 export default router;

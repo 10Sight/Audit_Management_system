@@ -71,12 +71,7 @@ export default function AdminLayout() {
     { to: "/admin/employees", label: "Auditors", icon: Users },
     { to: "/admin/audits", label: "Audits", icon: ClipboardCheck },
     { to: "/admin/questions", label: "Questions", icon: HelpCircle },
-    { to: "/admin/question-categories", label: "Question Categories", icon: Layers },
     { to: "/admin/departments", label: "Departments", icon: Building2 },
-    { to: "/admin/lines", label: "Lines", icon: Zap },
-    { to: "/admin/machines", label: "Machines", icon: Wrench },
-    { to: "/admin/processes", label: "Processes", icon: Cog },
-    { to: "/admin/units", label: "Units", icon: UsbIcon },
     { to: "/admin/email-settings", label: "Email Settings", icon: Settings },
     { to: "/admin/settings", label: "Profile", icon: CircleUserIcon },
   ];

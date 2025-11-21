@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { 
   useGetLinesQuery,
   useGetMachinesQuery,
-  useGetProcessesQuery,
   useGetUnitsQuery,
   useGetQuestionsQuery,
   useCreateAuditMutation,
@@ -16,6 +15,11 @@ import {
 } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import CameraCapture from "@/components/CameraCapture";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { uploadImageWithRetry, validateImageFile } from "@/utils/imageUpload";
 import simpleImageUpload, { simpleCompressImage } from "@/utils/simpleUpload";
 import api from "@/utils/axios";
@@ -27,24 +31,23 @@ export default function EmployeeFillInspectionPage() {
 
   const [lines, setLines] = useState([]);
   const [machines, setMachines] = useState([]);
-  const [processes, setProcesses] = useState([]);
   const [units, setUnits] = useState([]);
 
   const [line, setLine] = useState("");
   const [machine, setMachine] = useState("");
-  const [process, setProcess] = useState("");
   const [unit, setUnit] = useState("");
   const [lineLeader, setLineLeader] = useState("");   
   const [shift, setShift] = useState("");
   const [shiftIncharge, setShiftIncharge] = useState("");
   const [lineRating, setLineRating] = useState("");
   const [machineRating, setMachineRating] = useState("");
-  const [processRating, setProcessRating] = useState("");
   const [unitRating, setUnitRating] = useState("");
 
   const [questions, setQuestions] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [submittedAuditId, setSubmittedAuditId] = useState(null);
+  
+  const templateTitle = questions.length > 0 ? questions[0].templateTitle : "";
   
   // Photo capture states
   const [showCamera, setShowCamera] = useState(false);
@@ -69,9 +72,12 @@ export default function EmployeeFillInspectionPage() {
     return "Department";
   };
 
-  const { data: linesRes } = useGetLinesQuery();
-  const { data: machinesRes } = useGetMachinesQuery();
-  const { data: processesRes } = useGetProcessesQuery();
+  const departmentId = currentUser?.department?._id || currentUser?.department || "";
+  const { data: linesRes } = useGetLinesQuery(departmentId ? { department: departmentId } : {});
+  const { data: machinesRes } = useGetMachinesQuery({
+    ...(departmentId ? { department: departmentId } : {}),
+    ...(line ? { line } : {}),
+  });
   const { data: unitsRes } = useGetUnitsQuery();
   const [createAudit] = useCreateAuditMutation();
   const [uploadImage] = useUploadImageMutation();
@@ -80,21 +86,34 @@ export default function EmployeeFillInspectionPage() {
   useEffect(() => {
     setLines(linesRes?.data || []);
     setMachines(machinesRes?.data || []);
-    setProcesses(processesRes?.data || []);
-    setUnits(unitsRes?.data || []);
-    setLoading(false);
-  }, [linesRes, machinesRes, processesRes, unitsRes]);
+    const unitsData = unitsRes?.data || [];
+    setUnits(unitsData);
 
-  // Fetch questions when line/machine/process changes via RTK Query
+    // Auto-select unit from current user (if available) so auditor doesn't need to choose manually
+    if (!unit && currentUser?.unit) {
+      const autoUnitId = currentUser.unit._id || currentUser.unit;
+      if (autoUnitId) {
+        setUnit(String(autoUnitId));
+      }
+    }
+
+    setLoading(false);
+  }, [linesRes, machinesRes, unitsRes, currentUser, unit]);
+
+  // When line changes, clear selected machine so the user re-selects from filtered list
+  useEffect(() => {
+    setMachine("");
+  }, [line]);
+
+  // Fetch questions when line/machine/unit changes via RTK Query (process not required for template lookup)
   const questionParams = {
     ...(line ? { lineId: line } : {}),
     ...(machine ? { machineId: machine } : {}),
-    ...(process ? { processId: process } : {}),
     ...(unit ? { unitId: unit } : {}),
     includeGlobal: 'true',
     ...(currentUser?.department ? { departmentId: currentUser.department._id || currentUser.department } : {}),
   };
-  const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery(questionParams, { skip: !(line && machine && process && unit) });
+  const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery(questionParams, { skip: !(line && machine && unit) });
   useEffect(() => {
     if (questionsLoading) return;
     const list = Array.isArray(questionsRes?.data) ? questionsRes.data : [];
@@ -104,7 +123,10 @@ export default function EmployeeFillInspectionPage() {
   const handleAnswerChange = (idx, value) => {
     const newQs = [...questions];
     newQs[idx].answer = value;
-    if (value !== "No") newQs[idx].remark = "";
+    // Clear remark when answer is positive or cleared; keep remark for Fail/NA
+    if (value === "Pass" || value === "Yes" || value === "") {
+      newQs[idx].remark = "";
+    }
     setQuestions(newQs);
   };
 
@@ -193,7 +215,7 @@ export default function EmployeeFillInspectionPage() {
     e.preventDefault();
     if (submitting) return; // prevent double submit
 
-    if (!line || !machine || !process || !unit || !lineLeader || !shift || !shiftIncharge || !lineRating || !machineRating || !processRating || !unitRating) {
+    if (!line || !machine || !unit || !lineLeader || !shift || !shiftIncharge || !lineRating || !machineRating || !unitRating) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -202,7 +224,6 @@ export default function EmployeeFillInspectionPage() {
     const ratingFields = [
       { label: 'Line rating', value: lineRating },
       { label: 'Machine rating', value: machineRating },
-      { label: 'Process rating', value: processRating },
       { label: 'Unit rating', value: unitRating },
     ];
 
@@ -214,16 +235,12 @@ export default function EmployeeFillInspectionPage() {
       }
     }
 
-    // Validate each 'No' answer has remark and at least one photo
+    // Validate each Fail / Not Applicable answer has a remark (photo optional)
     const missing = [];
     questions.forEach((q) => {
-      if (q.answer === 'No') {
-        const photos = questionPhotos[q._id] || [];
+      if (q.answer === 'No' || q.answer === 'Fail' || q.answer === 'NA') {
         if (!q.remark || q.remark.trim() === '') {
           missing.push(`Remark required for: ${q.questionText}`);
-        }
-        if (photos.length === 0) {
-          missing.push(`At least one photo required for: ${q.questionText}`);
         }
       }
     });
@@ -238,7 +255,6 @@ export default function EmployeeFillInspectionPage() {
         date: new Date(),
         line,
         machine,
-        process,
         unit,
         department: currentUser?.department?._id || currentUser?.department || undefined,
         lineLeader,
@@ -246,26 +262,38 @@ export default function EmployeeFillInspectionPage() {
         shiftIncharge,
         lineRating: Number(lineRating),
         machineRating: Number(machineRating),
-        processRating: Number(processRating),
         unitRating: Number(unitRating),
         auditor: currentUser?._id,
         answers: questions.map((q) => ({
           question: q._id,
           answer: q.answer,
-          remark: q.answer === "No" ? q.remark : "",
-          photos: q.answer === "No" && questionPhotos[q._id]
-            ? questionPhotos[q._id].map(photo => ({
-                url: photo.url,
-                publicId: photo.publicId,
-                uploadedAt: photo.uploadedAt,
-                originalName: photo.originalName,
-              }))
-            : []
+          remark: (q.answer === "No" || q.answer === "Fail" || q.answer === "NA") ? q.remark : "",
+          photos: (questionPhotos[q._id] || []).map(photo => ({
+            url: photo.url,
+            publicId: photo.publicId,
+            uploadedAt: photo.uploadedAt,
+            originalName: photo.originalName,
+          })),
         })),
       };
       const res = await createAudit(payload).unwrap();
-      setSubmittedAuditId(res?.data?._id);
+      const newAuditId = res?.data?._id;
+      setSubmittedAuditId(newAuditId);
       setShowModal(true);
+
+      // Automatically share the audit report via email to configured recipients (no extra confirmation)
+      if (newAuditId) {
+        try {
+          await api.post(`/api/audits/${newAuditId}/share`);
+        } catch (shareErr) {
+          console.error('Auto-share audit email error:', shareErr);
+          const shareMsg =
+            shareErr?.response?.data?.message ||
+            shareErr?.message ||
+            'Failed to send audit email';
+          toast.error(shareMsg);
+        }
+      }
     } catch (err) {
       const msg = err?.data?.message || err?.response?.data?.message || err?.message || 'Failed to submit inspection';
       toast.error(msg);
@@ -296,101 +324,165 @@ export default function EmployeeFillInspectionPage() {
   if (loading) return <Loader />;
 
   return (
-    <div className="p-4 sm:p-6 max-w-4xl mx-auto text-gray-800">
+    <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
       <ToastContainer />
-      <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center sm:text-left">
-        Part and Quality Audit Performance
-      </h1>
+      <div className="space-y-1">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          Part and Quality Audit Performance
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Fill out inspection details and answer all questions for your department.
+        </p>
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Selection Fields */}
-        <div className="bg-gray-100 p-4 sm:p-6 rounded-lg grid grid-cols-1 sm:grid-cols-2 gap-4 shadow">
-          <div>
-            <label className="block mb-1 font-semibold">Date</label>
-            <input
-              type="date"
-              value={new Date().toISOString().split("T")[0]}
-              disabled
-              className="p-2 bg-gray-200 rounded-md w-full"
-            />
-          </div>
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-base sm:text-lg">Audit context</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">
+              Confirm the line, machine, shift and leaders before answering questions.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Auditor - auto fetched from logged-in user */}
+            <div className="sm:col-span-2 space-y-1.5">
+              <Label className="text-xs sm:text-sm font-medium">Auditor</Label>
+              <Input
+                type="text"
+                value={currentUser?.fullName || "Unknown"}
+                disabled
+              />
+            </div>
 
-          <div>
-            <label className="block mb-1 font-semibold">Line</label>
-            <select value={line} onChange={(e) => setLine(e.target.value)} className="p-2 bg-white border rounded-md w-full" required>
-              <option value="">Select Line</option>
-              {lines.map((l) => (<option key={l._id} value={l._id}>{l.name}</option>))}
-            </select>
-          </div>
+            {/* Unit - auto fetched from auditor's profile (read-only) */}
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm font-medium">Unit</Label>
+              <Input
+                type="text"
+                value={
+                  currentUser?.unit?.name ||
+                  (typeof currentUser?.unit === "string"
+                    ? (units.find((u) => u._id === currentUser.unit)?.name || "Unit")
+                    : units.find((u) => u._id === unit)?.name || "Unit")
+                }
+                disabled
+              />
+            </div>
 
-          <div>
-            <label className="block mb-1 font-semibold">Machine</label>
-            <select value={machine} onChange={(e) => setMachine(e.target.value)} className="p-2 bg-white border rounded-md w-full" required>
-              <option value="">Select Machine</option>
-              {machines.map((m) => (<option key={m._id} value={m._id}>{m.name}</option>))}
-            </select>
-          </div>
+            {/* Department - auto fetched from auditor profile */}
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm font-medium">Department</Label>
+              <Input
+                type="text"
+                value={getDepartmentName(currentUser?.department)}
+                disabled
+              />
+            </div>
 
-          <div>
-            <label className="block mb-1 font-semibold">Process</label>
-            <select value={process} onChange={(e) => setProcess(e.target.value)} className="p-2 bg-white border rounded-md w-full" required>
-              <option value="">Select Process</option>
-              {processes.map((p) => (<option key={p._id} value={p._id}>{p.name}</option>))}
-            </select>
-          </div>
+            {/* Line - filtered by department */}
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm font-medium">Line</Label>
+              <Select value={line} onValueChange={(value) => setLine(value)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select Line" />
+                </SelectTrigger>
+                <SelectContent>
+                  {lines.map((l) => (
+                    <SelectItem key={l._id} value={l._id}>
+                      {l.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {/* Keep native required validation */}
+              <input type="hidden" required value={line} />
+            </div>
 
-          <div>
-            <label className="block mb-1 font-semibold">Unit</label>
-            <select value={unit} onChange={(e) => setUnit(e.target.value)} className="p-2 bg-white border rounded-md w-full" required>
-              <option value="">Select Unit</option>
-              {units.map((u) => (<option key={u._id} value={u._id}>{u.name}</option>))}
-            </select>
-          </div>
+            {/* Machine - filtered by selected line (and department) */}
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm font-medium">Machine</Label>
+              <Select
+                value={machine}
+                onValueChange={(value) => setMachine(value)}
+                disabled={!line}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder={line ? "Select Machine" : "Select line first"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {machines.map((m) => (
+                    <SelectItem key={m._id} value={m._id}>
+                      {m.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <input type="hidden" required value={machine} />
+            </div>
 
-          <div>
-            <label className="block mb-1 font-semibold">Line Leader</label>
-            <input type="text" placeholder="Line Leader" value={lineLeader} onChange={(e) => setLineLeader(e.target.value)} className="p-2 bg-white border rounded-md w-full" required />
-          </div>
+            {/* Shift */}
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm font-medium">Shift</Label>
+              <Select value={shift} onValueChange={(value) => setShift(value)}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select Shift" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Shift 1">Shift 1</SelectItem>
+                  <SelectItem value="Shift 2">Shift 2</SelectItem>
+                  <SelectItem value="Shift 3">Shift 3</SelectItem>
+                </SelectContent>
+              </Select>
+              <input type="hidden" required value={shift} />
+            </div>
 
-          <div>
-            <label className="block mb-1 font-semibold">Shift</label>
-            <select
-              value={shift}
-              onChange={(e) => setShift(e.target.value)}
-              className="p-2 bg-white border rounded-md w-full"
-              required
-            >
-              <option value="">Select Shift</option>
-              <option value="Shift 1">Shift 1</option>
-              <option value="Shift 2">Shift 2</option>
-              <option value="Shift 3">Shift 3</option>
-            </select>
-          </div>
+            {/* Shift Incharge */}
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm font-medium">Shift Incharge</Label>
+              <Input
+                type="text"
+                placeholder="Shift Incharge"
+                value={shiftIncharge}
+                onChange={(e) => setShiftIncharge(e.target.value)}
+                required
+              />
+            </div>
 
-          <div>
-            <label className="block mb-1 font-semibold">Shift Incharge</label>
-            <input type="text" placeholder="Shift Incharge" value={shiftIncharge} onChange={(e) => setShiftIncharge(e.target.value)} className="p-2 bg-white border rounded-md w-full" required />
-          </div>
+            {/* Line Leader */}
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm font-medium">Line Leader</Label>
+              <Input
+                type="text"
+                placeholder="Line Leader"
+                value={lineLeader}
+                onChange={(e) => setLineLeader(e.target.value)}
+                required
+              />
+            </div>
 
-          <div>
-            <label className="block mb-1 font-semibold">Department</label>
-            <input
-              type="text"
-              value={getDepartmentName(currentUser?.department)}
-              disabled
-              className="p-2 bg-gray-200 rounded-md w-full"
-            />
-          </div>
-
-          <div className="sm:col-span-2">
-            <label className="block mb-1 font-semibold">Auditor</label>
-            <input type="text" value={currentUser?.fullName || "Unknown"} disabled className="p-2 bg-gray-200 rounded-md w-full" />
-          </div>
-        </div>
+            {/* Date - always current date, cannot be changed */}
+            <div className="space-y-1.5">
+              <Label className="text-xs sm:text-sm font-medium">Date</Label>
+              <Input
+                type="date"
+                value={new Date().toISOString().split("T")[0]}
+                disabled
+              />
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Questions Section */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-semibold mb-2">Inspection Questions</h2>
+        <section className="space-y-4">
+          <div className="space-y-1">
+            <h2 className="text-xl font-semibold">
+              {templateTitle || "Inspection Questions"}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              Questions are automatically filtered for your department and selected line/machine.
+            </p>
+          </div>
           {questions.length > 0 ? (
             questions.map((q, idx) => {
               const type = q.questionType || "yes_no";
@@ -398,130 +490,152 @@ export default function EmployeeFillInspectionPage() {
               const isChoiceType = type === "mcq" || type === "dropdown";
 
               return (
-                <div key={q._id} className="bg-gray-100 p-4 rounded-lg border shadow space-y-3">
-                  <p className="font-medium break-words">{q.questionText}</p>
-
-                  {type === "image" && q.imageUrl && (
-                    <div className="mb-2">
-                      <img
-                        src={q.imageUrl}
-                        alt="Question context"
-                        className="max-h-48 w-full rounded-md object-contain border"
-                      />
-                    </div>
-                  )}
-
-                  {isYesNoType && (
-                    <select
-                      value={q.answer}
-                      onChange={(e) => handleAnswerChange(idx, e.target.value)}
-                      className="p-2 bg-white border rounded-md w-full"
-                      required
-                    >
-                      <option value="">Select</option>
-                      <option value="Yes">Yes</option>
-                      <option value="No">No</option>
-                    </select>
-                  )}
-
-                  {isChoiceType && (
-                    <select
-                      value={q.answer}
-                      onChange={(e) => handleAnswerChange(idx, e.target.value)}
-                      className="p-2 bg-white border rounded-md w-full"
-                      required
-                    >
-                      <option value="">Select</option>
-                      {(q.options || []).map((opt, optIdx) => (
-                        <option key={optIdx} value={opt}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-
-                  {type === "short_text" && (
-                    <input
-                      type="text"
-                      placeholder="Enter answer"
-                      value={q.answer}
-                      onChange={(e) => handleAnswerChange(idx, e.target.value)}
-                      className="p-2 rounded-md border bg-white w-full"
-                      required
-                    />
-                  )}
-
-                  {isYesNoType && q.answer === "No" && (
-                    <div className="space-y-3">
-                      <input
-                        type="text"
-                        placeholder="Remark"
-                        value={q.remark}
-                        onChange={(e) => handleRemarkChange(idx, e.target.value)}
-                        className="p-2 rounded-md border bg-white w-full"
-                        required
-                      />
-
-                      {/* Photo Upload Section */}
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <label className="text-sm font-medium text-gray-700">
-                            Photos (Required for "No" answers)
-                          </label>
-                          <button
-                            type="button"
-                            onClick={() => handleCameraOpen(q)}
-                            disabled={uploading}
-                            className="flex items-center gap-1 px-3 py-1 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:opacity-50 transition"
-                          >
-                            <FiCamera className="w-4 h-4" />
-                            {uploading ? "Uploading..." : "Add Photo"}
-                          </button>
-                        </div>
-
-                        {/* Photo Previews */}
-                        {questionPhotos[q._id]?.length > 0 && (
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
-                            {questionPhotos[q._id].map((photo, photoIdx) => (
-                              <div key={photoIdx} className="relative group">
-                                <img
-                                  src={photo.url}
-                                  alt={`Photo ${photoIdx + 1}`}
-                                  className="w-full h-20 object-cover rounded-md border"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => handlePhotoRemove(q._id, photoIdx)}
-                                  className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
-                                >
-                                  <FiX />
-                                </button>
-                              </div>
-                            ))}
-                          </div>
+                <Card key={q._id} className="border border-border/70 shadow-sm">
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="space-y-1 flex-1">
+                        <p className="font-medium break-words text-sm sm:text-base">
+                          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary/5 text-xs font-semibold text-primary mr-2">
+                            {idx + 1}
+                          </span>
+                          {q.questionText}
+                        </p>
+                        {q.department?.name && (
+                          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                            Department: <span className="font-medium">{q.department.name}</span>
+                          </p>
                         )}
                       </div>
                     </div>
-                  )}
-                </div>
+
+                    {type === "image" && q.imageUrl && (
+                      <div className="mb-2">
+                        <img
+                          src={q.imageUrl}
+                          alt="Question context"
+                          className="max-h-48 w-full rounded-md object-contain border"
+                        />
+                      </div>
+                    )}
+
+                    {isYesNoType && (
+                      <Select
+                        value={q.answer}
+                        onValueChange={(value) => handleAnswerChange(idx, value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Pass">Pass</SelectItem>
+                          <SelectItem value="Fail">Fail</SelectItem>
+                          <SelectItem value="NA">Not Applicable</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      
+                    )}
+
+                    {isChoiceType && (
+                      <Select
+                        value={q.answer}
+                        onValueChange={(value) => handleAnswerChange(idx, value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {(q.options || []).map((opt, optIdx) => (
+                            <SelectItem key={optIdx} value={opt}>
+                              {opt}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
+
+                    {type === "short_text" && (
+                      <Input
+                        type="text"
+                        placeholder="Enter answer"
+                        value={q.answer}
+                        onChange={(e) => handleAnswerChange(idx, e.target.value)}
+                        required
+                      />
+                    )}
+
+                    {isYesNoType && (q.answer === "No" || q.answer === "Fail" || q.answer === "NA") && (
+                      <div className="space-y-3">
+                        <Input
+                          type="text"
+                          placeholder="Remark"
+                          value={q.remark}
+                          onChange={(e) => handleRemarkChange(idx, e.target.value)}
+                          required
+                        />
+
+                        {/* Photo Upload Section */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <Label className="text-sm font-medium text-muted-foreground">
+                              Photos (optional)
+                            </Label>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleCameraOpen(q)}
+                              disabled={uploading}
+                              className="gap-1"
+                            >
+                              <FiCamera className="w-4 h-4" />
+                              {uploading ? "Uploading..." : "Add Photo"}
+                            </Button>
+                          </div>
+
+                          {/* Photo Previews */}
+                          {questionPhotos[q._id]?.length > 0 && (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
+                              {questionPhotos[q._id].map((photo, photoIdx) => (
+                                <div key={photoIdx} className="relative group">
+                                  <img
+                                    src={photo.url}
+                                    alt={`Photo ${photoIdx + 1}`}
+                                    className="w-full h-20 object-cover rounded-md border"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => handlePhotoRemove(q._id, photoIdx)}
+                                    className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                                  >
+                                    <FiX />
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
               );
             })
           ) : (
             <p className="text-red-500 text-center sm:text-left">No questions available for the selected filters.</p>
           )}
-        </div>
+        </section>
 
         {/* Ratings Section */}
-        <div className="bg-gray-100 p-4 sm:p-6 rounded-lg grid grid-cols-1 sm:grid-cols-2 gap-4 shadow">
-          <div className="sm:col-span-2">
-            <h2 className="text-xl font-semibold mb-2">Overall Ratings (1-10)</h2>
-            <p className="text-sm text-gray-600">
-              Please provide overall ratings for the selected line, machine, process, and unit after answering the questions above.
-            </p>
-          </div>
-
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base sm:text-lg">Overall Ratings (1-10)</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">
+              Provide overall ratings for the selected line, machine and unit after answering the questions above.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block mb-1 font-semibold">Line Rating (1-10)</label>
+            <Label className="block mb-1 font-semibold">Line Rating (1-10)</Label>
             <div className="flex flex-wrap gap-1 mb-2">
               {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
                 const selected = Number(lineRating) === score;
@@ -551,13 +665,13 @@ export default function EmployeeFillInspectionPage() {
                 );
               })}
             </div>
-            <input
+            <Input
               type="number"
               min={1}
               max={10}
               value={lineRating}
               onChange={(e) => setLineRating(e.target.value)}
-              className="p-2 bg-white border rounded-md w-full text-sm"
+              className="text-sm"
               required
             />
             <p className="text-xs text-gray-500 mt-1">{describeRating(lineRating)}</p>
@@ -594,60 +708,18 @@ export default function EmployeeFillInspectionPage() {
                 );
               })}
             </div>
-            <input
+            <Input
               type="number"
               min={1}
               max={10}
               value={machineRating}
               onChange={(e) => setMachineRating(e.target.value)}
-              className="p-2 bg-white border rounded-md w-full text-sm"
+              className="text-sm"
               required
             />
             <p className="text-xs text-gray-500 mt-1">{describeRating(machineRating)}</p>
           </div>
 
-          <div>
-            <label className="block mb-1 font-semibold">Process Rating (1-10)</label>
-            <div className="flex flex-wrap gap-1 mb-2">
-              {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
-                const selected = Number(processRating) === score;
-                let colorClass = "bg-white text-gray-700 border-gray-300 hover:bg-blue-50";
-                if (score <= 3) {
-                  colorClass = selected
-                    ? "bg-red-600 text-white border-red-600"
-                    : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
-                } else if (score <= 7) {
-                  colorClass = selected
-                    ? "bg-yellow-500 text-white border-yellow-500"
-                    : "bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100";
-                } else {
-                  colorClass = selected
-                    ? "bg-green-600 text-white border-green-600"
-                    : "bg-green-50 text-green-800 border-green-200 hover:bg-green-100";
-                }
-                return (
-                  <button
-                    key={score}
-                    type="button"
-                    onClick={() => setProcessRating(String(score))}
-                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${colorClass}`}
-                  >
-                    {score}
-                  </button>
-                );
-              })}
-            </div>
-            <input
-              type="number"
-              min={1}
-              max={10}
-              value={processRating}
-              onChange={(e) => setProcessRating(e.target.value)}
-              className="p-2 bg-white border rounded-md w-full text-sm"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">{describeRating(processRating)}</p>
-          </div>
 
           <div>
             <label className="block mb-1 font-semibold">Unit Rating (1-10)</label>
@@ -680,27 +752,25 @@ export default function EmployeeFillInspectionPage() {
                 );
               })}
             </div>
-            <input
+            <Input
               type="number"
               min={1}
               max={10}
               value={unitRating}
               onChange={(e) => setUnitRating(e.target.value)}
-              className="p-2 bg-white border rounded-md w-full text-sm"
+              className="text-sm"
               required
             />
             <p className="text-xs text-gray-500 mt-1">{describeRating(unitRating)}</p>
           </div>
-        </div>
+          </CardContent>
 
-        <button
+        </Card>
+
+        <Button
           type="submit"
           disabled={submitting || uploading}
-          className={`w-full sm:w-auto px-6 py-2 rounded-md transition flex items-center justify-center gap-2 ${
-            submitting || uploading
-              ? 'bg-blue-400 cursor-not-allowed opacity-80'
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
-          }`}
+          className="w-full sm:w-auto px-6 flex items-center justify-center gap-2"
         >
           {submitting ? (
             <>
@@ -710,7 +780,7 @@ export default function EmployeeFillInspectionPage() {
           ) : (
             'Submit Audit'
           )}
-        </button>
+        </Button>
       </form>
 
       {/* Modal */}

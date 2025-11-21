@@ -37,10 +37,10 @@ export const bootstrapSuperAdmin = asyncHandler(async (req, res) => {
   return res.status(201).json(new ApiResponse(201, { employee: user }, "Superadmin created"));
 });
 export const registerEmployee = asyncHandler(async (req, res) => {
-  const { fullName, emailId, department, employeeId, username, phoneNumber, password, role } = req.body;
+  const { fullName, emailId, department, employeeId, username, phoneNumber, password, role, unit } = req.body;
 
   // Normalize role coming from client; default to 'employee' if missing
-  const requestedRole = role || "employee";
+  const requestedRole = (role || "employee").toLowerCase();
   const creatorRole = req.user?.role;
 
   // Permissions:
@@ -50,9 +50,32 @@ export const registerEmployee = asyncHandler(async (req, res) => {
     throw new ApiError(403, "Only superadmin can create admin users");
   }
 
-  // Validate department exists
-  if (department) {
-    const departmentExists = await Department.findById(department);
+  // Normalize department: only keep it for employee users
+  const normalizedDepartment = requestedRole === "employee" && department ? department : undefined;
+
+  // Business rules for department & unit
+  if (requestedRole === "employee" && !normalizedDepartment) {
+    throw new ApiError(400, "Department is required for employee users");
+  }
+
+  let finalUnit = unit;
+
+  if (creatorRole === "admin") {
+    // Admins create auditors (employees) in their own unit; unit is not taken from payload
+    if (!req.user.unit) {
+      throw new ApiError(400, "Admin does not have an associated unit");
+    }
+    finalUnit = req.user.unit;
+  } else if (creatorRole === "superadmin") {
+    // Superadmin must specify a unit when creating admin users
+    if (requestedRole === "admin" && !unit) {
+      throw new ApiError(400, "Unit is required for admin users");
+    }
+  }
+
+  // Validate department exists (when provided)
+  if (normalizedDepartment) {
+    const departmentExists = await Department.findById(normalizedDepartment);
     if (!departmentExists) throw new ApiError(400, "Invalid department selected");
   }
 
@@ -81,21 +104,23 @@ export const registerEmployee = asyncHandler(async (req, res) => {
   const employee = await Employee.create({
     fullName,
     emailId,
-    department,
+    department: normalizedDepartment,
     employeeId,
     username: finalUsername,
     phoneNumber,
     password,
     role: requestedRole,
+    unit: finalUnit,
   });
 
   // Update department employee count
-  if (department) {
-    await Department.findByIdAndUpdate(department, { $inc: { employeeCount: 1 } });
+  if (normalizedDepartment) {
+    await Department.findByIdAndUpdate(normalizedDepartment, { $inc: { employeeCount: 1 } });
   }
 
-  // Populate department info for response
+  // Populate department & unit info for response
   await employee.populate('department', 'name description');
+  await employee.populate('unit', 'name description');
 
   logger.info(`New employee registered: ${employee.fullName} (${employee.employeeId})`);
   return res.status(201).json(new ApiResponse(201, { employee }, "Employee registered successfully"));
@@ -111,7 +136,8 @@ export const loginEmployee = asyncHandler(async (req, res) => {
     username: username.toLowerCase()
   })
   .select("+password")
-  .populate('department', 'name description');
+  .populate('department', 'name description')
+  .populate('unit', 'name description');
   
   // If not found by username, try by employeeId (for existing users)
   if (!employee) {
@@ -120,7 +146,8 @@ export const loginEmployee = asyncHandler(async (req, res) => {
       employeeId: username.toUpperCase()
     })
     .select("+password")
-    .populate('department', 'name description');
+    .populate('department', 'name description')
+    .populate('unit', 'name description');
   }
   
   console.log('Employee found:', employee ? 'Yes' : 'No');
@@ -176,6 +203,18 @@ export const getEmployees = asyncHandler(async (req, res) => {
   // Build query - only get employees with role 'employee'
   let query = { role: 'employee' };
 
+  // Restrict admins to their own unit's employees; allow optional unit filter otherwise
+  if (req.user.role === 'admin' && req.user.unit) {
+    query.unit = req.user.unit;
+  } else if (req.query.unit) {
+    query.unit = req.query.unit;
+  }
+
+  // Optional department filter so admins can see auditors per department
+  if (req.query.department) {
+    query.department = req.query.department;
+  }
+
   // Add search functionality
   if (search) {
     query.$or = [
@@ -192,6 +231,7 @@ export const getEmployees = asyncHandler(async (req, res) => {
     employees = await Employee.find(query)
       .select("-password")
       .populate('department', 'name description')
+      .populate('unit', 'name description')
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 })
@@ -220,8 +260,8 @@ export const getSingleEmployee = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   let employee = mongoose.Types.ObjectId.isValid(id)
-    ? await Employee.findById(id).select("-password").populate('department', 'name description')
-    : await Employee.findOne({ employeeId: id }).select("-password").populate('department', 'name description');
+    ? await Employee.findById(id).select("-password").populate('department', 'name description').populate('unit', 'name description')
+    : await Employee.findOne({ employeeId: id }).select("-password").populate('department', 'name description').populate('unit', 'name description');
 
   if (!employee) throw new ApiError(404, "Employee not found");
   return res.status(200).json(new ApiResponse(200, { employee }, "Employee fetched successfully"));
@@ -262,6 +302,55 @@ export const updateEmployee = asyncHandler(async (req, res) => {
   );
   return res.status(200).json(new ApiResponse(200, { employee }, "Employee updated successfully"));
 });
+export const updateEmployeeTargetAudit = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { total, startDate, endDate, reminderTime } = req.body || {};
+
+  if (!total || Number(total) <= 0) {
+    throw new ApiError(400, "Target total must be a positive number");
+  }
+
+  const employee = await Employee.findById(id);
+  if (!employee) throw new ApiError(404, "Employee not found");
+  if (employee.role !== 'employee') {
+    throw new ApiError(400, "Target audits can only be set for employee (auditor) users");
+  }
+
+  const start = startDate ? new Date(startDate) : null;
+  const end = endDate ? new Date(endDate) : null;
+  if (!start || !end || Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    throw new ApiError(400, "Valid startDate and endDate are required");
+  }
+  if (start > end) {
+    throw new ApiError(400, "startDate cannot be after endDate");
+  }
+
+  let normalizedReminderTime;
+  if (reminderTime) {
+    const trimmed = String(reminderTime).trim();
+    const match = /^([01]\d|2[0-3]):[0-5]\d$/.test(trimmed);
+    if (!match) {
+      throw new ApiError(400, "reminderTime must be in HH:mm format (24-hour)");
+    }
+    normalizedReminderTime = trimmed;
+  }
+
+  employee.targetAudit = {
+    total: Number(total),
+    startDate: start,
+    endDate: end,
+    ...(normalizedReminderTime ? { reminderTime: normalizedReminderTime } : {}),
+  };
+
+  await employee.save();
+
+  logger.info(
+    `Target audit updated for ${employee.fullName} (${employee.employeeId}) by ${req.user.fullName} (${req.user.employeeId})`
+  );
+
+  return res.status(200).json(new ApiResponse(200, { employee }, "Target audit updated successfully"));
+});
+
 export const deleteEmployee = asyncHandler(async (req, res) => {
   if (!["admin", "superadmin"].includes(req.user.role)) {
     throw new ApiError(403, "Only admin/superadmin can delete users");
@@ -299,7 +388,10 @@ export const deleteEmployee = asyncHandler(async (req, res) => {
 
 export const getCurrentUser = asyncHandler(async (req, res) => {
   const userId = req.user.id;
-  const employee = await Employee.findById(userId).select("-password").populate('department', 'name description');
+  const employee = await Employee.findById(userId)
+    .select("-password")
+    .populate('department', 'name description')
+    .populate('unit', 'name description');
   if (!employee) throw new ApiError(404, "User not found");
   return res.status(200).json(new ApiResponse(200, { employee }, "User fetched successfully"));
 });
@@ -374,6 +466,7 @@ export const getAllUsers = asyncHandler(async (req, res) => {
     users = await Employee.find(query)
       .select("-password")
       .populate('department', 'name description')
+      .populate('unit', 'name description')
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 })
@@ -426,12 +519,14 @@ const buildEmployeeFromQrData = async (qrData) => {
 
   // Try treat QR data as username (case-insensitive)
   let employee = await Employee.findOne({ username: qrData.toLowerCase() })
-    .populate('department', 'name description');
+    .populate('department', 'name description')
+    .populate('unit', 'name description');
 
   if (!employee) {
     // Fallback: treat as employeeId (case-insensitive)
     employee = await Employee.findOne({ employeeId: qrData.toUpperCase() })
-      .populate('department', 'name description');
+      .populate('department', 'name description')
+      .populate('unit', 'name description');
   }
 
   return employee;
@@ -518,6 +613,7 @@ export const verifyQrLoginOtp = asyncHandler(async (req, res) => {
 
   const employee = await Employee.findById(employeeId)
     .populate('department', 'name description')
+    .populate('unit', 'name description')
     .select('+password');
 
   if (!employee) {

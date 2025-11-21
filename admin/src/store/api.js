@@ -59,9 +59,15 @@ export const api = createApi({
 
     // Employees
     getEmployees: builder.query({
-      query: ({ page = 1, limit = 20, search = '' } = {}) => ({
+      query: ({ page = 1, limit = 20, search = '', unit, department } = {}) => ({
         url: '/api/v1/auth/get-employee',
-        params: { page, limit, search },
+        params: {
+          page,
+          limit,
+          search,
+          ...(unit ? { unit } : {}),
+          ...(department ? { department } : {}),
+        },
       }),
       providesTags: (result) =>
         result?.data?.employees
@@ -81,7 +87,7 @@ export const api = createApi({
 
     // Lines
     getLines: builder.query({
-      query: () => '/api/lines',
+      query: (params = {}) => ({ url: '/api/lines', params }),
       providesTags: [{ type: 'Line', id: 'LIST' }],
     }),
     createLine: builder.mutation({
@@ -103,7 +109,7 @@ export const api = createApi({
 
     // Machines
     getMachines: builder.query({
-      query: () => '/api/machines',
+      query: (params = {}) => ({ url: '/api/machines', params }),
       providesTags: [{ type: 'Machine', id: 'LIST' }],
     }),
     createMachine: builder.mutation({
@@ -257,6 +263,10 @@ export const api = createApi({
       query: ({ id, ...body }) => ({ url: `/api/v1/auth/employee/${id}`, method: 'PUT', body }),
       invalidatesTags: (result, error, { id }) => [{ type: 'Employee', id }, { type: 'Employee', id: 'LIST' }],
     }),
+    updateEmployeeTargetAudit: builder.mutation({
+      query: ({ id, ...body }) => ({ url: `/api/v1/auth/employee/${id}/target-audit`, method: 'PUT', body }),
+      invalidatesTags: (result, error, { id }) => [{ type: 'Employee', id }],
+    }),
     deleteEmployeeById: builder.mutation({
       query: (id) => ({ url: `/api/v1/auth/employee/${id}`, method: 'DELETE' }),
       invalidatesTags: [
@@ -331,6 +341,7 @@ export const {
   useAssignEmployeeToDepartmentMutation,
   useGetEmployeeByIdQuery,
   useUpdateEmployeeByIdMutation,
+  useUpdateEmployeeTargetAuditMutation,
   useDeleteEmployeeByIdMutation,
   useRegisterEmployeeMutation,
   useUploadImageMutation,

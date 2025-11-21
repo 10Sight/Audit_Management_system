@@ -51,6 +51,14 @@ export const createQuestion = asyncHandler(async (req, res) => {
       createdBy: req.user.id,
     };
 
+    if (q.templateTitle && typeof q.templateTitle === "string") {
+      base.templateTitle = q.templateTitle.trim();
+    }
+
+    if (q.department) {
+      base.department = q.department;
+    }
+
     if (options.length && ["mcq", "dropdown"].includes(questionType)) {
       base.options = options;
       if (correctOptionIndex !== undefined) {
@@ -94,7 +102,7 @@ export const getQuestions = asyncHandler(async (req, res) => {
   // Fast path: explicitly request all questions (global + scoped), ignoring filters
   if (fetchAll) {
     const questions = await Question.find({})
-      .populate("lines machines processes units", "name")
+      .populate("lines machines processes units department", "name")
       .lean();
 
     return res.json({ status: "success", data: questions });
@@ -123,7 +131,7 @@ export const getQuestions = asyncHandler(async (req, res) => {
   const baseFilter = orConditions.length > 0 ? { $or: orConditions } : {};
 
   let questions = await Question.find(baseFilter)
-    .populate("lines machines processes units", "name")
+    .populate("lines machines processes units department", "name")
     .lean();
 
   // Department-based categories: include any questions that belong to a category assigned to this department
@@ -142,11 +150,32 @@ export const getQuestions = asyncHandler(async (req, res) => {
 
     if (departmentQuestionIds.length > 0) {
       const extraQuestions = await Question.find({ _id: { $in: departmentQuestionIds } })
-        .populate("lines machines processes units", "name")
+        .populate("lines machines processes units department", "name")
         .lean();
 
       const seen = new Set(questions.map((q) => q._id.toString()));
       for (const q of extraQuestions) {
+        if (!seen.has(q._id.toString())) {
+          seen.add(q._id.toString());
+          questions.push(q);
+        }
+      }
+    }
+
+    // Also include any questions scoped directly to this department (optionally with context)
+    const deptFilter = { department: departmentId };
+    if (lineId) deptFilter.lines = lineId;
+    if (machineId) deptFilter.machines = machineId;
+    if (processId) deptFilter.processes = processId;
+    if (unitId) deptFilter.units = unitId;
+
+    const deptQuestions = await Question.find(deptFilter)
+      .populate("lines machines processes units department", "name")
+      .lean();
+
+    if (deptQuestions.length) {
+      const seen = new Set(questions.map((q) => q._id.toString()));
+      for (const q of deptQuestions) {
         if (!seen.has(q._id.toString())) {
           seen.add(q._id.toString());
           questions.push(q);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,8 +9,11 @@ import { Settings, Mail, Info, CheckCircle2 } from "lucide-react";
 import api from "@/utils/axios";
 import { toast } from "sonner";
 import { useGetDepartmentsQuery } from "@/store/api";
+import { useAuth } from "../context/AuthContext";
 
 export default function AuditEmailSettingsPage() {
+  const { user: currentUser } = useAuth();
+
   const [toEmails, setToEmails] = useState("");
   const [ccEmails, setCcEmails] = useState("");
   const [lastUpdated, setLastUpdated] = useState(null);
@@ -19,6 +22,18 @@ export default function AuditEmailSettingsPage() {
 
   const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000, includeInactive: false });
   const departments = deptRes?.data?.departments || [];
+
+  const userUnitId = currentUser?.unit?._id || currentUser?.unit || "";
+
+  const filteredDepartments = useMemo(() => {
+    if (currentUser?.role === "admin" && userUnitId) {
+      return departments.filter((dept) => {
+        const deptUnitId = typeof dept.unit === "object" ? dept.unit?._id : dept.unit;
+        return deptUnitId && deptUnitId === userUnitId;
+      });
+    }
+    return departments;
+  }, [departments, currentUser, userUnitId]);
 
   const handleDeptEmailChange = (departmentId, field, value) => {
     setDepartmentEmailSettings((prev) => ({
@@ -230,13 +245,13 @@ export default function AuditEmailSettingsPage() {
                 </div>
 
                 <div className="max-h-64 space-y-3 overflow-y-auto pr-1">
-                  {departments.length === 0 && (
+                  {filteredDepartments.length === 0 && (
                     <p className="text-xs text-muted-foreground">
                       No departments found. Create departments first to enable per-department routing.
                     </p>
                   )}
 
-                  {departments.map((dept) => {
+                  {filteredDepartments.map((dept) => {
                     const config = departmentEmailSettings[dept._id] || { to: "", cc: "" };
 
                     return (

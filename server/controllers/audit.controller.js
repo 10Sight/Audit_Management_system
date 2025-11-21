@@ -19,7 +19,8 @@ const normalizeEmailList = (raw) => {
 export const createAudit = asyncHandler(async (req, res) => {
   const { date, line, machine, process, unit, lineLeader, shift, shiftIncharge, answers, lineRating, machineRating, processRating, unitRating, department } = req.body;
 
-  if (!date || !line || !machine || !process || !lineLeader || !shift || !shiftIncharge) {
+  // Process is no longer required; keep it optional for backward compatibility
+  if (!date || !line || !machine || !lineLeader || !shift || !shiftIncharge) {
     throw new ApiError(400, "All required fields must be filled");
   }
 
@@ -48,7 +49,11 @@ export const createAudit = asyncHandler(async (req, res) => {
 
   const normalizedLineRating = parseRating(lineRating, "Line rating");
   const normalizedMachineRating = parseRating(machineRating, "Machine rating");
-  const normalizedProcessRating = parseRating(processRating, "Process rating");
+  // Process rating is optional now; only validate when provided
+  const normalizedProcessRating =
+    processRating === undefined || processRating === null || processRating === ""
+      ? undefined
+      : parseRating(processRating, "Process rating");
   const normalizedUnitRating = parseRating(unitRating, "Unit rating");
 
   // Parse answers if it's a string (from form data)
@@ -79,22 +84,24 @@ export const createAudit = asyncHandler(async (req, res) => {
       });
     });
 
-    // Attach photos to corresponding answers
+    // Attach photos to corresponding answers and enforce remark rules
     parsedAnswers.forEach((ans) => {
-      if (ans.answer === "No") {
-        if (!ans.remark) {
-          throw new ApiError(400, `Remark required for question ${ans.question}`);
-        }
-        // Attach photos if available
-        if (photosByQuestion[ans.question]) {
-          ans.photos = photosByQuestion[ans.question];
-        }
+      const val = (ans.answer || "").toString();
+      const needsRemark = val === "No" || val === "Fail" || val === "NA";
+      if (needsRemark && !ans.remark) {
+        throw new ApiError(400, `Remark required for question ${ans.question}`);
+      }
+      // Attach photos if available (optional for all statuses)
+      if (photosByQuestion[ans.question]) {
+        ans.photos = photosByQuestion[ans.question];
       }
     });
   } else {
     // Validate answers without photos
     parsedAnswers.forEach((ans) => {
-      if (ans.answer === "No" && !ans.remark) {
+      const val = (ans.answer || "").toString();
+      const needsRemark = val === "No" || val === "Fail" || val === "NA";
+      if (needsRemark && !ans.remark) {
         throw new ApiError(400, `Remark required for question ${ans.question}`);
       }
     });
@@ -132,7 +139,7 @@ export const createAudit = asyncHandler(async (req, res) => {
 
   const lineName = populatedAudit?.line?.name || line;
   const machineName = populatedAudit?.machine?.name || machine;
-  const processName = populatedAudit?.process?.name || process;
+  const processName = populatedAudit?.process?.name || "";
   const unitName = populatedAudit?.unit?.name || unit;
   const auditorName = populatedAudit?.auditor?.fullName || req.user.fullName;
 
@@ -191,19 +198,59 @@ export const getAudits = asyncHandler(async (req, res) => {
     };
   }
 
-  // Optional filters: line, machine, process, unit, shift, department
+  // Optional filters: line, machine, unit, shift, department
   if (req.query.line) query.line = req.query.line;
   if (req.query.machine) query.machine = req.query.machine;
-  if (req.query.process) query.process = req.query.process;
   if (req.query.unit) query.unit = req.query.unit;
   if (req.query.shift) query.shift = req.query.shift;
   if (req.query.department) query.department = req.query.department;
 
-  // Result filter: allYes or allNo
-  if (req.query.result === 'allYes') {
-    query.answers = { $not: { $elemMatch: { answer: 'No' } } };
-  } else if (req.query.result === 'allNo') {
-    query.answers = { $not: { $elemMatch: { answer: 'Yes' } } };
+  // Result filter
+  // Supported values:
+  // - allYes, allNo     (legacy)
+  // - pass, fail, na    (computed based on Pass/Fail/NA style answers)
+  if (req.query.result) {
+    const resultFilter = req.query.result;
+    const conditions = [];
+
+    // Legacy filters: treat Pass as Yes and Fail as No; NA is neutral
+    if (resultFilter === 'allYes') {
+      conditions.push({
+        answers: { $not: { $elemMatch: { answer: { $in: ['No', 'Fail'] } } } },
+      });
+    } else if (resultFilter === 'allNo') {
+      conditions.push({
+        answers: { $not: { $elemMatch: { answer: { $in: ['Yes', 'Pass'] } } } },
+      });
+    }
+
+    // New filters based on overall audit result
+    // pass: at least one Yes/Pass, no No/Fail
+    // fail: at least one No/Fail
+    // na:   no Yes/Pass/No/Fail, but at least one NA/Not Applicable
+    if (resultFilter === 'pass') {
+      conditions.push(
+        { answers: { $elemMatch: { answer: { $in: ['Yes', 'Pass'] } } } },
+        { answers: { $not: { $elemMatch: { answer: { $in: ['No', 'Fail'] } } } } },
+      );
+    } else if (resultFilter === 'fail') {
+      conditions.push({
+        answers: { $elemMatch: { answer: { $in: ['No', 'Fail'] } } },
+      });
+    } else if (resultFilter === 'na') {
+      conditions.push(
+        { answers: { $not: { $elemMatch: { answer: { $in: ['Yes', 'Pass', 'No', 'Fail'] } } } } },
+        { answers: { $elemMatch: { answer: { $in: ['NA', 'Not Applicable'] } } } },
+      );
+    }
+
+    if (conditions.length) {
+      if (Array.isArray(query.$and)) {
+        query.$and.push(...conditions);
+      } else {
+        query.$and = conditions;
+      }
+    }
   }
 
   let audits;
@@ -217,7 +264,7 @@ export const getAudits = asyncHandler(async (req, res) => {
       .populate("department", "name")
       .populate("auditor", "fullName emailId")
       .populate("createdBy", "fullName employeeId")
-      .populate({ path: "answers.question", select: "questionText", options: { lean: true } })
+      .populate({ path: "answers.question", select: "questionText templateTitle questionType", options: { lean: true } })
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip(skip)
@@ -288,15 +335,48 @@ const buildAuditQueryForExport = (req) => {
 
   if (req.query.line) query.line = req.query.line;
   if (req.query.machine) query.machine = req.query.machine;
-  if (req.query.process) query.process = req.query.process;
   if (req.query.unit) query.unit = req.query.unit;
   if (req.query.shift) query.shift = req.query.shift;
   if (req.query.department) query.department = req.query.department;
 
-  if (req.query.result === 'allYes') {
-    query.answers = { $not: { $elemMatch: { answer: 'No' } } };
-  } else if (req.query.result === 'allNo') {
-    query.answers = { $not: { $elemMatch: { answer: 'Yes' } } };
+  // Result filter (export) – supports legacy and new values
+  if (req.query.result) {
+    const resultFilter = req.query.result;
+    const conditions = [];
+
+    if (resultFilter === 'allYes') {
+      conditions.push({
+        answers: { $not: { $elemMatch: { answer: { $in: ['No', 'Fail'] } } } },
+      });
+    } else if (resultFilter === 'allNo') {
+      conditions.push({
+        answers: { $not: { $elemMatch: { answer: { $in: ['Yes', 'Pass'] } } } },
+      });
+    }
+
+    if (resultFilter === 'pass') {
+      conditions.push(
+        { answers: { $elemMatch: { answer: { $in: ['Yes', 'Pass'] } } } },
+        { answers: { $not: { $elemMatch: { answer: { $in: ['No', 'Fail'] } } } } },
+      );
+    } else if (resultFilter === 'fail') {
+      conditions.push({
+        answers: { $elemMatch: { answer: { $in: ['No', 'Fail'] } } },
+      });
+    } else if (resultFilter === 'na') {
+      conditions.push(
+        { answers: { $not: { $elemMatch: { answer: { $in: ['Yes', 'Pass', 'No', 'Fail'] } } } } },
+        { answers: { $elemMatch: { answer: { $in: ['NA', 'Not Applicable'] } } } },
+      );
+    }
+
+    if (conditions.length) {
+      if (Array.isArray(query.$and)) {
+        query.$and.push(...conditions);
+      } else {
+        query.$and = conditions;
+      }
+    }
   }
 
   return query;
@@ -367,8 +447,8 @@ export const exportAudits = asyncHandler(async (req, res) => {
     'Machine Rating',
     'Process Rating',
     'Unit Rating',
-    'Yes Count',
-    'No Count',
+    'Pass Count',
+    'Fail Count',
     'Total Answers',
   ];
 
@@ -377,8 +457,8 @@ export const exportAudits = asyncHandler(async (req, res) => {
     const createdAtStr = audit.createdAt ? new Date(audit.createdAt).toISOString() : '';
 
     const answers = Array.isArray(audit.answers) ? audit.answers : [];
-    const yes = answers.filter((a) => a.answer === 'Yes').length;
-    const no = answers.filter((a) => a.answer === 'No').length;
+    const yes = answers.filter((a) => a.answer === 'Yes' || a.answer === 'Pass').length;
+    const no = answers.filter((a) => a.answer === 'No' || a.answer === 'Fail').length;
     const total = answers.length;
 
     return [
@@ -505,16 +585,16 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
   const auditorName = audit.auditor?.fullName || "N/A";
 
   const totalQuestions = Array.isArray(audit.answers) ? audit.answers.length : 0;
-  const yesNoAnswers = Array.isArray(audit.answers)
+    const yesNoAnswers = Array.isArray(audit.answers)
     ? audit.answers.filter((a) => {
         const qType = a.question?.questionType;
-        // Treat undefined type as legacy yes/no question
+        // Treat undefined type as legacy yes/no style question
         return !qType || qType === "yes_no" || qType === "image";
       })
     : [];
   const yesNoTotal = yesNoAnswers.length;
-  const noCount = yesNoAnswers.filter((a) => a.answer === "No").length;
-  const yesCount = yesNoAnswers.filter((a) => a.answer === "Yes").length;
+  const noCount = yesNoAnswers.filter((a) => a.answer === "No" || a.answer === "Fail").length;
+  const yesCount = yesNoAnswers.filter((a) => a.answer === "Yes" || a.answer === "Pass").length;
   const otherCount = Math.max(0, totalQuestions - yesNoTotal);
 
   const lineRatingValue = audit.lineRating ?? null;
@@ -611,10 +691,10 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
 
       <div style="margin-bottom:16px;">
         <p style="margin:0 0 4px 0;font-size:13px;"><strong>Total Questions:</strong> ${totalQuestions}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Yes/No Questions:</strong> ${yesNoTotal}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>YES (Yes/No only):</strong> ${yesCount}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>NO (Yes/No only):</strong> ${noCount}</p>
-        ${otherCount > 0 ? `<p style="margin:0 0 4px 0;font-size:13px;"><strong>Other Question Types:</strong> ${otherCount}</p>` : ""}
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Pass/Fail Questions:</strong> ${yesNoTotal}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Pass (Yes/Pass):</strong> ${yesCount}</p>
+        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Fail (No/Fail):</strong> ${noCount}</p>
+        ${otherCount > 0 ? `<p style=\"margin:0 0 4px 0;font-size:13px;\"><strong>Other Question Types:</strong> ${otherCount}</p>` : ""}
       </div>
 
       ${extraNote}
@@ -744,7 +824,9 @@ export const updateAudit = asyncHandler(async (req, res) => {
     }
 
     answers.forEach((ans) => {
-      if (ans.answer === "No" && !ans.remark) {
+      const val = (ans.answer || "").toString();
+      const needsRemark = val === "No" || val === "Fail" || val === "NA";
+      if (needsRemark && !ans.remark) {
         throw new ApiError(400, `Remark required for question ${ans.question}`);
       }
     });

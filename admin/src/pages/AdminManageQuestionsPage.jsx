@@ -12,6 +12,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   useGetLinesQuery,
@@ -21,6 +22,7 @@ import {
   useGetQuestionsQuery,
   useGetQuestionCategoriesQuery,
   useDeleteQuestionMutation,
+  useGetDepartmentsQuery,
 } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -28,7 +30,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import {
   AlertDialog,
@@ -54,18 +55,19 @@ import { toast } from "sonner";
 
 export default function AdminManageQuestionsPage() {
   const { user: currentUser } = useAuth();
+  const navigate = useNavigate();
 
   const [lines, setLines] = useState([]);
   const [machines, setMachines] = useState([]);
   const [processes, setProcesses] = useState([]);
   const [units, setUnits] = useState([]);
+  const [departments, setDepartments] = useState([]);
 
+  const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedLine, setSelectedLine] = useState("all");
   const [selectedMachine, setSelectedMachine] = useState("all");
   const [selectedProcess, setSelectedProcess] = useState("all");
   const [selectedUnit, setSelectedUnit] = useState("all");
-  const [includeGlobal, setIncludeGlobal] = useState(true);
-  const [fetchAll, setFetchAll] = useState(false);
 
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -78,6 +80,7 @@ export default function AdminManageQuestionsPage() {
   const { data: processesRes } = useGetProcessesQuery();
   const { data: unitsRes } = useGetUnitsQuery();
   const { data: categoriesRes } = useGetQuestionCategoriesQuery();
+  const { data: departmentsRes } = useGetDepartmentsQuery({ page: 1, limit: 1000, includeInactive: false });
   const [deleteQuestion] = useDeleteQuestionMutation();
 
   useEffect(() => {
@@ -85,19 +88,17 @@ export default function AdminManageQuestionsPage() {
     setMachines(machinesRes?.data || []);
     setProcesses(processesRes?.data || []);
     setUnits(unitsRes?.data || []);
-  }, [linesRes, machinesRes, processesRes, unitsRes]);
+    setDepartments(departmentsRes?.data?.departments || []);
+  }, [linesRes, machinesRes, processesRes, unitsRes, departmentsRes]);
 
   // Fetch questions based on filters via RTK Query
   const queryParams = {
-    ...(fetchAll
-      ? {}
-      : {
-          ...(selectedLine && selectedLine !== "all" ? { line: selectedLine } : {}),
-          ...(selectedMachine && selectedMachine !== "all" ? { machine: selectedMachine } : {}),
-          ...(selectedProcess && selectedProcess !== "all" ? { process: selectedProcess } : {}),
-          ...(selectedUnit && selectedUnit !== "all" ? { unit: selectedUnit } : {}),
-        }),
-    includeGlobal: includeGlobal ? "true" : "false",
+    ...(selectedDepartment && selectedDepartment !== "all"
+      ? { departmentId: selectedDepartment }
+      : {}),
+    ...(selectedLine && selectedLine !== "all" ? { line: selectedLine } : {}),
+    ...(selectedMachine && selectedMachine !== "all" ? { machine: selectedMachine } : {}),
+    includeGlobal: "true",
   };
 
   const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery(queryParams);
@@ -110,41 +111,80 @@ export default function AdminManageQuestionsPage() {
   // Reset pagination when filters change
   useEffect(() => {
     setPage(1);
-  }, [selectedLine, selectedMachine, selectedProcess, selectedUnit, includeGlobal, fetchAll]);
+  }, [selectedDepartment, selectedLine, selectedMachine]);
 
   const filteredQuestions = useMemo(() => {
     if (!searchTerm.trim()) return questions;
     const query = searchTerm.toLowerCase();
-    return questions.filter((q) => q.questionText?.toLowerCase().includes(query));
+    return questions.filter((q) => {
+      const text = q.questionText?.toLowerCase() || "";
+      const title = q.templateTitle?.toLowerCase() || "";
+      return text.includes(query) || title.includes(query);
+    });
   }, [questions, searchTerm]);
 
-  // Map questionId -> [category names]
-  const questionCategoriesMap = useMemo(() => {
-    const map = {};
-    const cats = Array.isArray(categoriesRes?.data) ? categoriesRes.data : [];
-    for (const cat of cats) {
-      const name = cat.name || "Unnamed";
-      const qs = Array.isArray(cat.questions) ? cat.questions : [];
-      for (const q of qs) {
-        const id = q._id;
-        if (!id) continue;
-        if (!map[id]) map[id] = [];
-        map[id].push(name);
-      }
-    }
-    return map;
-  }, [categoriesRes]);
+  // Group questions by template title so each template appears once
+  const templateGroups = useMemo(() => {
+    const map = new Map();
 
-  const total = filteredQuestions.length;
+    filteredQuestions.forEach((q) => {
+      const title = q.templateTitle || "Untitled template";
+      if (!map.has(title)) {
+        map.set(title, { representative: q, count: 1 });
+      } else {
+        const existing = map.get(title);
+        existing.count += 1;
+      }
+    });
+
+    return Array.from(map.entries()).map(([templateTitle, { representative, count }]) => ({
+      templateTitle,
+      representative,
+      questionCount: count,
+    }));
+  }, [filteredQuestions]);
+
+  const userUnitId = currentUser?.unit?._id || currentUser?.unit || "";
+
+  // Only show departments under the admin's unit (for admin role)
+  const filteredDepartments = useMemo(() => {
+    if (currentUser?.role === "admin" && userUnitId) {
+      return departments.filter((d) => {
+        const deptUnitId = typeof d.unit === "object" ? d.unit?._id : d.unit;
+        return deptUnitId && deptUnitId === userUnitId;
+      });
+    }
+    return departments;
+  }, [departments, currentUser, userUnitId]);
+
+  // Lines and machines filtered under the selected department
+  const filteredLines = useMemo(() => {
+    if (!selectedDepartment || selectedDepartment === "all") return lines;
+    return lines.filter((line) => {
+      const deptId = typeof line.department === "object" ? line.department?._id : line.department;
+      return deptId && deptId === selectedDepartment;
+    });
+  }, [lines, selectedDepartment]);
+
+  const filteredMachines = useMemo(() => {
+    if (!selectedDepartment || selectedDepartment === "all") return machines;
+    return machines.filter((machine) => {
+      const deptId = typeof machine.department === "object" ? machine.department?._id : machine.department;
+      return deptId && deptId === selectedDepartment;
+    });
+  }, [machines, selectedDepartment]);
+
+  const totalQuestions = filteredQuestions.length;
   const totalGlobal = useMemo(
     () => filteredQuestions.filter((q) => q.isGlobal).length,
     [filteredQuestions]
   );
-  const totalScoped = total - totalGlobal;
+  const totalScoped = totalQuestions - totalGlobal;
 
-  const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
+  const totalTemplates = templateGroups.length;
+  const totalPages = Math.max(1, Math.ceil(totalTemplates / rowsPerPage));
   const startIndex = (page - 1) * rowsPerPage;
-  const paginatedQuestions = filteredQuestions.slice(
+  const paginatedTemplates = templateGroups.slice(
     startIndex,
     startIndex + rowsPerPage
   );
@@ -195,15 +235,15 @@ export default function AdminManageQuestionsPage() {
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline" className="flex items-center gap-1">
             <HelpCircle className="h-4 w-4" />
-            {total} total
+            {totalQuestions} questions
           </Badge>
           <Badge variant="outline" className="flex items-center gap-1">
             <Globe className="h-4 w-4" />
-            {totalGlobal} global
+            {totalGlobal} global questions
           </Badge>
           <Badge variant="outline" className="flex items-center gap-1">
             <Settings className="h-4 w-4" />
-            {totalScoped} scoped
+            {totalScoped} scoped questions
           </Badge>
         </div>
       </div>
@@ -216,149 +256,79 @@ export default function AdminManageQuestionsPage() {
             Filters
           </CardTitle>
           <CardDescription>
-            Narrow down questions by line, machine, process or include global
-            questions.
+            Narrow down questions by department, line and machine.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid items-start gap-6 lg:grid-cols-[3fr_2fr]">
-            {/* Dropdown Filters */}
-            <div className="space-y-4 rounded-lg border bg-muted/40 p-4">
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Building2 className="h-4 w-4" />
-                    Production Line
-                  </Label>
-                  <Select
-                    value={selectedLine}
-                    onValueChange={setSelectedLine}
-                    disabled={fetchAll}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="All Lines" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Lines</SelectItem>
-                      {lines.map((line) => (
-                        <SelectItem key={line._id} value={line._id}>
-                          {line.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Cog className="h-4 w-4" />
-                    Machine
-                  </Label>
-                  <Select
-                    value={selectedMachine}
-                    onValueChange={setSelectedMachine}
-                    disabled={fetchAll}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="All Machines" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Machines</SelectItem>
-                      {machines.map((machine) => (
-                        <SelectItem key={machine._id} value={machine._id}>
-                          {machine.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Settings className="h-4 w-4" />
-                    Process
-                  </Label>
-                  <Select
-                    value={selectedProcess}
-                    onValueChange={setSelectedProcess}
-                    disabled={fetchAll}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="All Processes" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Processes</SelectItem>
-                      {processes.map((process) => (
-                        <SelectItem key={process._id} value={process._id}>
-                          {process.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <Settings className="h-4 w-4" />
-                    Unit
-                  </Label>
-                  <Select
-                    value={selectedUnit}
-                    onValueChange={setSelectedUnit}
-                    disabled={fetchAll}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="All Units" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Units</SelectItem>
-                      {units.map((unit) => (
-                        <SelectItem key={unit._id} value={unit._id}>
-                          {unit.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-
-            {/* Checkbox Options */}
-            <div className="space-y-4 rounded-lg border bg-muted/40 p-4">
-              <div className="space-y-3">
-                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  Display Options
+          <div className="space-y-4 rounded-lg border bg-muted/40 p-4">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  Department
                 </Label>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="includeGlobal"
-                      checked={includeGlobal}
-                      onCheckedChange={setIncludeGlobal}
-                    />
-                    <Label
-                      htmlFor="includeGlobal"
-                      className="flex items-center gap-2"
-                    >
-                      <Globe className="h-4 w-4" />
-                      Include Global Questions
-                    </Label>
-                  </div>
-                  <Separator className="my-2" />
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="fetchAll"
-                      checked={fetchAll}
-                      onCheckedChange={setFetchAll}
-                    />
-                    <Label
-                      htmlFor="fetchAll"
-                      className="flex items-center gap-2"
-                    >
-                      <Search className="h-4 w-4" />
-                      Fetch All Questions
-                    </Label>
-                  </div>
-                </div>
+                <Select
+                  value={selectedDepartment}
+                  onValueChange={setSelectedDepartment}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="All Departments" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Departments</SelectItem>
+                    {filteredDepartments.map((dept) => (
+                      <SelectItem key={dept._id} value={dept._id}>
+                        {dept.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  Production Line
+                </Label>
+                <Select
+                  value={selectedLine}
+                  onValueChange={setSelectedLine}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="All Lines" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Lines</SelectItem>
+                    {filteredLines.map((line) => (
+                      <SelectItem key={line._id} value={line._id}>
+                        {line.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Cog className="h-4 w-4" />
+                  Machine
+                </Label>
+                <Select
+                  value={selectedMachine}
+                  onValueChange={setSelectedMachine}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="All Machines" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Machines</SelectItem>
+                    {filteredMachines.map((machine) => (
+                      <SelectItem key={machine._id} value={machine._id}>
+                        {machine.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           </div>
@@ -366,15 +336,15 @@ export default function AdminManageQuestionsPage() {
       </Card>
 
       {/* Questions Display */}
-      <Card>
+      <Card className="border-none shadow-sm bg-muted/40">
         <CardHeader>
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <CardTitle>Questions Library</CardTitle>
+              <CardTitle>Audit Question Templates</CardTitle>
               <CardDescription>
                 {loading
-                  ? "Loading questions..."
-                  : `Showing ${paginatedQuestions.length} of ${total} questions`}
+                  ? "Loading templates..."
+                  : `Showing ${paginatedTemplates.length} of ${totalTemplates} templates`}
               </CardDescription>
             </div>
             <div className="relative w-full max-w-sm">
@@ -393,7 +363,7 @@ export default function AdminManageQuestionsPage() {
             <div className="flex items-center justify-center py-16">
               <Loader />
             </div>
-          ) : total === 0 ? (
+          ) : totalTemplates === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
               <HelpCircle className="mb-4 h-16 w-16 text-muted-foreground" />
               <p className="text-lg font-medium text-muted-foreground">
@@ -409,153 +379,108 @@ export default function AdminManageQuestionsPage() {
                 <Table>
                   <TableHeader className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm">
                     <TableRow>
-                      <TableHead>Question</TableHead>
-                      <TableHead className="hidden lg:table-cell">
-                        Scope
-                      </TableHead>
-                      <TableHead className="hidden md:table-cell">
-                        Type
-                      </TableHead>
-                      <TableHead className="hidden md:table-cell">
-                        Created
-                      </TableHead>
+                      <TableHead className="w-[60px] text-xs text-muted-foreground">#</TableHead>
+                      <TableHead>Template Title</TableHead>
+                      <TableHead>Unit</TableHead>
+                      <TableHead>Department</TableHead>
+                      <TableHead>Machine</TableHead>
+                      <TableHead>Process</TableHead>
+                      <TableHead className="hidden md:table-cell">Created At</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {paginatedQuestions.map((q) => (
-                      <TableRow
-                        key={q._id}
-                        className={q.isGlobal ? "bg-amber-50/60" : undefined}
-                      >
-                        <TableCell className="align-top">
-                          <div className="space-y-1">
-                            <p className="max-w-xl text-sm font-medium leading-relaxed">
-                              {q.questionText}
+                    {paginatedTemplates.map((group, index) => {
+                      const q = group.representative;
+                      const title = group.templateTitle || "Untitled template";
+                      return (
+                        <TableRow
+                          key={title}
+                          className={q.isGlobal ? "bg-amber-50/60 cursor-pointer" : "cursor-pointer"}
+                          onClick={() => {
+                            navigate(`/admin/questions/template/${encodeURIComponent(title)}`);
+                          }}
+                        >
+                          {/* Serial number */}
+                          <TableCell className="align-top text-xs text-muted-foreground">
+                            {startIndex + index + 1}
+                          </TableCell>
+
+                          {/* Template title */}
+                          <TableCell className="align-top">
+                            <p className="text-sm font-semibold leading-snug">
+                              {title}
                             </p>
-                            <div className="flex flex-wrap gap-1 text-xs text-muted-foreground md:hidden">
-                              <span>
-                                Line: {q.lines?.[0]?.name || "Any"}
+                          </TableCell>
+
+                          {/* Unit */}
+                          <TableCell className="align-top text-sm">
+                            {q.units?.[0]?.name || "Any"}
+                          </TableCell>
+
+                          {/* Department */}
+                          <TableCell className="align-top text-sm">
+                            {q.department?.name || "Any"}
+                          </TableCell>
+
+                          {/* Machine */}
+                          <TableCell className="align-top text-sm">
+                            {q.machines?.[0]?.name || "Any"}
+                          </TableCell>
+
+                          {/* Process */}
+                          <TableCell className="align-top text-sm">
+                            {q.processes?.[0]?.name || "Any"}
+                          </TableCell>
+
+                          {/* Created At */}
+                          <TableCell className="hidden md:table-cell align-top text-xs text-muted-foreground">
+                            {q.createdAt ? (
+                              <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5">
+                                {new Date(q.createdAt).toLocaleDateString()}
                               </span>
-                              <span>•</span>
-                              <span>
-                                Machine: {q.machines?.[0]?.name || "Any"}
-                              </span>
-                              <span>•</span>
-                              <span>
-                                Process: {q.processes?.[0]?.name || "Any"}
-                              </span>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell align-top">
-                          <div className="space-y-1 text-xs text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Building2 className="h-3 w-3" />
-                              <span>{q.lines?.[0]?.name || "Any"}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Cog className="h-3 w-3" />
-                              <span>{q.machines?.[0]?.name || "Any"}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Settings className="h-3 w-3" />
-                              <span>{q.processes?.[0]?.name || "Any"}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Settings className="h-3 w-3" />
-                              <span>{q.units?.[0]?.name || "Any"}</span>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell align-top">
-                          <div className="space-y-1">
-                            <Badge
-                              variant={q.isGlobal ? "secondary" : "outline"}
-                              className="flex w-fit items-center gap-1"
-                            >
-                              {q.isGlobal ? (
-                                <>
-                                  <Globe className="h-3 w-3" /> Global
-                                </>
-                              ) : (
-                                <>Scoped</>
-                              )}
-                            </Badge>
-                            {Array.isArray(questionCategoriesMap[q._id]) && questionCategoriesMap[q._id].length > 0 && (
-                              <div className="flex flex-wrap gap-1 pt-1">
-                                {questionCategoriesMap[q._id].map((name) => (
-                                  <Badge key={name} variant="outline" className="text-[10px]">
-                                    {name}
-                                  </Badge>
-                                ))}
-                              </div>
+                            ) : (
+                              "—"
                             )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell align-top">
-                          <Badge variant="outline" className="px-2 py-0.5 text-[11px] font-normal">
-                            {(() => {
-                              const type = q.questionType || "yes_no";
-                              switch (type) {
-                                case "mcq":
-                                  return "MCQ";
-                                case "dropdown":
-                                  return "Dropdown";
-                                case "short_text":
-                                  return "Short description";
-                                case "image":
-                                  return "Image + Yes/No";
-                                default:
-                                  return "Yes/No";
-                              }
-                            })()}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell align-top text-xs text-muted-foreground">
-                          {q.createdAt ? (
-                            <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5">
-                              {new Date(q.createdAt).toLocaleDateString()}
-                            </span>
-                          ) : (
-                            "—"
-                          )}
-                        </TableCell>
-                        <TableCell className="w-[80px] text-right align-top">
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-destructive hover:text-destructive"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Delete question?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  This will permanently delete the question "
-                                  {q.questionText?.slice(0, 80)}
-                                  {q.questionText?.length > 80 ? "..." : ""}
-                                  ". This action cannot be undone.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                <AlertDialogAction
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                  onClick={() => handleDelete(q._id, q.questionText)}
+                          </TableCell>
+
+                          {/* Actions */}
+                          <TableCell className="w-[80px] text-right align-top" onClick={(e) => e.stopPropagation()}>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-destructive hover:text-destructive"
                                 >
-                                  Delete
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>Delete question?</AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This will permanently delete the question "
+                                    {q.questionText?.slice(0, 80)}
+                                    {q.questionText?.length > 80 ? "..." : ""}
+                                    ". This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    onClick={() => handleDelete(q._id, q.questionText)}
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>
@@ -565,10 +490,10 @@ export default function AdminManageQuestionsPage() {
                 <p className="text-xs text-muted-foreground sm:text-sm">
                   Showing
                   <span className="mx-1 font-medium">
-                    {total === 0 ? 0 : startIndex + 1}–
-                    {Math.min(startIndex + rowsPerPage, total)}
+                    {totalTemplates === 0 ? 0 : startIndex + 1}–
+                    {Math.min(startIndex + rowsPerPage, totalTemplates)}
                   </span>
-                  of <span className="font-medium">{total}</span> questions
+                  of <span className="font-medium">{totalTemplates}</span> templates
                 </p>
                 <div className="flex items-center justify-end gap-2">
                   <Button
