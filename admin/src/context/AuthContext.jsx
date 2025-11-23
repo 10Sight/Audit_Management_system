@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);      
   const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null);
+  const [activeUnitId, setActiveUnitId] = useState(null);
 
   const { data: meData, isLoading: meLoading, refetch } = useGetMeQuery();
 
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(() => {
     setUser(null);
     setError(null);
+    setActiveUnitId(null);
   }, []);
 
   // Sync local state with RTK Query data
@@ -40,6 +42,13 @@ export const AuthProvider = ({ children }) => {
     }
   }, [meData, meLoading]);
 
+  // Reset active unit when user is cleared (e.g. logout)
+  useEffect(() => {
+    if (!user) {
+      setActiveUnitId(null);
+    }
+  }, [user]);
+
   // Memoize context value to prevent unnecessary re-renders
   const contextValue = useMemo(() => ({
     user,
@@ -48,7 +57,9 @@ export const AuthProvider = ({ children }) => {
     error,
     fetchUser,
     logout,
-  }), [user, loading, error, fetchUser, logout]);
+    activeUnitId,
+    setActiveUnitId,
+  }), [user, loading, error, fetchUser, logout, activeUnitId]);
 
   return (
     <AuthContext.Provider value={contextValue}>

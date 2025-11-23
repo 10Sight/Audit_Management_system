@@ -43,7 +43,6 @@ export default function AdminDashboard() {
   const [selectedDepartment, setSelectedDepartment] = useState("all");
   const [selectedLine, setSelectedLine] = useState("all");
   const [selectedMachine, setSelectedMachine] = useState("all");
-  const [selectedUnit, setSelectedUnit] = useState("all");
   const [timeframe, setTimeframe] = useState("daily");
 
   const [lineData, setLineData] = useState([]);
@@ -52,14 +51,14 @@ export default function AdminDashboard() {
   const [pieData, setPieData] = useState([]);
   const [auditCountData, setAuditCountData] = useState([]);
 
-  const { user: currentUser } = useAuth();
-  const unitId = currentUser?.unit?._id || currentUser?.unit || '';
+  const { user: currentUser, activeUnitId } = useAuth();
+  const userUnitId = currentUser?.unit?._id || currentUser?.unit || '';
   const role = currentUser?.role;
 
   // Effective unit used for queries & client-side filtering
   const effectiveUnitId = role === 'superadmin'
-    ? (selectedUnit !== 'all' ? selectedUnit : undefined)
-    : (unitId || undefined);
+    ? (activeUnitId || undefined)
+    : (userUnitId || undefined);
 
   // Blue + red palette for charts to match app theme
   const CHART_COLORS = {
@@ -84,6 +83,26 @@ export default function AdminDashboard() {
     if (val === 'no' || val === 'fail') return 'Fail';
     if (val === 'na' || val === 'not applicable') return 'NA';
     return null;
+  };
+
+  const getAuditOverallStatus = (audit) => {
+    let hasPass = false;
+    let hasFail = false;
+
+    audit.answers?.forEach((ans) => {
+      const normalized = normalizeAnswer(ans.answer);
+      if (!normalized) return;
+
+      if (normalized === 'Fail') {
+        hasFail = true;
+      } else if (normalized === 'Pass') {
+        hasPass = true;
+      }
+    });
+
+    if (hasFail) return 'Fail';
+    if (hasPass) return 'Pass';
+    return null; // only NA or no answers
   };
 
   const getTimeframeKey = (date, timeframe) => {
@@ -143,21 +162,16 @@ export default function AdminDashboard() {
 
     const unitsForView = allUnits.filter((u) => {
       // Admins are restricted to their own unit; superadmins can see all units
-      if (role === 'superadmin' || !unitId) return true;
-      return String(u._id) === String(unitId);
+      if (role === 'superadmin' || !userUnitId) return true;
+      return String(u._id) === String(userUnitId);
     });
-
-    // Ensure non-superadmin users see their unit selected in the Unit filter
-    if (role !== 'superadmin' && unitId) {
-      setSelectedUnit((prev) => (prev === 'all' ? String(unitId) : prev));
-    }
 
     setLines(linesInUnit);
     setMachines(machinesInUnit);
     setUnits(unitsForView);
     setDepartments(deptInUnit);
     setEmployees(Array.isArray(employeesRes?.data?.employees) ? employeesRes.data.employees : []);
-  }, [auditsRes, linesRes, machinesRes, employeesRes, unitsRes, departmentsRes, unitId, effectiveUnitId, role]);
+  }, [auditsRes, linesRes, machinesRes, employeesRes, unitsRes, departmentsRes, userUnitId, effectiveUnitId, role]);
   // RTK Query polling handles refresh; no manual interval needed
 
 
@@ -225,7 +239,7 @@ export default function AdminDashboard() {
   }, [audits, timeframe]);
 
   // Bar Chart Data
-  // Line-wise Bar Chart Data (Pass/Fail answers, NA excluded)
+  // Line-wise Bar Chart Data: total audits Pass/Fail per line
   useEffect(() => {
     if (!Array.isArray(audits)) return;
 
@@ -234,21 +248,19 @@ export default function AdminDashboard() {
       const lineName = audit.line?.name || "N/A";
       if (!countsByLine[lineName]) countsByLine[lineName] = { Pass: 0, Fail: 0 };
 
-      audit.answers?.forEach((ans) => {
-        const normalized = normalizeAnswer(ans.answer);
-        if (!normalized || normalized === 'NA') return;
+      const overallStatus = getAuditOverallStatus(audit);
+      if (!overallStatus) return; // only NA/no answers
 
-        if (answerType !== 'all' && normalized.toLowerCase() !== answerType) return;
+      if (answerType !== 'all' && overallStatus.toLowerCase() !== answerType) return;
 
-        countsByLine[lineName][normalized] = (countsByLine[lineName][normalized] || 0) + 1;
-      });
+      countsByLine[lineName][overallStatus] =
+        (countsByLine[lineName][overallStatus] || 0) + 1;
     });
 
     setLineBarData(Object.keys(countsByLine).map((k) => ({ name: k, ...countsByLine[k] })));
   }, [audits, answerType]);
 
-  // Pie Chart Data
-  // Machine-wise Bar Chart Data (Pass/Fail answers, NA excluded)
+  // Machine-wise Bar Chart Data: total audits Pass/Fail per machine
   useEffect(() => {
     if (!Array.isArray(audits)) return;
 
@@ -257,14 +269,13 @@ export default function AdminDashboard() {
       const machineName = audit.machine?.name || "N/A";
       if (!countsByMachine[machineName]) countsByMachine[machineName] = { Pass: 0, Fail: 0 };
 
-      audit.answers?.forEach((ans) => {
-        const normalized = normalizeAnswer(ans.answer);
-        if (!normalized || normalized === 'NA') return;
+      const overallStatus = getAuditOverallStatus(audit);
+      if (!overallStatus) return;
 
-        if (answerType !== 'all' && normalized.toLowerCase() !== answerType) return;
+      if (answerType !== 'all' && overallStatus.toLowerCase() !== answerType) return;
 
-        countsByMachine[machineName][normalized] = (countsByMachine[machineName][normalized] || 0) + 1;
-      });
+      countsByMachine[machineName][overallStatus] =
+        (countsByMachine[machineName][overallStatus] || 0) + 1;
     });
 
     setMachineBarData(Object.keys(countsByMachine).map((k) => ({ name: k, ...countsByMachine[k] })));
@@ -358,6 +369,26 @@ export default function AdminDashboard() {
     };
   }, [departments, lines, machines, employees, audits]);
 
+  const targetActualData = useMemo(
+    () => [
+      { name: 'Target Audits', value: aggregatedCounts.targetAudits || 0 },
+      { name: 'Actual Audits', value: aggregatedCounts.actualAudits || 0 },
+    ],
+    [aggregatedCounts.targetAudits, aggregatedCounts.actualAudits]
+  );
+
+  const unitScopeLabel = useMemo(() => {
+    if (role === 'superadmin') {
+      if (!effectiveUnitId) return 'All Units';
+      const u = units.find((x) => String(x._id) === String(effectiveUnitId));
+      return u?.name || `Unit (${effectiveUnitId})`;
+    }
+    const nameFromUser = currentUser?.unit?.name;
+    if (nameFromUser) return nameFromUser;
+    if (userUnitId) return `Unit (${userUnitId})`;
+    return 'Your unit';
+  }, [role, effectiveUnitId, units, currentUser, userUnitId]);
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -365,6 +396,9 @@ export default function AdminDashboard() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
           <p className="text-muted-foreground">Overview of your inspection system</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Current unit scope: <span className="font-medium text-foreground">{unitScopeLabel}</span>
+          </p>
         </div>
         <Badge variant="outline" className="flex items-center gap-2">
           <Calendar className="h-4 w-4" />
@@ -475,8 +509,13 @@ export default function AdminDashboard() {
                 Unit
               </label>
               <Select
-                value={selectedUnit}
-                onValueChange={setSelectedUnit}
+                value={role === 'superadmin' ? (activeUnitId || 'all') : (userUnitId || 'all')}
+                onValueChange={(val) => {
+                  if (role === 'superadmin') {
+                    if (val === 'all') setActiveUnitId(null);
+                    else setActiveUnitId(val);
+                  }
+                }}
                 disabled={role !== 'superadmin'}
               >
                 <SelectTrigger>
@@ -744,6 +783,55 @@ export default function AdminDashboard() {
                   activeDot={{ r: 7, fill: CHART_COLORS.primary }}
                 />
               </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Target vs Actual audits (per current filters) */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Target vs Actual Audits
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={targetActualData}>
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="hsl(var(--muted))"
+                  opacity={0.3}
+                />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fontSize: 12 }}
+                  tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
+                />
+                <YAxis
+                  allowDecimals={false}
+                  tick={{ fontSize: 12 }}
+                  tickLine={{ stroke: 'hsl(var(--muted-foreground))' }}
+                />
+                <Tooltip
+                  formatter={(value, name) => [`${value} audits`, name]}
+                  contentStyle={{
+                    backgroundColor: 'hsl(var(--background))',
+                    border: '1px solid hsl(var(--border))',
+                    borderRadius: '8px',
+                    boxShadow: '0 4px 12px hsl(var(--foreground) / 0.15)'
+                  }}
+                />
+                <Legend />
+                <Bar
+                  dataKey="value"
+                  name="Audits"
+                  fill={CHART_COLORS.primary}
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </CardContent>

@@ -174,11 +174,21 @@ export const api = createApi({
       query: (body) => ({ url: '/api/questions', method: 'POST', body }),
       invalidatesTags: ['Question'],
     }),
+    updateQuestion: builder.mutation({
+      query: ({ id, ...body }) => ({ url: `/api/questions/${id}`, method: 'PUT', body }),
+      invalidatesTags: ['Question'],
+    }),
     deleteQuestion: builder.mutation({
       query: (id) => ({ url: `/api/questions/${id}`, method: 'DELETE' }),
       invalidatesTags: ['Question'],
     }),
-
+    deleteTemplateQuestions: builder.mutation({
+      query: (templateTitle) => ({
+        url: `/api/questions/template/${encodeURIComponent(templateTitle)}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Question'],
+    }),
     // Question categories
     getQuestionCategories: builder.query({
       query: () => ({ url: '/api/question-categories' }),
@@ -227,14 +237,28 @@ export const api = createApi({
 
     // Departments
     getDepartments: builder.query({
-      query: ({ page = 1, limit = 20, includeInactive = false } = {}) => ({
+      query: ({ page = 1, limit = 20, includeInactive = false, unit } = {}) => ({
         url: '/api/v1/departments',
-        params: { page, limit, includeInactive },
+        params: {
+          page,
+          limit,
+          includeInactive,
+          ...(unit ? { unit } : {}),
+        },
       }),
       providesTags: [{ type: 'Department', id: 'LIST' }],
     }),
+    getDepartmentById: builder.query({
+      query: (id) => `/api/v1/departments/${id}`,
+      providesTags: (result, error, id) => [{ type: 'Department', id }],
+    }),
     getDepartmentStats: builder.query({
-      query: () => '/api/v1/departments/stats',
+      query: ({ unit } = {}) => ({
+        url: '/api/v1/departments/stats',
+        params: {
+          ...(unit ? { unit } : {}),
+        },
+      }),
       providesTags: [{ type: 'Department', id: 'STATS' }],
     }),
     createDepartment: builder.mutation({
@@ -323,7 +347,9 @@ export const {
   useReorderUnitsMutation,
   useGetQuestionsQuery,
   useCreateQuestionsMutation,
+  useUpdateQuestionMutation,
   useDeleteQuestionMutation,
+  useDeleteTemplateQuestionsMutation,
   useGetQuestionCategoriesQuery,
   useCreateQuestionCategoryMutation,
   useUpdateQuestionCategoryMutation,
@@ -334,6 +360,7 @@ export const {
   useUpdateAuditMutation,
   useDeleteAuditMutation,
   useGetDepartmentsQuery,
+  useGetDepartmentByIdQuery,
   useGetDepartmentStatsQuery,
   useCreateDepartmentMutation,
   useUpdateDepartmentMutation,

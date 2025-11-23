@@ -21,7 +21,7 @@ import {
   useGetUnitsQuery,
   useGetQuestionsQuery,
   useGetQuestionCategoriesQuery,
-  useDeleteQuestionMutation,
+  useDeleteTemplateQuestionsMutation,
   useGetDepartmentsQuery,
 } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,8 +54,14 @@ import Loader from "@/components/ui/Loader";
 import { toast } from "sonner";
 
 export default function AdminManageQuestionsPage() {
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, activeUnitId } = useAuth();
   const navigate = useNavigate();
+
+  const userUnitId = currentUser?.unit?._id || currentUser?.unit || "";
+  const role = currentUser?.role;
+  const effectiveUnitId = role === "superadmin"
+    ? (activeUnitId || undefined)
+    : (userUnitId || undefined);
 
   const [lines, setLines] = useState([]);
   const [machines, setMachines] = useState([]);
@@ -81,7 +87,7 @@ export default function AdminManageQuestionsPage() {
   const { data: unitsRes } = useGetUnitsQuery();
   const { data: categoriesRes } = useGetQuestionCategoriesQuery();
   const { data: departmentsRes } = useGetDepartmentsQuery({ page: 1, limit: 1000, includeInactive: false });
-  const [deleteQuestion] = useDeleteQuestionMutation();
+  const [deleteTemplateQuestions] = useDeleteTemplateQuestionsMutation();
 
   useEffect(() => {
     setLines(linesRes?.data || []);
@@ -93,6 +99,7 @@ export default function AdminManageQuestionsPage() {
 
   // Fetch questions based on filters via RTK Query
   const queryParams = {
+    ...(effectiveUnitId ? { unit: effectiveUnitId } : {}),
     ...(selectedDepartment && selectedDepartment !== "all"
       ? { departmentId: selectedDepartment }
       : {}),
@@ -144,18 +151,16 @@ export default function AdminManageQuestionsPage() {
     }));
   }, [filteredQuestions]);
 
-  const userUnitId = currentUser?.unit?._id || currentUser?.unit || "";
-
-  // Only show departments under the admin's unit (for admin role)
+  // Only show departments under the effective unit (admin's unit or selected superadmin unit)
   const filteredDepartments = useMemo(() => {
-    if (currentUser?.role === "admin" && userUnitId) {
+    if (effectiveUnitId) {
       return departments.filter((d) => {
         const deptUnitId = typeof d.unit === "object" ? d.unit?._id : d.unit;
-        return deptUnitId && deptUnitId === userUnitId;
+        return deptUnitId && String(deptUnitId) === String(effectiveUnitId);
       });
     }
     return departments;
-  }, [departments, currentUser, userUnitId]);
+  }, [departments, effectiveUnitId]);
 
   // Lines and machines filtered under the selected department
   const filteredLines = useMemo(() => {
@@ -193,15 +198,29 @@ export default function AdminManageQuestionsPage() {
     if (page > totalPages) setPage(totalPages);
   }, [page, totalPages]);
 
-  // Delete question
-  const handleDelete = async (id, questionText) => {
+  const unitScopeLabel = useMemo(() => {
+    if (role === 'superadmin') {
+      if (!effectiveUnitId) return 'All Units';
+      const selected = units.find((u) => String(u._id) === String(effectiveUnitId));
+      return selected?.name || `Unit (${effectiveUnitId})`;
+    }
+    const nameFromUser = currentUser?.unit?.name;
+    if (nameFromUser) return nameFromUser;
+    if (userUnitId) return `Unit (${userUnitId})`;
+    return 'Your unit';
+  }, [role, effectiveUnitId, currentUser, userUnitId, units]);
+
+  // Delete entire template (all questions for a templateTitle)
+  const handleDeleteTemplate = async (templateTitle) => {
     try {
-      await deleteQuestion(id).unwrap();
-      toast.success("Question deleted successfully!");
-      setQuestions((prev) => prev.filter((q) => q._id !== id));
+      await deleteTemplateQuestions(templateTitle).unwrap();
+      toast.success("Template deleted successfully!");
+      setQuestions((prev) =>
+        prev.filter((q) => (q.templateTitle || "Untitled template") !== templateTitle)
+      );
     } catch (err) {
       toast.error(
-        err?.data?.message || err?.message || "Failed to delete question"
+        err?.data?.message || err?.message || "Failed to delete template"
       );
     }
   };
@@ -230,6 +249,9 @@ export default function AdminManageQuestionsPage() {
           <h1 className="text-3xl font-bold tracking-tight">Manage Questions</h1>
           <p className="mt-1 text-sm text-muted-foreground">
             Browse, filter and maintain your audit question library
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Current unit scope: <span className="font-medium text-foreground">{unitScopeLabel}</span>
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
@@ -458,21 +480,19 @@ export default function AdminManageQuestionsPage() {
                               </AlertDialogTrigger>
                               <AlertDialogContent>
                                 <AlertDialogHeader>
-                                  <AlertDialogTitle>Delete question?</AlertDialogTitle>
+                                  <AlertDialogTitle>Delete audit template?</AlertDialogTitle>
                                   <AlertDialogDescription>
-                                    This will permanently delete the question "
-                                    {q.questionText?.slice(0, 80)}
-                                    {q.questionText?.length > 80 ? "..." : ""}
-                                    ". This action cannot be undone.
+                                    This will permanently delete all {group.questionCount} questions under
+                                    the template "{title}". This action cannot be undone.
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
                                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                                   <AlertDialogAction
                                     className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                    onClick={() => handleDelete(q._id, q.questionText)}
+                                    onClick={() => handleDeleteTemplate(title)}
                                   >
-                                    Delete
+                                    Delete template
                                   </AlertDialogAction>
                                 </AlertDialogFooter>
                               </AlertDialogContent>

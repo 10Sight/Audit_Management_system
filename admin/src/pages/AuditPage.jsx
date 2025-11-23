@@ -65,9 +65,13 @@ export default function AuditsPage() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const navigate = useNavigate();
-  const { user: currentUser, loading: authLoading } = useAuth();
+  const { user: currentUser, loading: authLoading, activeUnitId } = useAuth();
 
-  const unitId = currentUser?.unit?._id || currentUser?.unit || '';
+  const baseUnitId = currentUser?.unit?._id || currentUser?.unit || '';
+  const role = currentUser?.role;
+  const effectiveUnitId = role === 'superadmin'
+    ? (activeUnitId || undefined)
+    : (baseUnitId || undefined);
 
   const { data: linesRes } = useGetLinesQuery(
     selectedDepartment && selectedDepartment !== 'all'
@@ -94,7 +98,7 @@ export default function AuditsPage() {
     department: selectedDepartment !== 'all' ? selectedDepartment : undefined,
     line: selectedLine !== 'all' ? selectedLine : undefined,
     machine: selectedMachine !== 'all' ? selectedMachine : undefined,
-    unit: unitId || undefined,
+    unit: effectiveUnitId,
     shift: selectedShift !== 'all' ? selectedShift : undefined,
     result: resultFilter !== 'any' ? resultFilter : undefined,
     startDate: startDate || undefined,
@@ -191,6 +195,19 @@ export default function AuditsPage() {
     setCurrentPage(page);
   };
 
+  const unitScopeLabel = React.useMemo(() => {
+    if (role === 'superadmin') {
+      const units = unitsRes?.data || [];
+      if (!effectiveUnitId) return 'All Units';
+      const selected = units.find((u) => String(u._id) === String(effectiveUnitId));
+      return selected?.name || `Unit (${effectiveUnitId})`;
+    }
+    const nameFromUser = currentUser?.unit?.name;
+    if (nameFromUser) return nameFromUser;
+    if (baseUnitId) return `Unit (${baseUnitId})`;
+    return 'Your unit';
+  }, [role, effectiveUnitId, currentUser, baseUnitId, unitsRes]);
+
   const handleExport = async () => {
     try {
       setProcessing(true);
@@ -201,7 +218,7 @@ export default function AuditsPage() {
         department: selectedDepartment !== 'all' ? selectedDepartment : undefined,
         line: selectedLine !== 'all' ? selectedLine : undefined,
         machine: selectedMachine !== 'all' ? selectedMachine : undefined,
-        unit: selectedUnit !== 'all' ? selectedUnit : undefined,
+        unit: effectiveUnitId,
         shift: selectedShift !== 'all' ? selectedShift : undefined,
         result: resultFilter !== 'any' ? resultFilter : undefined,
         startDate: startDate || undefined,
@@ -269,6 +286,9 @@ export default function AuditsPage() {
           <p className="text-sm text-muted-foreground">
             Review, filter and manage inspection audits for your unit.
           </p>
+          <p className="text-xs text-muted-foreground">
+            Current unit scope: <span className="font-medium text-foreground">{unitScopeLabel}</span>
+          </p>
         </div>
         {currentUser?.role === "admin" && (
           <Button
@@ -301,12 +321,21 @@ export default function AuditsPage() {
                 <Label className="text-xs font-medium text-muted-foreground">Unit</Label>
                 <Input
                   type="text"
-                  value={
-                    currentUser?.unit?.name ||
-                    (typeof currentUser?.unit === 'string'
-                      ? (unitsRes?.data || []).find((u) => u._id === currentUser.unit)?.name || 'Unit'
-                      : (unitsRes?.data || []).find((u) => u._id === unitId)?.name || 'Unit')
-                  }
+                  value={(() => {
+                    const units = unitsRes?.data || [];
+                    const unitNameFromUser = currentUser?.unit?.name;
+                    if (role === 'superadmin') {
+                      if (!effectiveUnitId) return 'All Units';
+                      const selected = units.find((u) => String(u._id) === String(effectiveUnitId));
+                      return selected?.name || 'Unit';
+                    }
+
+                    if (unitNameFromUser) return unitNameFromUser;
+
+                    const fallbackId = typeof currentUser?.unit === 'string' ? currentUser.unit : baseUnitId;
+                    const found = units.find((u) => String(u._id) === String(fallbackId));
+                    return found?.name || 'Unit';
+                  })()}
                   disabled
                   className="min-w-[160px] bg-background text-foreground"
                 />
@@ -323,7 +352,8 @@ export default function AuditsPage() {
                     {(departmentsRes?.data?.departments || [])
                       .filter((d) => {
                         const du = d.unit?._id || d.unit;
-                        return !unitId || !du || String(du) === String(unitId);
+                        if (!effectiveUnitId) return true;
+                        return du && String(du) === String(effectiveUnitId);
                       })
                       .map((d) => (
                         <SelectItem key={d._id} value={d._id}>{d.name}</SelectItem>

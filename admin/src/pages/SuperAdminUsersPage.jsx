@@ -34,6 +34,15 @@ export default function SuperAdminUsersPage() {
 
   const getInitials = (name) => (name ? name.split(" ").map((n) => n[0]).join("").toUpperCase() : "?");
 
+  const handleUserClick = (user) => {
+    if (!user || !user._id) return;
+    if (user.role === "employee") {
+      navigate(`/superadmin/users/employee/${user._id}`);
+    } else if (user.role === "admin") {
+      navigate(`/superadmin/users/admin/${user._id}`);
+    }
+  };
+
   const onDelete = async (id, name) => {
     if (!confirm(`Delete ${name}?`)) return;
     try {
@@ -96,7 +105,11 @@ export default function SuperAdminUsersPage() {
               </TableHeader>
               <TableBody>
                 {users.map((u) => (
-                  <TableRow key={u._id}>
+                  <TableRow
+                    key={u._id}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleUserClick(u)}
+                  >
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Avatar className="h-8 w-8">
@@ -129,7 +142,10 @@ export default function SuperAdminUsersPage() {
                         variant="destructive"
                         size="sm"
                         disabled={deleting || u.role === 'superadmin'}
-                        onClick={() => onDelete(u._id, u.fullName)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDelete(u._id, u.fullName);
+                        }}
                       >
                         <Trash2 className="h-4 w-4 mr-1" /> Delete
                       </Button>

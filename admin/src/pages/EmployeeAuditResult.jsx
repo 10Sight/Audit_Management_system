@@ -5,6 +5,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useGetAuditByIdQuery } from "@/store/api";
 import Loader from "@/components/ui/Loader";
+import api from "@/utils/axios";
 
 export default function EmployeeAuditResult() {
   const { user: currentUser } = useAuth();
@@ -13,11 +14,61 @@ export default function EmployeeAuditResult() {
   const [loading, setLoading] = useState(true);
   const [audit, setAudit] = useState(null);
 
+  // Admin-configurable form settings (title + line/machine fields)
+  const [formSettings, setFormSettings] = useState({
+    formTitle: "Part and Quality Audit Performance",
+    lineField: { label: "Line", placeholder: "Select Line", enabled: true },
+    machineField: { label: "Machine", placeholder: "Select Machine", enabled: true },
+  });
+
   const { data: auditRes, isLoading: auditLoading } = useGetAuditByIdQuery(auditId, { skip: !auditId });
   useEffect(() => {
     setLoading(auditLoading);
     setAudit(auditRes?.data);
   }, [auditRes, auditLoading]);
+
+  // Load dynamic form settings for the audit's department so labels/visibility match the current form
+  useEffect(() => {
+    if (!audit) return;
+
+    let isMounted = true;
+    const departmentId = audit.department?._id || audit.department || "";
+
+    const fetchFormSettings = async () => {
+      try {
+        const res = await api.get("/api/audits/form-settings", {
+          params: {
+            ...(departmentId ? { department: departmentId } : {}),
+          },
+        });
+        const setting = res?.data?.data;
+        if (!setting || !isMounted) return;
+
+        setFormSettings({
+          formTitle: setting.formTitle || "Part and Quality Audit Performance",
+          lineField: {
+            label: setting.lineField?.label || "Line",
+            placeholder: setting.lineField?.placeholder || "Select Line",
+            enabled: setting.lineField?.enabled !== false,
+          },
+          machineField: {
+            label: setting.machineField?.label || "Machine",
+            placeholder: setting.machineField?.placeholder || "Select Machine",
+            enabled: setting.machineField?.enabled !== false,
+          },
+        });
+      } catch (error) {
+        // Silently ignore if not configured yet
+        console.error("Failed to load audit form settings for result view", error);
+      }
+    };
+
+    fetchFormSettings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [audit]);
 
   const normalizeAnswer = (value) => {
     const val = (value || "").toString().toLowerCase();
@@ -26,6 +77,11 @@ export default function EmployeeAuditResult() {
     if (val === "na" || val === "not applicable") return "Not Applicable";
     return value || "";
   };
+
+  const lineFieldEnabled = formSettings?.lineField?.enabled !== false;
+  const machineFieldEnabled = formSettings?.machineField?.enabled !== false;
+  const lineLabel = formSettings?.lineField?.label || "Line";
+  const machineLabel = formSettings?.machineField?.label || "Machine";
 
   if (loading) return <Loader />;
   if (!audit) return <div className="p-6 text-gray-700 text-center">No audit found.</div>;
@@ -36,19 +92,27 @@ export default function EmployeeAuditResult() {
 
       {/* Header */}
       <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-center sm:text-left">
-        Audit Result
+        {formSettings.formTitle || "Audit Result"}
       </h1>
 
       {/* Audit Metadata */}
       <div className="bg-gray-100 p-4 sm:p-6 rounded-lg space-y-2 sm:space-y-3 border border-gray-300 shadow-sm">
         <div><strong>Date:</strong> {new Date(audit.date).toLocaleDateString()}</div>
         <div><strong>Department:</strong> {audit.department?.name || audit.department || "N/A"}</div>
-        <div><strong>Line:</strong> {audit.line?.name || audit.line}</div>
-        <div><strong>Machine:</strong> {audit.machine?.name || audit.machine}</div>
-        <div><strong>Unit:</strong> {audit.unit?.name || audit.unit}</div>
+        {lineFieldEnabled && (
+          <div><strong>{lineLabel}:</strong> {audit.line?.name || audit.line || "N/A"}</div>
+        )}
+        {machineFieldEnabled && (
+          <div><strong>{machineLabel}:</strong> {audit.machine?.name || audit.machine || "N/A"}</div>
+        )}
+        <div><strong>Unit:</strong> {audit.unit?.name || audit.unit || "N/A"}</div>
         <div><strong>Shift:</strong> {audit.shift || "N/A"}</div>
-        <div><strong>Line Rating:</strong> {audit.lineRating != null ? `${audit.lineRating}/10` : "N/A"}</div>
-        <div><strong>Machine Rating:</strong> {audit.machineRating != null ? `${audit.machineRating}/10` : "N/A"}</div>
+        {lineFieldEnabled && (
+          <div><strong>{lineLabel} Rating:</strong> {audit.lineRating != null ? `${audit.lineRating}/10` : "N/A"}</div>
+        )}
+        {machineFieldEnabled && (
+          <div><strong>{machineLabel} Rating:</strong> {audit.machineRating != null ? `${audit.machineRating}/10` : "N/A"}</div>
+        )}
         <div><strong>Unit Rating:</strong> {audit.unitRating != null ? `${audit.unitRating}/10` : "N/A"}</div>
         <div><strong>Line Leader:</strong> {audit.lineLeader}</div>
         <div><strong>Shift Incharge:</strong> {audit.shiftIncharge}</div>

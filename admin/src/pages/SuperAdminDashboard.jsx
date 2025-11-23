@@ -33,6 +33,8 @@ import {
   Tooltip,
   CartesianGrid,
   Legend,
+  BarChart,
+  Bar,
 } from "recharts";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/context/AuthContext";
@@ -114,6 +116,26 @@ export default function SuperAdminDashboard() {
     return null;
   };
 
+  const getAuditOverallStatus = (audit) => {
+    let hasPass = false;
+    let hasFail = false;
+
+    (audit.answers || []).forEach((ans) => {
+      const normalized = normalizeAnswer(ans.answer);
+      if (!normalized) return;
+
+      if (normalized === "Fail") {
+        hasFail = true;
+      } else if (normalized === "Pass") {
+        hasPass = true;
+      }
+    });
+
+    if (hasFail) return "Fail";
+    if (hasPass) return "Pass";
+    return null; // audits with only NA or no answers
+  };
+
   const getTimeframeKey = (date, tf) => {
     const d = date ? new Date(date) : new Date();
     if (tf === "weekly") return format(startOfWeek(d, { weekStartsOn: 1 }), "yyyy-MM-dd");
@@ -126,24 +148,18 @@ export default function SuperAdminDashboard() {
     if (!Array.isArray(audits)) return [];
 
     const countsByPeriod = {};
+
     audits.forEach((audit) => {
       const key = getTimeframeKey(audit.date || audit.createdAt, timeframe);
-      if (!countsByPeriod[key]) countsByPeriod[key] = { Pass: 0, Fail: 0, NA: 0 };
+      if (!countsByPeriod[key]) countsByPeriod[key] = { Pass: 0, Fail: 0 };
 
-      (audit.answers || []).forEach((ans) => {
-        const normalized = normalizeAnswer(ans.answer);
-        if (!normalized) return;
+      const overallStatus = getAuditOverallStatus(audit);
+      if (!overallStatus) return; // skip audits with only NA or no answers
 
-        if (answerType !== "all") {
-          const filterKey =
-            answerType === "na"
-              ? "NA"
-              : answerType.charAt(0).toUpperCase() + answerType.slice(1);
-          if (normalized !== filterKey) return;
-        }
+      if (answerType !== "all" && overallStatus.toLowerCase() !== answerType) return;
 
-        countsByPeriod[key][normalized] = (countsByPeriod[key][normalized] || 0) + 1;
-      });
+      countsByPeriod[key][overallStatus] =
+        (countsByPeriod[key][overallStatus] || 0) + 1;
     });
 
     return Object.keys(countsByPeriod)
@@ -171,35 +187,54 @@ export default function SuperAdminDashboard() {
 
     let passCount = 0;
     let failCount = 0;
-    let naCount = 0;
 
     audits.forEach((audit) => {
-      (audit.answers || []).forEach((ans) => {
-        const normalized = normalizeAnswer(ans.answer);
-        if (!normalized) return;
+      const overallStatus = getAuditOverallStatus(audit);
+      if (!overallStatus) return;
 
-        if (answerType !== "all") {
-          const filterKey =
-            answerType === "na"
-              ? "NA"
-              : answerType.charAt(0).toUpperCase() + answerType.slice(1);
-          if (normalized !== filterKey) return;
-        }
+      if (answerType !== "all" && overallStatus.toLowerCase() !== answerType) return;
 
-        if (normalized === "Pass") passCount++;
-        else if (normalized === "Fail") failCount++;
-        else if (normalized === "NA") naCount++;
-      });
+      if (overallStatus === "Pass") passCount++;
+      else if (overallStatus === "Fail") failCount++;
     });
 
     return [
       { name: "Pass", value: passCount },
       { name: "Fail", value: failCount },
-      { name: "Not Applicable", value: naCount },
     ];
   }, [audits, answerType]);
 
   const todayLabel = useMemo(() => format(new Date(), "MMM dd, yyyy"), []);
+
+  // Target vs Actual audits data (per selected unit)
+  const targetAuditsForScope = useMemo(() => {
+    const employeesOnly = usersList.filter((u) => u.role === "employee");
+    const scoped =
+      selectedUnit === "all"
+        ? employeesOnly
+        : employeesOnly.filter((u) => {
+            const unitId = u.unit?._id || u.unit;
+            return unitId && String(unitId) === String(selectedUnit);
+          });
+
+    return scoped.reduce((sum, emp) => {
+      const total = emp.targetAudit?.total;
+      return sum + (typeof total === "number" ? total : 0);
+    }, 0);
+  }, [usersList, selectedUnit]);
+
+  const actualAuditsForScope = useMemo(
+    () => (Array.isArray(audits) ? audits.length : 0),
+    [audits]
+  );
+
+  const targetActualData = useMemo(
+    () => [
+      { name: "Target Audits", value: targetAuditsForScope },
+      { name: "Actual Audits", value: actualAuditsForScope },
+    ],
+    [targetAuditsForScope, actualAuditsForScope]
+  );
 
   return (
     <div className="space-y-6">
@@ -346,7 +381,7 @@ export default function SuperAdminDashboard() {
 
       {/* Charts */}
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Audit trend over time */}
+        {/* Audit trend over time (per audit Pass/Fail, like admin dashboard) */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -390,7 +425,7 @@ export default function SuperAdminDashboard() {
           </CardContent>
         </Card>
 
-        {/* Overall distribution */}
+        {/* Overall distribution (per audit Pass/Fail, like admin dashboard) */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -448,6 +483,35 @@ export default function SuperAdminDashboard() {
                   dot={{ r: 3, fill: CHART_COLORS.success }}
                 />
               </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Target vs Actual audits (per selected unit) */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5" />
+            Target vs Actual Audits
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={targetActualData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" tick={{ fontSize: 12 }} />
+                <YAxis allowDecimals={false} tick={{ fontSize: 12 }} />
+                <Tooltip formatter={(value, name) => [`${value} audits`, name]} />
+                <Legend />
+                <Bar
+                  dataKey="value"
+                  name="Audits"
+                  fill={CHART_COLORS.success}
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </CardContent>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,8 @@ import {
   useGetQuestionsQuery,
   useCreateAuditMutation,
   useUploadImageMutation,
-  useDeleteUploadMutation
+  useDeleteUploadMutation,
+  useGetDepartmentByIdQuery,
 } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import CameraCapture from "@/components/CameraCapture";
@@ -32,6 +33,13 @@ export default function EmployeeFillInspectionPage() {
   const [lines, setLines] = useState([]);
   const [machines, setMachines] = useState([]);
   const [units, setUnits] = useState([]);
+
+  // Admin-configurable form settings (title + line/machine fields)
+  const [formSettings, setFormSettings] = useState({
+    formTitle: "Part and Quality Audit Performance",
+    lineField: { label: "Line", placeholder: "Select Line", enabled: true },
+    machineField: { label: "Machine", placeholder: "Select Machine", enabled: true },
+  });
 
   const [line, setLine] = useState("");
   const [machine, setMachine] = useState("");
@@ -57,6 +65,7 @@ export default function EmployeeFillInspectionPage() {
   const [submitting, setSubmitting] = useState(false);
   const [sharing, setSharing] = useState(false);
 
+  // Local dropdown visibility for leader/incharge suggestions
   const describeRating = (val) => {
     const num = Number(val);
     if (!Number.isFinite(num)) return "Select a score between 1 and 10";
@@ -74,14 +83,50 @@ export default function EmployeeFillInspectionPage() {
 
   const departmentId = currentUser?.department?._id || currentUser?.department || "";
   const { data: linesRes } = useGetLinesQuery(departmentId ? { department: departmentId } : {});
+  const { data: deptDetailRes } = useGetDepartmentByIdQuery(departmentId, { skip: !departmentId });
   const { data: machinesRes } = useGetMachinesQuery({
     ...(departmentId ? { department: departmentId } : {}),
     ...(line ? { line } : {}),
   });
   const { data: unitsRes } = useGetUnitsQuery();
+
+  const lineFieldEnabled = formSettings?.lineField?.enabled !== false;
+  const machineFieldEnabled = formSettings?.machineField?.enabled !== false;
+  const lineLabel = formSettings?.lineField?.label || "Line";
+  const linePlaceholder = formSettings?.lineField?.placeholder || "Select Line";
+  const machineLabel = formSettings?.machineField?.label || "Machine";
+  const baseMachinePlaceholder = formSettings?.machineField?.placeholder || "Select Machine";
+  const machinePlaceholder =
+    !machineFieldEnabled
+      ? ""
+      : lineFieldEnabled && !line
+        ? "Select line first"
+        : baseMachinePlaceholder;
   const [createAudit] = useCreateAuditMutation();
   const [uploadImage] = useUploadImageMutation();
   const [deleteUpload] = useDeleteUploadMutation();
+
+  // Compute all configured names for this department (across all shifts)
+  const { leaderOptions, inchargeOptions } = useMemo(() => {
+    const dept = deptDetailRes?.data?.department;
+    const staff = Array.isArray(dept?.staffByShift) ? dept.staffByShift : [];
+    const leaderSet = new Set();
+    const inchargeSet = new Set();
+    staff.forEach((row) => {
+      (row.lineLeaders || []).forEach((n) => {
+        const v = (n || "").toString().trim();
+        if (v) leaderSet.add(v);
+      });
+      (row.shiftIncharges || []).forEach((n) => {
+        const v = (n || "").toString().trim();
+        if (v) inchargeSet.add(v);
+      });
+    });
+    return {
+      leaderOptions: Array.from(leaderSet),
+      inchargeOptions: Array.from(inchargeSet),
+    };
+  }, [deptDetailRes]);
 
   useEffect(() => {
     setLines(linesRes?.data || []);
@@ -100,6 +145,71 @@ export default function EmployeeFillInspectionPage() {
     setLoading(false);
   }, [linesRes, machinesRes, unitsRes, currentUser, unit]);
 
+  // Auto-fill Line Leader / Shift Incharge from department-level configuration (not per shift)
+  useEffect(() => {
+    if (!departmentId) return;
+    const dept = deptDetailRes?.data?.department;
+    const staff = Array.isArray(dept?.staffByShift) ? dept.staffByShift : [];
+    if (!staff.length) return;
+    // Use the first configured record as department-wide default
+    const config = staff[0];
+    const firstLineLeader = Array.isArray(config.lineLeaders)
+      ? config.lineLeaders[0]
+      : config.lineLeader;
+    const firstShiftIncharge = Array.isArray(config.shiftIncharges)
+      ? config.shiftIncharges[0]
+      : config.shiftIncharge;
+    // Only auto-fill when fields are empty so auditors can override manually
+    if (!lineLeader && firstLineLeader) {
+      setLineLeader(firstLineLeader);
+    }
+    if (!shiftIncharge && firstShiftIncharge) {
+      setShiftIncharge(firstShiftIncharge);
+    }
+  }, [departmentId, deptDetailRes, lineLeader, shiftIncharge]);
+
+  // Fetch admin-configured form settings (title + line/machine fields)
+  useEffect(() => {
+    let isMounted = true;
+
+    const auditorDeptId = currentUser?.department?._id || currentUser?.department || "";
+
+    const fetchFormSettings = async () => {
+      try {
+        const res = await api.get("/api/audits/form-settings", {
+          params: {
+            ...(auditorDeptId ? { department: auditorDeptId } : {}),
+          },
+        });
+        const setting = res?.data?.data;
+        if (!setting || !isMounted) return;
+
+        setFormSettings({
+          formTitle: setting.formTitle || "Part and Quality Audit Performance",
+          lineField: {
+            label: setting.lineField?.label || "Line",
+            placeholder: setting.lineField?.placeholder || "Select Line",
+            enabled: setting.lineField?.enabled !== false,
+          },
+          machineField: {
+            label: setting.machineField?.label || "Machine",
+            placeholder: setting.machineField?.placeholder || "Select Machine",
+            enabled: setting.machineField?.enabled !== false,
+          },
+        });
+      } catch (error) {
+        // Silently ignore if not configured yet
+        console.error("Failed to load audit form settings", error);
+      }
+    };
+
+    fetchFormSettings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [currentUser]);
+
   // When line changes, clear selected machine so the user re-selects from filtered list
   useEffect(() => {
     setMachine("");
@@ -107,13 +217,19 @@ export default function EmployeeFillInspectionPage() {
 
   // Fetch questions when line/machine/unit changes via RTK Query (process not required for template lookup)
   const questionParams = {
-    ...(line ? { lineId: line } : {}),
-    ...(machine ? { machineId: machine } : {}),
+    ...(line && lineFieldEnabled ? { lineId: line } : {}),
+    ...(machine && machineFieldEnabled ? { machineId: machine } : {}),
     ...(unit ? { unitId: unit } : {}),
     includeGlobal: 'true',
     ...(currentUser?.department ? { departmentId: currentUser.department._id || currentUser.department } : {}),
   };
-  const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery(questionParams, { skip: !(line && machine && unit) });
+
+  // Only skip fetching questions until we at least know the auditor's unit.
+  // Line and machine selections further refine results but are not required
+  // to load department/global questions for the employee.
+  const shouldSkipQuestions = !unit;
+
+  const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery(questionParams, { skip: shouldSkipQuestions });
   useEffect(() => {
     if (questionsLoading) return;
     const list = Array.isArray(questionsRes?.data) ? questionsRes.data : [];
@@ -215,8 +331,37 @@ export default function EmployeeFillInspectionPage() {
     e.preventDefault();
     if (submitting) return; // prevent double submit
 
-    if (!line || !machine || !unit || !lineLeader || !shift || !shiftIncharge || !lineRating || !machineRating || !unitRating) {
+    const lineRequired = lineFieldEnabled;
+    const machineRequired = machineFieldEnabled;
+
+    if (
+      (lineRequired && !line) ||
+      (machineRequired && !machine) ||
+      !unit ||
+      !lineLeader ||
+      !shift ||
+      !shiftIncharge ||
+      !lineRating ||
+      !machineRating ||
+      !unitRating
+    ) {
       toast.error("Please fill all required fields");
+      return;
+    }
+
+    // If we have configured leaders for this department, enforce that auditor picks one of them
+    const trimmedLeader = lineLeader.trim();
+    const trimmedIncharge = shiftIncharge.trim();
+    const lowerLeaderOptions = leaderOptions.map((n) => n.toLowerCase());
+    const lowerInchargeOptions = inchargeOptions.map((n) => n.toLowerCase());
+
+    if (leaderOptions.length && !lowerLeaderOptions.includes(trimmedLeader.toLowerCase())) {
+      toast.error("Line leader must be one of the configured names for this department");
+      return;
+    }
+
+    if (inchargeOptions.length && !lowerInchargeOptions.includes(trimmedIncharge.toLowerCase())) {
+      toast.error("Shift incharge must be one of the configured names for this department");
       return;
     }
 
@@ -253,8 +398,8 @@ export default function EmployeeFillInspectionPage() {
       setSubmitting(true);
       const payload = {
         date: new Date(),
-        line,
-        machine,
+        line: line || undefined,
+        machine: machine || undefined,
         unit,
         department: currentUser?.department?._id || currentUser?.department || undefined,
         lineLeader,
@@ -326,10 +471,10 @@ export default function EmployeeFillInspectionPage() {
   return (
     <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
       <ToastContainer />
-      <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          Part and Quality Audit Performance
-        </h1>
+        <div className="space-y-1">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+            {formSettings.formTitle || "Part and Quality Audit Performance"}
+          </h1>
         <p className="text-sm text-muted-foreground">
           Fill out inspection details and answer all questions for your department.
         </p>
@@ -380,46 +525,50 @@ export default function EmployeeFillInspectionPage() {
               />
             </div>
 
-            {/* Line - filtered by department */}
-            <div className="space-y-1.5">
-              <Label className="text-xs sm:text-sm font-medium">Line</Label>
-              <Select value={line} onValueChange={(value) => setLine(value)}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select Line" />
-                </SelectTrigger>
-                <SelectContent>
-                  {lines.map((l) => (
-                    <SelectItem key={l._id} value={l._id}>
-                      {l.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {/* Keep native required validation */}
-              <input type="hidden" required value={line} />
-            </div>
+            {/* Line - filtered by department (admin can rename/disable) */}
+            {lineFieldEnabled && (
+              <div className="space-y-1.5">
+                <Label className="text-xs sm:text-sm font-medium">{lineLabel}</Label>
+                <Select value={line} onValueChange={(value) => setLine(value)}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={linePlaceholder} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {lines.map((l) => (
+                      <SelectItem key={l._id} value={l._id}>
+                        {l.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {/* Hidden input to keep native required validation aligned with config */}
+            <input type="hidden" required={lineFieldEnabled} value={line} />
 
             {/* Machine - filtered by selected line (and department) */}
-            <div className="space-y-1.5">
-              <Label className="text-xs sm:text-sm font-medium">Machine</Label>
-              <Select
-                value={machine}
-                onValueChange={(value) => setMachine(value)}
-                disabled={!line}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder={line ? "Select Machine" : "Select line first"} />
-                </SelectTrigger>
-                <SelectContent>
-                  {machines.map((m) => (
-                    <SelectItem key={m._id} value={m._id}>
-                      {m.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <input type="hidden" required value={machine} />
-            </div>
+            {machineFieldEnabled && (
+              <div className="space-y-1.5">
+                <Label className="text-xs sm:text-sm font-medium">{machineLabel}</Label>
+                <Select
+                  value={machine}
+                  onValueChange={(value) => setMachine(value)}
+                  disabled={lineFieldEnabled && !line}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder={machinePlaceholder} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {machines.map((m) => (
+                      <SelectItem key={m._id} value={m._id}>
+                        {m.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            <input type="hidden" required={machineFieldEnabled} value={machine} />
 
             {/* Shift */}
             <div className="space-y-1.5">
@@ -437,28 +586,62 @@ export default function EmployeeFillInspectionPage() {
               <input type="hidden" required value={shift} />
             </div>
 
-            {/* Shift Incharge */}
+            {/* Shift Incharge - must be chosen from department-configured list */}
             <div className="space-y-1.5">
               <Label className="text-xs sm:text-sm font-medium">Shift Incharge</Label>
-              <Input
-                type="text"
-                placeholder="Shift Incharge"
-                value={shiftIncharge}
-                onChange={(e) => setShiftIncharge(e.target.value)}
-                required
-              />
+              {inchargeOptions.length > 0 ? (
+                <Select
+                  value={shiftIncharge}
+                  onValueChange={(value) => setShiftIncharge(value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Shift Incharge" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {inchargeOptions.map((name) => (
+                      <SelectItem key={name} value={name}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  type="text"
+                  placeholder="Shift Incharge"
+                  value={shiftIncharge}
+                  onChange={(e) => setShiftIncharge(e.target.value)}
+                />
+              )}
             </div>
 
-            {/* Line Leader */}
+            {/* Line Leader - must be chosen from department-configured list */}
             <div className="space-y-1.5">
               <Label className="text-xs sm:text-sm font-medium">Line Leader</Label>
-              <Input
-                type="text"
-                placeholder="Line Leader"
-                value={lineLeader}
-                onChange={(e) => setLineLeader(e.target.value)}
-                required
-              />
+              {leaderOptions.length > 0 ? (
+                <Select
+                  value={lineLeader}
+                  onValueChange={(value) => setLineLeader(value)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Line Leader" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {leaderOptions.map((name) => (
+                      <SelectItem key={name} value={name}>
+                        {name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  type="text"
+                  placeholder="Line Leader"
+                  value={lineLeader}
+                  onChange={(e) => setLineLeader(e.target.value)}
+                />
+              )}
             </div>
 
             {/* Date - always current date, cannot be changed */}

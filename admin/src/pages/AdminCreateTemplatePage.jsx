@@ -7,6 +7,8 @@ import { FiPlus, FiTrash2 } from "react-icons/fi";
 import {
   useGetUnitsQuery,
   useGetDepartmentsQuery,
+  useGetLinesQuery,
+  useGetMachinesQuery,
   useCreateQuestionsMutation,
   useUploadImageMutation,
 } from "@/store/api";
@@ -15,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import api from "@/utils/axios";
 
 export default function AdminCreateTemplatePage() {
   const navigate = useNavigate();
@@ -23,10 +26,20 @@ export default function AdminCreateTemplatePage() {
 
   const [units, setUnits] = useState([]);
   const [departments, setDepartments] = useState([]);
+  const [lines, setLines] = useState([]);
+  const [machines, setMachines] = useState([]);
 
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedUnit, setSelectedUnit] = useState("");
+  const [selectedLine, setSelectedLine] = useState("");
+  const [selectedMachine, setSelectedMachine] = useState("");
   const [templateTitle, setTemplateTitle] = useState("");
+
+  // Admin-configurable form settings for Line / Machine labels & visibility
+  const [formSettings, setFormSettings] = useState({
+    lineField: { label: "Line", placeholder: "Select Line", enabled: true },
+    machineField: { label: "Machine", placeholder: "Select Machine", enabled: true },
+  });
 
   const [questions, setQuestions] = useState([
     {
@@ -41,6 +54,8 @@ export default function AdminCreateTemplatePage() {
 
   const { data: unitsRes } = useGetUnitsQuery();
   const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000, includeInactive: false });
+  const { data: linesRes } = useGetLinesQuery();
+  const { data: machinesRes } = useGetMachinesQuery();
   const [createQuestions] = useCreateQuestionsMutation();
   const [uploadImage] = useUploadImageMutation();
   const [imageUploading, setImageUploading] = useState(false);
@@ -48,7 +63,9 @@ export default function AdminCreateTemplatePage() {
   useEffect(() => {
     setUnits(unitsRes?.data || []);
     setDepartments(deptRes?.data?.departments || []);
-  }, [unitsRes, deptRes]);
+    setLines(linesRes?.data || []);
+    setMachines(machinesRes?.data || []);
+  }, [unitsRes, deptRes, linesRes, machinesRes]);
 
   const userUnitId = currentUser?.unit?._id || currentUser?.unit || "";
 
@@ -58,6 +75,61 @@ export default function AdminCreateTemplatePage() {
     }
   }, [currentUser, userUnitId, selectedUnit]);
 
+  // Load admin-configured form settings (line/machine fields) for the selected department
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchFormSettings = async () => {
+      try {
+        if (!selectedDepartment) {
+          if (!isMounted) return;
+          setFormSettings({
+            lineField: { label: "Line", placeholder: "Select Line", enabled: true },
+            machineField: { label: "Machine", placeholder: "Select Machine", enabled: true },
+          });
+          return;
+        }
+
+        const res = await api.get("/api/audits/form-settings", {
+          params: { department: selectedDepartment },
+        });
+        const setting = res?.data?.data;
+        if (!setting || !isMounted) return;
+
+        setFormSettings({
+          lineField: {
+            label: setting.lineField?.label || "Line",
+            placeholder: setting.lineField?.placeholder || "Select Line",
+            enabled: setting.lineField?.enabled !== false,
+          },
+          machineField: {
+            label: setting.machineField?.label || "Machine",
+            placeholder: setting.machineField?.placeholder || "Select Machine",
+            enabled: setting.machineField?.enabled !== false,
+          },
+        });
+      } catch (error) {
+        // Silently ignore if form settings not configured yet for this department
+        console.error("Failed to load audit form settings", error);
+        if (!isMounted) return;
+        setFormSettings({
+          lineField: { label: "Line", placeholder: "Select Line", enabled: true },
+          machineField: { label: "Machine", placeholder: "Select Machine", enabled: true },
+        });
+      }
+    };
+
+    fetchFormSettings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedDepartment]);
+
+  const lineFieldEnabled = formSettings?.lineField?.enabled !== false;
+  const machineFieldEnabled = formSettings?.machineField?.enabled !== false;
+  const lineLabel = formSettings?.lineField?.label || "Line";
+  const machineLabel = formSettings?.machineField?.label || "Machine";
 
   const addQuestion = () =>
     setQuestions([
@@ -158,6 +230,25 @@ export default function AdminCreateTemplatePage() {
           department: selectedDepartment,
         };
 
+        // Attach unit scope so templates are visible under the unit filters
+        const effectiveUnit =
+          (currentUser?.role === "admin" && userUnitId)
+            ? userUnitId
+            : (selectedUnit || "");
+        if (effectiveUnit) {
+          base.unit = effectiveUnit;
+        }
+
+        // Optional scoping by line and machine within the department.
+        // If admin does not select line/machine (or the field is disabled), these
+        // fields are omitted so the template applies more broadly.
+        if (lineFieldEnabled && selectedLine) {
+          base.line = selectedLine;
+        }
+        if (machineFieldEnabled && selectedMachine) {
+          base.machine = selectedMachine;
+        }
+
         return base;
       });
 
@@ -186,6 +277,23 @@ export default function AdminCreateTemplatePage() {
     return deptUnitId && deptUnitId === effectiveUnit;
   });
 
+  const availableLines = (lines || []).filter((line) => {
+    if (!selectedDepartment) return false;
+    const deptId = typeof line.department === "object" ? line.department?._id : line.department;
+    return deptId && deptId === selectedDepartment;
+  });
+
+  const availableMachines = (machines || []).filter((machine) => {
+    if (!selectedDepartment) return false;
+    const deptId = typeof machine.department === "object" ? machine.department?._id : machine.department;
+    if (!deptId || deptId !== selectedDepartment) return false;
+
+    if (selectedLine) {
+      const lineId = typeof machine.line === "object" ? machine.line?._id : machine.line;
+      if (!lineId || lineId !== selectedLine) return false;
+    }
+    return true;
+  });
 
   return (
     <div className="bg-muted/40 p-4 sm:p-6">
@@ -214,19 +322,28 @@ export default function AdminCreateTemplatePage() {
           <CardHeader className="space-y-1">
             <CardTitle className="text-lg">Inspection Context</CardTitle>
             <CardDescription>
-              Choose the Department for these questions. They will automatically appear for all lines and machines under that department.
+              Choose the Department for these questions. Optionally scope to a specific line or machine;
+              if left empty, the template will apply to all lines and machines in that department.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-8">
               {/* Select Options */}
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {/* Department (filtered by unit) */}
                 <div className="space-y-2">
                   <Label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                     Department
                   </Label>
-                  <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
+                  <Select
+                    value={selectedDepartment}
+                    onValueChange={(val) => {
+                      setSelectedDepartment(val);
+                      // Reset line/machine when department changes
+                      setSelectedLine("");
+                      setSelectedMachine("");
+                    }}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select department" />
                     </SelectTrigger>
@@ -243,13 +360,13 @@ export default function AdminCreateTemplatePage() {
                   </Label>
                   {currentUser?.role === "admin" && userUnitId ? (
                     <Input
-                      value={filteredUnits[0]?.name || "Assigned Unit"}
+                      value={filteredUnits[0]?.name || currentUser?.unit?.name || ""}
                       disabled
                     />
                   ) : (
                     <Select value={selectedUnit} onValueChange={setSelectedUnit}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select unit" />
+                        <SelectValue placeholder="Select unit (optional)" />
                       </SelectTrigger>
                       <SelectContent>
                         {filteredUnits.map((u) => (
@@ -259,6 +376,68 @@ export default function AdminCreateTemplatePage() {
                     </Select>
                   )}
                 </div>
+
+                {/* Line (optional) – respects admin form settings */}
+                {lineFieldEnabled && (
+                  <div className="space-y-2">
+                    <Label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {lineLabel} (optional)
+                    </Label>
+                    <Select
+                      value={selectedLine || "__all__"}
+                      onValueChange={(val) => {
+                        setSelectedLine(val === "__all__" ? "" : val);
+                        // Reset machine when line changes
+                        setSelectedMachine("");
+                      }}
+                      disabled={!selectedDepartment || availableLines.length === 0}
+                    >
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={
+                            selectedDepartment ? `All ${lineLabel.toLowerCase()}s in department` : "Select department first"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__all__">All {lineLabel.toLowerCase()}s in department</SelectItem>
+                        {availableLines.map((line) => (
+                          <SelectItem key={line._id} value={line._id}>{line.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+
+                {/* Machine (optional) – respects admin form settings */}
+                {machineFieldEnabled && (
+                  <div className="space-y-2 md:col-span-2 lg:col-span-1">
+                    <Label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                      {machineLabel} (optional)
+                    </Label>
+                    <Select
+                      value={selectedMachine || "__all__"}
+                      onValueChange={(val) => setSelectedMachine(val === "__all__" ? "" : val)}
+                      disabled={!selectedDepartment || availableMachines.length === 0}
+                    >
+                      <SelectTrigger>
+                        <SelectValue
+                          placeholder={
+                            selectedDepartment
+                              ? `All ${machineLabel.toLowerCase()}s in scope`
+                              : "Select department first"
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__all__">All {machineLabel.toLowerCase()}s in scope</SelectItem>
+                        {availableMachines.map((machine) => (
+                          <SelectItem key={machine._id} value={machine._id}>{machine.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
               </div>
 
               {/* Template Title */}

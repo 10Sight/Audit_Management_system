@@ -8,11 +8,11 @@ import { Separator } from "@/components/ui/separator";
 import { Settings, Mail, Info, CheckCircle2 } from "lucide-react";
 import api from "@/utils/axios";
 import { toast } from "sonner";
-import { useGetDepartmentsQuery } from "@/store/api";
+import { useGetDepartmentsQuery, useGetUnitsQuery } from "@/store/api";
 import { useAuth } from "../context/AuthContext";
 
 export default function AuditEmailSettingsPage() {
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, activeUnitId } = useAuth();
 
   const [toEmails, setToEmails] = useState("");
   const [ccEmails, setCcEmails] = useState("");
@@ -22,18 +22,23 @@ export default function AuditEmailSettingsPage() {
 
   const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000, includeInactive: false });
   const departments = deptRes?.data?.departments || [];
+  const { data: unitsRes } = useGetUnitsQuery();
 
   const userUnitId = currentUser?.unit?._id || currentUser?.unit || "";
+  const role = currentUser?.role;
+  const effectiveUnitId = role === 'superadmin'
+    ? (activeUnitId || undefined)
+    : (userUnitId || undefined);
 
   const filteredDepartments = useMemo(() => {
-    if (currentUser?.role === "admin" && userUnitId) {
+    if (effectiveUnitId) {
       return departments.filter((dept) => {
         const deptUnitId = typeof dept.unit === "object" ? dept.unit?._id : dept.unit;
-        return deptUnitId && deptUnitId === userUnitId;
+        return deptUnitId && String(deptUnitId) === String(effectiveUnitId);
       });
     }
     return departments;
-  }, [departments, currentUser, userUnitId]);
+  }, [departments, effectiveUnitId]);
 
   const handleDeptEmailChange = (departmentId, field, value) => {
     setDepartmentEmailSettings((prev) => ({
@@ -83,6 +88,19 @@ export default function AuditEmailSettingsPage() {
 
     fetchSettings();
   }, []);
+
+  const unitScopeLabel = useMemo(() => {
+    if (role === 'superadmin') {
+      if (!effectiveUnitId) return 'All Units';
+      const units = unitsRes?.data || [];
+      const selected = units.find((u) => String(u._id) === String(effectiveUnitId));
+      return selected?.name || `Unit (${effectiveUnitId})`;
+    }
+    const nameFromUser = currentUser?.unit?.name;
+    if (nameFromUser) return nameFromUser;
+    if (userUnitId) return `Unit (${userUnitId})`;
+    return 'Your unit';
+  }, [role, effectiveUnitId, currentUser, userUnitId, unitsRes]);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -144,6 +162,9 @@ export default function AuditEmailSettingsPage() {
           <p className="max-w-2xl text-sm text-muted-foreground">
             Define where completed audit inspection reports are delivered when employees click
             <span className="mx-1 font-medium">"Share via Email"</span>.
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Current unit scope: <span className="font-medium text-foreground">{unitScopeLabel}</span>
           </p>
         </div>
         <div className="flex flex-col items-start gap-2 text-xs text-muted-foreground md:items-end">

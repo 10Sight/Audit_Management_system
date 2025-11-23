@@ -214,7 +214,7 @@ export default function EmployeeLayout() {
             </SheetContent>
           </Sheet>
 
-          {/* Desktop Sidebar Toggle */}
+        {/* Desktop Sidebar Toggle */}
           <Button
             variant="ghost"
             size="icon"
@@ -224,8 +224,19 @@ export default function EmployeeLayout() {
             <Menu className="h-5 w-5" />
           </Button>
 
-          {/* Header Actions */}
-          <div className="ml-auto flex items-center gap-3 md:gap-4">
+          {/* Back to SuperAdmin (visible only for superadmin users) */}
+          {user?.role === "superadmin" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/superadmin/dashboard")}
+            >
+              Back to SuperAdmin
+            </Button>
+          )}
+
+        {/* Header Actions */}
+        <div className="ml-auto flex items-center gap-3 md:gap-4">
             {/* Notifications */}
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-4 w-4" />

@@ -22,7 +22,7 @@ import {
   CircleUserIcon
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useLogoutMutation } from "@/store/api";
+import { useLogoutMutation, useGetUnitsQuery } from "@/store/api";
 import RealtimeNotifications from "@/components/RealtimeNotifications";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -39,14 +39,19 @@ import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetDescription, SheetH
 import { Separator } from "@/components/ui/separator";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function AdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false); // Start collapsed on mobile
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, setUser } = useAuth();
+  const { user, setUser, activeUnitId, setActiveUnitId } = useAuth();
   const [logout] = useLogoutMutation();
+  const { data: unitsRes } = useGetUnitsQuery(undefined, {
+    skip: user?.role !== "superadmin",
+  });
+  const units = unitsRes?.data || [];
 
   const handleLogout = async () => {
     try {
@@ -72,6 +77,7 @@ export default function AdminLayout() {
     { to: "/admin/audits", label: "Audits", icon: ClipboardCheck },
     { to: "/admin/questions", label: "Questions", icon: HelpCircle },
     { to: "/admin/departments", label: "Departments", icon: Building2 },
+    { to: "/admin/form-settings", label: "Form Settings", icon: Layers },
     { to: "/admin/email-settings", label: "Email Settings", icon: Settings },
     { to: "/admin/settings", label: "Profile", icon: CircleUserIcon },
   ];
@@ -278,6 +284,47 @@ export default function AdminLayout() {
           >
             <Menu className="h-5 w-5" />
           </Button>
+
+          {/* Back to SuperAdmin (visible only for superadmin users) */}
+          {user?.role === "superadmin" && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/superadmin/dashboard")}
+              >
+                Back to SuperAdmin
+              </Button>
+
+              {/* Global Unit selector for Superadmin on admin pages */}
+              <div className="ml-2 min-w-[220px] hidden md:block">
+                <Select
+                  value={activeUnitId || "all"}
+                  onValueChange={(val) => {
+                    setActiveUnitId(val === "all" ? null : val);
+                  }}
+                >
+                  <SelectTrigger className="h-9 w-full">
+                    <SelectValue placeholder="Select Unit">
+                      {(() => {
+                        if (!activeUnitId) return "All Units";
+                        const selected = units.find((u) => String(u._id) === String(activeUnitId));
+                        return selected?.name || "Select Unit";
+                      })()}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Units</SelectItem>
+                    {units.map((u) => (
+                      <SelectItem key={u._id} value={u._id}>
+                        {u.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </>
+          )}
 
           {/* Header Actions */}
           <div className="ml-auto flex items-center gap-2 md:gap-4">

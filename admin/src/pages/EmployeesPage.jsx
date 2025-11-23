@@ -14,7 +14,7 @@ import {
   Users,
   Target
 } from "lucide-react";
-import { useDeleteEmployeeByIdMutation, useGetDepartmentsQuery, useGetEmployeesQuery, useGetAuditsQuery } from "@/store/api";
+import { useDeleteEmployeeByIdMutation, useGetDepartmentsQuery, useGetEmployeesQuery, useGetAuditsQuery, useGetUnitsQuery } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import { useAuth } from "../context/AuthContext";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -97,8 +97,16 @@ export default function EmployeesPage() {
   const [total, setTotal] = useState(0);
 
   const navigate = useNavigate();
-  const { user: currentUser } = useAuth();
-  const unitId = currentUser?.unit?._id || currentUser?.unit || '';
+  const { user: currentUser, activeUnitId } = useAuth();
+  const baseUnitId = currentUser?.unit?._id || currentUser?.unit || '';
+  const role = currentUser?.role;
+
+  const effectiveUnitId = role === 'superadmin'
+    ? (activeUnitId || undefined)
+    : (baseUnitId || undefined);
+
+  const { data: unitsRes } = useGetUnitsQuery();
+  const allUnits = unitsRes?.data || [];
 
   const getInitials = (name) => {
     return name ? name.split(" ").map((n) => n[0]).join("").toUpperCase() : "?";
@@ -129,7 +137,7 @@ export default function EmployeesPage() {
     page,
     limit,
     search: debouncedSearch,
-    unit: unitId || undefined,
+    unit: effectiveUnitId,
     department: selectedDepartment !== "all" ? selectedDepartment : undefined,
   });
   const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
@@ -141,7 +149,7 @@ export default function EmployeesPage() {
     {
       page: 1,
       limit: 100000,
-      unit: unitId || undefined,
+      unit: effectiveUnitId,
     },
     {
       // Re-fetch periodically so admin view stays in sync with new audits.
@@ -162,13 +170,13 @@ export default function EmployeesPage() {
 
   const departments = useMemo(() => {
     const list = deptRes?.data?.departments || [];
-    if (!unitId) return list;
+    if (!effectiveUnitId) return list;
 
     return list.filter((d) => {
       const du = d.unit?._id || d.unit;
-      return du && String(du) === String(unitId);
+      return du && String(du) === String(effectiveUnitId);
     });
-  }, [deptRes, unitId]);
+  }, [deptRes, effectiveUnitId]);
 
   const departmentMap = useMemo(() => {
     const map = new Map();
@@ -184,6 +192,18 @@ export default function EmployeesPage() {
   };
 
   const audits = auditsRes?.data?.audits || auditsRes?.data || [];
+
+  const unitScopeLabel = useMemo(() => {
+    if (role === 'superadmin') {
+      if (!effectiveUnitId) return 'All Units';
+      const selected = allUnits.find((u) => String(u._id) === String(effectiveUnitId));
+      return selected?.name || `Unit (${effectiveUnitId})`;
+    }
+    const nameFromUser = currentUser?.unit?.name;
+    if (nameFromUser) return nameFromUser;
+    if (baseUnitId) return `Unit (${baseUnitId})`;
+    return 'Your unit';
+  }, [role, effectiveUnitId, currentUser, baseUnitId, allUnits]);
 
   const getTargetAndActual = (emp) => {
     const target = emp?.targetAudit;
@@ -254,6 +274,9 @@ export default function EmployeesPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Auditors</h1>
           <p className="text-muted-foreground">Manage your team members and their access</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Current unit scope: <span className="font-medium text-foreground">{unitScopeLabel}</span>
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <Button onClick={downloadExcel} variant="outline" size="sm">

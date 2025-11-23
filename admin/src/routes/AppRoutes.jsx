@@ -35,7 +35,10 @@ const ProcessesPage = lazy(() => import("@/pages/ProcessesPage"));
 const UnitsPage = lazy(() => import("@/pages/UnitsPage"));
 const SuperAdminDashboard = lazy(() => import("@/pages/SuperAdminDashboard"));
 const SuperAdminUsersPage = lazy(() => import("@/pages/SuperAdminUsersPage"));
+const SuperAdminEmployeeDetailPage = lazy(() => import("@/pages/SuperAdminEmployeeDetailPage"));
+const SuperAdminAdminDetailPage = lazy(() => import("@/pages/SuperAdminAdminDetailPage"));
 const AuditEmailSettingsPage = lazy(() => import("@/pages/AuditEmailSettingsPage"));
+const AuditFormSettingsPage = lazy(() => import("@/pages/AuditFormSettingsPage"));
 const AdminQuestionCategoriesPage = lazy(() => import("@/pages/AdminQuestionCategoriesPage"));
 const AdminQuestionCategoryDetailPage = lazy(() => import("@/pages/AdminQuestionCategoryDetailPage"));
 
@@ -59,6 +62,9 @@ export default function AppRoutes() {
           <Route index element={<SuperAdminDashboard />} />
           <Route path="dashboard" element={<SuperAdminDashboard />} />
           <Route path="users" element={<SuperAdminUsersPage />} />
+          <Route path="users/employee/:id" element={<SuperAdminEmployeeDetailPage />} />
+          <Route path="users/admin/:id" element={<SuperAdminAdminDetailPage />} />
+          <Route path="audits/:id" element={<AuditDetailPage />} />
           <Route path="units" element={<UnitsPage />} />
           <Route path="add-user" element={<AddEmployeePage />} />
         </Route>
@@ -92,6 +98,7 @@ export default function AppRoutes() {
           <Route path="processes" element={<ProcessesPage />} />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="email-settings" element={<AuditEmailSettingsPage />} />
+          <Route path="form-settings" element={<AuditFormSettingsPage />} />
           <Route path="audits/edit/:id" element={<AdminEditAuditPage />} />
           <Route path="employee/edit/:id" element={<EditEmployeePage />} />
         </Route>

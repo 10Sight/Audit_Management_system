@@ -61,7 +61,7 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function DepartmentPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, activeUnitId } = useAuth();
   const isSuperadmin = user?.role === "superadmin";
 
   const [departments, setDepartments] = useState([]);
@@ -87,9 +87,17 @@ export default function DepartmentPage() {
   const [loading, setLoading] = useState(false);
   const [assignLoading, setAssignLoading] = useState(false);
 
-  const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
+  const departmentQueryParams = {
+    page: 1,
+    limit: 1000,
+    ...(isSuperadmin && activeUnitId ? { unit: activeUnitId } : {}),
+  };
+
+  const { data: deptRes } = useGetDepartmentsQuery(departmentQueryParams);
   const { data: usersRes } = useGetAllUsersQuery({ page: 1, limit: 1000 });
-  const { data: statsRes } = useGetDepartmentStatsQuery();
+  const { data: statsRes } = useGetDepartmentStatsQuery(
+    isSuperadmin && activeUnitId ? { unit: activeUnitId } : {}
+  );
   const { data: unitsRes } = useGetUnitsQuery(undefined, { skip: !isSuperadmin });
   const [createDepartmentMutation] = useCreateDepartmentMutation();
   const [updateDepartmentMutation] = useUpdateDepartmentMutation();
@@ -151,6 +159,19 @@ export default function DepartmentPage() {
       assignedEmployees: onlyEmployees.filter((u) => !!u.department),
     };
   }, [employees]);
+
+  const unitScopeLabel = useMemo(() => {
+    if (isSuperadmin) {
+      if (!activeUnitId) return 'All Units';
+      const selected = units.find((u) => String(u._id) === String(activeUnitId));
+      return selected?.name || `Unit (${activeUnitId})`;
+    }
+    const nameFromUser = user?.unit?.name;
+    const userUnitId = user?.unit?._id || user?.unit || '';
+    if (nameFromUser) return nameFromUser;
+    if (userUnitId) return `Unit (${userUnitId})`;
+    return 'Your unit';
+  }, [isSuperadmin, activeUnitId, user, units]);
 
   // CRUD Operations
   const createDepartment = async () => {
@@ -386,6 +407,9 @@ export default function DepartmentPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Department Management</h1>
           <p className="text-muted-foreground">Create and manage company departments, assign auditors</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Current unit scope: <span className="font-medium text-foreground">{unitScopeLabel}</span>
+          </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button onClick={() => setOpenAssignDialog(true)} variant="outline">

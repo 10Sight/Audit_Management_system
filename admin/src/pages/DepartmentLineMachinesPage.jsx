@@ -28,6 +28,10 @@ export default function DepartmentLineMachinesPage() {
   const [createMachine] = useCreateMachineMutation();
   const [deleteMachine] = useDeleteMachineMutation();
 
+  // Local loading states to prevent double submissions
+  const [creatingMachine, setCreatingMachine] = useState(false);
+  const [deletingMachineId, setDeletingMachineId] = useState(null);
+
   const department = useMemo(() => {
     return (deptRes?.data?.departments || []).find((d) => d._id === departmentId);
   }, [deptRes, departmentId]);
@@ -48,6 +52,7 @@ export default function DepartmentLineMachinesPage() {
       return;
     }
     try {
+      setCreatingMachine(true);
       await createMachine({
         name,
         description: machineDescription.trim(),
@@ -60,14 +65,19 @@ export default function DepartmentLineMachinesPage() {
     } catch (err) {
       console.error("Failed to create machine", err);
       toast.error(err?.data?.message || err?.message || "Failed to create machine");
+    } finally {
+      setCreatingMachine(false);
     }
   };
 
   const handleDeleteMachine = async (machineId) => {
     try {
+      setDeletingMachineId(machineId);
       await deleteMachine(machineId).unwrap();
     } catch (err) {
       console.error("Failed to delete machine", err);
+    } finally {
+      setDeletingMachineId(null);
     }
   };
 
@@ -122,8 +132,15 @@ export default function DepartmentLineMachinesPage() {
             />
           </div>
           <div className="flex justify-end">
-            <Button size="sm" onClick={handleCreateMachine}>
-              Add Machine
+            <Button size="sm" onClick={handleCreateMachine} disabled={creatingMachine}>
+              {creatingMachine ? (
+                <span className="flex items-center gap-2">
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Adding...
+                </span>
+              ) : (
+                "Add Machine"
+              )}
             </Button>
           </div>
           <div className="space-y-2">
@@ -147,8 +164,13 @@ export default function DepartmentLineMachinesPage() {
                       variant="ghost"
                       size="icon"
                       onClick={() => handleDeleteMachine(machine._id)}
+                      disabled={deletingMachineId === machine._id}
                     >
-                      ✕
+                      {deletingMachineId === machine._id ? (
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                      ) : (
+                        <span>✕</span>
+                      )}
                     </Button>
                   </div>
                 </div>

@@ -6,6 +6,7 @@ import { FiImage, FiEye, FiX } from "react-icons/fi";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts";
 import { useGetAuditByIdQuery } from "@/store/api";
 import Loader from "@/components/ui/Loader";
+import api from "@/utils/axios";
 
 export default function AuditDetailPage() {
   const { id } = useParams();
@@ -15,6 +16,13 @@ export default function AuditDetailPage() {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
+
+  // Admin-configurable form settings (title + line/machine fields)
+  const [formSettings, setFormSettings] = useState({
+    formTitle: "Part and Quality Audit Performance",
+    lineField: { label: "Line", placeholder: "Select Line", enabled: true },
+    machineField: { label: "Machine", placeholder: "Select Machine", enabled: true },
+  });
 
   const openImageModal = (imageUrl) => {
     setSelectedImage(imageUrl);
@@ -31,6 +39,54 @@ export default function AuditDetailPage() {
     setLoading(auditLoading);
     setAudit(auditRes?.data || null);
   }, [auditRes, auditLoading]);
+
+  // Load dynamic form settings for this audit's department to drive labels/visibility
+  useEffect(() => {
+    if (!audit) return;
+
+    let isMounted = true;
+    const departmentId = audit.department?._id || audit.department || "";
+
+    const fetchFormSettings = async () => {
+      try {
+        const res = await api.get("/api/audits/form-settings", {
+          params: {
+            ...(departmentId ? { department: departmentId } : {}),
+          },
+        });
+        const setting = res?.data?.data;
+        if (!setting || !isMounted) return;
+
+        setFormSettings({
+          formTitle: setting.formTitle || "Part and Quality Audit Performance",
+          lineField: {
+            label: setting.lineField?.label || "Line",
+            placeholder: setting.lineField?.placeholder || "Select Line",
+            enabled: setting.lineField?.enabled !== false,
+          },
+          machineField: {
+            label: setting.machineField?.label || "Machine",
+            placeholder: setting.machineField?.placeholder || "Select Machine",
+            enabled: setting.machineField?.enabled !== false,
+          },
+        });
+      } catch (error) {
+        // Silently ignore if not configured yet
+        console.error("Failed to load audit form settings for admin detail", error);
+      }
+    };
+
+    fetchFormSettings();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [audit]);
+
+  const lineFieldEnabled = formSettings?.lineField?.enabled !== false;
+  const machineFieldEnabled = formSettings?.machineField?.enabled !== false;
+  const lineLabel = formSettings?.lineField?.label || "Line";
+  const machineLabel = formSettings?.machineField?.label || "Machine";
 
   if (loading)
     return (
@@ -88,8 +144,19 @@ export default function AuditDetailPage() {
       {/* Audit Metadata */}
       <div className="bg-gray-100 p-4 rounded-lg shadow-md border border-gray-300 mb-4 text-sm sm:text-base">
         <h2 className="text-lg font-semibold mb-2">
-          {audit.line?.name || "N/A"} - {audit.machine?.name || "N/A"} (
-          {audit.date ? new Date(audit.date).toLocaleDateString() : "N/A"})
+          {lineFieldEnabled && (
+            <span>
+              {lineLabel}: {audit.line?.name || "N/A"}
+            </span>
+          )}
+          {lineFieldEnabled && machineFieldEnabled && " - "}
+          {machineFieldEnabled && (
+            <span>
+              {machineLabel}: {audit.machine?.name || "N/A"}
+            </span>
+          )}
+          {" "}
+          ({audit.date ? new Date(audit.date).toLocaleDateString() : "N/A"})
         </h2>
         <p className="text-gray-600 mb-1">
           Department: {audit.department?.name || "N/A"} | Unit: {audit.unit?.name || "N/A"} | Shift: {audit.shift || "N/A"} | Auditor:{" "}
@@ -97,7 +164,17 @@ export default function AuditDetailPage() {
           {audit.shiftIncharge || "N/A"} | Line Leader: {audit.lineLeader || "N/A"}
         </p>
         <p className="text-gray-600 mb-1">
-          Line Rating: {audit.lineRating != null ? `${audit.lineRating}/10` : "N/A"} | Machine Rating: {audit.machineRating != null ? `${audit.machineRating}/10` : "N/A"}
+          {lineFieldEnabled && (
+            <span>
+              {lineLabel} Rating: {audit.lineRating != null ? `${audit.lineRating}/10` : "N/A"}
+            </span>
+          )}
+          {lineFieldEnabled && machineFieldEnabled && " | "}
+          {machineFieldEnabled && (
+            <span>
+              {machineLabel} Rating: {audit.machineRating != null ? `${audit.machineRating}/10` : "N/A"}
+            </span>
+          )}
         </p>
         <p className="text-gray-600 mb-1">
           Unit Rating: {audit.unitRating != null ? `${audit.unitRating}/10` : "N/A"}

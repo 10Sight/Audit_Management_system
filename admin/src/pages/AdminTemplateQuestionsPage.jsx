@@ -1,17 +1,45 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, HelpCircle } from "lucide-react";
+import { ArrowLeft, HelpCircle, Pencil, Trash2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { useGetQuestionsQuery } from "@/store/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  useGetQuestionsQuery,
+  useDeleteQuestionMutation,
+  useUpdateQuestionMutation,
+  useCreateQuestionsMutation,
+} from "@/store/api";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Loader from "@/components/ui/Loader";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 export default function AdminTemplateQuestionsPage() {
   const { user: currentUser } = useAuth();
   const { title: encodedTitle } = useParams();
   const navigate = useNavigate();
+
+  const [editingId, setEditingId] = useState(null);
+  const [editingText, setEditingText] = useState("");
+  const [newQuestionText, setNewQuestionText] = useState("");
 
   const templateTitle = decodeURIComponent(encodedTitle || "");
 
@@ -20,6 +48,9 @@ export default function AdminTemplateQuestionsPage() {
     includeGlobal: "true",
   });
 
+  const [deleteQuestion] = useDeleteQuestionMutation();
+  const [updateQuestion, { isLoading: isUpdating }] = useUpdateQuestionMutation();
+  const [createQuestions, { isLoading: isCreating }] = useCreateQuestionsMutation();
   const allQuestions = useMemo(
     () => (Array.isArray(questionsRes?.data) ? questionsRes.data : []),
     [questionsRes]
@@ -44,6 +75,80 @@ export default function AdminTemplateQuestionsPage() {
   if (!currentUser || currentUser.role !== "admin") {
     return <div>Access Denied</div>;
   }
+
+  const handleDelete = async (id, questionText) => {
+    try {
+      await deleteQuestion(id).unwrap();
+      toast.success("Question deleted successfully");
+    } catch (err) {
+      toast.error(err?.data?.message || err?.message || "Failed to delete question");
+    }
+  };
+
+  const handleStartEdit = (q) => {
+    setEditingId(q._id);
+    setEditingText(q.questionText || "");
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditingText("");
+  };
+
+  const handleSaveEdit = async (id) => {
+    try {
+      await updateQuestion({ id, questionText: editingText }).unwrap();
+      toast.success("Question updated successfully");
+      setEditingId(null);
+      setEditingText("");
+    } catch (err) {
+      toast.error(err?.data?.message || err?.message || "Failed to update question");
+    }
+  };
+
+  const handleAddQuestion = async () => {
+    const text = newQuestionText.trim();
+    if (!text) {
+      toast.error("Question text is required");
+      return;
+    }
+
+    const first = questions[0];
+    if (!first) {
+      toast.error("Template context is missing; cannot add question");
+      return;
+    }
+
+    const departmentId =
+      typeof first.department === "object" ? first.department?._id : first.department;
+
+    let unitId;
+    if (Array.isArray(first.units) && first.units.length > 0) {
+      const u = first.units[0];
+      unitId = typeof u === "object" ? u?._id : u;
+    } else if (first.unit) {
+      unitId = typeof first.unit === "object" ? first.unit?._id : first.unit;
+    }
+
+    const payload = [
+      {
+        questionText: text,
+        isGlobal: false,
+        questionType: first.questionType || "yes_no",
+        templateTitle,
+        ...(departmentId ? { department: departmentId } : {}),
+        ...(unitId ? { unit: unitId } : {}),
+      },
+    ];
+
+    try {
+      await createQuestions(payload).unwrap();
+      toast.success("Question added to template");
+      setNewQuestionText("");
+    } catch (err) {
+      toast.error(err?.data?.message || err?.message || "Failed to add question");
+    }
+  };
 
   if (isLoading) return <Loader />;
 
@@ -109,17 +214,112 @@ export default function AdminTemplateQuestionsPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {questions.map((q, idx) => (
-              <div
-                key={q._id}
-                className="rounded-lg border bg-background px-3 py-3 text-sm shadow-sm"
+          <div className="space-y-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              <Input
+                placeholder="Add a new question to this template"
+                value={newQuestionText}
+                onChange={(e) => setNewQuestionText(e.target.value)}
+                disabled={isCreating}
+              />
+              <Button
+                size="sm"
+                onClick={handleAddQuestion}
+                disabled={isCreating || !newQuestionText.trim()}
               >
-                <p className="font-medium leading-snug">
-                  {idx + 1}. {q.questionText}
-                </p>
-              </div>
-            ))}
+                {isCreating ? "Adding..." : "Add Question"}
+              </Button>
+            </div>
+            <div className="space-y-3">
+              {questions.map((q, idx) => {
+                const isEditing = editingId === q._id;
+                return (
+                  <div
+                    key={q._id}
+                    className="flex items-start gap-3 rounded-lg border bg-background px-3 py-3 text-sm shadow-sm"
+                  >
+                    <div className="flex-1 space-y-2">
+                      {isEditing ? (
+                        <Input
+                          value={editingText}
+                          onChange={(e) => setEditingText(e.target.value)}
+                          disabled={isUpdating}
+                        />
+                      ) : (
+                        <p className="font-medium leading-snug">
+                          {idx + 1}. {q.questionText}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col gap-2">
+                      {isEditing ? (
+                        <>
+                          <Button
+                            size="xs"
+                            className="h-7 px-2 text-xs"
+                            onClick={() => handleSaveEdit(q._id)}
+                            disabled={isUpdating || !editingText.trim()}
+                          >
+                            Save
+                          </Button>
+                          <Button
+                            size="xs"
+                            variant="outline"
+                            className="h-7 px-2 text-xs"
+                            onClick={handleCancelEdit}
+                            disabled={isUpdating}
+                          >
+                            Cancel
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => handleStartEdit(q)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 text-destructive hover:text-destructive"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete question?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This will permanently delete the question "
+                                  {q.questionText?.slice(0, 80)}
+                                  {q.questionText?.length > 80 ? "..." : ""}
+                                  ". This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                  onClick={() => handleDelete(q._id, q.questionText)}
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </CardContent>
       </Card>
