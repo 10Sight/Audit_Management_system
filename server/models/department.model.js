@@ -6,7 +6,6 @@ const DepartmentSchema = new Schema(
       type: String,
       required: [true, "Department name is required"],
       trim: true,
-      unique: true,
       minlength: [2, "Department name must be at least 2 characters"],
       maxlength: [50, "Department name cannot exceed 50 characters"],
     },
@@ -40,6 +39,33 @@ const DepartmentSchema = new Schema(
       default: 0,
       min: 0,
     },
+
+    // Optional mapping of default Line Leader / Shift Incharge names at department level.
+    // We keep an array for future extensibility, but no longer bind it to specific shift enums.
+    staffByShift: [
+      {
+        // "shift" is now optional and free-form (kept only for backward compatibility if old data exists).
+        shift: {
+          type: String,
+          trim: true,
+          required: false,
+        },
+        lineLeaders: [
+          {
+            type: String,
+            trim: true,
+            maxlength: [100, "Line leader name cannot exceed 100 characters"],
+          },
+        ],
+        shiftIncharges: [
+          {
+            type: String,
+            trim: true,
+            maxlength: [100, "Shift incharge name cannot exceed 100 characters"],
+          },
+        ],
+      },
+    ],
   },
   {
     timestamps: true,
@@ -48,23 +74,18 @@ const DepartmentSchema = new Schema(
 );
 
 // Create indexes for better query performance
-DepartmentSchema.index({ name: 1 }, { unique: true });
+// Ensure uniqueness of department name within the same unit
+DepartmentSchema.index(
+  { name: 1, unit: 1 },
+  {
+    unique: true,
+    // Only enforce uniqueness when unit is set
+    partialFilterExpression: { unit: { $exists: true, $ne: null } },
+  }
+);
 DepartmentSchema.index({ isActive: 1 });
 DepartmentSchema.index({ unit: 1 });
 DepartmentSchema.index({ createdAt: -1 });
-
-// Pre-save middleware to ensure name is properly formatted
-DepartmentSchema.pre("save", function (next) {
-  if (this.name) {
-    // Capitalize first letter of each word
-    this.name = this.name
-      .toLowerCase()
-      .split(" ")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  }
-  next();
-});
 
 // Static method to get active departments
 DepartmentSchema.statics.getActiveDepartments = function () {

@@ -162,24 +162,40 @@ export const getQuestions = asyncHandler(async (req, res) => {
       }
     }
 
-    // Also include any questions scoped directly to this department (optionally with context)
-    const deptFilter = { department: departmentId };
-    if (lineId) deptFilter.lines = lineId;
-    if (machineId) deptFilter.machines = machineId;
-    if (processId) deptFilter.processes = processId;
-    if (unitId) deptFilter.units = unitId;
-
-    const deptQuestions = await Question.find(deptFilter)
+    // Also include any questions scoped directly to this department.
+    // If a question has no specific line/machine, it should apply to *all* lines/machines
+    // in that department. If it is scoped to certain lines/machines, only include it when
+    // the requested context matches.
+    const deptQuestions = await Question.find({ department: departmentId })
       .populate("lines machines processes units department", "name")
       .lean();
 
     if (deptQuestions.length) {
       const seen = new Set(questions.map((q) => q._id.toString()));
+      const lineIdStr = lineId ? String(lineId) : null;
+      const machineIdStr = machineId ? String(machineId) : null;
+      const processIdStr = processId ? String(processId) : null;
+
       for (const q of deptQuestions) {
-        if (!seen.has(q._id.toString())) {
-          seen.add(q._id.toString());
-          questions.push(q);
-        }
+        if (seen.has(q._id.toString())) continue;
+
+        const lineIds = (q.lines || []).map((id) => id.toString());
+        const machineIds = (q.machines || []).map((id) => id.toString());
+        const processIds = (q.processes || []).map((id) => id.toString());
+
+        // Line match: if a line is requested and question has specific lines,
+        // require that the requested line is one of them. If question has no
+        // line restriction, it applies to all lines in the department.
+        if (lineIdStr && lineIds.length && !lineIds.includes(lineIdStr)) continue;
+
+        // Machine match: same idea as line.
+        if (machineIdStr && machineIds.length && !machineIds.includes(machineIdStr)) continue;
+
+        // Process match: same idea as line.
+        if (processIdStr && processIds.length && !processIds.includes(processIdStr)) continue;
+
+        seen.add(q._id.toString());
+        questions.push(q);
       }
     }
   }
@@ -202,3 +218,76 @@ export const deleteQuestion = asyncHandler(async (req, res) => {
   return res.json(new ApiResponse(200, question, "Question deleted"));
 });
 
+export const updateQuestion = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    throw new ApiError(400, "Invalid question id");
+  }
+
+  const updates = {};
+
+  // Allow updating basic fields for now. Extend as needed.
+  if (typeof req.body.questionText === "string") {
+    const text = req.body.questionText.trim();
+    if (!text) {
+      throw new ApiError(400, "Question text cannot be empty");
+    }
+    updates.questionText = text;
+  }
+
+  if (req.body.templateTitle !== undefined) {
+    if (req.body.templateTitle && typeof req.body.templateTitle === "string") {
+      updates.templateTitle = req.body.templateTitle.trim();
+    } else {
+      updates.templateTitle = undefined;
+    }
+  }
+
+  if (req.body.department !== undefined) {
+    updates.department = req.body.department || undefined;
+  }
+
+  if (Object.keys(updates).length === 0) {
+    throw new ApiError(400, "No valid fields provided to update");
+  }
+
+  const question = await Question.findByIdAndUpdate(id, updates, {
+    new: true,
+    runValidators: true,
+  });
+
+  if (!question) {
+    throw new ApiError(404, "Question not found");
+  }
+
+  logger.info(`Question updated: ${id} by user ${req.user.id}`);
+
+  return res.json(new ApiResponse(200, question, "Question updated"));
+});
+
+export const deleteQuestionsByTemplateTitle = asyncHandler(async (req, res) => {
+  const { title } = req.params;
+
+  if (!title || typeof title !== "string") {
+    throw new ApiError(400, "Template title is required");
+  }
+
+  const result = await Question.deleteMany({ templateTitle: title });
+
+  logger.info(
+    `Deleted ${result.deletedCount} questions for template "${title}" by user ${req.user.id}`
+  );
+
+  if (!result.deletedCount) {
+    throw new ApiError(404, "No questions found for this template");
+  }
+
+  return res.json(
+    new ApiResponse(
+      200,
+      { deletedCount: result.deletedCount },
+      "Template questions deleted"
+    )
+  );
+});

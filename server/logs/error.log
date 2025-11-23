@@ -79,3 +79,17 @@
 [24 Oct, 2025 - 00:31:59:3159] [31merror[39m: [31mPlease ensure MongoDB is running locally or check your Atlas connection.[39m
 [24 Oct, 2025 - 00:32:07:327] [31merror[39m: [31m🚨 All MongoDB connection attempts failed![39m
 [24 Oct, 2025 - 00:32:07:327] [31merror[39m: [31mPlease ensure MongoDB is running locally or check your Atlas connection.[39m
+[22 Nov, 2025 - 11:18:33:1833] [31merror[39m: [31mTarget audit reminder job failed: write ECONNRESET[39m
+[22 Nov, 2025 - 15:56:10:5610] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 14:19:02:192] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 14:19:12:1912] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 6175ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 14:19:22:1922] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 8514ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 14:19:32:1932] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 8848ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 14:19:42:1942] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 9404ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 14:19:52:1952] [31merror[39m: [31mTarget audit reminder job failed: connection <monitor> to 159.41.229.92:27017 timed out[39m
+[23 Nov, 2025 - 14:20:02:202] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 9404ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 14:20:12:2012] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 9371ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 14:20:22:2022] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 6498ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 14:20:32:2032] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 9443ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 14:20:54:2054] [31merror[39m: [31mFailed to update lastReminderDate for 69209e22f21472b73a18f3fb: Socket 'secureConnect' timed out after 6730ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 14:21:00:210] [31merror[39m: [31mFailed to send target audit reminder to jatinnagar563@gmail.com: Connection timeout[39m

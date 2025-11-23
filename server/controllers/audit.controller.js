@@ -1,11 +1,13 @@
 import Audit from "../models/audit.model.js";
 import AuditEmailSetting from "../models/auditEmailSetting.model.js";
+import AuditFormSetting from "../models/auditFormSetting.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import logger from "../logger/winston.logger.js";
 import {asyncHandler} from "../utils/asyncHandler.js";
 import { invalidateCache } from "../middlewares/cache.middleware.js";
 import sendMail from "../utils/mail.util.js";
+import EVN from "../config/env.config.js";
 
 // Normalize a comma-separated email string into a clean list
 const normalizeEmailList = (raw) => {
@@ -16,11 +18,41 @@ const normalizeEmailList = (raw) => {
     .join(", ");
 };
 
+// Public logo URL used in audit email reports (same logo as frontend loader)
+const AUDIT_EMAIL_LOGO_URL = EVN.CLIENT_URL
+  ? `${EVN.CLIENT_URL.replace(/\/+$/, "")}/motherson+marelli.png`
+  : null;
+
 export const createAudit = asyncHandler(async (req, res) => {
   const { date, line, machine, process, unit, lineLeader, shift, shiftIncharge, answers, lineRating, machineRating, processRating, unitRating, department } = req.body;
 
-  // Process is no longer required; keep it optional for backward compatibility
-  if (!date || !line || !machine || !lineLeader || !shift || !shiftIncharge) {
+  // Determine effective scope for form settings (department-based)
+  const effectiveDepartment = department || req.user.department || undefined;
+
+  let formSetting = null;
+  if (effectiveDepartment) {
+    formSetting = await AuditFormSetting.findOne({ department: effectiveDepartment })
+      .sort({ createdAt: -1 })
+      .lean();
+  }
+  // Fallback to the latest global configuration if no scoped config exists
+  if (!formSetting) {
+    formSetting = await AuditFormSetting.findOne().sort({ createdAt: -1 }).lean();
+  }
+
+  const lineEnabled = formSetting?.lineField?.enabled !== false; // default: true
+  const machineEnabled = formSetting?.machineField?.enabled !== false; // default: true
+
+  // Process is no longer required; keep it optional for backward compatibility.
+  // Line and machine requirement is driven by admin configuration.
+  if (
+    !date ||
+    (lineEnabled && !line) ||
+    (machineEnabled && !machine) ||
+    !lineLeader ||
+    !shift ||
+    !shiftIncharge
+  ) {
     throw new ApiError(400, "All required fields must be filled");
   }
 
@@ -602,6 +634,30 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
   const processRatingValue = audit.processRating ?? null;
   const unitRatingValue = audit.unitRating ?? null;
 
+  // Load dynamic form settings to drive labels/visibility in the shared email
+  let formSetting = null;
+  if (departmentId) {
+    try {
+      formSetting = await AuditFormSetting.findOne({ department: departmentId })
+        .sort({ createdAt: -1 })
+        .lean();
+    } catch (err) {
+      logger.error(`Failed to load audit form settings for email (department ${departmentId}): ${err?.message || err}`);
+    }
+  }
+  if (!formSetting) {
+    try {
+      formSetting = await AuditFormSetting.findOne().sort({ createdAt: -1 }).lean();
+    } catch (err) {
+      logger.error(`Failed to load global audit form settings for email: ${err?.message || err}`);
+    }
+  }
+
+  const lineFieldEnabled = formSetting?.lineField?.enabled !== false;
+  const machineFieldEnabled = formSetting?.machineField?.enabled !== false;
+  const lineLabel = formSetting?.lineField?.label || "Line";
+  const machineLabel = formSetting?.machineField?.label || "Machine";
+
   const subject = `Audit Result - ${dateStr} - ${lineName}`;
 
   const rowsHtml = (audit.answers || [])
@@ -647,75 +703,143 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
     })
     .join("");
 
-  const extraNote = note ? `<p style="margin:0 0 16px 0;font-size:13px;"><strong>Note from ${
-    auditorName || "auditor"
-  }:</strong> ${note}</p>` : "";
+  const extraNote = note
+    ? `<p style="margin:0 0 16px 0;font-size:13px;"><strong>Note from ${
+        auditorName || "auditor"
+      }:</strong> ${note}</p>`
+    : "";
+
+  const logoImgHtml = AUDIT_EMAIL_LOGO_URL
+    ? '<img src="' +
+      AUDIT_EMAIL_LOGO_URL +
+      '" alt="Company Logo" style="max-width:220px;height:auto;margin-bottom:12px;" />'
+    : "";
 
   const html = `
-    <div style="font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111827;">
-      <h2 style="margin-bottom:4px;font-size:20px;">Audit Result Shared</h2>
-      <p style="margin:0 0 16px 0;font-size:14px;color:#4b5563;">
-        An audit has been completed and shared with you. Below are the details.
-      </p>
+    <div style="background-color:#f3f4f6;padding:24px 16px;font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:#111827;">
+      <div style="max-width:800px;margin:0 auto;background-color:#ffffff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden;box-shadow:0 10px 25px rgba(15,23,42,0.08);">
+        <div style="padding:20px 24px 16px 24px;text-align:center;border-bottom:1px solid #e5e7eb;">
+          ${logoImgHtml}
+          <h2 style="margin:0;font-size:20px;line-height:1.4;color:#111827;">Audit Result Shared</h2>
+          <p style="margin:6px 0 0 0;font-size:13px;color:#4b5563;">
+            An audit has been completed and shared with you. Below are the key details and full question breakdown.
+          </p>
+        </div>
 
-      <div style="margin-bottom:16px;padding:12px 14px;border-radius:8px;background:#f9fafb;border:1px solid #e5e7eb;">
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Date:</strong> ${dateStr}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Department:</strong> ${departmentName}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Line:</strong> ${lineName}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Machine:</strong> ${machineName}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Process:</strong> ${processName}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Unit:</strong> ${unitName}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Shift:</strong> ${
-          audit.shift || "N/A"
-        }</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Line Rating:</strong> ${
-          lineRatingValue !== null ? `${lineRatingValue}/10` : "N/A"
-        }</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Machine Rating:</strong> ${
-          machineRatingValue !== null ? `${machineRatingValue}/10` : "N/A"
-        }</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Process Rating:</strong> ${
-          processRatingValue !== null ? `${processRatingValue}/10` : "N/A"
-        }</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Unit Rating:</strong> ${
-          unitRatingValue !== null ? `${unitRatingValue}/10` : "N/A"
-        }</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Line Leader:</strong> ${
-          audit.lineLeader || "N/A"
-        }</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Shift Incharge:</strong> ${
-          audit.shiftIncharge || "N/A"
-        }</p>
-        <p style="margin:0;font-size:13px;"><strong>Auditor:</strong> ${auditorName}</p>
+        <div style="padding:20px 24px 8px 24px;">
+          <h3 style="margin:0 0 8px 0;font-size:14px;color:#111827;">Audit overview</h3>
+          <table style="width:100%;border-collapse:collapse;font-size:13px;color:#111827;">
+            <tbody>
+              <tr>
+                <td style="padding:4px 8px;width:35%;color:#6b7280;">Date</td>
+                <td style="padding:4px 8px;font-weight:500;">${dateStr}</td>
+              </tr>
+              <tr>
+                <td style="padding:4px 8px;color:#6b7280;">Department</td>
+                <td style="padding:4px 8px;font-weight:500;">${departmentName}</td>
+              </tr>
+              ${
+                lineFieldEnabled
+                  ? `<tr>
+                      <td style="padding:4px 8px;color:#6b7280;">${lineLabel}</td>
+                      <td style="padding:4px 8px;font-weight:500;">${lineName}</td>
+                    </tr>`
+                  : ""
+              }
+              ${
+                machineFieldEnabled
+                  ? `<tr>
+                      <td style="padding:4px 8px;color:#6b7280;">${machineLabel}</td>
+                      <td style="padding:4px 8px;font-weight:500;">${machineName}</td>
+                    </tr>`
+                  : ""
+              }
+              <tr>
+                <td style="padding:4px 8px;color:#6b7280;">Process</td>
+                <td style="padding:4px 8px;font-weight:500;">${processName}</td>
+              </tr>
+              <tr>
+                <td style="padding:4px 8px;color:#6b7280;">Unit</td>
+                <td style="padding:4px 8px;font-weight:500;">${unitName}</td>
+              </tr>
+              <tr>
+                <td style="padding:4px 8px;color:#6b7280;">Shift</td>
+                <td style="padding:4px 8px;font-weight:500;">${audit.shift || "N/A"}</td>
+              </tr>
+              <tr>
+                <td style="padding:4px 8px;color:#6b7280;">Line leader</td>
+                <td style="padding:4px 8px;font-weight:500;">${audit.lineLeader || "N/A"}</td>
+              </tr>
+              <tr>
+                <td style="padding:4px 8px;color:#6b7280;">Shift incharge</td>
+                <td style="padding:4px 8px;font-weight:500;">${audit.shiftIncharge || "N/A"}</td>
+              </tr>
+              <tr>
+                <td style="padding:4px 8px;color:#6b7280;">Auditor</td>
+                <td style="padding:4px 8px;font-weight:500;">${auditorName}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="padding:8px 24px 16px 24px;">
+          <h3 style="margin:0 0 8px 0;font-size:14px;color:#111827;">Summary</h3>
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <tbody>
+              <tr>
+                <td style="padding:8px;border-radius:8px;background:#f9fafb;border:1px solid #e5e7eb;">
+                  <div style="font-size:11px;color:#6b7280;">Total questions</div>
+                  <div style="margin-top:2px;font-size:16px;font-weight:600;color:#111827;">${totalQuestions}</div>
+                </td>
+                <td style="padding:8px;border-radius:8px;background:#f9fafb;border:1px solid #e5e7eb;">
+                  <div style="font-size:11px;color:#6b7280;">Pass (Yes/Pass)</div>
+                  <div style="margin-top:2px;font-size:16px;font-weight:600;color:#16a34a;">${yesCount}</div>
+                </td>
+                <td style="padding:8px;border-radius:8px;background:#f9fafb;border:1px solid #e5e7eb;">
+                  <div style="font-size:11px;color:#6b7280;">Fail (No/Fail)</div>
+                  <div style="margin-top:2px;font-size:16px;font-weight:600;color:#dc2626;">${noCount}</div>
+                </td>
+              </tr>
+              ${
+                otherCount > 0
+                  ? `<tr>
+                      <td colspan="3" style="padding:8px 4px 0 4px;font-size:11px;color:#6b7280;">
+                        Other question types (e.g. MCQ, text): <strong style="color:#111827;">${otherCount}</strong>
+                      </td>
+                    </tr>`
+                  : ""
+              }
+            </tbody>
+          </table>
+        </div>
+
+        ${
+          extraNote
+            ? `<div style="padding:0 24px 16px 24px;">${extraNote}</div>`
+            : ""
+        }
+
+        <div style="padding:16px 24px 24px 24px;border-top:1px solid #e5e7eb;">
+          <h3 style="margin:0 0 8px 0;font-size:14px;color:#111827;">Question breakdown</h3>
+          <table style="border-collapse:collapse;width:100%;margin-top:4px;font-size:12px;">
+            <thead>
+              <tr style="background:#f3f4f6;">
+                <th style="padding:8px;border:1px solid #e5e7eb;text-align:left;font-weight:600;color:#374151;">#</th>
+                <th style="padding:8px;border:1px solid #e5e7eb;text-align:left;font-weight:600;color:#374151;">Question</th>
+                <th style="padding:8px;border:1px solid #e5e7eb;text-align:left;font-weight:600;color:#374151;">Answer</th>
+                <th style="padding:8px;border:1px solid #e5e7eb;text-align:left;font-weight:600;color:#374151;">Remark</th>
+                <th style="padding:8px;border:1px solid #e5e7eb;text-align:left;font-weight:600;color:#374151;">Photos</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rowsHtml}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <div style="margin-bottom:16px;">
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Total Questions:</strong> ${totalQuestions}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Pass/Fail Questions:</strong> ${yesNoTotal}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Pass (Yes/Pass):</strong> ${yesCount}</p>
-        <p style="margin:0 0 4px 0;font-size:13px;"><strong>Fail (No/Fail):</strong> ${noCount}</p>
-        ${otherCount > 0 ? `<p style=\"margin:0 0 4px 0;font-size:13px;\"><strong>Other Question Types:</strong> ${otherCount}</p>` : ""}
-      </div>
-
-      ${extraNote}
-
-      <table style="border-collapse:collapse;width:100%;margin-top:12px;">
-        <thead>
-          <tr style="background:#f3f4f6;">
-            <th style="padding:8px;border:1px solid #e5e7eb;font-size:13px;text-align:left;">#</th>
-            <th style="padding:8px;border:1px solid #e5e7eb;font-size:13px;text-align:left;">Question</th>
-            <th style="padding:8px;border:1px solid #e5e7eb;font-size:13px;text-align:left;">Answer</th>
-            <th style="padding:8px;border:1px solid #e5e7eb;font-size:13px;text-align:left;">Remark</th>
-            <th style="padding:8px;border:1px solid #e5e7eb;font-size:13px;text-align:left;">Photos</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rowsHtml}
-        </tbody>
-      </table>
-
-      <p style="margin-top:16px;font-size:12px;color:#9ca3af;">
-        This email was sent automatically by the Audit Management System.
+      <p style="margin-top:12px;font-size:11px;color:#9ca3af;text-align:center;">
+        Developed by 10Sight Technologies.
       </p>
     </div>
   `;
@@ -773,6 +897,87 @@ export const updateAuditEmailSettings = asyncHandler(async (req, res) => {
     .lean();
 
   return res.json(new ApiResponse(200, setting, "Audit email settings updated"));
+});
+
+// ===== Audit Form Settings (Admin) =====
+
+export const getAuditFormSettings = asyncHandler(async (req, res) => {
+  const { department } = req.query || {};
+
+  let setting = null;
+  // Prefer a scoped configuration when department is provided
+  if (department) {
+    setting = await AuditFormSetting.findOne({ department })
+      .sort({ createdAt: -1 })
+      .lean();
+  }
+
+  // Fallback to the latest global configuration if no scoped config exists
+  if (!setting) {
+    setting = await AuditFormSetting.findOne()
+      .sort({ createdAt: -1 })
+      .lean();
+  }
+
+  return res.json(new ApiResponse(200, setting, "Audit form settings fetched"));
+});
+
+export const updateAuditFormSettings = asyncHandler(async (req, res) => {
+  const { formTitle, lineField, machineField, unit, department } = req.body || {};
+
+  const sanitizeField = (field, defaults) => {
+    const safe = field && typeof field === "object" ? field : {};
+    return {
+      label: typeof safe.label === "string" && safe.label.trim() ? safe.label.trim() : defaults.label,
+      placeholder:
+        typeof safe.placeholder === "string" && safe.placeholder.trim()
+          ? safe.placeholder.trim()
+          : defaults.placeholder,
+      enabled:
+        typeof safe.enabled === "boolean"
+          ? safe.enabled
+          : defaults.enabled,
+    };
+  };
+
+  const defaults = {
+    lineField: { label: "Line", placeholder: "Select Line", enabled: true },
+    machineField: { label: "Machine", placeholder: "Select Machine", enabled: true },
+  };
+
+  const sanitizedLineField = sanitizeField(lineField, defaults.lineField);
+  const sanitizedMachineField = sanitizeField(machineField, defaults.machineField);
+
+  // Prevent misconfiguration where both fields are disabled
+  if (!sanitizedLineField.enabled && !sanitizedMachineField.enabled) {
+    throw new ApiError(400, "At least one of Line or Machine fields must be enabled");
+  }
+
+  if (!department) {
+    throw new ApiError(400, "Department is required to save form settings");
+  }
+
+  const payload = {
+    formTitle: typeof formTitle === "string" && formTitle.trim()
+      ? formTitle.trim()
+      : "Part and Quality Audit Performance",
+    // We keep the unit on the document for reference, but selection is department-based
+    unit: unit || undefined,
+    department,
+    lineField: sanitizedLineField,
+    machineField: sanitizedMachineField,
+  };
+
+  const filter = { department };
+
+  const setting = await AuditFormSetting.findOneAndUpdate(
+    filter,
+    payload,
+    { new: true, upsert: true, setDefaultsOnInsert: true }
+  )
+    .lean();
+
+  return res.json(new ApiResponse(200, setting, "Audit form settings updated"));
 });
 
 export const updateAudit = asyncHandler(async (req, res) => {

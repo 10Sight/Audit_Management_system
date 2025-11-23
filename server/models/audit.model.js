@@ -7,8 +7,10 @@ const AuditSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    line: { type: Schema.Types.ObjectId, ref: "Line", required: true, index: true },
-    machine: { type: Schema.Types.ObjectId, ref: "Machine", required: true, index: true },
+    // Line and machine are now optional at schema level; actual requirement is enforced
+    // in the controller based on admin-configured form settings.
+    line: { type: Schema.Types.ObjectId, ref: "Line", required: false, index: true },
+    machine: { type: Schema.Types.ObjectId, ref: "Machine", required: false, index: true },
     // Process is now optional for audits (kept for historical data)
     process: { type: Schema.Types.ObjectId, ref: "Process", required: false, index: true },
     unit: { type: Schema.Types.ObjectId, ref: "Unit", required: false, index: true },

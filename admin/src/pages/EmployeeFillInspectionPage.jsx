@@ -215,26 +215,37 @@ export default function EmployeeFillInspectionPage() {
     setMachine("");
   }, [line]);
 
-  // Fetch questions when line/machine/unit changes via RTK Query (process not required for template lookup)
+  // Fetch questions when unit changes via RTK Query (line/machine do NOT affect which questions appear)
+  // Questions are scoped only by department (and optionally unit) on the server, and we also enforce
+  // department filtering on the client to avoid seeing questions from other departments.
   const questionParams = {
-    ...(line && lineFieldEnabled ? { lineId: line } : {}),
-    ...(machine && machineFieldEnabled ? { machineId: machine } : {}),
-    ...(unit ? { unitId: unit } : {}),
+    ...(unit ? { unit } : {}),
     includeGlobal: 'true',
-    ...(currentUser?.department ? { departmentId: currentUser.department._id || currentUser.department } : {}),
   };
 
   // Only skip fetching questions until we at least know the auditor's unit.
-  // Line and machine selections further refine results but are not required
-  // to load department/global questions for the employee.
   const shouldSkipQuestions = !unit;
 
   const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery(questionParams, { skip: shouldSkipQuestions });
+
   useEffect(() => {
     if (questionsLoading) return;
-    const list = Array.isArray(questionsRes?.data) ? questionsRes.data : [];
-    setQuestions(list.map(q => ({ ...q, answer: "", remark: "" })));
-  }, [questionsRes, questionsLoading]);
+    const rawList = Array.isArray(questionsRes?.data) ? questionsRes.data : [];
+
+    // Only keep questions that belong to the employee's department, plus any global questions.
+    const employeeDeptId = currentUser?.department?._id || currentUser?.department || '';
+
+    const filteredByDept = rawList.filter((q) => {
+      // Allow explicit global questions regardless of department
+      if (q.isGlobal) return true;
+
+      const qDeptId = typeof q.department === 'object' ? q.department?._id : q.department;
+      if (!employeeDeptId) return true; // if somehow no department on user, don't hide anything
+      return qDeptId && String(qDeptId) === String(employeeDeptId);
+    });
+
+    setQuestions(filteredByDept.map((q) => ({ ...q, answer: '', remark: '' })));
+  }, [questionsRes, questionsLoading, currentUser]);
 
   const handleAnswerChange = (idx, value) => {
     const newQs = [...questions];
@@ -469,7 +480,7 @@ export default function EmployeeFillInspectionPage() {
   if (loading) return <Loader />;
 
   return (
-    <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto">
+    <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto scroll-smooth">
       <ToastContainer />
         <div className="space-y-1">
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">

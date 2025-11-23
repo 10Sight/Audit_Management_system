@@ -63,16 +63,7 @@ export const getSingleDepartment = asyncHandler(async (req, res) => {
 
 // Create new department
 export const createDepartment = asyncHandler(async (req, res) => {
-  const { name, description, unit: bodyUnit } = req.body;
-
-  // Check if department already exists (case-insensitive)
-  const existingDepartment = await Department.findOne({
-    name: new RegExp(`^${name}$`, "i"),
-  });
-
-  if (existingDepartment) {
-    throw new ApiError(409, "Department with this name already exists");
-  }
+  const { name, description, unit: bodyUnit, staffByShift } = req.body;
 
   let unitIdToUse;
 
@@ -100,11 +91,60 @@ export const createDepartment = asyncHandler(async (req, res) => {
     unitIdToUse = req.user.unit;
   }
 
+  // Optional staffByShift configuration (department-level leaders/incharges, no shift binding required)
+  let staffByShiftPayload;
+  if (Array.isArray(staffByShift)) {
+    const toArray = (val, fallbackSingle) => {
+      if (Array.isArray(val)) {
+        return val.map((s) => (s || "").toString().trim()).filter(Boolean);
+      }
+      if (typeof val === "string") {
+        return val
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
+      if (fallbackSingle) {
+        return [(fallbackSingle || "").toString().trim()].filter(Boolean);
+      }
+      return [];
+    };
+
+    staffByShiftPayload = staffByShift
+      .map((item) => {
+        if (!item) return null;
+        const lineLeaders = toArray(item.lineLeaders, item.lineLeader);
+        const shiftIncharges = toArray(item.shiftIncharges, item.shiftIncharge);
+        const payloadItem = {
+          lineLeaders,
+          shiftIncharges,
+        };
+        // Preserve any existing shift label if provided (for backward compatibility),
+        // but it is no longer required or enforced.
+        if (item.shift) {
+          payloadItem.shift = item.shift;
+        }
+        return payloadItem;
+      })
+      .filter((item) => item && (item.lineLeaders.length || item.shiftIncharges.length));
+  }
+
+  // Check if department already exists in the same unit (case-insensitive)
+  const existingDepartment = await Department.findOne({
+    name: new RegExp(`^${name}$`, "i"),
+    unit: unitIdToUse,
+  });
+
+  if (existingDepartment) {
+    throw new ApiError(409, "Department with this name already exists in this unit");
+  }
+
   const department = await Department.create({
     name,
     description,
     createdBy: req.user.id,
     unit: unitIdToUse,
+    ...(staffByShiftPayload ? { staffByShift: staffByShiftPayload } : {}),
   });
 
   await department.populate("createdBy", "fullName employeeId");
@@ -117,22 +157,13 @@ export const createDepartment = asyncHandler(async (req, res) => {
 // Update department
 export const updateDepartment = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { name, description, isActive, unit: unitId } = req.body;
+  const { name, description, isActive, unit: unitId, staffByShift } = req.body;
 
   const department = await Department.findById(id);
   if (!department) throw new ApiError(404, "Department not found");
 
-  // Check if new name conflicts with existing department (excluding current one)
-  if (name && name !== department.name) {
-    const existingDepartment = await Department.findOne({
-      name: new RegExp(`^${name}$`, "i"),
-      _id: { $ne: id },
-    });
-
-    if (existingDepartment) {
-      throw new ApiError(409, "Department with this name already exists");
-    }
-  }
+  // Determine which unit this department will belong to after update
+  let targetUnitId = department.unit;
 
   // Superadmin can reassign a department to a different unit
   if (req.user.role === "superadmin" && unitId) {
@@ -141,6 +172,61 @@ export const updateDepartment = asyncHandler(async (req, res) => {
       throw new ApiError(404, "Selected unit not found");
     }
     department.unit = targetUnit._id;
+    targetUnitId = targetUnit._id;
+  }
+
+  // Check if new name conflicts with existing department in the same unit (excluding current one)
+  if (name && name !== department.name) {
+    const query = {
+      name: new RegExp(`^${name}$`, "i"),
+      _id: { $ne: id },
+    };
+
+    if (targetUnitId) {
+      query.unit = targetUnitId;
+    }
+
+    const existingDepartment = await Department.findOne(query);
+
+    if (existingDepartment) {
+      throw new ApiError(409, "Department with this name already exists in this unit");
+    }
+  }
+
+  // Optional staffByShift update (department-level leaders/incharges, no shift binding required)
+  if (Array.isArray(staffByShift)) {
+    const toArray = (val, fallbackSingle) => {
+      if (Array.isArray(val)) {
+        return val.map((s) => (s || "").toString().trim()).filter(Boolean);
+      }
+      if (typeof val === "string") {
+        return val
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
+      }
+      if (fallbackSingle) {
+        return [(fallbackSingle || "").toString().trim()].filter(Boolean);
+      }
+      return [];
+    };
+
+    department.staffByShift = staffByShift
+      .map((item) => {
+        if (!item) return null;
+        const lineLeaders = toArray(item.lineLeaders, item.lineLeader);
+        const shiftIncharges = toArray(item.shiftIncharges, item.shiftIncharge);
+        const payloadItem = {
+          lineLeaders,
+          shiftIncharges,
+        };
+        // Preserve any existing shift label if provided, but do not require it.
+        if (item.shift) {
+          payloadItem.shift = item.shift;
+        }
+        return payloadItem;
+      })
+      .filter((item) => item && (item.lineLeaders.length || item.shiftIncharges.length));
   }
 
   // Update fields
@@ -261,58 +347,87 @@ export const assignEmployeeToDepartment = asyncHandler(async (req, res) => {
 
 // Get department statistics
 export const getDepartmentStats = asyncHandler(async (req, res) => {
-  // Use Promise.all to run queries concurrently for better performance
-  const [stats, totalDepartments, activeDepartments, totalUsers, totalEmployees] = await Promise.all([
-    Department.aggregate([
-      {
-        $lookup: {
-          from: "employees",
-          localField: "_id",
-          foreignField: "department",
-          as: "employees",
-          pipeline: [
-            {
-              $project: {
-                role: 1
-              }
-            }
-          ]
-        }
-      },
-      {
-        $project: {
-          name: 1,
-          description: 1,
-          isActive: 1,
-          employeeCount: { $size: "$employees" },
-          adminCount: {
-            $size: {
-              $filter: {
-                input: "$employees",
-                cond: { $eq: ["$$this.role", "admin"] }
-              }
-            }
+  // Determine unit scope based on role / query
+  let unitFilter = null;
+
+  if (req.user && req.user.role === 'admin' && req.user.unit) {
+    // Admins are always restricted to their own unit
+    unitFilter = req.user.unit;
+  } else if (req.query.unit) {
+    // Superadmin can optionally filter by unit via query param
+    unitFilter = req.query.unit;
+  }
+
+  const deptMatch = {};
+  if (unitFilter) {
+    deptMatch.unit = unitFilter;
+  }
+
+  // Aggregate per-department stats, optionally scoped to a unit
+  const stats = await Department.aggregate([
+    Object.keys(deptMatch).length ? { $match: deptMatch } : null,
+    {
+      $lookup: {
+        from: "employees",
+        localField: "_id",
+        foreignField: "department",
+        as: "employees",
+        pipeline: [
+          {
+            $project: {
+              role: 1,
+            },
           },
-          employeeRoleCount: {
-            $size: {
-              $filter: {
-                input: "$employees",
-                cond: { $eq: ["$$this.role", "employee"] }
-              }
-            }
-          },
-          createdAt: 1
-        }
+        ],
       },
-      {
-        $sort: { employeeCount: -1, name: 1 }
-      }
-    ]),
-    Department.countDocuments(),
-    Department.countDocuments({ isActive: true }),
-    Employee.countDocuments(), // total users (all roles)
-    Employee.countDocuments({ role: 'employee' }) // employees only
-  ]);
+    },
+    {
+      $project: {
+        name: 1,
+        description: 1,
+        isActive: 1,
+        employeeCount: { $size: "$employees" },
+        adminCount: {
+          $size: {
+            $filter: {
+              input: "$employees",
+              cond: { $eq: ["$$this.role", "admin"] },
+            },
+          },
+        },
+        employeeRoleCount: {
+          $size: {
+            $filter: {
+              input: "$employees",
+              cond: { $eq: ["$$this.role", "employee"] },
+            },
+          },
+        },
+        createdAt: 1,
+      },
+    },
+    {
+      $sort: { employeeCount: -1, name: 1 },
+    },
+  ].filter(Boolean));
+
+  // Summary numbers, scoped to the same unit filter
+  const totalDepartments = await Department.countDocuments(deptMatch);
+  const activeDepartments = await Department.countDocuments({
+    ...deptMatch,
+    isActive: true,
+  });
+
+  // Derive user counts from aggregated stats so they respect the same unit scope
+  const totalUsers = stats.reduce(
+    (sum, dept) => sum + (dept.employeeCount || 0),
+    0
+  );
+
+  const totalEmployees = stats.reduce(
+    (sum, dept) => sum + (dept.employeeRoleCount || 0),
+    0
+  );
 
   logger.info(`Department statistics fetched by ${req.user.fullName} (${req.user.employeeId})`);
 
@@ -325,8 +440,8 @@ export const getDepartmentStats = asyncHandler(async (req, res) => {
           totalDepartments,
           activeDepartments,
           totalUsers,
-          totalEmployees
-        }
+          totalEmployees,
+        },
       },
       "Department statistics fetched successfully"
     )

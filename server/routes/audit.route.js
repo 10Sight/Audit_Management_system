@@ -9,6 +9,8 @@ import {
   shareAuditByEmail,
   getAuditEmailSettings,
   updateAuditEmailSettings,
+  getAuditFormSettings,
+  updateAuditFormSettings,
 } from "../controllers/audit.controller.js";
 import { verifyJWT, authorizeRoles } from "../middlewares/auth.middleware.js";
 import { cache, cacheConfig } from "../middlewares/cache.middleware.js";
@@ -24,6 +26,12 @@ router.post("/", verifyJWT, authorizeRoles("employee", "manager", "admin"), uplo
 // Email settings (admin only)
 router.get("/email-settings", verifyJWT, authorizeRoles("admin"), getAuditEmailSettings);
 router.put("/email-settings", verifyJWT, authorizeRoles("admin"), updateAuditEmailSettings);
+
+// Form settings
+// - Any authenticated user (admin/employee/superadmin) can READ form settings
+// - Only admin can UPDATE them
+router.get("/form-settings", verifyJWT, authorizeRoles("admin", "employee", "superadmin"), getAuditFormSettings);
+router.put("/form-settings", verifyJWT, authorizeRoles("admin"), updateAuditFormSettings);
 
 // Admin (or manager) can view all audits
 

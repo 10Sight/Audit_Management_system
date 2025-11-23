@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env?.VITE_SERVER_URL || "http://https://audit-management-system-server.onrender.com";
+const BASE_URL = import.meta.env?.VITE_SERVER_URL || "http://http://localhost:5000";
 
 const axiosInstance = axios.create({
     baseURL: BASE_URL,

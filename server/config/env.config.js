@@ -26,6 +26,9 @@ const EVN = {
     TWILIO_SID: process.env.TWILIO_SID,
     TWILIO_AUTH: process.env.TWILIO_AUTH,
     TWILIO_NUMBER: process.env.TWILIO_NUMBER,
+
+    // Public client base URL for assets/links in emails (e.g. https://app.example.com)
+    CLIENT_URL: process.env.CLIENT_URL,
 }
 
 export default EVN;
