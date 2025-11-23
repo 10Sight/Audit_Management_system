@@ -10,7 +10,6 @@ const SuperAdminLayout = lazy(() => import("../Layout/SuperAdminLayout"));
 
 // Pages
 const LoginPage = lazy(() => import("../pages/LoginPage"));
-const EmployeeMobileLoginPage = lazy(() => import("../pages/EmployeeMobileLoginPage"));
 const AdminDashboard = lazy(() => import("../pages/AdminDashboard"));
 const EmployeesPage = lazy(() => import("../pages/EmployeesPage"));
 const AddEmployeePage = lazy(() => import("../pages/AddEmployee"));
@@ -48,7 +47,6 @@ export default function AppRoutes() {
       <Routes>
         {/* Public Route */}
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/employee/mobile-login" element={<EmployeeMobileLoginPage />} />
 
         {/* SuperAdmin Routes */}
         <Route
