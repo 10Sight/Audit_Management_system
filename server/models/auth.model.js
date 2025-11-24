@@ -63,12 +63,12 @@ const EmployeeSchema = new Schema(
       type: String,
       required: [true, "Password is required"],
       minlength: [6, "Password must be at least 6 characters"],
-      select: false, 
+      select: false,
     },
 
     role: {
       type: String,
-      enum: ["SuperSuperadmin","superadmin", "admin", "employee"],
+      enum: ["SuperSuperadmin", "superadmin", "admin", "employee"],
       default: "employee",
     },
 
@@ -94,11 +94,21 @@ const EmployeeSchema = new Schema(
       lastReminderDate: {
         type: Date,
       },
+      // Tracks the completed audit count when the last reminder was sent
+      lastAuditCountAtReminder: {
+        type: Number,
+        default: 0,
+      },
+      // Tracks consecutive reminders sent with no progress
+      stagnantReminderCount: {
+        type: Number,
+        default: 0,
+      },
     },
   },
   {
     timestamps: true,
-    versionKey: false, 
+    versionKey: false,
   }
 );
 
@@ -137,8 +147,8 @@ EmployeeSchema.index({ username: 1 }, { unique: false, sparse: true });
 EmployeeSchema.index({ phoneNumber: 1 }, { unique: true });
 EmployeeSchema.index({ role: 1 });
 EmployeeSchema.index({ department: 1 });
-EmployeeSchema.index({ username: 1, department: 1 }); 
-EmployeeSchema.index({ createdAt: -1 }); 
+EmployeeSchema.index({ username: 1, department: 1 });
+EmployeeSchema.index({ createdAt: -1 });
 
 const Employee = model("Employee", EmployeeSchema);
 

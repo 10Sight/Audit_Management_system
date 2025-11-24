@@ -56,6 +56,8 @@ export default function AuditsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState({ total: 0, totalRecords: 0, count: 0 });
   const auditsPerPage = 10;
+  // Row selection for export
+  const [selectedAuditIds, setSelectedAuditIds] = useState([]);
   // Filters
   const [selectedDepartment, setSelectedDepartment] = useState('all');
   const [selectedLine, setSelectedLine] = useState('all');
@@ -195,6 +197,33 @@ export default function AuditsPage() {
     setCurrentPage(page);
   };
 
+  const toggleAuditSelection = (auditId, checked) => {
+    setSelectedAuditIds((prev) => {
+      if (checked) {
+        if (prev.includes(auditId)) return prev;
+        return [...prev, auditId];
+      }
+      return prev.filter((id) => id !== auditId);
+    });
+  };
+
+  const toggleSelectAllCurrentPage = (checked) => {
+    const currentPageIds = audits.map((audit) => audit._id);
+    setSelectedAuditIds((prev) => {
+      if (checked) {
+        const set = new Set(prev);
+        currentPageIds.forEach((id) => set.add(id));
+        return Array.from(set);
+      }
+      // Remove only the ids from the current page
+      const pageIdSet = new Set(currentPageIds);
+      return prev.filter((id) => !pageIdSet.has(id));
+    });
+  };
+
+  const isAllCurrentPageSelected =
+    audits.length > 0 && audits.every((audit) => selectedAuditIds.includes(audit._id));
+
   const unitScopeLabel = React.useMemo(() => {
     if (role === 'superadmin') {
       const units = unitsRes?.data || [];
@@ -212,21 +241,29 @@ export default function AuditsPage() {
     try {
       setProcessing(true);
 
-      const params = {
-        page: 1,
-        limit: 100000,
-        department: selectedDepartment !== 'all' ? selectedDepartment : undefined,
-        line: selectedLine !== 'all' ? selectedLine : undefined,
-        machine: selectedMachine !== 'all' ? selectedMachine : undefined,
-        unit: effectiveUnitId,
-        shift: selectedShift !== 'all' ? selectedShift : undefined,
-        result: resultFilter !== 'any' ? resultFilter : undefined,
-        startDate: startDate || undefined,
-        endDate: endDate || undefined,
-      };
+      let exportAudits = [];
 
-      const res = await api.get('/api/audits', { params });
-      const exportAudits = res?.data?.data?.audits || [];
+      if (selectedAuditIds.length > 0) {
+        // Export only the audits that are currently selected in the table
+        exportAudits = audits.filter((audit) => selectedAuditIds.includes(audit._id));
+      } else {
+        // Fallback: export all audits for the current filters (existing behaviour)
+        const params = {
+          page: 1,
+          limit: 100000,
+          department: selectedDepartment !== 'all' ? selectedDepartment : undefined,
+          line: selectedLine !== 'all' ? selectedLine : undefined,
+          machine: selectedMachine !== 'all' ? selectedMachine : undefined,
+          unit: effectiveUnitId,
+          shift: selectedShift !== 'all' ? selectedShift : undefined,
+          result: resultFilter !== 'any' ? resultFilter : undefined,
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+        };
+
+        const res = await api.get('/api/audits', { params });
+        exportAudits = res?.data?.data?.audits || [];
+      }
 
       if (!exportAudits.length) {
         toast.info('No audits to export for selected filters');
@@ -290,17 +327,6 @@ export default function AuditsPage() {
             Current unit scope: <span className="font-medium text-foreground">{unitScopeLabel}</span>
           </p>
         </div>
-        {currentUser?.role === "admin" && (
-          <Button
-            onClick={() => navigate("/admin/audits/create")}
-            size="sm"
-            disabled={processing}
-            className="self-start sm:self-auto gap-2 shadow-sm"
-          >
-            <FiPlus className="h-4 w-4" />
-            <span>New Audit</span>
-          </Button>
-        )}
       </div>
 
       <Card className="border-muted/60 shadow-sm">
@@ -462,6 +488,14 @@ export default function AuditsPage() {
               <Table className="min-w-[960px]">
                 <TableHeader>
                   <TableRow className="bg-muted/60">
+                    <TableHead className="w-[40px]">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 cursor-pointer"
+                        checked={isAllCurrentPageSelected}
+                        onChange={(e) => toggleSelectAllCurrentPage(e.target.checked)}
+                      />
+                    </TableHead>
                     <TableHead className="whitespace-nowrap text-xs font-semibold text-muted-foreground">S. No.</TableHead>
                     <TableHead className="whitespace-nowrap text-xs font-semibold text-muted-foreground">Auditor</TableHead>
                     <TableHead className="whitespace-nowrap text-xs font-semibold text-muted-foreground">Audit title</TableHead>
@@ -493,6 +527,14 @@ export default function AuditsPage() {
                         className="cursor-pointer bg-background transition-colors hover:bg-muted/60"
                         onClick={() => navigate(`/admin/audits/${audit._id}`)}
                       >
+                        <TableCell className="w-[40px]" onClick={(e) => e.stopPropagation()}>
+                          <input
+                            type="checkbox"
+                            className="h-4 w-4 cursor-pointer"
+                            checked={selectedAuditIds.includes(audit._id)}
+                            onChange={(e) => toggleAuditSelection(audit._id, e.target.checked)}
+                          />
+                        </TableCell>
                         <TableCell className="whitespace-nowrap text-xs sm:text-sm text-muted-foreground">
                           {serial}
                         </TableCell>

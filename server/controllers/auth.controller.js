@@ -4,7 +4,7 @@ import Department from "../models/department.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import logger from "../logger/winston.logger.js";
-import {asyncHandler} from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import EVN from "../config/env.config.js";
 import { getRedisClient } from "../config/redis.config.js";
 import { sendLoginOtpSms } from "../services/twilio.service.js";
@@ -36,6 +36,7 @@ export const bootstrapSuperAdmin = asyncHandler(async (req, res) => {
   logger.info(`Superadmin bootstrapped: ${user.fullName} (${user.employeeId})`);
   return res.status(201).json(new ApiResponse(201, { employee: user }, "Superadmin created"));
 });
+
 export const registerEmployee = asyncHandler(async (req, res) => {
   const { fullName, emailId, department, employeeId, username, phoneNumber, password, role, unit } = req.body;
 
@@ -135,21 +136,21 @@ export const loginEmployee = asyncHandler(async (req, res) => {
   let employee = await Employee.findOne({
     username: username.toLowerCase()
   })
-  .select("+password")
-  .populate('department', 'name description')
-  .populate('unit', 'name description');
-  
+    .select("+password")
+    .populate('department', 'name description')
+    .populate('unit', 'name description');
+
   // If not found by username, try by employeeId (for existing users)
   if (!employee) {
     console.log('User not found by username, trying employeeId...');
     employee = await Employee.findOne({
       employeeId: username.toUpperCase()
     })
-    .select("+password")
-    .populate('department', 'name description')
-    .populate('unit', 'name description');
+      .select("+password")
+      .populate('department', 'name description')
+      .populate('unit', 'name description');
   }
-  
+
   console.log('Employee found:', employee ? 'Yes' : 'No');
   if (!employee) {
     // Get some info about available users for debugging
@@ -400,17 +401,17 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
 export const populateUsernames = asyncHandler(async (req, res) => {
   try {
     // Find all users without username
-    const usersWithoutUsername = await Employee.find({ 
-      $or: [{ username: { $exists: false } }, { username: null }, { username: '' }] 
+    const usersWithoutUsername = await Employee.find({
+      $or: [{ username: { $exists: false } }, { username: null }, { username: '' }]
     });
-    
+
     console.log(`Found ${usersWithoutUsername.length} users without username`);
-    
+
     let updated = 0;
     for (const user of usersWithoutUsername) {
       // Create username from employeeId (converted to lowercase)
       const username = user.employeeId.toLowerCase();
-      
+
       // Check if username already exists
       const existingUser = await Employee.findOne({ username });
       if (!existingUser) {
@@ -422,9 +423,9 @@ export const populateUsernames = asyncHandler(async (req, res) => {
         console.log(`Username ${username} already exists for ${user.fullName}`);
       }
     }
-    
-    return res.status(200).json(new ApiResponse(200, 
-      { totalFound: usersWithoutUsername.length, updated }, 
+
+    return res.status(200).json(new ApiResponse(200,
+      { totalFound: usersWithoutUsername.length, updated },
       `Migration completed. Updated ${updated} users with usernames`
     ));
   } catch (error) {

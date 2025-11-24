@@ -93,3 +93,28 @@
 [23 Nov, 2025 - 14:20:32:2032] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 9443ms (connectTimeoutMS: 5000)[39m
 [23 Nov, 2025 - 14:20:54:2054] [31merror[39m: [31mFailed to update lastReminderDate for 69209e22f21472b73a18f3fb: Socket 'secureConnect' timed out after 6730ms (connectTimeoutMS: 5000)[39m
 [23 Nov, 2025 - 14:21:00:210] [31merror[39m: [31mFailed to send target audit reminder to jatinnagar563@gmail.com: Connection timeout[39m
+[23 Nov, 2025 - 16:58:41:5841] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 5007ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 18:44:13:4413] [31merror[39m: [31mTarget audit reminder job failed: connection <monitor> to 159.41.229.92:27017 timed out[39m
+[23 Nov, 2025 - 18:44:17:4417] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 5012ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 18:44:27:4427] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:44:37:4437] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:44:47:4447] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:44:57:4457] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:45:07:457] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:45:17:4517] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:45:45:4545] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:47:57:4757] [31merror[39m: [31mTarget audit reminder job failed: connection <monitor> to 159.41.229.92:27017 timed out[39m
+[23 Nov, 2025 - 18:48:07:487] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:48:17:4817] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:48:27:4827] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:48:37:4837] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[24 Nov, 2025 - 09:15:22:1522] [31merror[39m: [31mTarget audit reminder job failed: connection <monitor> to 159.41.229.92:27017 timed out[39m
+[24 Nov, 2025 - 09:15:32:1532] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[24 Nov, 2025 - 09:15:42:1542] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[24 Nov, 2025 - 09:15:52:1552] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[24 Nov, 2025 - 09:16:02:162] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[24 Nov, 2025 - 09:16:12:1612] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[24 Nov, 2025 - 12:47:21:4721] [31merror[39m: [31mTarget audit reminder job failed: connection <monitor> to 159.41.251.56:27017 timed out[39m
+[24 Nov, 2025 - 14:34:47:3447] [31merror[39m: [31mTarget audit reminder job failed: write ECONNRESET[39m
+[24 Nov, 2025 - 18:30:56:3056] [31merror[39m: [31mTarget audit reminder job failed: write ECONNRESET[39m
+[24 Nov, 2025 - 23:20:47:2047] [31merror[39m: [31mTarget audit reminder job failed: read ECONNRESET[39m

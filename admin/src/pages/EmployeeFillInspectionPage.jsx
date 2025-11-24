@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { FiCheckCircle, FiHome, FiBarChart2, FiCamera, FiX, FiShare2 } from "react-icons/fi";
+import { FiCheckCircle, FiHome, FiBarChart2, FiCamera, FiX } from "react-icons/fi";
 import "react-toastify/dist/ReactToastify.css";
 import { 
   useGetLinesQuery,
@@ -63,7 +63,6 @@ export default function EmployeeFillInspectionPage() {
   const [questionPhotos, setQuestionPhotos] = useState({}); // questionId -> array of photos
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [sharing, setSharing] = useState(false);
 
   // Local dropdown visibility for leader/incharge suggestions
   const describeRating = (val) => {
@@ -455,25 +454,6 @@ export default function EmployeeFillInspectionPage() {
       toast.error(msg);
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  const handleShareAudit = async () => {
-    if (!submittedAuditId) return;
-
-    try {
-      setSharing(true);
-      toast.info("Sending audit result...");
-      await api.post(`/api/audits/${submittedAuditId}/share`);
-      toast.success("Audit result shared successfully!");
-    } catch (error) {
-      const msg =
-        error?.response?.data?.message ||
-        error?.message ||
-        "Failed to share audit result";
-      toast.error(msg);
-    } finally {
-      setSharing(false);
     }
   };
 
@@ -986,8 +966,7 @@ export default function EmployeeFillInspectionPage() {
             </div>
             <h2 className="mt-4 text-xl font-semibold text-gray-900 sm:text-2xl">Audit submitted successfully</h2>
             <p className="mt-2 text-sm text-gray-600">
-              Your inspection has been saved. You can return to your dashboard, review the detailed results,
-              or share the audit via email.
+              Your inspection has been saved. You can return to your dashboard or review the detailed results.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
               <button
@@ -1003,15 +982,6 @@ export default function EmployeeFillInspectionPage() {
               >
                 <FiBarChart2 className="h-4 w-4" />
                 Show Results
-              </button>
-              <button
-                type="button"
-                onClick={handleShareAudit}
-                disabled={sharing}
-                className="flex w-full items-center justify-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-purple-700 disabled:opacity-60 sm:w-auto"
-              >
-                <FiShare2 className="h-4 w-4" />
-                {sharing ? "Sharing..." : "Share via Email"}
               </button>
             </div>
           </div>

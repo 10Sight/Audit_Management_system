@@ -839,7 +839,7 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
       </div>
 
       <p style="margin-top:12px;font-size:11px;color:#9ca3af;text-align:center;">
-        Developed by 10Sight Technologies.
+        Developed by Sarvagaya Institute.
       </p>
     </div>
   `;

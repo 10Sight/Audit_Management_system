@@ -11,6 +11,7 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
+  Download,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -52,6 +53,7 @@ import {
 } from "@/components/ui/table";
 import Loader from "@/components/ui/Loader";
 import { toast } from "sonner";
+import * as XLSX from "xlsx";
 
 export default function AdminManageQuestionsPage() {
   const { user: currentUser, activeUnitId } = useAuth();
@@ -80,6 +82,8 @@ export default function AdminManageQuestionsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const rowsPerPage = 12;
+  // Row selection for export (by template title)
+  const [selectedTemplateTitles, setSelectedTemplateTitles] = useState([]);
 
   const { data: linesRes } = useGetLinesQuery();
   const { data: machinesRes } = useGetMachinesQuery();
@@ -210,6 +214,33 @@ export default function AdminManageQuestionsPage() {
     return 'Your unit';
   }, [role, effectiveUnitId, currentUser, userUnitId, units]);
 
+  const toggleTemplateSelection = (templateTitle, checked) => {
+    setSelectedTemplateTitles((prev) => {
+      if (checked) {
+        if (prev.includes(templateTitle)) return prev;
+        return [...prev, templateTitle];
+      }
+      return prev.filter((t) => t !== templateTitle);
+    });
+  };
+
+  const toggleSelectAllCurrentTemplates = (checked) => {
+    const currentTitles = paginatedTemplates.map((t) => t.templateTitle);
+    setSelectedTemplateTitles((prev) => {
+      if (checked) {
+        const set = new Set(prev);
+        currentTitles.forEach((t) => set.add(t));
+        return Array.from(set);
+      }
+      const pageTitleSet = new Set(currentTitles);
+      return prev.filter((t) => !pageTitleSet.has(t));
+    });
+  };
+
+  const isAllCurrentTemplatesSelected =
+    paginatedTemplates.length > 0 &&
+    paginatedTemplates.every((t) => selectedTemplateTitles.includes(t.templateTitle));
+
   // Delete entire template (all questions for a templateTitle)
   const handleDeleteTemplate = async (templateTitle) => {
     try {
@@ -218,10 +249,59 @@ export default function AdminManageQuestionsPage() {
       setQuestions((prev) =>
         prev.filter((q) => (q.templateTitle || "Untitled template") !== templateTitle)
       );
+      setSelectedTemplateTitles((prev) => prev.filter((t) => t !== templateTitle));
     } catch (err) {
       toast.error(
         err?.data?.message || err?.message || "Failed to delete template"
       );
+    }
+  };
+
+  const handleExportQuestions = () => {
+    try {
+      if (!templateGroups.length) {
+        toast.info("No questions to export");
+        return;
+      }
+
+      const titlesToExport =
+        selectedTemplateTitles.length > 0
+          ? new Set(selectedTemplateTitles)
+          : new Set(templateGroups.map((t) => t.templateTitle));
+
+      const questionsToExport = filteredQuestions.filter((q) => {
+        const title = q.templateTitle || "Untitled template";
+        return titlesToExport.has(title);
+      });
+
+      if (!questionsToExport.length) {
+        toast.info("No questions to export for current filters");
+        return;
+      }
+
+      const data = questionsToExport.map((q, index) => ({
+        SNo: index + 1,
+        TemplateTitle: q.templateTitle || "Untitled template",
+        QuestionText: q.questionText || "",
+        QuestionType: q.questionType || "",
+        IsGlobal: q.isGlobal ? "Yes" : "No",
+        Unit: q.units?.[0]?.name || "Any",
+        Department: q.department?.name || "Any",
+        Machine: q.machines?.[0]?.name || "Any",
+        Process: q.processes?.[0]?.name || "Any",
+        CreatedAt: q.createdAt ? new Date(q.createdAt).toLocaleString() : "",
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Questions");
+      XLSX.writeFile(
+        workbook,
+        `questions_export_${new Date().toISOString().slice(0, 10)}.xlsx`
+      );
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message || "Failed to export questions");
     }
   };
 
@@ -263,10 +343,15 @@ export default function AdminManageQuestionsPage() {
             <Globe className="h-4 w-4" />
             {totalGlobal} global questions
           </Badge>
-          <Badge variant="outline" className="flex items-center gap-1">
-            <Settings className="h-4 w-4" />
-            {totalScoped} scoped questions
-          </Badge>
+          {currentUser?.role === "admin" && (
+            <Button
+              onClick={() => navigate("/admin/audits/create")}
+              size="sm"
+              className="gap-2 shadow-sm"
+            >
+              <span>Create audit template</span>
+            </Button>
+          )}
         </div>
       </div>
 
@@ -369,14 +454,26 @@ export default function AdminManageQuestionsPage() {
                   : `Showing ${paginatedTemplates.length} of ${totalTemplates} templates`}
               </CardDescription>
             </div>
-            <div className="relative w-full max-w-sm">
-              <Search className="pointer-events-none absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search questions..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8"
-              />
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:gap-3">
+              <div className="relative w-full max-w-sm">
+                <Search className="pointer-events-none absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search questions..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-8"
+                />
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 whitespace-nowrap"
+                onClick={handleExportQuestions}
+                disabled={loading || !totalTemplates}
+              >
+                <Download className="h-4 w-4" />
+                <span>Export questions</span>
+              </Button>
             </div>
           </div>
         </CardHeader>
@@ -401,6 +498,14 @@ export default function AdminManageQuestionsPage() {
                 <Table>
                   <TableHeader className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm">
                     <TableRow>
+                      <TableHead className="w-[40px]">
+                        <input
+                          type="checkbox"
+                          className="h-4 w-4 cursor-pointer"
+                          checked={isAllCurrentTemplatesSelected}
+                          onChange={(e) => toggleSelectAllCurrentTemplates(e.target.checked)}
+                        />
+                      </TableHead>
                       <TableHead className="w-[60px] text-xs text-muted-foreground">#</TableHead>
                       <TableHead>Template Title</TableHead>
                       <TableHead>Unit</TableHead>
@@ -415,6 +520,7 @@ export default function AdminManageQuestionsPage() {
                     {paginatedTemplates.map((group, index) => {
                       const q = group.representative;
                       const title = group.templateTitle || "Untitled template";
+                      const isSelected = selectedTemplateTitles.includes(group.templateTitle);
                       return (
                         <TableRow
                           key={title}
@@ -423,6 +529,14 @@ export default function AdminManageQuestionsPage() {
                             navigate(`/admin/questions/template/${encodeURIComponent(title)}`);
                           }}
                         >
+                          <TableCell className="w-[40px] align-top" onClick={(e) => e.stopPropagation()}>
+                            <input
+                              type="checkbox"
+                              className="h-4 w-4 cursor-pointer"
+                              checked={isSelected}
+                              onChange={(e) => toggleTemplateSelection(group.templateTitle, e.target.checked)}
+                            />
+                          </TableCell>
                           {/* Serial number */}
                           <TableCell className="align-top text-xs text-muted-foreground">
                             {startIndex + index + 1}

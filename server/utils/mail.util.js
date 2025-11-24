@@ -27,7 +27,7 @@ const transporter = nodemailer.createTransport({
  */
 const sendMail = async function (email, subject, message, cc) {
     await transporter.sendMail({
-        from: `10Sight Technologies <${EVN.SMTP_USERNAME}>`,
+        from: `Sarvagaya Institute <${EVN.SMTP_USERNAME}>`,
         to: email,
         cc: cc || undefined,
         subject: subject,

@@ -1,12 +1,12 @@
 import React, { Profiler, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { 
-  ChevronRight, 
-  LayoutDashboard, 
-  Users, 
-  ClipboardCheck, 
-  HelpCircle, 
-  Building2, 
+import {
+  ChevronRight,
+  LayoutDashboard,
+  Users,
+  ClipboardCheck,
+  HelpCircle,
+  Building2,
   Settings,
   Layers,
   Menu,
@@ -26,7 +26,7 @@ import { useLogoutMutation, useGetUnitsQuery } from "@/store/api";
 import RealtimeNotifications from "@/components/RealtimeNotifications";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -105,16 +105,15 @@ export default function AdminLayout() {
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = location.pathname === link.to;
-          
+
           return (
             <Link
               key={link.to}
               to={link.to}
-              className={`flex items-center justify-center w-full h-10 rounded-lg transition-all hover:bg-accent ${
-                isActive 
-                  ? "bg-primary text-primary-foreground" 
-                  : "text-muted-foreground hover:text-accent-foreground"
-              }`}
+              className={`flex items-center justify-center w-full h-10 rounded-lg transition-all hover:bg-accent ${isActive
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-accent-foreground"
+                }`}
               title={link.label}
             >
               <Icon className="h-4 w-4" />
@@ -124,7 +123,7 @@ export default function AdminLayout() {
       </nav>
 
       {/* User Section */}
-      <div className="border-t p-2">
+      <div className="border-t p-2 flex flex-col gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="w-full h-10 p-0">
@@ -159,12 +158,22 @@ export default function AdminLayout() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <Button
+          variant="ghost"
+          size="icon"
+          className="w-full h-10 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+          onClick={handleLogout}
+          title="Logout"
+        >
+          <LogOut className="h-4 w-4" />
+        </Button>
       </div>
     </div>
   );
 
   // Full sidebar content
-  const SidebarContent = ({ isMobile = false, onLinkClick = () => {} }) => (
+  const SidebarContent = ({ isMobile = false, onLinkClick = () => { } }) => (
     <div className="flex h-full flex-col">
       {/* Logo */}
       <div className="flex h-16 items-center border-b px-6">
@@ -179,17 +188,16 @@ export default function AdminLayout() {
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = location.pathname === link.to;
-          
+
           return (
             <Link
               key={link.to}
               to={link.to}
               onClick={() => isMobile && onLinkClick()}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground ${
-                isActive 
-                  ? "bg-primary text-primary-foreground shadow-sm" 
-                  : "text-muted-foreground"
-              }`}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground ${isActive
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground"
+                }`}
             >
               <Icon className="h-4 w-4 shrink-0" />
               <span className="truncate">{link.label}</span>
@@ -199,7 +207,7 @@ export default function AdminLayout() {
       </nav>
 
       {/* User Section */}
-      <div className="border-t p-4">
+      <div className="border-t p-4 space-y-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -236,6 +244,15 @@ export default function AdminLayout() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <Button
+          variant="outline"
+          className="w-full justify-start gap-3 text-muted-foreground hover:text-destructive hover:bg-destructive/10 hover:border-destructive/20"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-4 w-4 shrink-0" />
+          <span className="truncate">Logout</span>
+        </Button>
       </div>
     </div>
   );
@@ -243,11 +260,20 @@ export default function AdminLayout() {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Desktop Sidebar */}
+      {/* Desktop Sidebar Spacer */}
+      <motion.div
+        initial={{ width: sidebarOpen ? 280 : 64 }}
+        animate={{ width: sidebarOpen ? 280 : 64 }}
+        transition={{ duration: 0.3, ease: "easeInOut" }}
+        className="hidden lg:block shrink-0"
+      />
+
+      {/* Desktop Sidebar (Fixed) */}
       <motion.aside
         initial={{ width: sidebarOpen ? 280 : 64 }}
         animate={{ width: sidebarOpen ? 280 : 64 }}
         transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="hidden lg:block border-r bg-background shrink-0"
+        className="hidden lg:block border-r bg-background fixed top-0 left-0 h-screen z-40"
       >
         {sidebarOpen ? <SidebarContent /> : <CollapsedSidebarContent />}
       </motion.aside>
@@ -268,9 +294,9 @@ export default function AdminLayout() {
                 <SheetTitle>Navigation Menu</SheetTitle>
                 <SheetDescription>Main navigation menu for the application</SheetDescription>
               </SheetHeader>
-              <SidebarContent 
-                isMobile={true} 
-                onLinkClick={() => setMobileMenuOpen(false)} 
+              <SidebarContent
+                isMobile={true}
+                onLinkClick={() => setMobileMenuOpen(false)}
               />
             </SheetContent>
           </Sheet>
@@ -330,13 +356,13 @@ export default function AdminLayout() {
           <div className="ml-auto flex items-center gap-2 md:gap-4">
             {/* Real-time Notifications */}
             <RealtimeNotifications />
-            
+
             {/* Brand Logo */}
             <div className="hidden sm:flex items-center gap-2">
-              <img 
-                src="/motherson+marelli.png" 
-                alt="Motherson" 
-                className="h-8 w-8 md:h-8 md:w-30 object-contain" 
+              <img
+                src="/motherson+marelli.png"
+                alt="Motherson"
+                className="h-8 w-8 md:h-8 md:w-30 object-contain"
               />
               {/* <span className="hidden md:block font-semibold text-lg">
                 Motherson

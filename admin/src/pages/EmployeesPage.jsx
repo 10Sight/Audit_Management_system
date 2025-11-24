@@ -2,11 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-import { 
-  Download, 
-  Plus, 
+import {
+  Download,
+  Plus,
   Search,
-  ChevronLeft, 
+  ChevronLeft,
   ChevronRight,
   MoreHorizontal,
   Edit,
@@ -211,17 +211,22 @@ export default function EmployeesPage() {
       return { hasTarget: false, targetTotal: 0, actual: 0 };
     }
 
-    const start = new Date(target.startDate);
-    const end = new Date(target.endDate);
+    // Normalize to YYYY-MM-DD strings for date-only comparison
+    // This avoids issues where the audit time is later than the target end date's midnight timestamp
+    const startDateStr = new Date(target.startDate).toISOString().split('T')[0];
+    const endDateStr = new Date(target.endDate).toISOString().split('T')[0];
+
     const actual = Array.isArray(audits)
       ? audits.filter((a) => {
-          if (!a.date) return false;
-          if (!a.auditor) return false;
-          const auditorId = a.auditor._id || a.auditor;
-          if (String(auditorId) !== String(emp._id)) return false;
-          const d = new Date(a.date);
-          return d >= start && d <= end;
-        }).length
+        if (!a.date) return false;
+        if (!a.auditor) return false;
+        const auditorId = a.auditor._id || a.auditor;
+
+        if (String(auditorId) !== String(emp._id)) return false;
+
+        const auditDateStr = new Date(a.date).toISOString().split('T')[0];
+        return auditDateStr >= startDateStr && auditDateStr <= endDateStr;
+      }).length
       : 0;
 
     return { hasTarget: true, targetTotal: target.total, actual };

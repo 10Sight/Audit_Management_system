@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { 
-  ArrowLeft, 
-  Save, 
-  FileText, 
-  User, 
+import {
+  ArrowLeft,
+  Save,
+  FileText,
+  User,
   Building2,
   CheckCircle2,
   XCircle,
   MessageSquare,
   Calendar,
-  Clock
+  MinusCircle,
 } from "lucide-react";
 import { useGetAuditByIdQuery, useUpdateAuditMutation } from "@/store/api";
 import Loader from "@/components/ui/Loader";
@@ -44,32 +44,32 @@ export default function AdminAuditPage() {
     answers: [],
   });
 
-const { data: auditRes, isLoading: auditLoading } = useGetAuditByIdQuery(id, { skip: !id });
+  const { data: auditRes, isLoading: auditLoading } = useGetAuditByIdQuery(id, { skip: !id });
 
-useEffect(() => {
-  setLoading(auditLoading);
-  const auditData = auditRes?.data;
-  if (auditData) {
-    setAudit(auditData);
-    setFormData({
-      line: auditData?.line?._id || "",
-      machine: auditData?.machine?._id || "",
-      process: auditData?.process?._id || "",
-      unit: auditData?.unit?._id || "",
-      lineLeader: auditData?.lineLeader || "",
-      shift: auditData?.shift || "",
-      shiftIncharge: auditData?.shiftIncharge || "",
-      answers: Array.isArray(auditData?.answers)
-        ? auditData.answers.map((a) => ({
+  useEffect(() => {
+    setLoading(auditLoading);
+    const auditData = auditRes?.data;
+    if (auditData) {
+      setAudit(auditData);
+      setFormData({
+        line: auditData?.line?._id || "",
+        machine: auditData?.machine?._id || "",
+        process: auditData?.process?._id || "",
+        unit: auditData?.unit?._id || "",
+        lineLeader: auditData?.lineLeader || "",
+        shift: auditData?.shift || "",
+        shiftIncharge: auditData?.shiftIncharge || "",
+        answers: Array.isArray(auditData?.answers)
+          ? auditData.answers.map((a) => ({
             question: a?.question?._id || "",
             questionText: a?.question?.questionText || "",
             answer: a?.answer || "",
             remark: a?.remark || "",
           }))
-        : [],
-    });
-  }
-}, [auditRes, auditLoading]);
+          : [],
+      });
+    }
+  }, [auditRes, auditLoading]);
 
 
   const handleChange = (e) => {
@@ -86,20 +86,20 @@ useEffect(() => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setSubmitting(true);
+    e.preventDefault();
+    setSubmitting(true);
 
-  try {
-    await updateAudit({ id, ...formData }).unwrap();
-    toast.success("Audit updated successfully");
-    navigate(-1);
-  } catch (err) {
-    console.error(err);
-    toast.error(err?.data?.message || err?.message || "Failed to update audit");
-  } finally {
-    setSubmitting(false);
-  }
-};
+    try {
+      await updateAudit({ id, ...formData }).unwrap();
+      toast.success("Audit updated successfully");
+      navigate(-1);
+    } catch (err) {
+      console.error(err);
+      toast.error(err?.data?.message || err?.message || "Failed to update audit");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
 
   if (loading)
@@ -122,7 +122,7 @@ useEffect(() => {
     );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto scroll-smooth">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
@@ -140,7 +140,7 @@ useEffect(() => {
         </div>
         <Badge variant="outline" className="flex items-center gap-2">
           <FileText className="h-4 w-4" />
-          Audit #{audit?._id?.slice(-6)}
+          Audit #{audit?.auditor?.fullName}
         </Badge>
       </div>
 
@@ -161,7 +161,7 @@ useEffect(() => {
               <div className="flex items-center gap-2 text-sm">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <span className="font-medium">Date:</span>
-                <span>{new Date(audit.date).toLocaleDateString()}</span>
+                <span>{audit.date ? new Date(audit.date).toLocaleDateString() : "N/A"}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <Building2 className="h-4 w-4 text-muted-foreground" />
@@ -255,7 +255,7 @@ useEffect(() => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
+                <div className="space-y-6">
                   {formData.answers.map((ans, idx) => (
                     <Card key={idx} className="border-l-4 border-l-blue-500 hover:shadow-md transition-shadow">
                       <CardContent className="p-4 space-y-4">
@@ -269,7 +269,7 @@ useEffect(() => {
                             <p className="font-medium text-foreground">
                               {ans.questionText}
                             </p>
-                            
+
                             <div className="space-y-2">
                               <Label>Response</Label>
                               <Select
@@ -282,23 +282,29 @@ useEffect(() => {
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  <SelectItem value="Yes">
+                                  <SelectItem value="Pass">
                                     <div className="flex items-center gap-2">
                                       <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                      Yes
+                                      Pass
                                     </div>
                                   </SelectItem>
-                                  <SelectItem value="No">
+                                  <SelectItem value="Fail">
                                     <div className="flex items-center gap-2">
                                       <XCircle className="h-4 w-4 text-red-500" />
-                                      No
+                                      Fail
+                                    </div>
+                                  </SelectItem>
+                                  <SelectItem value="NA">
+                                    <div className="flex items-center gap-2">
+                                      <MinusCircle className="h-4 w-4 text-amber-500" />
+                                      Not Applicable
                                     </div>
                                   </SelectItem>
                                 </SelectContent>
                               </Select>
                             </div>
 
-                            {ans.answer === "No" && (
+                            {(ans.answer === "No" || ans.answer === "Fail" || ans.answer === "NA") && (
                               <div className="space-y-2">
                                 <Label className="flex items-center gap-2">
                                   <MessageSquare className="h-4 w-4" />

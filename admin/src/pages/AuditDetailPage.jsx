@@ -257,15 +257,15 @@ export default function AuditDetailPage() {
 
           <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-gray-600">
             <div className="flex flex-col">
-              <span className="font-medium">Pass</span>
+              <span className="font-medium">Total Pass Questions</span>
               <span>{yesCount}</span>
             </div>
             <div className="flex flex-col">
-              <span className="font-medium">Fail</span>
+              <span className="font-medium">Total Fail Questions</span>
               <span>{noCount}</span>
             </div>
             <div className="flex flex-col">
-              <span className="font-medium">Not Applicable</span>
+              <span className="font-medium">Total Not Applicable Questions</span>
               <span>{naCount}</span>
             </div>
           </div>

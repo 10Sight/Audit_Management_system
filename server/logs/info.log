@@ -4877,3 +4877,306 @@
 [23 Nov, 2025 - 14:46:13:4613] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
 [23 Nov, 2025 - 14:46:16:4616] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
 [23 Nov, 2025 - 14:47:32:4732] [34minfo[39m: [34mEmployee logged out[39m
+[23 Nov, 2025 - 15:07:28:728] [33mwarn[39m: [33mMongoDB disconnected[39m
+[23 Nov, 2025 - 15:16:18:1618] [34minfo[39m: [34mEmployee logged out[39m
+[23 Nov, 2025 - 15:16:30:1630] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 15:16:30:1630] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 15:17:58:1758] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 15:18:16:1816] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 15:18:43:1843] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 15:31:46:3146] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 15:31:48:3148] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 15:31:48:3148] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 15:33:22:3322] [34minfo[39m: [34mNew employee registered: Mirza Shah Hussain (MIRZA001)[39m
+[23 Nov, 2025 - 15:33:23:3323] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 15:40:36:4036] [34minfo[39m: [34mTarget audit updated for Mirza Shah Hussain (MIRZA001) by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 15:41:23:4123] [34minfo[39m: [34mTarget audit reminder email sent to mirza_shah@ndiit.org[39m
+[23 Nov, 2025 - 16:51:38:5138] [33mwarn[39m: [33mMongoDB disconnected[39m
+[23 Nov, 2025 - 16:52:39:5239] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 16:52:39:5239] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 16:53:19:5319] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 16:53:48:5348] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 16:53:48:5348] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 16:56:14:5614] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 16:58:36:5836] [33mwarn[39m: [33mMongoDB disconnected[39m
+[23 Nov, 2025 - 16:58:41:5841] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 5007ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 16:59:26:5926] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 16:59:33:5933] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:01:27:127] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:01:52:152] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:03:36:336] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:03:50:350] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:04:49:449] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:06:50:650] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:06:55:655] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:09:31:931] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:09:39:939] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:09:45:945] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:09:45:945] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:18:06:186] [34minfo[39m: [34mEmployee logged out[39m
+[23 Nov, 2025 - 17:26:30:2630] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:26:30:2630] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:26:33:2633] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:26:33:2633] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:30:39:3039] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:35:39:3539] [34minfo[39m: [34mEmployee logged out[39m
+[23 Nov, 2025 - 17:36:37:3637] [34minfo[39m: [34mAudit created by 69209e22f21472b73a18f3fb[39m
+[23 Nov, 2025 - 17:36:40:3640] [34minfo[39m: [34mAudit 6922f8cd2f1d335ae264b3ed shared via email to todaymart1@gmail.com by 69209e22f21472b73a18f3fb[39m
+[23 Nov, 2025 - 17:39:22:3922] [34minfo[39m: [34mTarget audit reminder email sent to mirza_shah@ndiit.org[39m
+[23 Nov, 2025 - 17:49:12:4912] [34minfo[39m: [34mEmployee logged out[39m
+[23 Nov, 2025 - 17:49:23:4923] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:49:23:4923] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:50:32:5032] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:53:18:5318] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:54:19:5419] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:56:23:5623] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:56:35:5635] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:58:02:582] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:58:45:5845] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:59:18:5918] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:59:20:5920] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:59:22:5922] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 17:59:22:5922] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 18:36:04:364] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 18:36:04:364] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 18:36:32:3632] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 18:36:39:3639] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 18:36:39:3639] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 18:36:59:3659] [34minfo[39m: [34mEmployee logged out[39m
+[23 Nov, 2025 - 18:37:09:379] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[23 Nov, 2025 - 18:38:02:382] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[23 Nov, 2025 - 18:38:08:388] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[23 Nov, 2025 - 18:38:08:388] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[23 Nov, 2025 - 18:38:15:3815] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[23 Nov, 2025 - 18:38:31:3831] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[23 Nov, 2025 - 18:38:44:3844] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[23 Nov, 2025 - 18:38:44:3844] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[23 Nov, 2025 - 18:38:44:3844] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (SA001)[39m
+[23 Nov, 2025 - 18:41:12:4112] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[23 Nov, 2025 - 18:41:19:4119] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[23 Nov, 2025 - 18:41:37:4137] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[23 Nov, 2025 - 18:41:59:4159] [34minfo[39m: [34mEmployee logged out[39m
+[23 Nov, 2025 - 18:44:08:448] [33mwarn[39m: [33mMongoDB disconnected[39m
+[23 Nov, 2025 - 18:44:13:4413] [31merror[39m: [31mTarget audit reminder job failed: connection <monitor> to 159.41.229.92:27017 timed out[39m
+[23 Nov, 2025 - 18:44:17:4417] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 5012ms (connectTimeoutMS: 5000)[39m
+[23 Nov, 2025 - 18:44:27:4427] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:44:37:4437] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:44:47:4447] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:44:57:4457] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:45:07:457] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:45:17:4517] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:45:40:4540] [33mwarn[39m: [33mMongoDB disconnected[39m
+[23 Nov, 2025 - 18:45:45:4545] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:47:52:4752] [33mwarn[39m: [33mMongoDB disconnected[39m
+[23 Nov, 2025 - 18:47:57:4757] [31merror[39m: [31mTarget audit reminder job failed: connection <monitor> to 159.41.229.92:27017 timed out[39m
+[23 Nov, 2025 - 18:48:07:487] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:48:17:4817] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:48:27:4827] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:48:37:4837] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[23 Nov, 2025 - 18:57:10:5710] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 18:57:10:5710] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 18:57:14:5714] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[23 Nov, 2025 - 20:33:37:3337] [33mwarn[39m: [33mMongoDB disconnected[39m
+[23 Nov, 2025 - 23:45:45:4545] [33mwarn[39m: [33mMongoDB disconnected[39m
+[24 Nov, 2025 - 01:23:48:2348] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:23:56:2356] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:38:31:3831] [34minfo[39m: [34mAudit 6922f8cd2f1d335ae264b3ed updated by 691fb65012bbe9b91ecdb23f[39m
+[24 Nov, 2025 - 01:38:31:3831] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:39:16:3916] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:39:20:3920] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:39:20:3920] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:39:27:3927] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:39:56:3956] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:42:09:429] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:42:09:429] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:45:57:4557] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:45:57:4557] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:46:10:4610] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:50:45:5045] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:50:47:5047] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:50:47:5047] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 01:50:52:5052] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 01:51:23:5123] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:15:22:1522] [31merror[39m: [31mTarget audit reminder job failed: connection <monitor> to 159.41.229.92:27017 timed out[39m
+[24 Nov, 2025 - 09:15:32:1532] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[24 Nov, 2025 - 09:15:42:1542] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[24 Nov, 2025 - 09:15:52:1552] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[24 Nov, 2025 - 09:16:02:162] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[24 Nov, 2025 - 09:16:12:1612] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[24 Nov, 2025 - 09:16:26:1626] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com[39m
+[24 Nov, 2025 - 09:16:31:1631] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:16:31:1631] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:18:41:1841] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:18:42:1842] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:19:15:1915] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:20:19:2019] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:21:42:2142] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:21:42:2142] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:22:21:2221] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 09:24:40:2440] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:24:40:2440] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:24:40:2440] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:25:31:2531] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 09:26:25:2625] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 09:26:36:2636] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:26:49:2649] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:26:51:2651] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:27:53:2753] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:27:53:2753] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:29:48:2948] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:33:39:3339] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:37:39:3739] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:45:50:4550] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:45:59:4559] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:45:59:4559] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:45:59:4559] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:49:59:4959] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:50:12:5012] [34minfo[39m: [34mAudit 6922f8cd2f1d335ae264b3ed updated by 6903af446170eeefe4fa9eb5[39m
+[24 Nov, 2025 - 09:52:03:523] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:52:32:5232] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:53:23:5323] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com[39m
+[24 Nov, 2025 - 09:54:43:5443] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Super Admin (SA001)[39m
+[24 Nov, 2025 - 09:56:27:5627] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[24 Nov, 2025 - 09:56:28:5628] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[24 Nov, 2025 - 09:56:48:5648] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[24 Nov, 2025 - 09:56:49:5649] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[24 Nov, 2025 - 09:56:55:5655] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[24 Nov, 2025 - 09:56:55:5655] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[24 Nov, 2025 - 10:00:57:057] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 10:08:07:87] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 10:08:08:88] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 10:09:20:920] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 10:09:22:922] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 10:09:22:922] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 10:09:33:933] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 10:10:13:1013] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 10:10:43:1043] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:15:20:1520] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 10:16:25:1625] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:16:47:1647] [34minfo[39m: [34mEmployee deleted: Mirza Shah Hussain (MIRZA001) by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:16:47:1647] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:16:47:1647] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:16:59:1659] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:17:02:172] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:17:02:172] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:17:44:1744] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:17:47:1747] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:17:47:1747] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:19:19:1919] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:20:58:2058] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:22:39:2239] [34minfo[39m: [34mCreated 2 questions by user 691fb65012bbe9b91ecdb23f[39m
+[24 Nov, 2025 - 10:22:45:2245] [34minfo[39m: [34mDeleted 2 questions for template "Testing Assembly" by user 691fb65012bbe9b91ecdb23f[39m
+[24 Nov, 2025 - 10:22:49:2249] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:22:49:2249] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:22:49:2249] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:23:27:2327] [34minfo[39m: [34mLine created: Assembly Line[39m
+[24 Nov, 2025 - 10:23:39:2339] [34minfo[39m: [34mMachine created: Delat[39m
+[24 Nov, 2025 - 10:23:43:2343] [34minfo[39m: [34mMachine deleted: 6923e4d3b5c310be8d5ae2c8[39m
+[24 Nov, 2025 - 10:23:48:2348] [34minfo[39m: [34mLine deleted: 6923e4c7b5c310be8d5ae2be[39m
+[24 Nov, 2025 - 10:24:19:2419] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:24:29:2429] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:24:29:2429] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:24:32:2432] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:24:32:2432] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:24:42:2442] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 10:29:09:299] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 10:37:34:3734] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 10:37:47:3747] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:20:09:209] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:20:09:209] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:20:46:2046] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:20:46:2046] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:21:53:2153] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:21:53:2153] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:24:41:2441] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:24:41:2441] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:29:58:2958] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:30:32:3032] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:30:36:3036] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:30:40:3040] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:30:40:3040] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:30:41:3041] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com[39m
+[24 Nov, 2025 - 11:30:51:3051] [34minfo[39m: [34mTarget audit updated for Jatin Kumar Nagar (JKN001) by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:30:56:3056] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:31:01:311] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com[39m
+[24 Nov, 2025 - 11:31:04:314] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:34:31:3431] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:47:29:4729] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:47:35:4735] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:47:35:4735] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:49:11:4911] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:49:13:4913] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:49:16:4916] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 11:49:20:4920] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 12:00:13:013] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 12:04:27:427] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 12:04:43:443] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 12:05:30:530] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 12:06:53:653] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 12:10:34:1034] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 12:11:30:1130] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 12:13:45:1345] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 12:31:57:3157] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 12:47:21:4721] [31merror[39m: [31mTarget audit reminder job failed: connection <monitor> to 159.41.251.56:27017 timed out[39m
+[24 Nov, 2025 - 12:47:26:4726] [33mwarn[39m: [33mMongoDB disconnected[39m
+[24 Nov, 2025 - 12:52:22:5222] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 12:52:35:5235] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 12:52:35:5235] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 12:53:07:537] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 14:34:47:3447] [31merror[39m: [31mTarget audit reminder job failed: write ECONNRESET[39m
+[24 Nov, 2025 - 14:34:55:3455] [33mwarn[39m: [33mMongoDB disconnected[39m
+[24 Nov, 2025 - 14:36:05:365] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 14:36:07:367] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 14:45:13:4513] [34minfo[39m: [34mAudit created by 69209e22f21472b73a18f3fb[39m
+[24 Nov, 2025 - 14:45:18:4518] [34minfo[39m: [34mAudit 69242221b5c310be8d5af281 shared via email to todaymart1@gmail.com by 69209e22f21472b73a18f3fb[39m
+[24 Nov, 2025 - 14:46:33:4633] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 14:51:22:5122] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 14:51:22:5122] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 14:52:19:5219] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 14:54:48:5448] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 14:55:31:5531] [34minfo[39m: [34mQuestion updated: 692112e2f5151b635bccf629 by user 691fb65012bbe9b91ecdb23f[39m
+[24 Nov, 2025 - 14:56:08:568] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 14:56:18:5618] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 14:56:18:5618] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 14:57:37:5737] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 15:23:10:2310] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:24:00:240] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:24:09:249] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:24:23:2423] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:24:23:2423] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:25:12:2512] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:25:14:2514] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:25:38:2538] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:25:38:2538] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:25:50:2550] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:25:58:2558] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:26:09:269] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:26:20:2620] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:26:35:2635] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:26:35:2635] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:26:35:2635] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:27:02:272] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[24 Nov, 2025 - 15:27:19:2719] [34minfo[39m: [34mEmployee logged out[39m
+[24 Nov, 2025 - 18:30:56:3056] [31merror[39m: [31mTarget audit reminder job failed: write ECONNRESET[39m
+[24 Nov, 2025 - 23:20:47:2047] [31merror[39m: [31mTarget audit reminder job failed: read ECONNRESET[39m
+[24 Nov, 2025 - 23:29:38:2938] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 23:29:38:2938] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 23:30:27:3027] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 23:30:56:3056] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 23:31:00:310] [34minfo[39m: [34mAll users fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 23:31:00:310] [34minfo[39m: [34mDepartment statistics fetched by Rahul Patil (UNIT003)[39m
+[24 Nov, 2025 - 23:35:53:3553] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[24 Nov, 2025 - 23:35:55:3555] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[25 Nov, 2025 - 00:08:04:84] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[25 Nov, 2025 - 00:08:04:84] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[25 Nov, 2025 - 00:08:27:827] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 00:08:27:827] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 00:08:32:832] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 00:13:42:1342] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 00:13:50:1350] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 00:21:12:2112] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 00:27:59:2759] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 00:27:59:2759] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 00:28:37:2837] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 00:45:03:453] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[25 Nov, 2025 - 00:45:03:453] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m

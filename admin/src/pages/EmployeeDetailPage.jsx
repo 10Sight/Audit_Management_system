@@ -309,67 +309,116 @@ export default function EmployeeDetailPage() {
         <ArrowLeft className="h-4 w-4" />
         Back to Auditors
       </Button>
-      <Card>
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <Avatar className="h-14 w-14">
-              <AvatarImage src="" />
-              <AvatarFallback>{(employee.fullName || "?").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}</AvatarFallback>
-            </Avatar>
-            <div>
-              <CardTitle className="text-2xl">{employee.fullName}</CardTitle>
-              <CardDescription>{employee.emailId}</CardDescription>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Button onClick={handleEdit} size="sm">
-              <Edit className="mr-2 h-4 w-4" /> Edit
-            </Button>
-            <Button onClick={handleDelete} variant="destructive" size="sm">
-              <Trash2 className="mr-2 h-4 w-4" /> Delete
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="secondary" className="capitalize">{employee.role}</Badge>
-            <Badge variant="outline" className="capitalize">{employee.department?.name || employee.department || "N/A"}</Badge>
-          </div>
 
-          <Separator />
+      {/* Top Section: Employee Detail + Chart */}
+      <div className="grid gap-6 md:grid-cols-3">
+        {/* Employee Detail Card - Takes up 2 columns */}
+        <Card className="md:col-span-2 h-full">
+          <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <Avatar className="h-14 w-14">
+                <AvatarImage src="" />
+                <AvatarFallback>{(employee.fullName || "?").split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}</AvatarFallback>
+              </Avatar>
+              <div>
+                <CardTitle className="text-2xl">{employee.fullName}</CardTitle>
+                <CardDescription>{employee.emailId}</CardDescription>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button onClick={handleEdit} size="sm">
+                <Edit className="mr-2 h-4 w-4" /> Edit
+              </Button>
+              <Button onClick={handleDelete} variant="destructive" size="sm">
+                <Trash2 className="mr-2 h-4 w-4" /> Delete
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex flex-wrap gap-2">
+              <Badge variant="secondary" className="capitalize">{employee.role}</Badge>
+              <Badge variant="outline" className="capitalize">{employee.department?.name || employee.department || "N/A"}</Badge>
+            </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="flex items-center gap-3">
-              <IdCard className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-xs text-muted-foreground">Auditor ID</p>
-                <p className="font-medium">{employee.employeeId}</p>
+            <Separator />
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="flex items-center gap-3">
+                <IdCard className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Auditor ID</p>
+                  <p className="font-medium">{employee.employeeId}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Phone className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Phone</p>
+                  <p className="font-medium">{employee.phoneNumber || "N/A"}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Mail className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Email</p>
+                  <p className="font-medium break-all">{employee.emailId}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <User className="h-4 w-4 text-muted-foreground" />
+                <div>
+                  <p className="text-xs text-muted-foreground">Joined</p>
+                  <p className="font-medium">{new Date(employee.createdAt).toLocaleDateString()}</p>
+                </div>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <Phone className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-xs text-muted-foreground">Phone</p>
-                <p className="font-medium">{employee.phoneNumber || "N/A"}</p>
+          </CardContent>
+        </Card>
+
+        {/* Result Distribution Chart - Takes up 1 column */}
+        <Card className="md:col-span-1 h-full flex flex-col">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Activity className="h-5 w-5 text-muted-foreground" />
+              Result Distribution
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1 flex items-center justify-center min-h-[200px]">
+            {auditsSummary && auditsSummary.chartData.length > 0 ? (
+              <div className="w-full h-56">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={auditsSummary.chartData}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={70}
+                      innerRadius={40}
+                      paddingAngle={4}
+                    >
+                      {auditsSummary.chartData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${entry.name}`}
+                          fill={auditsSummary.chartColors[index % auditsSummary.chartColors.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip formatter={(value, name) => [value, name]} contentStyle={{ fontSize: 12 }} />
+                    <Legend verticalAlign="bottom" height={24} iconType="circle" wrapperStyle={{ fontSize: 12 }} />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Mail className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-xs text-muted-foreground">Email</p>
-                <p className="font-medium break-all">{employee.emailId}</p>
+            ) : (
+              <div className="text-center text-muted-foreground text-sm">
+                <p>No audit data available</p>
+                <p className="text-xs mt-1">Chart will appear here once audits are performed.</p>
               </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <User className="h-4 w-4 text-muted-foreground" />
-              <div>
-                <p className="text-xs text-muted-foreground">Joined</p>
-                <p className="font-medium">{new Date(employee.createdAt).toLocaleDateString()}</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Target Audit Section */}
       <Card className="shadow-sm border border-slate-200/70">
@@ -443,7 +492,7 @@ export default function EmployeeDetailPage() {
                 <p>
                   <span className="inline-block w-32 font-medium text-slate-700">Target window</span>
                   <span>
-                    {progress.start.toLocaleDateString()} 
+                    {progress.start.toLocaleDateString()}
                     <span className="mx-1">to</span>
                     {progress.end.toLocaleDateString()}
                   </span>
@@ -482,9 +531,8 @@ export default function EmployeeDetailPage() {
                     <span className="inline-block w-32 font-medium text-slate-700">Next reminder</span>
                     <span className="font-semibold">
                       {nextReminderAt
-                        ? `${nextReminderAt.toLocaleString()}${
-                            reminderCountdown ? `  (in ${reminderCountdown})` : ""
-                          }`
+                        ? `${nextReminderAt.toLocaleString()}${reminderCountdown ? `  (in ${reminderCountdown})` : ""
+                        }`
                         : "No more reminders scheduled for this target"}
                     </span>
                   </p>
@@ -515,73 +563,34 @@ export default function EmployeeDetailPage() {
           ) : (
             <>
               {auditsSummary && (
-                <div className="grid gap-4 md:grid-cols-3">
-                  {/* Summary stats */}
-                  <div className="md:col-span-1 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_8px_30px_rgba(15,23,42,0.03)]">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">
-                      Audit Performance Overview
-                    </p>
-                    <p className="text-2xl font-semibold text-slate-800 mb-3">
-                      {auditsSummary.totalAudits} Audits
-                    </p>
-                    <div className="space-y-2 text-xs text-slate-600">
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1">
-                          <span className="h-2 w-2 rounded-full bg-emerald-500" /> Pass
-                        </span>
-                        <span className="font-semibold">{auditsSummary.passAudits}</span>
+                <div className="grid gap-4 md:grid-cols-4">
+                  {/* Summary stats - Now takes full width or grid */}
+                  <div className="md:col-span-4 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-[0_8px_30px_rgba(15,23,42,0.03)] flex items-center justify-between">
+                      <div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-1">Total Audits</p>
+                        <p className="text-2xl font-semibold text-slate-800">{auditsSummary.totalAudits}</p>
                       </div>
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1">
-                          <span className="h-2 w-2 rounded-full bg-red-500" /> Fail
-                        </span>
-                        <span className="font-semibold">{auditsSummary.failAudits}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="flex items-center gap-1">
-                          <span className="h-2 w-2 rounded-full bg-amber-500" /> Not Applicable
-                        </span>
-                        <span className="font-semibold">{auditsSummary.naAudits}</span>
-                      </div>
+                      <Activity className="h-8 w-8 text-slate-200" />
                     </div>
-                  </div>
 
-                  {/* Chart */}
-                  <div className="md:col-span-2 rounded-xl border border-slate-200 bg-white p-4 shadow-[0_8px_30px_rgba(15,23,42,0.03)]">
-                    <div className="flex items-center justify-between mb-3">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-                        Result Distribution
-                      </p>
-                    </div>
-                    {auditsSummary.chartData.length > 0 ? (
-                      <div className="h-56">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie
-                              data={auditsSummary.chartData}
-                              dataKey="value"
-                              nameKey="name"
-                              cx="50%"
-                              cy="50%"
-                              outerRadius={70}
-                              innerRadius={40}
-                              paddingAngle={4}
-                            >
-                              {auditsSummary.chartData.map((entry, index) => (
-                                <Cell
-                                  key={`cell-${entry.name}`}
-                                  fill={auditsSummary.chartColors[index % auditsSummary.chartColors.length]}
-                                />
-                              ))}
-                            </Pie>
-                            <Tooltip formatter={(value, name) => [value, name]} contentStyle={{ fontSize: 12 }} />
-                            <Legend verticalAlign="bottom" height={24} iconType="circle" wrapperStyle={{ fontSize: 12 }} />
-                          </PieChart>
-                        </ResponsiveContainer>
+                    <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-[0_8px_30px_rgba(15,23,42,0.03)]">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Results</p>
+                      <div className="flex items-center gap-4 text-sm">
+                        <div className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                          <span className="font-medium">{auditsSummary.passAudits}</span> Pass
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-red-500" />
+                          <span className="font-medium">{auditsSummary.failAudits}</span> Fail
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <span className="h-2 w-2 rounded-full bg-amber-500" />
+                          <span className="font-medium">{auditsSummary.naAudits}</span> NA
+                        </div>
                       </div>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">No data available for chart.</p>
-                    )}
+                    </div>
                   </div>
                 </div>
               )}
