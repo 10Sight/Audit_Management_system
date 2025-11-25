@@ -46,6 +46,7 @@ const sessionConfig = {
 
 // Centralize allowed origins for both HTTP and Socket.IO CORS
 const allowedOrigins = [
+  "https://audiotmanagementsystem.org",
   "https://audit-management-system.onrender.com",
   "http://localhost:5173",
   "http://localhost:5174",

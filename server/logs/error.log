@@ -118,3 +118,5 @@
 [24 Nov, 2025 - 14:34:47:3447] [31merror[39m: [31mTarget audit reminder job failed: write ECONNRESET[39m
 [24 Nov, 2025 - 18:30:56:3056] [31merror[39m: [31mTarget audit reminder job failed: write ECONNRESET[39m
 [24 Nov, 2025 - 23:20:47:2047] [31merror[39m: [31mTarget audit reminder job failed: read ECONNRESET[39m
+[25 Nov, 2025 - 11:47:39:4739] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[25 Nov, 2025 - 23:02:14:214] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m

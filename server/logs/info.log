@@ -5184,3 +5184,25 @@
 [25 Nov, 2025 - 00:45:51:4551] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
 [25 Nov, 2025 - 00:47:59:4759] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
 [25 Nov, 2025 - 00:50:44:5044] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 04:12:57:1257] [33mwarn[39m: [33mMongoDB disconnected[39m
+[25 Nov, 2025 - 11:47:39:4739] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[25 Nov, 2025 - 11:47:45:4745] [33mwarn[39m: [33mMongoDB disconnected[39m
+[25 Nov, 2025 - 12:40:22:4022] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com (CC: )[39m
+[25 Nov, 2025 - 12:48:51:4851] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 12:48:51:4851] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 13:03:44:344] [33mwarn[39m: [33mMongoDB disconnected[39m
+[25 Nov, 2025 - 13:18:28:1828] [34minfo[39m: [34mAudit created by 69209e22f21472b73a18f3fb[39m
+[25 Nov, 2025 - 13:18:33:1833] [34minfo[39m: [34mAudit 69255f4b8b5178fb682c4f80 shared via email to jatinnagar563@gmail.com by 69209e22f21472b73a18f3fb[39m
+[25 Nov, 2025 - 23:02:14:214] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-01.knfen.mongodb.net[39m
+[25 Nov, 2025 - 23:02:16:216] [33mwarn[39m: [33mMongoDB disconnected[39m
+[25 Nov, 2025 - 23:02:31:231] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 23:02:32:232] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 23:04:46:446] [34minfo[39m: [34mEmployees fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 23:04:46:446] [34minfo[39m: [34mDepartments fetched by Rahul Patil (UNIT003)[39m
+[25 Nov, 2025 - 23:22:44:2244] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[25 Nov, 2025 - 23:22:47:2247] [34minfo[39m: [34mEmployee logged out[39m
+[25 Nov, 2025 - 23:22:58:2258] [34minfo[39m: [34mEmployee logged out[39m
+[25 Nov, 2025 - 23:23:08:238] [34minfo[39m: [34mEmployee logged out[39m
+[25 Nov, 2025 - 23:23:19:2319] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[25 Nov, 2025 - 23:23:20:2320] [34minfo[39m: [34mEmployee logged out[39m
+[25 Nov, 2025 - 23:53:19:5319] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m

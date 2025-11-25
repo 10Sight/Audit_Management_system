@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-const baseUrl = import.meta.env.VITE_SERVER_URL || 'https://audit-management-system-server.onrender.com';
+const baseUrl = import.meta.env.VITE_SERVER_URL || 'https://api.audiotmanagementsystem.org';
 
 export const api = createApi({
   reducerPath: 'api',
