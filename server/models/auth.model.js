@@ -141,7 +141,7 @@ EmployeeSchema.methods.toJSON = function () {
 };
 
 // Create indexes for better query performance
-EmployeeSchema.index({ emailId: 1 }, { unique: true });
+EmployeeSchema.index({ emailId: 1 });
 EmployeeSchema.index({ employeeId: 1 }, { unique: true });
 EmployeeSchema.index({ username: 1 }, { unique: false, sparse: true });
 EmployeeSchema.index({ phoneNumber: 1 }, { unique: true });

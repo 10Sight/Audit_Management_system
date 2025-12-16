@@ -38,7 +38,7 @@ LineSchema.index(
   {
     unique: true,
     // Only apply when a department is set
-    partialFilterExpression: { department: { $exists: true, $ne: null } },
+    partialFilterExpression: { department: { $type: "objectId" } },
   }
 );
 

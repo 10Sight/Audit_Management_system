@@ -16,10 +16,12 @@ export const getDepartments = asyncHandler(async (req, res) => {
 
   let query = includeInactive ? {} : { isActive: true };
 
-  // For authenticated admins, automatically restrict departments to their unit.
-  // For other callers, allow optional ?unit= filter.
-  if (req.user && req.user.role === 'admin' && req.user.unit) {
-    query.unit = req.user.unit;
+  // For authenticated admins, restrict departments to their unit.
+  // For superadmins, allow optional ?unit= filter.
+  if (req.user && req.user.role === 'admin') {
+    if (req.user.unit) {
+      query.unit = req.user.unit;
+    }
   } else if (req.query.unit) {
     query.unit = req.query.unit;
   }
@@ -257,7 +259,7 @@ export const deleteDepartment = asyncHandler(async (req, res) => {
 
   if (employeeCount > 0) {
     if (!transferToDepartmentId) {
-      throw new ApiError(400, 
+      throw new ApiError(400,
         "Cannot delete department with employees. Please specify transferToDepartmentId to transfer employees to another department."
       );
     }
@@ -275,8 +277,8 @@ export const deleteDepartment = asyncHandler(async (req, res) => {
     );
 
     // Update employee counts
-    await transferDepartment.updateOne({ 
-      $inc: { employeeCount: employeeCount } 
+    await transferDepartment.updateOne({
+      $inc: { employeeCount: employeeCount }
     });
 
     logger.info(

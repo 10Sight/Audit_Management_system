@@ -1,17 +1,17 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { 
-  Trash2, 
-  Plus, 
-  Building2, 
-  Edit3, 
+import {
+  Trash2,
+  Plus,
+  Building2,
+  Edit3,
   Settings,
   Users,
   AlertTriangle,
   UserCheck,
   BarChart3,
   Grid3X3,
-} from "lucide-react"; 
-import { 
+} from "lucide-react";
+import {
   useGetDepartmentsQuery,
   useGetAllUsersQuery,
   useGetDepartmentStatsQuery,
@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -35,7 +35,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { 
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -87,11 +87,16 @@ export default function DepartmentPage() {
   const [loading, setLoading] = useState(false);
   const [assignLoading, setAssignLoading] = useState(false);
 
-  const departmentQueryParams = {
-    page: 1,
-    limit: 1000,
-    ...(isSuperadmin && activeUnitId ? { unit: activeUnitId } : {}),
-  };
+  const departmentQueryParams = useMemo(() => {
+    const params = { page: 1, limit: 1000 };
+    if (isSuperadmin && activeUnitId) {
+      params.unit = activeUnitId;
+    } else if (!isSuperadmin && user?.unit) {
+      // For admins, explicitly pass their unit if available, though backend also enforces it
+      params.unit = user.unit?._id || user.unit;
+    }
+    return params;
+  }, [isSuperadmin, activeUnitId, user]);
 
   const { data: deptRes } = useGetDepartmentsQuery(departmentQueryParams);
   const { data: usersRes } = useGetAllUsersQuery({ page: 1, limit: 1000 });
@@ -329,9 +334,9 @@ export default function DepartmentPage() {
                   <Building2 className="h-6 w-6 text-primary" />
                 </div>
                 <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={(e) => { e.stopPropagation(); navigate(`/admin/departments/${department._id}`); }}
                     title="View members"
                     aria-label="View members"
@@ -339,18 +344,18 @@ export default function DepartmentPage() {
                     <Users className="h-4 w-4" />
                     <span className="hidden sm:inline ml-1">Members</span>
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={(e) => { e.stopPropagation(); openEditDepartment(department); }}
                     title="Edit department"
                     aria-label="Edit department"
                   >
                     <Edit3 className="h-4 w-4" />
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={(e) => { e.stopPropagation(); openDeleteConfirm(department); }}
                     className="text-destructive hover:text-destructive"
                     title="Delete department"
@@ -359,7 +364,7 @@ export default function DepartmentPage() {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <h3 className="font-semibold text-lg">{department.name}</h3>
                 {department.description && (
@@ -376,19 +381,19 @@ export default function DepartmentPage() {
                     </span>
                   </div>
                 )}
-                
+
                 <div className="flex items-center justify-between pt-4">
                   <div className="flex items-center space-x-2">
                     <Users className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm font-medium">{department.employeeCount || 0}</span>
                     <span className="text-sm text-muted-foreground">auditors</span>
                   </div>
-                  
+
                   <Badge variant={department.isActive ? "default" : "secondary"}>
                     {department.isActive ? "Active" : "Inactive"}
                   </Badge>
                 </div>
-                
+
                 <div className="text-xs text-muted-foreground pt-2">
                   Created {new Date(department.createdAt).toLocaleDateString()}
                 </div>
@@ -454,7 +459,7 @@ export default function DepartmentPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stats.summary?.totalDepartments > 0 
+              {stats.summary?.totalDepartments > 0
                 ? Math.round((stats.summary?.totalEmployees || 0) / stats.summary.totalDepartments)
                 : 0}
             </div>

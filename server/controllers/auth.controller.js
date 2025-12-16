@@ -82,19 +82,18 @@ export const registerEmployee = asyncHandler(async (req, res) => {
 
   // Check for duplicates based on fields that are actually unique in the DB
   const existingUser = await Employee.findOne({
-    $or: [{ emailId }, { phoneNumber }, { employeeId }],
+    $or: [{ phoneNumber }, { employeeId }],
   });
 
   if (existingUser) {
     // Provide a more specific error message to help debugging
     let conflictField = "";
-    if (existingUser.emailId === emailId) conflictField = "Email";
-    else if (existingUser.phoneNumber === phoneNumber) conflictField = "Phone";
+    if (existingUser.phoneNumber === phoneNumber) conflictField = "Phone";
     else if (existingUser.employeeId === employeeId?.toUpperCase()) conflictField = "Employee ID";
 
     const message = conflictField
       ? `${conflictField} already exists`
-      : "User already exists with given Email / Phone / Employee ID";
+      : "User already exists with given Phone / Employee ID";
 
     throw new ApiError(409, message);
   }

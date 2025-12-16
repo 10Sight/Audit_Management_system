@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const machineSchema = new mongoose.Schema(
   {
-    name: { 
-      type: String, 
-      required: true, 
+    name: {
+      type: String,
+      required: true,
       trim: true,
     },
     // Optional reference to the department this machine belongs to
@@ -40,7 +40,7 @@ machineSchema.index(
   { line: 1, name: 1 },
   {
     unique: true,
-    partialFilterExpression: { line: { $exists: true, $ne: null } },
+    partialFilterExpression: { line: { $type: "objectId" } },
   }
 );
 
@@ -50,8 +50,8 @@ machineSchema.index(
   {
     unique: true,
     partialFilterExpression: {
-      department: { $exists: true, $ne: null },
-      line: { $exists: false },
+      department: { $type: "objectId" },
+      line: { $eq: null },
     },
   }
 );

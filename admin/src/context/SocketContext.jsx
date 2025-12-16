@@ -19,8 +19,8 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Initialize socket connection
-    const newSocket = io(import.meta.env.VITE_SERVER_URL || 'https://api.audiotmanagementsystem.org', {
-      transports: ['polling', 'websocket'],
+    const newSocket = io(import.meta?.env?.VITE_SERVER_URL || 'http://localhost:5000', {
+      transports: ['websocket', 'polling'],
       withCredentials: true,
       autoConnect: true,
       reconnection: true,
@@ -34,7 +34,7 @@ export const SocketProvider = ({ children }) => {
       console.log('🔌 Connected to server:', newSocket.id);
       setIsConnected(true);
       toast.success('Connected to server');
-      
+
       // Join general room for notifications
       newSocket.emit('join-room', 'general');
     });

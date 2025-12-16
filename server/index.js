@@ -46,11 +46,13 @@ const sessionConfig = {
 
 // Centralize allowed origins for both HTTP and Socket.IO CORS
 const allowedOrigins = [
+  "http://localhost:5000",
   "https://www.audiotmanagementsystem.org",
+  "https://api.audiotmanagementsystem.org",
+  "https://admin.audiotmanagementsystem.org",
   "https://audit-management-system.onrender.com",
   "http://localhost:5173",
   "http://localhost:5174",
-  "http://localhost:5175",
   "http://localhost:3000",
 ];
 
@@ -189,8 +191,8 @@ const startServer = async () => {
         console.warn('⚠️ Failed to sync indexes for Line/Machine models:', syncErr.message);
       }
     }
-    
-// Try to connect Redis if available, but don't fail if it's not
+
+    // Try to connect Redis if available, but don't fail if it's not
     if (redisClient) {
       try {
         await redisClient.connect();
@@ -200,7 +202,7 @@ const startServer = async () => {
         console.log('✅ Redis connected successfully');
       } catch (error) {
         // Ensure Redis client is disconnected to prevent reconnection spam
-        try { await redisClient.disconnect(); } catch {}
+        try { await redisClient.disconnect(); } catch { }
         console.warn('⚠️ Redis connection failed:', error.message);
         console.log('💡 Using memory session store (Redis not available)');
       }
