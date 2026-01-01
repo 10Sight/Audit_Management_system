@@ -6,10 +6,11 @@ const AuthContext = createContext();
 
 // Provider component
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);      
-  const [loading, setLoading] = useState(true); 
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeUnitId, setActiveUnitId] = useState(null);
+  const [activeDepartmentId, setActiveDepartmentId] = useState(null);
 
   const { data: meData, isLoading: meLoading, refetch } = useGetMeQuery();
 
@@ -31,6 +32,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setError(null);
     setActiveUnitId(null);
+    setActiveDepartmentId(null);
   }, []);
 
   // Sync local state with RTK Query data
@@ -46,6 +48,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (!user) {
       setActiveUnitId(null);
+      setActiveDepartmentId(null);
     }
   }, [user]);
 
@@ -59,7 +62,9 @@ export const AuthProvider = ({ children }) => {
     logout,
     activeUnitId,
     setActiveUnitId,
-  }), [user, loading, error, fetchUser, logout, activeUnitId]);
+    activeDepartmentId,
+    setActiveDepartmentId,
+  }), [user, loading, error, fetchUser, logout, activeUnitId, activeDepartmentId]);
 
   return (
     <AuthContext.Provider value={contextValue}>

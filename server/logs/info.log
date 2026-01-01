@@ -5371,3 +5371,206 @@
 [16 Dec, 2025 - 13:52:13:5213] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
 [16 Dec, 2025 - 13:52:39:5239] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
 [16 Dec, 2025 - 13:52:40:5240] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[16 Dec, 2025 - 15:07:58:758] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[16 Dec, 2025 - 15:07:58:758] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[16 Dec, 2025 - 15:53:30:5330] [33mwarn[39m: [33mMongoDB disconnected[39m
+[16 Dec, 2025 - 16:46:56:4656] [33mwarn[39m: [33mMongoDB disconnected[39m
+[16 Dec, 2025 - 17:28:07:287] [33mwarn[39m: [33mMongoDB disconnected[39m
+[16 Dec, 2025 - 18:03:11:311] [31merror[39m: [31mTarget audit reminder job failed: connection <monitor> to 159.41.169.18:27017 timed out[39m
+[16 Dec, 2025 - 18:03:16:316] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 5006ms (connectTimeoutMS: 5000)[39m
+[16 Dec, 2025 - 18:03:18:318] [33mwarn[39m: [33mMongoDB disconnected[39m
+[16 Dec, 2025 - 21:31:08:318] [33mwarn[39m: [33mMongoDB disconnected[39m
+[17 Dec, 2025 - 13:48:01:481] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[17 Dec, 2025 - 13:48:02:482] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[17 Dec, 2025 - 13:48:05:485] [34minfo[39m: [34mTarget audit reminder email sent to mts.pune3@marelli.motherson.com, MTS.Pune3@marelli.motherson.com (CC: rahul.patil@marelli.motherson.com)[39m
+[17 Dec, 2025 - 16:13:17:1317] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[17 Dec, 2025 - 16:13:26:1326] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[17 Dec, 2025 - 16:13:36:1336] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[17 Dec, 2025 - 16:13:46:1346] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[17 Dec, 2025 - 16:13:56:1356] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[17 Dec, 2025 - 16:14:06:146] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[17 Dec, 2025 - 16:14:10:1410] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[17 Dec, 2025 - 16:14:10:1410] [33mwarn[39m: [33m❌ MongoDB connection 1 failed: querySrv ECONNREFUSED _mongodb._tcp.cluster0.knfen.mongodb.net[39m
+[17 Dec, 2025 - 16:14:11:1411] [34minfo[39m: [34mAttempting to connect to MongoDB (2/3): mongodb://localhost:27017/automobile_inspection[39m
+[31 Dec, 2025 - 15:19:08:198] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 15:19:08:198] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 15:32:03:323] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 15:32:03:323] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 15:33:00:330] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 15:33:01:331] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 15:33:02:332] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 15:33:05:335] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 15:33:29:3329] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 15:33:30:3330] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 15:33:31:3331] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 15:33:34:3334] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 15:34:53:3453] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 15:34:54:3454] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 15:35:15:3515] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 15:35:15:3515] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 15:35:39:3539] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 15:35:40:3540] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 15:43:16:4316] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 15:43:16:4316] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 15:45:42:4542] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 15:45:43:4543] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 15:48:39:4839] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 15:48:39:4839] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 23:35:02:352] [33mwarn[39m: [33mMongoDB disconnected[39m
+[31 Dec, 2025 - 23:35:03:353] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-00.knfen.mongodb.net[39m
+[31 Dec, 2025 - 23:38:28:3828] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 23:38:28:3828] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 23:38:47:3847] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:38:47:3847] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:38:51:3851] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:38:51:3851] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:38:51:3851] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:39:24:3924] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:39:24:3924] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:39:24:3924] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:39:34:3934] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:39:34:3934] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:39:34:3934] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:39:40:3940] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:39:40:3940] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:39:40:3940] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:40:19:4019] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 23:40:21:4021] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 23:40:40:4040] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 23:40:41:4041] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 23:41:33:4133] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 23:41:34:4134] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 23:42:22:4222] [33mwarn[39m: [33mAtomic update failed for employee 69417a15cb8bf9ad069925d3, checking for legacy data repair... Error: Plan executor error during findAndModify :: caused by :: Cannot apply $addToSet to non-array field. Field named 'department' has non-array type objectId[39m
+[31 Dec, 2025 - 23:42:22:4222] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:42:22:4222] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:42:22:4222] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:42:27:4227] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:42:27:4227] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:42:27:4227] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:42:39:4239] [33mwarn[39m: [33mAtomic update failed for employee 69417a15cb8bf9ad069925d3, checking for legacy data repair... Error: Plan executor error during findAndModify :: caused by :: Cannot apply $addToSet to non-array field. Field named 'department' has non-array type objectId[39m
+[31 Dec, 2025 - 23:42:39:4239] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:42:39:4239] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:42:39:4239] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:42:47:4247] [33mwarn[39m: [33mMongoDB disconnected[39m
+[31 Dec, 2025 - 23:43:13:4313] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 23:43:16:4316] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 23:43:39:4339] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:43:39:4339] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:43:43:4343] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:43:43:4343] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:43:43:4343] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:43:52:4352] [33mwarn[39m: [33mAtomic update failed for employee 69417a15cb8bf9ad069925d3, checking for legacy data repair... Error: Plan executor error during findAndModify :: caused by :: Cannot apply $addToSet to non-array field. Field named 'department' has non-array type objectId[39m
+[31 Dec, 2025 - 23:43:52:4352] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:43:52:4352] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:43:52:4352] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:43:58:4358] [33mwarn[39m: [33mAtomic update failed for employee 69417a15cb8bf9ad069925d3, checking for legacy data repair... Error: Plan executor error during findAndModify :: caused by :: Cannot apply $addToSet to non-array field. Field named 'department' has non-array type objectId[39m
+[31 Dec, 2025 - 23:43:58:4358] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:43:58:4358] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:43:58:4358] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:44:13:4413] [33mwarn[39m: [33mAtomic update failed for employee 69417a15cb8bf9ad069925d3, checking for legacy data repair... Error: Plan executor error during findAndModify :: caused by :: Cannot apply $addToSet to non-array field. Field named 'department' has non-array type objectId[39m
+[31 Dec, 2025 - 23:44:13:4413] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:44:13:4413] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:44:13:4413] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:45:36:4536] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 23:45:36:4536] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 23:46:09:469] [34minfo[39m: [34mEmployee test (TEST001) assigned to department Information Technology by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:46:09:469] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:46:09:469] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:46:10:4610] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:46:29:4629] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:47:53:4753] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 23:47:54:4754] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 23:48:00:480] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[31 Dec, 2025 - 23:48:01:481] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-00.knfen.mongodb.net:27017/test[39m
+[31 Dec, 2025 - 23:48:50:4850] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:48:50:4850] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:48:57:4857] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:48:57:4857] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:49:05:495] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:49:05:495] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:52:34:5234] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:52:34:5234] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:52:41:5241] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:52:41:5241] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:53:03:533] [34minfo[39m: [34mEmployee testing (TEST002) removed from department Human Resource by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:53:03:533] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:53:03:533] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:53:07:537] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:53:07:537] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:53:40:5340] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:53:40:5340] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:53:40:5340] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:53:43:5343] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:54:11:5411] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[31 Dec, 2025 - 23:54:24:5424] [34minfo[39m: [34mEmployee logged out[39m
+[31 Dec, 2025 - 23:55:15:5515] [34minfo[39m: [34mEmployee logged out[39m
+[31 Dec, 2025 - 23:55:25:5525] [34minfo[39m: [34mDepartments fetched by testing (TEST002)[39m
+[01 Jan, 2026 - 00:14:24:1424] [34minfo[39m: [34mEmployee logged out[39m
+[01 Jan, 2026 - 00:16:35:1635] [34minfo[39m: [34mEmployee logged out[39m
+[01 Jan, 2026 - 00:16:48:1648] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:16:48:1648] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:16:55:1655] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:16:55:1655] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:16:55:1655] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:17:19:1719] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:17:19:1719] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:18:38:1838] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:18:38:1838] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:18:43:1843] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:18:43:1843] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:18:49:1849] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:19:07:197] [34minfo[39m: [34mEmployee logged out[39m
+[01 Jan, 2026 - 00:19:36:1936] [34minfo[39m: [34mEmployee logged out[39m
+[01 Jan, 2026 - 00:19:46:1946] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:19:56:1956] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:22:00:220] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:22:13:2213] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:23:31:2331] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:27:52:2752] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:28:13:2813] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:29:57:2957] [34minfo[39m: [34mEmployee logged out[39m
+[01 Jan, 2026 - 00:30:12:3012] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:30:15:3015] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:30:28:3028] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:30:28:3028] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:30:31:3031] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:30:56:3056] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:34:52:3452] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:34:52:3452] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:35:20:3520] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:35:20:3520] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:35:33:3533] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:35:33:3533] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (SA001)[39m
+[01 Jan, 2026 - 00:35:54:3554] [34minfo[39m: [34mEmployee logged out[39m
+[01 Jan, 2026 - 00:36:22:3622] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:36:24:3624] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:36:36:3636] [34minfo[39m: [34mQuestion deleted: 693672bfe401d850a7f6b852 by user 69367226e401d850a7f6b7f6[39m
+[01 Jan, 2026 - 00:36:42:3642] [34minfo[39m: [34mDeleted 2 questions for template "Audit 01" by user 69367226e401d850a7f6b7f6[39m
+[01 Jan, 2026 - 00:37:23:3723] [34minfo[39m: [34mCreated 2 questions by user 69367226e401d850a7f6b7f6[39m
+[01 Jan, 2026 - 00:37:29:3729] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:37:29:3729] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:37:29:3729] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:37:31:3731] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:37:34:3734] [34minfo[39m: [34mEmployee logged out[39m
+[01 Jan, 2026 - 00:38:21:3821] [34minfo[39m: [34mEmployee logged out[39m
+[01 Jan, 2026 - 00:38:49:3849] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:38:49:3849] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:38:58:3858] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:44:27:4427] [34minfo[39m: [34mCreated 2 questions by user 69367226e401d850a7f6b7f6[39m
+[01 Jan, 2026 - 00:44:32:4432] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:44:32:4432] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:44:32:4432] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:44:34:4434] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 00:44:38:4438] [34minfo[39m: [34mEmployee logged out[39m
+[01 Jan, 2026 - 12:35:01:351] [33mwarn[39m: [33mMongoDB disconnected[39m
+[01 Jan, 2026 - 12:39:29:3929] [34minfo[39m: [34mEmployee logged out[39m
+[01 Jan, 2026 - 12:39:40:3940] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:39:40:3940] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:40:41:4041] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:40:41:4041] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:40:45:4045] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:40:46:4046] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:41:24:4124] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:41:24:4124] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:42:10:4210] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:42:10:4210] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m

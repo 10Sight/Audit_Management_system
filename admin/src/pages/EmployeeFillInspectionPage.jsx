@@ -4,7 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { FiCheckCircle, FiHome, FiBarChart2, FiCamera, FiX } from "react-icons/fi";
 import "react-toastify/dist/ReactToastify.css";
-import { 
+import {
   useGetLinesQuery,
   useGetMachinesQuery,
   useGetUnitsQuery,
@@ -13,6 +13,7 @@ import {
   useUploadImageMutation,
   useDeleteUploadMutation,
   useGetDepartmentByIdQuery,
+  useGetEmployeeByIdQuery,
 } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import CameraCapture from "@/components/CameraCapture";
@@ -26,7 +27,7 @@ import simpleImageUpload, { simpleCompressImage } from "@/utils/simpleUpload";
 import api from "@/utils/axios";
 
 export default function EmployeeFillInspectionPage() {
-  const { user: currentUser } = useAuth();
+  const { user: currentUser, activeUnitId, activeDepartmentId } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
 
@@ -44,7 +45,7 @@ export default function EmployeeFillInspectionPage() {
   const [line, setLine] = useState("");
   const [machine, setMachine] = useState("");
   const [unit, setUnit] = useState("");
-  const [lineLeader, setLineLeader] = useState("");   
+  const [lineLeader, setLineLeader] = useState("");
   const [shift, setShift] = useState("");
   const [shiftIncharge, setShiftIncharge] = useState("");
   const [lineRating, setLineRating] = useState("");
@@ -54,15 +55,39 @@ export default function EmployeeFillInspectionPage() {
   const [questions, setQuestions] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [submittedAuditId, setSubmittedAuditId] = useState(null);
-  
+
   const templateTitle = questions.length > 0 ? questions[0].templateTitle : "";
-  
+
   // Photo capture states
   const [showCamera, setShowCamera] = useState(false);
   const [currentQuestionForPhoto, setCurrentQuestionForPhoto] = useState(null);
   const [questionPhotos, setQuestionPhotos] = useState({}); // questionId -> array of photos
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+
+  const { data: userRes, isLoading: isUserLoading, error: userError } = useGetEmployeeByIdQuery(currentUser?._id, { skip: !currentUser?._id });
+  const freshUser = userRes?.data?.employee;
+
+  // Use freshUser for department logic if available, otherwise fallback to currentUser
+  const userForData = freshUser || currentUser;
+
+  // New: Department Selection State
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+
+  const availableDepartments = useMemo(() => {
+    if (!userForData?.department) return [];
+    if (Array.isArray(userForData.department)) return userForData.department;
+    return [userForData.department];
+  }, [userForData]);
+
+  // Auto-select first department by default
+  useEffect(() => {
+    if (availableDepartments.length > 0 && !selectedDepartment) {
+      const dept = availableDepartments[0];
+      const dId = typeof dept === 'object' ? dept._id : dept;
+      if (dId) setSelectedDepartment(dId);
+    }
+  }, [availableDepartments, selectedDepartment]);
 
   // Local dropdown visibility for leader/incharge suggestions
   const describeRating = (val) => {
@@ -74,17 +99,27 @@ export default function EmployeeFillInspectionPage() {
   };
 
   const getDepartmentName = (dept) => {
-    if (!dept) return "Department";
-    if (typeof dept === "string") return dept;
+    if (!dept) return "";
     if (typeof dept === "object" && dept?.name) return dept.name;
     return "Department";
   };
 
-  const departmentId = currentUser?.department?._id || currentUser?.department || "";
-  const { data: linesRes } = useGetLinesQuery(departmentId ? { department: departmentId } : {});
+  // Determine effective IDs based on role
+  // Superadmin: use global context first. Employee: use assigned data.
+  const isSuperAdmin = currentUser?.role === 'superadmin';
+
+  // Ensure we consistently use the Unit ID for filtering
+  // If Superadmin, use activeUnitId. Else use user's assigned unit.
+  const unitId = isSuperAdmin ? activeUnitId : (typeof userForData?.unit === 'object' ? userForData?.unit?._id : userForData?.unit);
+
+  // If Superadmin, use activeDepartmentId. Else use selectedDepartment (from their assigned list).
+  const departmentId = isSuperAdmin ? activeDepartmentId : selectedDepartment;
+
+  const { data: linesRes } = useGetLinesQuery(departmentId ? { department: departmentId, unit: unitId } : { skip: !departmentId });
   const { data: deptDetailRes } = useGetDepartmentByIdQuery(departmentId, { skip: !departmentId });
   const { data: machinesRes } = useGetMachinesQuery({
     ...(departmentId ? { department: departmentId } : {}),
+    ...(unitId ? { unit: unitId } : {}),
     ...(line ? { line } : {}),
   });
   const { data: unitsRes } = useGetUnitsQuery();
@@ -144,6 +179,14 @@ export default function EmployeeFillInspectionPage() {
     setLoading(false);
   }, [linesRes, machinesRes, unitsRes, currentUser, unit]);
 
+  // Reset dependent fields when department changes
+  useEffect(() => {
+    setLine("");
+    setMachine("");
+    setLineLeader("");
+    setShiftIncharge("");
+  }, [departmentId]);
+
   // Auto-fill Line Leader / Shift Incharge from department-level configuration (not per shift)
   useEffect(() => {
     if (!departmentId) return;
@@ -171,7 +214,8 @@ export default function EmployeeFillInspectionPage() {
   useEffect(() => {
     let isMounted = true;
 
-    const auditorDeptId = currentUser?.department?._id || currentUser?.department || "";
+    // Use selectedDepartment for form settings too
+    const auditorDeptId = selectedDepartment;
 
     const fetchFormSettings = async () => {
       try {
@@ -207,7 +251,7 @@ export default function EmployeeFillInspectionPage() {
     return () => {
       isMounted = false;
     };
-  }, [currentUser]);
+  }, [currentUser, selectedDepartment]);
 
   // When line changes, clear selected machine so the user re-selects from filtered list
   useEffect(() => {
@@ -232,7 +276,8 @@ export default function EmployeeFillInspectionPage() {
     const rawList = Array.isArray(questionsRes?.data) ? questionsRes.data : [];
 
     // Only keep questions that belong to the employee's department, plus any global questions.
-    const employeeDeptId = currentUser?.department?._id || currentUser?.department || '';
+    // Filter by selectedDepartment
+    const employeeDeptId = selectedDepartment;
 
     const filteredByDept = rawList.filter((q) => {
       // Allow explicit global questions regardless of department
@@ -244,7 +289,7 @@ export default function EmployeeFillInspectionPage() {
     });
 
     setQuestions(filteredByDept.map((q) => ({ ...q, answer: '', remark: '' })));
-  }, [questionsRes, questionsLoading, currentUser]);
+  }, [questionsRes, questionsLoading, currentUser, selectedDepartment]);
 
   const handleAnswerChange = (idx, value) => {
     const newQs = [...questions];
@@ -320,16 +365,16 @@ export default function EmployeeFillInspectionPage() {
     try {
       const photos = questionPhotos[questionId] || [];
       const photoToRemove = photos[photoIndex];
-      
+
       if (photoToRemove?.publicId) {
         await deleteUpload(photoToRemove.publicId).unwrap();
       }
-      
+
       setQuestionPhotos(prev => ({
         ...prev,
         [questionId]: photos.filter((_, idx) => idx !== photoIndex)
       }));
-      
+
       toast.success('Photo removed successfully!');
     } catch (error) {
       console.error('Photo removal error:', error);
@@ -348,6 +393,7 @@ export default function EmployeeFillInspectionPage() {
       (lineRequired && !line) ||
       (machineRequired && !machine) ||
       !unit ||
+      !selectedDepartment ||
       !lineLeader ||
       !shift ||
       !shiftIncharge ||
@@ -411,7 +457,7 @@ export default function EmployeeFillInspectionPage() {
         line: line || undefined,
         machine: machine || undefined,
         unit,
-        department: currentUser?.department?._id || currentUser?.department || undefined,
+        department: selectedDepartment,
         lineLeader,
         shift,
         shiftIncharge,
@@ -462,10 +508,10 @@ export default function EmployeeFillInspectionPage() {
   return (
     <div className="space-y-6 p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto scroll-smooth">
       <ToastContainer />
-        <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-            {formSettings.formTitle || "Part and Quality Audit Performance"}
-          </h1>
+      <div className="space-y-1">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          {formSettings.formTitle || "Part and Quality Audit Performance"}
+        </h1>
         <p className="text-sm text-muted-foreground">
           Fill out inspection details and answer all questions for your department.
         </p>
@@ -506,14 +552,47 @@ export default function EmployeeFillInspectionPage() {
               />
             </div>
 
-            {/* Department - auto fetched from auditor profile */}
+            {/* Department - Allow selection if multiple, otherwise read-only */}
             <div className="space-y-1.5">
               <Label className="text-xs sm:text-sm font-medium">Department</Label>
-              <Input
-                type="text"
-                value={getDepartmentName(currentUser?.department)}
-                disabled
-              />
+              {availableDepartments.length > 1 ? (
+                <Select
+                  value={selectedDepartment}
+                  onValueChange={(val) => setSelectedDepartment(val)}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableDepartments.map((dept) => {
+                      const dId = typeof dept === 'object' ? dept._id : dept;
+                      const dName = typeof dept === 'object' ? dept.name : "Department"; // You might need to fetch names if they are IDs
+                      return (
+                        <SelectItem key={dId} value={dId}>
+                          {dName}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Input
+                  type="text"
+                  value={
+                    // If Superadmin, show selected active department name or prompt
+                    isSuperAdmin
+                      ? (deptDetailRes?.data?.department?.name || "Select Department in Header")
+                      : availableDepartments.length
+                        ? getDepartmentName(availableDepartments[0])
+                        : isUserLoading
+                          ? "Loading User Data..."
+                          : userError
+                            ? "Error Loading User"
+                            : "No Departments Assigned"
+                  }
+                  disabled
+                />
+              )}
             </div>
 
             {/* Line - filtered by department (admin can rename/disable) */}
@@ -682,12 +761,13 @@ export default function EmployeeFillInspectionPage() {
                       </div>
                     </div>
 
-                    {type === "image" && q.imageUrl && (
+                    {/* Display Image if present (regardless of strict 'type' check for robustness) */}
+                    {q.imageUrl && (
                       <div className="mb-2">
                         <img
                           src={q.imageUrl}
                           alt="Question context"
-                          className="max-h-48 w-full rounded-md object-contain border"
+                          className="max-h-48 w-full rounded-md object-contain border bg-slate-50"
                         />
                       </div>
                     )}
@@ -706,7 +786,7 @@ export default function EmployeeFillInspectionPage() {
                           <SelectItem value="NA">Not Applicable</SelectItem>
                         </SelectContent>
                       </Select>
-                      
+
                     )}
 
                     {isChoiceType && (
@@ -808,135 +888,135 @@ export default function EmployeeFillInspectionPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <Label className="block mb-1 font-semibold">Line Rating (1-10)</Label>
-            <div className="flex flex-wrap gap-1 mb-2">
-              {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
-                const selected = Number(lineRating) === score;
-                let colorClass = "bg-white text-gray-700 border-gray-300 hover:bg-blue-50";
-                if (score <= 3) {
-                  colorClass = selected
-                    ? "bg-red-600 text-white border-red-600"
-                    : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
-                } else if (score <= 7) {
-                  colorClass = selected
-                    ? "bg-yellow-500 text-white border-yellow-500"
-                    : "bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100";
-                } else {
-                  colorClass = selected
-                    ? "bg-green-600 text-white border-green-600"
-                    : "bg-green-50 text-green-800 border-green-200 hover:bg-green-100";
-                }
-                return (
-                  <button
-                    key={score}
-                    type="button"
-                    onClick={() => setLineRating(String(score))}
-                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${colorClass}`}
-                  >
-                    {score}
-                  </button>
-                );
-              })}
+            <div>
+              <Label className="block mb-1 font-semibold">Line Rating (1-10)</Label>
+              <div className="flex flex-wrap gap-1 mb-2">
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
+                  const selected = Number(lineRating) === score;
+                  let colorClass = "bg-white text-gray-700 border-gray-300 hover:bg-blue-50";
+                  if (score <= 3) {
+                    colorClass = selected
+                      ? "bg-red-600 text-white border-red-600"
+                      : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
+                  } else if (score <= 7) {
+                    colorClass = selected
+                      ? "bg-yellow-500 text-white border-yellow-500"
+                      : "bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100";
+                  } else {
+                    colorClass = selected
+                      ? "bg-green-600 text-white border-green-600"
+                      : "bg-green-50 text-green-800 border-green-200 hover:bg-green-100";
+                  }
+                  return (
+                    <button
+                      key={score}
+                      type="button"
+                      onClick={() => setLineRating(String(score))}
+                      className={`px-3 py-1 rounded-full text-sm border transition-colors ${colorClass}`}
+                    >
+                      {score}
+                    </button>
+                  );
+                })}
+              </div>
+              <Input
+                type="number"
+                min={1}
+                max={10}
+                value={lineRating}
+                onChange={(e) => setLineRating(e.target.value)}
+                className="text-sm"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">{describeRating(lineRating)}</p>
             </div>
-            <Input
-              type="number"
-              min={1}
-              max={10}
-              value={lineRating}
-              onChange={(e) => setLineRating(e.target.value)}
-              className="text-sm"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">{describeRating(lineRating)}</p>
-          </div>
 
-          <div>
-            <label className="block mb-1 font-semibold">Machine Rating (1-10)</label>
-            <div className="flex flex-wrap gap-1 mb-2">
-              {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
-                const selected = Number(machineRating) === score;
-                let colorClass = "bg-white text-gray-700 border-gray-300 hover:bg-blue-50";
-                if (score <= 3) {
-                  colorClass = selected
-                    ? "bg-red-600 text-white border-red-600"
-                    : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
-                } else if (score <= 7) {
-                  colorClass = selected
-                    ? "bg-yellow-500 text-white border-yellow-500"
-                    : "bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100";
-                } else {
-                  colorClass = selected
-                    ? "bg-green-600 text-white border-green-600"
-                    : "bg-green-50 text-green-800 border-green-200 hover:bg-green-100";
-                }
-                return (
-                  <button
-                    key={score}
-                    type="button"
-                    onClick={() => setMachineRating(String(score))}
-                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${colorClass}`}
-                  >
-                    {score}
-                  </button>
-                );
-              })}
+            <div>
+              <label className="block mb-1 font-semibold">Machine Rating (1-10)</label>
+              <div className="flex flex-wrap gap-1 mb-2">
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
+                  const selected = Number(machineRating) === score;
+                  let colorClass = "bg-white text-gray-700 border-gray-300 hover:bg-blue-50";
+                  if (score <= 3) {
+                    colorClass = selected
+                      ? "bg-red-600 text-white border-red-600"
+                      : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
+                  } else if (score <= 7) {
+                    colorClass = selected
+                      ? "bg-yellow-500 text-white border-yellow-500"
+                      : "bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100";
+                  } else {
+                    colorClass = selected
+                      ? "bg-green-600 text-white border-green-600"
+                      : "bg-green-50 text-green-800 border-green-200 hover:bg-green-100";
+                  }
+                  return (
+                    <button
+                      key={score}
+                      type="button"
+                      onClick={() => setMachineRating(String(score))}
+                      className={`px-3 py-1 rounded-full text-sm border transition-colors ${colorClass}`}
+                    >
+                      {score}
+                    </button>
+                  );
+                })}
+              </div>
+              <Input
+                type="number"
+                min={1}
+                max={10}
+                value={machineRating}
+                onChange={(e) => setMachineRating(e.target.value)}
+                className="text-sm"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">{describeRating(machineRating)}</p>
             </div>
-            <Input
-              type="number"
-              min={1}
-              max={10}
-              value={machineRating}
-              onChange={(e) => setMachineRating(e.target.value)}
-              className="text-sm"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">{describeRating(machineRating)}</p>
-          </div>
 
 
-          <div>
-            <label className="block mb-1 font-semibold">Unit Rating (1-10)</label>
-            <div className="flex flex-wrap gap-1 mb-2">
-              {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
-                const selected = Number(unitRating) === score;
-                let colorClass = "bg-white text-gray-700 border-gray-300 hover:bg-blue-50";
-                if (score <= 3) {
-                  colorClass = selected
-                    ? "bg-red-600 text-white border-red-600"
-                    : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
-                } else if (score <= 7) {
-                  colorClass = selected
-                    ? "bg-yellow-500 text-white border-yellow-500"
-                    : "bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100";
-                } else {
-                  colorClass = selected
-                    ? "bg-green-600 text-white border-green-600"
-                    : "bg-green-50 text-green-800 border-green-200 hover:bg-green-100";
-                }
-                return (
-                  <button
-                    key={score}
-                    type="button"
-                    onClick={() => setUnitRating(String(score))}
-                    className={`px-3 py-1 rounded-full text-sm border transition-colors ${colorClass}`}
-                  >
-                    {score}
-                  </button>
-                );
-              })}
+            <div>
+              <label className="block mb-1 font-semibold">Unit Rating (1-10)</label>
+              <div className="flex flex-wrap gap-1 mb-2">
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((score) => {
+                  const selected = Number(unitRating) === score;
+                  let colorClass = "bg-white text-gray-700 border-gray-300 hover:bg-blue-50";
+                  if (score <= 3) {
+                    colorClass = selected
+                      ? "bg-red-600 text-white border-red-600"
+                      : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100";
+                  } else if (score <= 7) {
+                    colorClass = selected
+                      ? "bg-yellow-500 text-white border-yellow-500"
+                      : "bg-yellow-50 text-yellow-800 border-yellow-200 hover:bg-yellow-100";
+                  } else {
+                    colorClass = selected
+                      ? "bg-green-600 text-white border-green-600"
+                      : "bg-green-50 text-green-800 border-green-200 hover:bg-green-100";
+                  }
+                  return (
+                    <button
+                      key={score}
+                      type="button"
+                      onClick={() => setUnitRating(String(score))}
+                      className={`px-3 py-1 rounded-full text-sm border transition-colors ${colorClass}`}
+                    >
+                      {score}
+                    </button>
+                  );
+                })}
+              </div>
+              <Input
+                type="number"
+                min={1}
+                max={10}
+                value={unitRating}
+                onChange={(e) => setUnitRating(e.target.value)}
+                className="text-sm"
+                required
+              />
+              <p className="text-xs text-gray-500 mt-1">{describeRating(unitRating)}</p>
             </div>
-            <Input
-              type="number"
-              min={1}
-              max={10}
-              value={unitRating}
-              onChange={(e) => setUnitRating(e.target.value)}
-              className="text-sm"
-              required
-            />
-            <p className="text-xs text-gray-500 mt-1">{describeRating(unitRating)}</p>
-          </div>
           </CardContent>
 
         </Card>

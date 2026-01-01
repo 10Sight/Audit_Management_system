@@ -153,16 +153,16 @@ export default function AdminCreateTemplatePage() {
   };
 
   // We keep questionType fixed to "yes_no" for Pass/Fail/NA, so no-op
-  const handleQuestionTypeChange = () => {};
+  const handleQuestionTypeChange = () => { };
 
   // MCQ/Dropdown options are not used in Pass/Fail/NA mode
-  const handleOptionChange = () => {};
+  const handleOptionChange = () => { };
 
-  const handleCorrectOptionChange = () => {};
+  const handleCorrectOptionChange = () => { };
 
-  const addOption = () => {};
+  const addOption = () => { };
 
-  const removeOption = () => {};
+  const removeOption = () => { };
 
   const handleImageUrlChange = (idx, value) => {
     const newQ = [...questions];
@@ -225,9 +225,11 @@ export default function AdminCreateTemplatePage() {
         const base = {
           questionText: q.questionText,
           isGlobal: false,
-          questionType: type,
+          // If image is present, force type to "image" so frontend renders it correctly. Otherwise default to user selection or yes_no.
+          questionType: q.imageUrl ? "image" : type,
           templateTitle: templateTitle.trim(),
           department: selectedDepartment,
+          imageUrl: q.imageUrl || undefined,
         };
 
         // Attach unit scope so templates are visible under the unit filters
@@ -487,7 +489,7 @@ export default function AdminCreateTemplatePage() {
 
                             <Select
                               value={type}
-                              onValueChange={() => {}}
+                              onValueChange={() => { }}
                             >
                               <SelectTrigger className="w-[200px]">
                                 <SelectValue placeholder="Question type" />
@@ -514,26 +516,26 @@ export default function AdminCreateTemplatePage() {
                               <Label className="text-xs font-medium text-muted-foreground">Options</Label>
                               <div className="space-y-2">
                                 {(q.options || [""]).map((opt, optIdx) => (
-                              <div
-                                key={optIdx}
-                                className="flex items-center gap-2"
-                              >
-                                <input
-                                  type="radio"
-                                  name={`correct-${idx}`}
-                                  checked={q.correctOptionIndex === optIdx}
-                                  onChange={() => handleCorrectOptionChange(idx, optIdx)}
-                                  className="h-4 w-4 text-primary"
-                                />
-                                <Input
-                                  placeholder={`Option ${optIdx + 1}`}
-                                  value={opt}
-                                  onChange={(e) =>
-                                    handleOptionChange(idx, optIdx, e.target.value)
-                                  }
-                                  required={optIdx < 2}
-                                />
-                                <Button
+                                  <div
+                                    key={optIdx}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <input
+                                      type="radio"
+                                      name={`correct-${idx}`}
+                                      checked={q.correctOptionIndex === optIdx}
+                                      onChange={() => handleCorrectOptionChange(idx, optIdx)}
+                                      className="h-4 w-4 text-primary"
+                                    />
+                                    <Input
+                                      placeholder={`Option ${optIdx + 1}`}
+                                      value={opt}
+                                      onChange={(e) =>
+                                        handleOptionChange(idx, optIdx, e.target.value)
+                                      }
+                                      required={optIdx < 2}
+                                    />
+                                    <Button
                                       type="button"
                                       variant="outline"
                                       size="icon"
@@ -555,43 +557,46 @@ export default function AdminCreateTemplatePage() {
                             </div>
                           )}
 
-                          {type === "image" && (
-                            <div className="hidden">
-                              <div className="space-y-2">
-                                <Label className="text-xs font-medium text-muted-foreground">Image URL</Label>
-                                <Input
-                                  placeholder="Paste image URL for this question or upload below"
-                                  value={q.imageUrl || ""}
-                                  onChange={(e) => handleImageUrlChange(idx, e.target.value)}
-                                  required
+                          <div className="pt-2">
+                            <div className="flex flex-wrap items-center gap-3">
+                              <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border px-3 py-1 text-xs font-medium text-muted-foreground hover:bg-muted/60">
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  className="hidden"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    handleImageFileChange(idx, file);
+                                    e.target.value = "";
+                                  }}
                                 />
-                              </div>
+                                {imageUploading ? "Uploading..." : "Upload image"}
+                              </label>
 
-                              <div className="flex flex-wrap items-center gap-3">
-                                <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border px-3 py-1 text-xs font-medium text-muted-foreground hover:bg-muted/60">
-                                  <input
-                                    type="file"
-                                    accept="image/*"
-                                    className="hidden"
-                                    onChange={(e) => {
-                                      const file = e.target.files?.[0];
-                                      handleImageFileChange(idx, file);
-                                      e.target.value = "";
-                                    }}
-                                  />
-                                  {imageUploading ? "Uploading..." : "Upload image"}
-                                </label>
-
-                                {q.imageUrl && (
+                              {q.imageUrl && (
+                                <div className="relative group">
                                   <img
                                     src={q.imageUrl}
-                                    alt="Preview"
+                                    alt="Question Image"
                                     className="h-16 w-16 rounded-md border object-cover"
                                   />
-                                )}
-                              </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleImageUrlChange(idx, "")}
+                                    className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                                  >
+                                    <FiTrash2 className="h-3 w-3" />
+                                  </button>
+                                </div>
+                              )}
                             </div>
-                          )}
+                            {/* Hidden URL input fallback */}
+                            <Input
+                              className="hidden"
+                              value={q.imageUrl || ""}
+                              readOnly
+                            />
+                          </div>
                         </CardContent>
                       </Card>
                     );
@@ -610,4 +615,4 @@ export default function AdminCreateTemplatePage() {
       </div>
     </div>
   );
- }
+}

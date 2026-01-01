@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { 
+import {
   useGetAllUsersQuery,
   useGetDepartmentsQuery,
   useUpdateDepartmentMutation,
   useGetLinesQuery,
   useCreateLineMutation,
   useDeleteLineMutation,
+  useRemoveEmployeeFromDepartmentMutation,
 } from "@/store/api"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -16,6 +17,16 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Users, Building2, ChevronLeft, Factory, Plus, Minus, Trash2 } from "lucide-react"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { toast } from "sonner"
 
 export default function DepartmentDetailPage() {
@@ -26,11 +37,17 @@ export default function DepartmentDetailPage() {
   const { data: usersRes } = useGetAllUsersQuery({ page: 1, limit: 1000 })
 
   const [updateDepartment] = useUpdateDepartmentMutation()
+  const [removeEmployeeMutation] = useRemoveEmployeeFromDepartmentMutation()
 
   // Local loading states to prevent double submissions
   const [savingLeaders, setSavingLeaders] = useState(false)
   const [creatingLine, setCreatingLine] = useState(false)
   const [deletingLineId, setDeletingLineId] = useState(null)
+
+  // Remove Auditor states
+  const [employeeToRemove, setEmployeeToRemove] = useState(null)
+  const [openRemoveDialog, setOpenRemoveDialog] = useState(false)
+  const [removingLoading, setRemovingLoading] = useState(false)
 
   // Local state for department-scoped lines
   const [lineName, setLineName] = useState("")
@@ -73,13 +90,13 @@ export default function DepartmentDetailPage() {
     const lineLeaders = Array.isArray(first.lineLeaders)
       ? first.lineLeaders
       : first.lineLeader
-      ? [first.lineLeader]
-      : [""]
+        ? [first.lineLeader]
+        : [""]
     const shiftIncharges = Array.isArray(first.shiftIncharges)
       ? first.shiftIncharges
       : first.shiftIncharge
-      ? [first.shiftIncharge]
-      : [""]
+        ? [first.shiftIncharge]
+        : [""]
 
     setStaffByShift([
       {
@@ -99,6 +116,16 @@ export default function DepartmentDetailPage() {
       .filter((u) => (u.role?.toLowerCase?.() || "") === "employee")
       .filter((u) => {
         if (!u.department) return false
+
+        // Handle array of departments (strings or objects)
+        if (Array.isArray(u.department)) {
+          return u.department.some(dept => {
+            const deptId = typeof dept === 'object' && dept !== null ? dept._id : dept;
+            return deptId === id;
+          });
+        }
+
+        // Handle single department (legacy)
         if (typeof u.department === "string") return u.department === id
         return u.department?._id === id
       })
@@ -201,6 +228,32 @@ export default function DepartmentDetailPage() {
     }
   }
 
+  // Remove Auditor Logic
+  const initiateRemoveEmployee = (employee) => {
+    setEmployeeToRemove(employee)
+    setOpenRemoveDialog(true)
+  }
+
+  const handleRemoveEmployee = async () => {
+    if (!employeeToRemove) return
+
+    setRemovingLoading(true)
+    try {
+      await removeEmployeeMutation({
+        employeeId: employeeToRemove._id,
+        departmentId: id
+      }).unwrap()
+
+      toast.success(`Removed ${employeeToRemove.fullName} from department`)
+      setOpenRemoveDialog(false)
+      setEmployeeToRemove(null)
+    } catch (err) {
+      toast.error(err?.data?.message || err?.message || "Failed to remove employee")
+    } finally {
+      setRemovingLoading(false)
+    }
+  }
+
   return (
     <div className="space-y-8">
       {/* Header / Overview */}
@@ -256,7 +309,7 @@ export default function DepartmentDetailPage() {
           <div className="space-y-3">
             {staffByShift.map((row, idx) => (
               <div
-                key={row.shift}
+                key={idx}
                 className="space-y-3 rounded-lg border border-dashed border-border/70 bg-muted/40 p-3 sm:p-4"
               >
                 <div className="mb-1 flex items-center justify-between text-sm font-medium">
@@ -394,11 +447,18 @@ export default function DepartmentDetailPage() {
             {lines.length ? (
               <div className="divide-y rounded-md border bg-card">
                 {lines.map((line) => (
-                  <button
+                  <div
                     key={line._id}
-                    type="button"
-                    className="flex w-full items-center justify-between px-3 py-2.5 text-left transition-colors hover:bg-muted/60 sm:px-4 sm:py-3"
+                    role="button"
+                    tabIndex={0}
+                    className="flex w-full items-center justify-between px-3 py-2.5 text-left transition-colors hover:bg-muted/60 sm:px-4 sm:py-3 cursor-pointer"
                     onClick={() => navigate(`/admin/departments/${id}/lines/${line._id}`)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        navigate(`/admin/departments/${id}/lines/${line._id}`);
+                      }
+                    }}
                   >
                     <div>
                       <div className="font-medium">{line.name}</div>
@@ -428,7 +488,7 @@ export default function DepartmentDetailPage() {
                         )}
                       </Button>
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             ) : (
@@ -457,6 +517,7 @@ export default function DepartmentDetailPage() {
                   <TableHead>Contact</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Joined</TableHead>
+                  <TableHead className="w-[80px]"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -489,11 +550,22 @@ export default function DepartmentDetailPage() {
                       <TableCell className="text-muted-foreground">
                         {new Date(emp.createdAt).toLocaleDateString()}
                       </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                          onClick={() => initiateRemoveEmployee(emp)}
+                          title="Remove from this department"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={4} className="h-24 text-center">
+                    <TableCell colSpan={5} className="h-24 text-center">
                       <div className="flex flex-col items-center justify-center">
                         <Users className="mb-2 h-8 w-8 text-muted-foreground" />
                         <p className="text-muted-foreground">No employees in this department</p>
@@ -506,6 +578,30 @@ export default function DepartmentDetailPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Remove Confirmation Dialog */}
+      <AlertDialog open={openRemoveDialog} onOpenChange={setOpenRemoveDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remove Auditor?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to remove <strong>{employeeToRemove?.fullName}</strong> from this department?
+              <br className="mb-2" />
+              They will remain in other departments they are assigned to.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={removingLoading}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleRemoveEmployee}
+              disabled={removingLoading}
+            >
+              {removingLoading ? "Removing..." : "Remove"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

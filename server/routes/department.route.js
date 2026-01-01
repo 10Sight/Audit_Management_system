@@ -1,11 +1,12 @@
 import express from 'express';
-import { 
-  getDepartments, 
-  getSingleDepartment, 
-  createDepartment, 
-  updateDepartment, 
+import {
+  getDepartments,
+  getSingleDepartment,
+  createDepartment,
+  updateDepartment,
   deleteDepartment,
   assignEmployeeToDepartment,
+  removeEmployeeFromDepartment,
   getDepartmentStats
 } from "../controllers/department.controller.js";
 import { verifyJWT, authorizeRoles } from '../middlewares/auth.middleware.js';
@@ -35,5 +36,8 @@ router.delete("/:id", verifyJWT, authorizeRoles("admin", "superadmin"), deleteDe
 
 // Assign employee to department (admin only)
 router.post("/assign-employee", verifyJWT, authorizeRoles("admin", "superadmin"), assignEmployeeToDepartment);
+
+// Remove employee from department (admin only)
+router.post("/remove-employee", verifyJWT, authorizeRoles("admin", "superadmin"), removeEmployeeFromDepartment);
 
 export default router;

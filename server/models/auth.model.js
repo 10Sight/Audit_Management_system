@@ -22,14 +22,10 @@ const EmployeeSchema = new Schema(
       ],
     },
 
-    department: {
+    department: [{
       type: Schema.Types.ObjectId,
       ref: "Department",
-      required: function () {
-        // Department is required only for employee (auditor) users
-        return this.role === "employee";
-      },
-    },
+    }],
 
     // Optional reference to a Unit (e.g. Unit 1, Unit 2)
     // Business rules for when this is required are enforced in the controller

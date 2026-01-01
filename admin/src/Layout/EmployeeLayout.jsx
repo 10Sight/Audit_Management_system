@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; 
+import { useAuth } from "../context/AuthContext";
 import {
   LayoutDashboard,
   FileText,
@@ -11,12 +11,14 @@ import {
   User,
   Briefcase,
   Activity,
-  CircleUserIcon
+  CircleUserIcon,
+  Download
 } from "lucide-react";
-import { useLogoutMutation } from "@/store/api";
+import { useLogoutMutation, useGetUnitsQuery, useGetDepartmentsQuery } from "@/store/api";
+import { useInstallPrompt } from "@/context/InstallContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -24,6 +26,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { motion } from "framer-motion";
@@ -33,8 +36,21 @@ export default function EmployeeLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, setUser } = useAuth();
+
+  const { user, setUser, activeUnitId, setActiveUnitId, activeDepartmentId, setActiveDepartmentId } = useAuth();
   const [logout] = useLogoutMutation();
+  const { isInstallable, showInstallPrompt } = useInstallPrompt();
+
+  // Superadmin: Fetch Units for selection
+  const { data: unitsRes } = useGetUnitsQuery(undefined, { skip: user?.role !== "superadmin" });
+  const units = unitsRes?.data || [];
+
+  // Superadmin: Fetch Departments for selection (filtered by activeUnitId)
+  const { data: deptsRes } = useGetDepartmentsQuery(
+    { unit: activeUnitId, limit: 100 },
+    { skip: user?.role !== "superadmin" || !activeUnitId }
+  );
+  const departments = deptsRes?.data?.departments || [];
 
   const navLinks = [
     { to: "/employee/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -67,6 +83,10 @@ export default function EmployeeLayout() {
 
   const getDepartmentName = (dept) => {
     if (!dept) return "Department";
+    if (Array.isArray(dept)) {
+      if (dept.length === 0) return "Department";
+      return dept.map(d => d.name || "Dept").join(", ");
+    }
     if (typeof dept === "string") return dept;
     if (typeof dept === "object" && dept?.name) return dept.name;
     return "Department";
@@ -88,11 +108,10 @@ export default function EmployeeLayout() {
             <Link
               key={link.to}
               to={link.to}
-              className={`flex items-center justify-center w-full h-10 rounded-lg transition-all hover:bg-accent ${
-                isActive 
-                  ? "bg-primary text-primary-foreground" 
-                  : "text-muted-foreground hover:text-accent-foreground"
-              }`}
+              className={`flex items-center justify-center w-full h-10 rounded-lg transition-all hover:bg-accent ${isActive
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-accent-foreground"
+                }`}
               title={link.label}
             >
               <Icon className="h-4 w-4" />
@@ -103,8 +122,8 @@ export default function EmployeeLayout() {
 
       {/* Logout */}
       <div className="border-t p-2">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           size="sm"
           className="w-full h-10 p-0 text-destructive hover:text-destructive"
           onClick={handleLogout}
@@ -115,7 +134,7 @@ export default function EmployeeLayout() {
     </div>
   );
 
-  const SidebarContent = ({ className = "", isMobile = false, onLinkClick = () => {} }) => (
+  const SidebarContent = ({ className = "", isMobile = false, onLinkClick = () => { } }) => (
     <div className={`flex h-full flex-col ${className}`}>
       {/* Logo */}
       <div className="flex h-16 items-center border-b px-6">
@@ -150,17 +169,16 @@ export default function EmployeeLayout() {
         {navLinks.map((link) => {
           const Icon = link.icon;
           const isActive = location.pathname === link.to;
-          
+
           return (
             <Link
               key={link.to}
               to={link.to}
               onClick={() => isMobile && onLinkClick()}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground ${
-                isActive 
-                  ? "bg-primary text-primary-foreground shadow-sm" 
-                  : "text-muted-foreground"
-              }`}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground ${isActive
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "text-muted-foreground"
+                }`}
             >
               <Icon className="h-4 w-4 shrink-0" />
               <span className="truncate">{link.label}</span>
@@ -171,8 +189,8 @@ export default function EmployeeLayout() {
 
       {/* Logout Button */}
       <div className="border-t p-4">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           className="w-full justify-start gap-2 text-destructive hover:text-destructive hover:bg-destructive/10"
           onClick={handleLogout}
         >
@@ -206,15 +224,15 @@ export default function EmployeeLayout() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-[280px]">
-              <SheetHeader className="sr-only">
-                <SheetTitle>Navigation Menu</SheetTitle>
-                <SheetDescription>Main navigation menu for the application</SheetDescription>
+              <SheetHeader className="p-0 border-none">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetDescription className="sr-only">Main navigation menu for the application</SheetDescription>
               </SheetHeader>
               <SidebarContent className="w-full" isMobile={true} onLinkClick={() => setMobileMenuOpen(false)} />
             </SheetContent>
           </Sheet>
 
-        {/* Desktop Sidebar Toggle */}
+          {/* Desktop Sidebar Toggle */}
           <Button
             variant="ghost"
             size="icon"
@@ -226,23 +244,74 @@ export default function EmployeeLayout() {
 
           {/* Back to SuperAdmin (visible only for superadmin users) */}
           {user?.role === "superadmin" && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/superadmin/dashboard")}
-            >
-              Back to SuperAdmin
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate("/superadmin/dashboard")}
+              >
+                Back to Dashboard
+              </Button>
+
+              {/* Superadmin Unit Selector */}
+              <Select
+                value={activeUnitId || "all"}
+                onValueChange={(val) => {
+                  const newVal = val === "all" ? null : val;
+                  setActiveUnitId(newVal);
+                  setActiveDepartmentId(null); // Reset dept when unit changes
+                }}
+              >
+                <SelectTrigger className="w-[140px] h-8">
+                  <SelectValue placeholder="Select Unit" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Units</SelectItem>
+                  {units.map((u) => (
+                    <SelectItem key={u._id} value={u._id}>{u.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Superadmin Department Selector */}
+              <Select
+                value={activeDepartmentId || "all"}
+                onValueChange={(val) => setActiveDepartmentId(val === "all" ? null : val)}
+                disabled={!activeUnitId}
+              >
+                <SelectTrigger className="w-[160px] h-8">
+                  <SelectValue placeholder="Select Dept" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Select Dept</SelectItem>
+                  {departments.map((d) => (
+                    <SelectItem key={d._id} value={d._id}>{d.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           )}
 
-        {/* Header Actions */}
-        <div className="ml-auto flex items-center gap-3 md:gap-4">
+          {/* Header Actions */}
+          <div className="ml-auto flex items-center gap-3 md:gap-4">
             {/* Notifications */}
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-4 w-4" />
               <Badge className="absolute -top-1 -right-1 h-2 w-2 p-0 bg-destructive" />
             </Button>
-            
+
+            {/* Install PWA Button */}
+            {isInstallable && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={showInstallPrompt}
+                title="Install App"
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+            )}
+
             {/* Activity Status */}
             <div className="hidden sm:flex items-center gap-2">
               <Activity className="h-4 w-4 text-green-500" />
@@ -251,10 +320,10 @@ export default function EmployeeLayout() {
 
             {/* Brand */}
             <div className="hidden xs:flex items-center gap-2">
-              <img 
-                src="/motherson+marelli.png" 
-                alt="Motherson" 
-                className="h-6 w-6 md:h-8 md:w-8 object-contain" 
+              <img
+                src="/motherson+marelli.png"
+                alt="Motherson"
+                className="h-6 w-6 md:h-8 md:w-8 object-contain"
               />
               {/* <span className="hidden sm:block font-semibold text-lg">
                 Motherson

@@ -7,7 +7,9 @@ import {
   useDeleteQuestionMutation,
   useUpdateQuestionMutation,
   useCreateQuestionsMutation,
+  useUploadImageMutation,
 } from "@/store/api";
+import { FiImage, FiX } from "react-icons/fi";
 import {
   Card,
   CardContent,
@@ -40,6 +42,8 @@ export default function AdminTemplateQuestionsPage() {
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
   const [newQuestionText, setNewQuestionText] = useState("");
+  const [newQuestionImage, setNewQuestionImage] = useState("");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const templateTitle = decodeURIComponent(encodedTitle || "");
 
@@ -51,6 +55,7 @@ export default function AdminTemplateQuestionsPage() {
   const [deleteQuestion] = useDeleteQuestionMutation();
   const [updateQuestion, { isLoading: isUpdating }] = useUpdateQuestionMutation();
   const [createQuestions, { isLoading: isCreating }] = useCreateQuestionsMutation();
+  const [uploadImage] = useUploadImageMutation();
   const allQuestions = useMemo(
     () => (Array.isArray(questionsRes?.data) ? questionsRes.data : []),
     [questionsRes]
@@ -134,8 +139,9 @@ export default function AdminTemplateQuestionsPage() {
       {
         questionText: text,
         isGlobal: false,
-        questionType: first.questionType || "yes_no",
+        questionType: newQuestionImage ? "image" : (first.questionType || "yes_no"),
         templateTitle,
+        imageUrl: newQuestionImage,
         ...(departmentId ? { department: departmentId } : {}),
         ...(unitId ? { unit: unitId } : {}),
       },
@@ -145,6 +151,7 @@ export default function AdminTemplateQuestionsPage() {
       await createQuestions(payload).unwrap();
       toast.success("Question added to template");
       setNewQuestionText("");
+      setNewQuestionImage("");
     } catch (err) {
       toast.error(err?.data?.message || err?.message || "Failed to add question");
     }
@@ -215,20 +222,72 @@ export default function AdminTemplateQuestionsPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-              <Input
-                placeholder="Add a new question to this template"
-                value={newQuestionText}
-                onChange={(e) => setNewQuestionText(e.target.value)}
-                disabled={isCreating}
-              />
-              <Button
-                size="sm"
-                onClick={handleAddQuestion}
-                disabled={isCreating || !newQuestionText.trim()}
-              >
-                {isCreating ? "Adding..." : "Add Question"}
-              </Button>
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                <Input
+                  placeholder="Add a new question to this template"
+                  value={newQuestionText}
+                  onChange={(e) => setNewQuestionText(e.target.value)}
+                  disabled={isCreating}
+                />
+
+                <div className="flex items-center gap-2">
+                  <label className="cursor-pointer inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 w-9">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        try {
+                          setIsUploadingImage(true);
+                          const res = await uploadImage(file).unwrap();
+                          if (res?.data?.url) {
+                            setNewQuestionImage(res.data.url);
+                            toast.success("Image attached");
+                          }
+                        } catch (err) {
+                          toast.error("Failed to upload image");
+                        } finally {
+                          setIsUploadingImage(false);
+                        }
+                        e.target.value = "";
+                      }}
+                      disabled={isUploadingImage || isCreating}
+                    />
+                    {isUploadingImage ? (
+                      <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                    ) : (
+                      <FiImage className="h-4 w-4 text-muted-foreground" />
+                    )}
+                  </label>
+
+                  <Button
+                    size="sm"
+                    onClick={handleAddQuestion}
+                    disabled={isCreating || !newQuestionText.trim() || isUploadingImage}
+                  >
+                    {isCreating ? "Adding..." : "Add Question"}
+                  </Button>
+                </div>
+              </div>
+
+              {newQuestionImage && (
+                <div className="relative inline-block self-start">
+                  <img
+                    src={newQuestionImage}
+                    alt="New question attachment"
+                    className="h-20 w-20 rounded-md border object-cover"
+                  />
+                  <button
+                    onClick={() => setNewQuestionImage("")}
+                    className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1 shadow-sm hover:bg-destructive/90"
+                  >
+                    <FiX className="h-3 w-3" />
+                  </button>
+                </div>
+              )}
             </div>
             <div className="space-y-3">
               {questions.map((q, idx) => {

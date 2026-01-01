@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { 
-  Mail, 
-  Phone, 
-  Briefcase, 
-  IdCard, 
-  Shield, 
-  User, 
+import {
+  Mail,
+  Phone,
+  Briefcase,
+  IdCard,
+  Shield,
+  User,
   Edit3,
   Calendar,
   Settings,
@@ -57,6 +57,10 @@ export default function SettingsPage() {
 
   const getDepartmentName = (dept) => {
     if (!dept) return 'Not assigned';
+    if (Array.isArray(dept)) {
+      if (dept.length === 0) return 'Not assigned';
+      return dept.map(d => d.name || "Dept").join(", ");
+    }
     if (typeof dept === 'string') return dept;
     if (typeof dept === 'object' && dept?.name) return dept.name;
     return 'Not assigned';
@@ -127,12 +131,12 @@ export default function SettingsPage() {
                   <span>Joined {new Date(profile.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
-              
+
               {currentUser?.role === "admin" && (
                 <>
                   <Separator className="my-4" />
-                  <Button 
-                    className="w-full" 
+                  <Button
+                    className="w-full"
                     onClick={() => navigate(`/admin/employee/edit/${profile._id}`)}
                   >
                     <Edit3 className="h-4 w-4 mr-2" />
@@ -158,40 +162,40 @@ export default function SettingsPage() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-6 md:grid-cols-2">
-                <ProfileItem 
-                  icon={<Mail className="h-5 w-5 text-blue-500" />} 
-                  label="Email Address" 
-                  value={profile.emailId} 
+                <ProfileItem
+                  icon={<Mail className="h-5 w-5 text-blue-500" />}
+                  label="Email Address"
+                  value={profile.emailId}
                 />
-                <ProfileItem 
-                  icon={<Phone className="h-5 w-5 text-green-500" />} 
-                  label="Phone Number" 
-                  value={profile.phoneNumber || "Not provided"} 
+                <ProfileItem
+                  icon={<Phone className="h-5 w-5 text-green-500" />}
+                  label="Phone Number"
+                  value={profile.phoneNumber || "Not provided"}
                 />
-                <ProfileItem 
-                  icon={<Briefcase className="h-5 w-5 text-purple-500" />} 
-                  label="Department" 
-                  value={getDepartmentName(profile.department)} 
+                <ProfileItem
+                  icon={<Briefcase className="h-5 w-5 text-purple-500" />}
+                  label="Department"
+                  value={getDepartmentName(profile.department)}
                 />
-                <ProfileItem 
-                  icon={<IdCard className="h-5 w-5 text-orange-500" />} 
-                  label="Auditor ID" 
-                  value={profile.employeeId} 
+                <ProfileItem
+                  icon={<IdCard className="h-5 w-5 text-orange-500" />}
+                  label="Auditor ID"
+                  value={profile.employeeId}
                 />
-                <ProfileItem 
-                  icon={<Shield className="h-5 w-5 text-indigo-500" />} 
-                  label="Role & Permissions" 
-                  value={profile.role} 
+                <ProfileItem
+                  icon={<Shield className="h-5 w-5 text-indigo-500" />}
+                  label="Role & Permissions"
+                  value={profile.role}
                   isRole={true}
                 />
-                <ProfileItem 
-                  icon={<Calendar className="h-5 w-5 text-gray-500" />} 
-                  label="Account Created" 
+                <ProfileItem
+                  icon={<Calendar className="h-5 w-5 text-gray-500" />}
+                  label="Account Created"
                   value={new Date(profile.createdAt).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
-                  })} 
+                  })}
                 />
               </div>
             </CardContent>

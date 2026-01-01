@@ -217,3 +217,12 @@
 [29 Nov, 2025 - 20:23:04:234] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
 [29 Nov, 2025 - 21:35:24:3524] [31merror[39m: [31mTarget audit reminder job failed: write ECONNRESET[39m
 [30 Nov, 2025 - 14:25:20:2520] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[16 Dec, 2025 - 18:03:11:311] [31merror[39m: [31mTarget audit reminder job failed: connection <monitor> to 159.41.169.18:27017 timed out[39m
+[16 Dec, 2025 - 18:03:16:316] [31merror[39m: [31mTarget audit reminder job failed: Socket 'secureConnect' timed out after 5006ms (connectTimeoutMS: 5000)[39m
+[17 Dec, 2025 - 16:13:17:1317] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[17 Dec, 2025 - 16:13:26:1326] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[17 Dec, 2025 - 16:13:36:1336] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[17 Dec, 2025 - 16:13:46:1346] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[17 Dec, 2025 - 16:13:56:1356] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[17 Dec, 2025 - 16:14:06:146] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-02.knfen.mongodb.net[39m
+[31 Dec, 2025 - 23:35:03:353] [31merror[39m: [31mTarget audit reminder job failed: getaddrinfo ENOTFOUND cluster0-shard-00-00.knfen.mongodb.net[39m

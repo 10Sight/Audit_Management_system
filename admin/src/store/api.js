@@ -72,9 +72,9 @@ export const api = createApi({
       providesTags: (result) =>
         result?.data?.employees
           ? [
-              ...result.data.employees.map((e) => ({ type: 'Employee', id: e._id })),
-              { type: 'Employee', id: 'LIST' },
-            ]
+            ...result.data.employees.map((e) => ({ type: 'Employee', id: e._id })),
+            { type: 'Employee', id: 'LIST' },
+          ]
           : [{ type: 'Employee', id: 'LIST' }],
     }),
     getAllUsers: builder.query({
@@ -277,6 +277,10 @@ export const api = createApi({
       query: (body) => ({ url: '/api/v1/departments/assign-employee', method: 'POST', body }),
       invalidatesTags: ['Department', 'Employee'],
     }),
+    removeEmployeeFromDepartment: builder.mutation({
+      query: (body) => ({ url: '/api/v1/departments/remove-employee', method: 'POST', body }),
+      invalidatesTags: ['Department', 'Employee'],
+    }),
 
     // Employee single
     getEmployeeById: builder.query({
@@ -366,6 +370,7 @@ export const {
   useUpdateDepartmentMutation,
   useDeleteDepartmentMutation,
   useAssignEmployeeToDepartmentMutation,
+  useRemoveEmployeeFromDepartmentMutation,
   useGetEmployeeByIdQuery,
   useUpdateEmployeeByIdMutation,
   useUpdateEmployeeTargetAuditMutation,

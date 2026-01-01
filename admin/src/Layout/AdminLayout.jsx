@@ -19,9 +19,11 @@ import {
   Cog,
   UsbIcon,
   User2Icon,
-  CircleUserIcon
+  CircleUserIcon,
+  Download
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useInstallPrompt } from "@/context/InstallContext";
 import { useLogoutMutation, useGetUnitsQuery } from "@/store/api";
 import RealtimeNotifications from "@/components/RealtimeNotifications";
 import { Button } from "@/components/ui/button";
@@ -47,6 +49,7 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, setUser, activeUnitId, setActiveUnitId } = useAuth();
+  const { isInstallable, showInstallPrompt } = useInstallPrompt();
   const [logout] = useLogoutMutation();
   const { data: unitsRes } = useGetUnitsQuery(undefined, {
     skip: user?.role !== "superadmin",
@@ -87,6 +90,10 @@ export default function AdminLayout() {
 
   const getDepartmentName = (dept) => {
     if (!dept) return "Admin";
+    if (Array.isArray(dept)) {
+      if (dept.length === 0) return "Admin";
+      return dept.map(d => d.name || "Dept").join(", ");
+    }
     if (typeof dept === "string") return dept;
     if (typeof dept === "object" && dept?.name) return dept.name;
     return "Admin";
@@ -290,9 +297,9 @@ export default function AdminLayout() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-[280px]">
-              <SheetHeader className="sr-only">
-                <SheetTitle>Navigation Menu</SheetTitle>
-                <SheetDescription>Main navigation menu for the application</SheetDescription>
+              <SheetHeader className="p-0 border-none">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetDescription className="sr-only">Main navigation menu for the application</SheetDescription>
               </SheetHeader>
               <SidebarContent
                 isMobile={true}
@@ -368,6 +375,18 @@ export default function AdminLayout() {
                 Motherson
               </span> */}
             </div>
+
+            {/* Install PWA Button */}
+            {isInstallable && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={showInstallPrompt}
+                title="Install App"
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+            )}
 
             {/* User Menu */}
             <DropdownMenu>

@@ -37,13 +37,10 @@ export const simpleCompressImage = (file, quality = 0.6) => {
 // Simple upload without complex retry logic
 export const simpleImageUpload = async (baseURL, imageFile) => {
   try {
-    console.log('Starting simple image upload...');
     
     // Always compress to reduce size
     const compressedBlob = await simpleCompressImage(imageFile, 0.5);
     const compressedFile = new File([compressedBlob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
-    
-    console.log(`Compressed from ${(imageFile.size / 1024).toFixed(1)}KB to ${(compressedFile.size / 1024).toFixed(1)}KB`);
     
     const formData = new FormData();
     formData.append('images', compressedFile);
@@ -66,7 +63,6 @@ export const simpleImageUpload = async (baseURL, imageFile) => {
       }
     });
     
-    console.log('Upload successful');
     return response;
     
   } catch (error) {

@@ -116,18 +116,18 @@ app.use(errorHandler);
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
-  console.log(`👤 User connected: ${socket.id}`);
+  console.log(`User connected: ${socket.id}`);
 
   // Join room based on user role or department
   socket.on('join-room', (room) => {
     socket.join(room);
-    console.log(`🏠 User ${socket.id} joined room: ${room}`);
+    console.log(`User ${socket.id} joined room: ${room}`);
   });
 
   // Leave room
   socket.on('leave-room', (room) => {
     socket.leave(room);
-    console.log(`🚪 User ${socket.id} left room: ${room}`);
+    console.log(`User ${socket.id} left room: ${room}`);
   });
 
   // Handle audit updates
@@ -142,7 +142,7 @@ io.on('connection', (socket) => {
 
   // Handle disconnection
   socket.on('disconnect', () => {
-    console.log(`👋 User disconnected: ${socket.id}`);
+    console.log(`User disconnected: ${socket.id}`);
   });
 });
 
@@ -179,7 +179,7 @@ const startServer = async () => {
   try {
     const dbConnected = await connectDB();
     if (!dbConnected) {
-      console.warn('⚠️ Starting server without MongoDB connection; some routes may be unavailable.');
+      console.warn('Starting server without MongoDB connection; some routes may be unavailable.');
     } else {
       // Ensure MongoDB indexes match the current Mongoose schema definitions
       try {
@@ -187,9 +187,9 @@ const startServer = async () => {
           Line.syncIndexes(),
           Machine.syncIndexes(),
         ]);
-        console.log('✅ Synced indexes for Line and Machine models');
+        console.log('Synced indexes for Line and Machine models');
       } catch (syncErr) {
-        console.warn('⚠️ Failed to sync indexes for Line/Machine models:', syncErr.message);
+        console.warn('Failed to sync indexes for Line/Machine models:', syncErr.message);
       }
     }
 
@@ -199,16 +199,16 @@ const startServer = async () => {
         await redisClient.connect();
         // Attach Redis store only after successful connection
         sessionConfig.store = new RedisStore({ client: redisClient });
-        console.log('✅ Using Redis session store');
-        console.log('✅ Redis connected successfully');
+        console.log('Using Redis session store');
+        console.log('Redis connected successfully');
       } catch (error) {
         // Ensure Redis client is disconnected to prevent reconnection spam
         try { await redisClient.disconnect(); } catch { }
-        console.warn('⚠️ Redis connection failed:', error.message);
-        console.log('💡 Using memory session store (Redis not available)');
+        console.warn('Redis connection failed:', error.message);
+        console.log('Using memory session store (Redis not available)');
       }
     } else {
-      console.log('💡 Using memory session store (Redis not available)');
+      console.log('Using memory session store (Redis not available)');
     }
 
     // Apply session middleware after deciding the store
@@ -216,15 +216,15 @@ const startServer = async () => {
 
     const port = await listenWithRetry(ENV.PORT, 10);
     if (!port) {
-      console.error('❌ No available ports found near', ENV.PORT);
+      console.error('No available ports found near', ENV.PORT);
       process.exit(1);
     }
 
-    console.log(`ℹ️ Selected port: ${port}`);
-    console.log(`🚀 Server running on http://localhost:${port}`);
-    console.log(`🔌 Socket.IO enabled`);
+    console.log(`ℹSelected port: ${port}`);
+    console.log(`Server running on http://localhost:${port}`);
+    console.log(`Socket.IO enabled`);
     if (!redisClient || !sessionConfig.store) {
-      console.log('💡 Running without Redis caching (install Redis for better performance)');
+      console.log('Running without Redis caching (install Redis for better performance)');
     }
   } catch (error) {
     console.error("Failed to start server:", error.message);

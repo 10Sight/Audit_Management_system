@@ -101,10 +101,13 @@ export const registerEmployee = asyncHandler(async (req, res) => {
   // If username not provided, default to employeeId in lowercase for login convenience
   const finalUsername = username || (employeeId ? employeeId.toLowerCase() : undefined);
 
+  // Wrap department in array if it exists
+  const deptArray = normalizedDepartment ? [normalizedDepartment] : [];
+
   const employee = await Employee.create({
     fullName,
     emailId,
-    department: normalizedDepartment,
+    department: deptArray,
     employeeId,
     username: finalUsername,
     phoneNumber,
@@ -291,7 +294,13 @@ export const updateEmployee = asyncHandler(async (req, res) => {
 
   if (fullName) employee.fullName = fullName;
   if (emailId) employee.emailId = emailId;
-  if (department) employee.department = department;
+  if (department) {
+    // Handle department update: If single ID, wrap in array.
+    // NOTE: This REPLACES the entire department list.
+    // If the client wants to add/remove, they should send the full new list or use assign endpoint.
+    const newDepts = Array.isArray(department) ? department : [department];
+    employee.department = newDepts;
+  }
   if (phoneNumber) employee.phoneNumber = phoneNumber;
   if (isManager && role) employee.role = role;
 
@@ -442,6 +451,11 @@ export const getAllUsers = asyncHandler(async (req, res) => {
 
   // Build query - get all users
   let query = {};
+
+  // Restrict admins to their own unit
+  if (req.user.role === 'admin' && req.user.unit) {
+    query.unit = req.user.unit;
+  }
 
   // Optional role filter
   const role = (req.query.role || '').toLowerCase();

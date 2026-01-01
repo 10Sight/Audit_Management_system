@@ -1,17 +1,17 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { 
-  Trash2, 
-  Plus, 
-  Building2, 
-  Edit3, 
+import {
+  Trash2,
+  Plus,
+  Building2,
+  Edit3,
   Settings,
   Users,
   AlertTriangle,
   UserCheck,
   BarChart3,
   Grid3X3,
-} from "lucide-react"; 
-import { 
+} from "lucide-react";
+import {
   useGetDepartmentsQuery,
   useGetAllUsersQuery,
   useGetDepartmentStatsQuery,
@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -34,7 +34,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { 
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -67,7 +67,6 @@ export default function DepartmentManagementPage() {
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedTransferDepartment, setSelectedTransferDepartment] = useState("");
-  const [includeAssigned, setIncludeAssigned] = useState(false);
 
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
@@ -227,9 +226,9 @@ export default function DepartmentManagementPage() {
                   <Building2 className="h-6 w-6 text-primary" />
                 </div>
                 <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => window.location.assign(`/admin/departments/${department._id}`)}
                     title="View members"
                     aria-label="View members"
@@ -237,18 +236,18 @@ export default function DepartmentManagementPage() {
                     <Users className="h-4 w-4" />
                     <span className="hidden sm:inline ml-1">Members</span>
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => openEditDepartment(department)}
                     title="Edit department"
                     aria-label="Edit department"
                   >
                     <Edit3 className="h-4 w-4" />
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
+                  <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => openDeleteConfirm(department)}
                     className="text-destructive hover:text-destructive"
                     title="Delete department"
@@ -257,7 +256,7 @@ export default function DepartmentManagementPage() {
                   </Button>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <h3 className="font-semibold text-lg">{department.name}</h3>
                 {department.description && (
@@ -274,19 +273,19 @@ export default function DepartmentManagementPage() {
                     </span>
                   </div>
                 )}
-                
+
                 <div className="flex items-center justify-between pt-4">
                   <div className="flex items-center space-x-2">
                     <Users className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm font-medium">{department.employeeCount || 0}</span>
                     <span className="text-sm text-muted-foreground">auditors</span>
                   </div>
-                  
+
                   <Badge variant={department.isActive ? "default" : "secondary"}>
                     {department.isActive ? "Active" : "Inactive"}
                   </Badge>
                 </div>
-                
+
                 <div className="text-xs text-muted-foreground pt-2">
                   Created {new Date(department.createdAt).toLocaleDateString()}
                 </div>
@@ -349,7 +348,7 @@ export default function DepartmentManagementPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {stats.summary?.totalDepartments > 0 
+              {stats.summary?.totalDepartments > 0
                 ? Math.round((stats.summary?.totalEmployees || 0) / stats.summary.totalDepartments)
                 : 0}
             </div>
@@ -478,21 +477,6 @@ export default function DepartmentManagementPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="flex items-center justify-between rounded-md border p-3 bg-muted/30">
-              <div className="space-y-0.5">
-                <p className="text-sm font-medium">Include already-assigned</p>
-                <p className="text-xs text-muted-foreground">Allows reassigning auditors who already belong to a department</p>
-              </div>
-              <label className="inline-flex items-center gap-2 text-sm text-muted-foreground select-none">
-                <Checkbox
-                  checked={includeAssigned}
-                  onCheckedChange={(v) => setIncludeAssigned(Boolean(v))}
-                  aria-label="Include already-assigned employees"
-                />
-                Include assigned
-              </label>
-            </div>
-
             <div className="grid gap-2">
               <Label>Select Auditor</Label>
               <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
@@ -500,19 +484,41 @@ export default function DepartmentManagementPage() {
                   <SelectValue placeholder="Choose an auditor" />
                 </SelectTrigger>
                 <SelectContent>
-                  {(includeAssigned ? unassignedEmployees.concat(assignedEmployees) : unassignedEmployees).map((employee) => (
-                    <SelectItem key={employee._id} value={employee._id}>
-                      {employee.fullName} ({employee.employeeId})
-                      {employee.department && (
-                        <span className="text-muted-foreground ml-2">– {employee.department?.name || "Assigned"}</span>
-                      )}
-                    </SelectItem>
-                  ))}
-                  {(!unassignedEmployees.length && !includeAssigned) && (
-                    <SelectItem value="__none__" disabled>
-                      All auditors are already assigned to a department
-                    </SelectItem>
-                  )}
+                  {employees
+                    .filter((employee) => {
+                      // 1. Filter by Unit if department is selected
+                      if (selectedDepartment) {
+                        const dept = departments.find(d => d._id === selectedDepartment);
+                        if (dept && dept.unit && employee.unit) {
+                          const deptUnitId = typeof dept.unit === 'object' ? dept.unit._id : dept.unit;
+                          const empUnitId = typeof employee.unit === 'object' ? employee.unit._id : employee.unit;
+                          if (deptUnitId && empUnitId && deptUnitId !== empUnitId) {
+                            return false;
+                          }
+                        }
+
+                        // 2. Filter out if already in this department
+                        if (employee.department && Array.isArray(employee.department)) {
+                          const alreadyIn = employee.department.some(d =>
+                            (typeof d === 'object' ? d._id : d) === selectedDepartment
+                          );
+                          if (alreadyIn) return false;
+                        }
+                      }
+                      return true;
+                    })
+                    .map((employee) => (
+                      <SelectItem key={employee._id} value={employee._id}>
+                        {employee.fullName} ({employee.employeeId})
+                        {employee.department && employee.department.length > 0 && (
+                          <span className="text-muted-foreground ml-2">
+                            – {Array.isArray(employee.department)
+                              ? employee.department.map(d => (typeof d === 'object' ? d.name : "Dept")).join(", ")
+                              : "Assigned"}
+                          </span>
+                        )}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -524,11 +530,32 @@ export default function DepartmentManagementPage() {
                   <SelectValue placeholder="Choose a department" />
                 </SelectTrigger>
                 <SelectContent>
-                  {departments.map((department) => (
-                    <SelectItem key={department._id} value={department._id}>
-                      {department.name} ({department.employeeCount || 0} auditors)
-                    </SelectItem>
-                  ))}
+                  {departments
+                    .filter(department => {
+                      if (selectedEmployee) {
+                        const emp = employees.find(e => e._id === selectedEmployee);
+                        if (emp && emp.unit && department.unit) {
+                          const empUnitId = typeof emp.unit === 'object' ? emp.unit._id : emp.unit;
+                          const deptUnitId = typeof department.unit === 'object' ? department.unit._id : department.unit;
+                          if (empUnitId && deptUnitId && empUnitId !== deptUnitId) {
+                            return false;
+                          }
+                        }
+                        // Also filter out departments the employee is already in?
+                        if (emp && emp.department && Array.isArray(emp.department)) {
+                          const alreadyIn = emp.department.some(d =>
+                            (typeof d === 'object' ? d._id : d) === department._id
+                          );
+                          if (alreadyIn) return false;
+                        }
+                      }
+                      return true;
+                    })
+                    .map((department) => (
+                      <SelectItem key={department._id} value={department._id}>
+                        {department.name} ({department.employeeCount || 0} auditors)
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
@@ -538,7 +565,7 @@ export default function DepartmentManagementPage() {
               Cancel
             </Button>
             <Button onClick={assignEmployeeToDepartment} disabled={assignLoading}>
-              {assignLoading ? "Assigning..." : includeAssigned ? "Assign / Reassign" : "Assign Employee"}
+              {assignLoading ? "Assigning..." : "Assign Employee"}
             </Button>
           </DialogFooter>
         </DialogContent>

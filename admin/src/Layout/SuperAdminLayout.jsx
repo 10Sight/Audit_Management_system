@@ -11,11 +11,13 @@ import {
   LogOut,
   User as UserIcon,
   UsbIcon,
+  Download,
 } from "lucide-react";
+import { useInstallPrompt } from "@/context/InstallContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 
 export default function SuperAdminLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -23,6 +25,7 @@ export default function SuperAdminLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
+  const { isInstallable, showInstallPrompt } = useInstallPrompt();
   const [logout] = useLogoutMutation();
 
   const navLinks = [
@@ -38,12 +41,12 @@ export default function SuperAdminLayout() {
       await logout().unwrap();
       setUser(null);
       navigate("/login", { replace: true });
-    } catch (e) {}
+    } catch (e) { }
   };
 
   const getInitials = (name) => (name ? name.split(" ").map((n) => n[0]).join("").toUpperCase() : "SA");
 
-  const Sidebar = ({ isMobile = false, onLinkClick = () => {} }) => (
+  const Sidebar = ({ isMobile = false, onLinkClick = () => { } }) => (
     <div className="flex h-full flex-col">
       <div className="flex h-16 items-center border-b px-6">
         <div className="flex items-center gap-2">
@@ -60,9 +63,8 @@ export default function SuperAdminLayout() {
               key={link.to}
               to={link.to}
               onClick={() => isMobile && onLinkClick()}
-              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground ${
-                isActive ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground"
-              }`}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-accent hover:text-accent-foreground ${isActive ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground"
+                }`}
             >
               <Icon className="h-4 w-4" />
               <span>{link.label}</span>
@@ -92,11 +94,26 @@ export default function SuperAdminLayout() {
               </Button>
             </SheetTrigger>
             <SheetContent side="left" className="p-0 w-[280px]">
+              <SheetHeader className="p-0 border-none">
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+                <SheetDescription className="sr-only">Main navigation menu for the application</SheetDescription>
+              </SheetHeader>
               <Sidebar isMobile onLinkClick={() => setMobileMenuOpen(false)} />
             </SheetContent>
           </Sheet>
 
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-2">
+            {/* Install PWA Button */}
+            {isInstallable && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={showInstallPrompt}
+                title="Install App"
+              >
+                <Download className="h-4 w-4" />
+              </Button>
+            )}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full">

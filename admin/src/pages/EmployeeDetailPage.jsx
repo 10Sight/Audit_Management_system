@@ -337,7 +337,12 @@ export default function EmployeeDetailPage() {
           <CardContent className="space-y-6">
             <div className="flex flex-wrap gap-2">
               <Badge variant="secondary" className="capitalize">{employee.role}</Badge>
-              <Badge variant="outline" className="capitalize">{employee.department?.name || employee.department || "N/A"}</Badge>
+              <Badge variant="outline" className="capitalize">
+                {Array.isArray(employee.department)
+                  ? employee.department.map(d => d.name || "Dept").join(", ")
+                  : (employee.department?.name || employee.department || "N/A")
+                }
+              </Badge>
             </div>
 
             <Separator />
@@ -398,12 +403,19 @@ export default function EmployeeDetailPage() {
                       innerRadius={40}
                       paddingAngle={4}
                     >
-                      {auditsSummary.chartData.map((entry, index) => (
-                        <Cell
-                          key={`cell-${entry.name}`}
-                          fill={auditsSummary.chartColors[index % auditsSummary.chartColors.length]}
-                        />
-                      ))}
+                      {auditsSummary.chartData.map((entry, index) => {
+                        const colorMap = {
+                          "Pass": "#22c55e", // Green
+                          "Fail": "#ef4444", // Red
+                          "Not Applicable": "#f97316" // Orange
+                        };
+                        return (
+                          <Cell
+                            key={`cell-${entry.name}`}
+                            fill={colorMap[entry.name] || "#cbd5e1"}
+                          />
+                        );
+                      })}
                     </Pie>
                     <Tooltip formatter={(value, name) => [value, name]} contentStyle={{ fontSize: 12 }} />
                     <Legend verticalAlign="bottom" height={24} iconType="circle" wrapperStyle={{ fontSize: 12 }} />
