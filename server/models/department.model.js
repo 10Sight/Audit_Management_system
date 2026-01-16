@@ -219,7 +219,9 @@ class Department {
     }
 
     if (options.limit) {
-      sql += " LIMIT " + options.limit;
+      // MSSQL Offset-Fetch
+      // Ensure ORDER BY exists (it does above)
+      sql += ` OFFSET 0 ROWS FETCH NEXT ${options.limit} ROWS ONLY`;
     }
 
     return { sql, params };

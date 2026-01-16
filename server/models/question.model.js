@@ -400,7 +400,10 @@ class Question {
     }
 
     if (options.limit && !options.isDelete) {
-      sql += " LIMIT " + options.limit;
+      if (!sql.toLowerCase().includes("order by")) {
+        sql += " ORDER BY (SELECT NULL)";
+      }
+      sql += ` OFFSET 0 ROWS FETCH NEXT ${options.limit} ROWS ONLY`;
     }
 
     return { sql, params };

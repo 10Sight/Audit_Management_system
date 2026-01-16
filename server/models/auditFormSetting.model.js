@@ -30,7 +30,7 @@ class AuditFormSetting {
     // 1. Check if exists based on filter
     const department = filter.department;
 
-    let sql = "SELECT * FROM audit_form_settings WHERE department = ? ORDER BY id DESC LIMIT 1";
+    let sql = "SELECT TOP 1 * FROM audit_form_settings WHERE department = ? ORDER BY id DESC";
     let [rows] = await pool.query(sql, [department]);
 
     let recordId = rows.length > 0 ? rows[0].id : null;
@@ -90,7 +90,8 @@ class FormSettingsQueryBuilder {
     }
 
     // Always sort by latest like Mongoose code did
-    sql += " ORDER BY id DESC LIMIT 1";
+    sql = sql.replace("SELECT *", "SELECT TOP 1 *");
+    sql += " ORDER BY id DESC";
 
     const [rows] = await pool.query(sql, params);
     if (rows.length === 0) return null;

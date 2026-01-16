@@ -6056,3 +6056,12 @@
 [16 Jan, 2026 - 14:45:51:4551] [34minfo[39m: [34mMySQL Database connected successfully.[39m
 [16 Jan, 2026 - 14:46:34:4634] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
 [16 Jan, 2026 - 14:46:34:4634] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[16 Jan, 2026 - 18:19:22:1922] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[16 Jan, 2026 - 18:20:50:2050] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[16 Jan, 2026 - 18:23:02:232] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[16 Jan, 2026 - 18:23:04:234] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[16 Jan, 2026 - 18:24:21:2421] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[16 Jan, 2026 - 18:24:25:2425] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[16 Jan, 2026 - 18:28:26:2826] [31merror[39m: [31mMSSQL Database connection failed: getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:29:22:2922] [31merror[39m: [31mMSSQL Database connection failed: getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:29:33:2933] [31merror[39m: [31mMSSQL Database connection failed: getaddrinfo ENOTFOUND mmmpundbser[39m

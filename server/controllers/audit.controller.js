@@ -347,26 +347,14 @@ const buildAuditQueryForExport = (req) => {
   }
 
   if (req.query.startDate || req.query.endDate) {
-    const start = req.query.startDate ? new Date(req.query.startDate) : null;
-    const end = req.query.endDate ? new Date(req.query.endDate) : null;
+    const start = req.query.startDate ? new Date(req.query.startDate).toISOString().split('T')[0] : null;
+    const end = req.query.endDate ? new Date(req.query.endDate).toISOString().split('T')[0] : null;
 
-    const dateRange = {};
-    const createdAtRange = {};
-    if (start) { dateRange.$gte = start; createdAtRange.$gte = start; }
-    if (end) { dateRange.$lte = end; createdAtRange.$lte = end; }
-
-    const base = Object.keys(query).length ? [query] : [];
-    query = {
-      $and: [
-        ...base,
-        {
-          $or: [
-            Object.keys(dateRange).length ? { date: dateRange } : {},
-            Object.keys(createdAtRange).length ? { createdAt: createdAtRange } : {}
-          ]
-        }
-      ]
-    };
+    // Simplified for SQL: check 'date' column
+    const range = {};
+    if (start) range.$gte = start;
+    if (end) range.$lte = end;
+    if (Object.keys(range).length) query.date = range;
   }
 
   if (req.query.line) query.line = req.query.line;
@@ -374,46 +362,6 @@ const buildAuditQueryForExport = (req) => {
   if (req.query.unit) query.unit = req.query.unit;
   if (req.query.shift) query.shift = req.query.shift;
   if (req.query.department) query.department = req.query.department;
-
-  // Result filter (export) – supports legacy and new values
-  if (req.query.result) {
-    const resultFilter = req.query.result;
-    const conditions = [];
-
-    if (resultFilter === 'allYes') {
-      conditions.push({
-        answers: { $not: { $elemMatch: { answer: { $in: ['No', 'Fail'] } } } },
-      });
-    } else if (resultFilter === 'allNo') {
-      conditions.push({
-        answers: { $not: { $elemMatch: { answer: { $in: ['Yes', 'Pass'] } } } },
-      });
-    }
-
-    if (resultFilter === 'pass') {
-      conditions.push(
-        { answers: { $elemMatch: { answer: { $in: ['Yes', 'Pass'] } } } },
-        { answers: { $not: { $elemMatch: { answer: { $in: ['No', 'Fail'] } } } } },
-      );
-    } else if (resultFilter === 'fail') {
-      conditions.push({
-        answers: { $elemMatch: { answer: { $in: ['No', 'Fail'] } } },
-      });
-    } else if (resultFilter === 'na') {
-      conditions.push(
-        { answers: { $not: { $elemMatch: { answer: { $in: ['Yes', 'Pass', 'No', 'Fail'] } } } } },
-        { answers: { $elemMatch: { answer: { $in: ['NA', 'Not Applicable'] } } } },
-      );
-    }
-
-    if (conditions.length) {
-      if (Array.isArray(query.$and)) {
-        query.$and.push(...conditions);
-      } else {
-        query.$and = conditions;
-      }
-    }
-  }
 
   return query;
 };
@@ -429,6 +377,7 @@ const escapeCsv = (value) => {
 
 export const exportAudits = asyncHandler(async (req, res) => {
   const query = buildAuditQueryForExport(req);
+  const resultFilter = req.query.result;
 
   const limit = Math.min(parseInt(req.query.limit) || 100000, 200000);
 
@@ -463,6 +412,27 @@ export const exportAudits = asyncHandler(async (req, res) => {
     } else {
       throw err;
     }
+  }
+
+  // In-memory filtering for result status (Pass/Fail/NA)
+  if (resultFilter) {
+    audits = audits.filter(audit => {
+      const answers = audit.answers || [];
+      if (resultFilter === 'allYes') return !answers.some(a => ['No', 'Fail'].includes(a.answer));
+      if (resultFilter === 'allNo') return !answers.some(a => ['Yes', 'Pass'].includes(a.answer));
+      if (resultFilter === 'pass') {
+        const hasPass = answers.some(a => ['Yes', 'Pass'].includes(a.answer));
+        const hasFail = answers.some(a => ['No', 'Fail'].includes(a.answer));
+        return hasPass && !hasFail;
+      }
+      if (resultFilter === 'fail') return answers.some(a => ['No', 'Fail'].includes(a.answer));
+      if (resultFilter === 'na') {
+        const hasStandard = answers.some(a => ['Yes', 'Pass', 'No', 'Fail'].includes(a.answer));
+        const hasNa = answers.some(a => ['NA', 'Not Applicable'].includes(a.answer));
+        return !hasStandard && hasNa;
+      }
+      return true;
+    });
   }
 
   const headers = [

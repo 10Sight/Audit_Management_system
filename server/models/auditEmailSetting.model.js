@@ -42,7 +42,7 @@ class SettingsQueryBuilder {
   }
 
   async exec() {
-    const [rows] = await pool.query("SELECT * FROM audit_email_settings ORDER BY id DESC LIMIT 1");
+    const [rows] = await pool.query("SELECT TOP 1 * FROM audit_email_settings ORDER BY id DESC");
     if (rows.length === 0) return null;
 
     const doc = new AuditEmailSetting(rows[0]);
@@ -91,7 +91,7 @@ class SettingsUpdateBuilder {
 
   async exec() {
     // Perform Update
-    const [rows] = await pool.query("SELECT * FROM audit_email_settings ORDER BY id DESC LIMIT 1");
+    const [rows] = await pool.query("SELECT TOP 1 * FROM audit_email_settings ORDER BY id DESC");
     let recordId = rows.length > 0 ? rows[0].id : null;
 
     const { to, cc, departmentRecipients } = this.update;

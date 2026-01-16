@@ -265,3 +265,12 @@
 [16 Jan, 2026 - 14:45:16:4516] [31merror[39m: [31mMySQL Database connection failed: ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client[39m
 [16 Jan, 2026 - 14:45:18:4518] [31merror[39m: [31mMySQL Database connection failed: ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client[39m
 [16 Jan, 2026 - 14:45:18:4518] [31merror[39m: [31mMySQL Database connection failed: ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client[39m
+[16 Jan, 2026 - 18:19:22:1922] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[16 Jan, 2026 - 18:20:50:2050] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[16 Jan, 2026 - 18:23:02:232] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[16 Jan, 2026 - 18:23:04:234] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[16 Jan, 2026 - 18:24:21:2421] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[16 Jan, 2026 - 18:24:25:2425] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[16 Jan, 2026 - 18:28:26:2826] [31merror[39m: [31mMSSQL Database connection failed: getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:29:22:2922] [31merror[39m: [31mMSSQL Database connection failed: getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:29:33:2933] [31merror[39m: [31mMSSQL Database connection failed: getaddrinfo ENOTFOUND mmmpundbser[39m

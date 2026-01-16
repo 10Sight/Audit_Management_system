@@ -226,17 +226,26 @@ class Audit {
       sql += ` WHERE ${whereClauses.join(' AND ')}`;
     }
 
-    if (!options.isCount && options.sort) {
-      const sortParts = [];
-      for (const [k, v] of Object.entries(options.sort)) {
-        sortParts.push(`${k} ${v === -1 || v === 'desc' ? 'DESC' : 'ASC'}`);
+    if (!options.isCount) {
+      // MSSQL Paging requires ORDER BY
+      let orderByClause = '';
+      if (options.sort) {
+        const sortParts = [];
+        for (const [k, v] of Object.entries(options.sort)) {
+          sortParts.push(`${k} ${v === -1 || v === 'desc' ? 'DESC' : 'ASC'}`);
+        }
+        if (sortParts.length) orderByClause = ` ORDER BY ${sortParts.join(', ')}`;
+      } else {
+        // Default sort for paging if none provided
+        orderByClause = ` ORDER BY id DESC`;
       }
-      if (sortParts.length) sql += ` ORDER BY ${sortParts.join(', ')}`;
-    }
+      sql += orderByClause;
 
-    if (!options.isCount && options.limit) {
-      sql += ` LIMIT ? OFFSET ?`;
-      params.push(parseInt(options.limit), parseInt(options.skip || 0));
+      if (options.limit) {
+        // MSSQL OFFSET-FETCH
+        sql += ` OFFSET ? ROWS FETCH NEXT ? ROWS ONLY`;
+        params.push(parseInt(options.skip || 0), parseInt(options.limit));
+      }
     }
 
     return { sql, params };

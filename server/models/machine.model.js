@@ -182,7 +182,7 @@ class Machine {
     }
 
     if (options.limit) {
-      sql += " LIMIT " + options.limit;
+      sql += ` OFFSET 0 ROWS FETCH NEXT ${options.limit} ROWS ONLY`;
     }
 
     return { sql, params };

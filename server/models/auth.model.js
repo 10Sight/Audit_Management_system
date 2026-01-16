@@ -66,11 +66,26 @@ class EmployeeDocument {
         await pool.query('DELETE FROM employee_departments WHERE employee_id = ?', [this.id]);
         if (this.department.length > 0) {
           // Deduplicate and ensure strings
+          // Deduplicate and ensure strings
           const uniqueDepts = [...new Set(this.department.map(d =>
             (typeof d === 'object' && d !== null ? d._id : d).toString()
           ))];
-          const deptValues = uniqueDepts.map(d => [this.id, d]);
-          await pool.query('INSERT IGNORE INTO employee_departments (employee_id, department_id) VALUES ?', [deptValues]);
+
+          if (uniqueDepts.length > 0) {
+            // MSSQL Bulk Insert manually
+            let valuesClause = [];
+            let params = [];
+            uniqueDepts.forEach(deptId => {
+              valuesClause.push(`(?, ?)`);
+              params.push(this.id, deptId);
+            });
+
+            // Allow insert, skip duplicates? 
+            // MSSQL doesn't have simple INSERT IGNORE. 
+            // Assuming duplicates within the same transaction/logic are handled by delete above.
+            // But if race condition... we'll rely on delete first.
+            await pool.query(`INSERT INTO employee_departments (employee_id, department_id) VALUES ${valuesClause.join(', ')}`, params);
+          }
         }
       }
 
@@ -109,8 +124,16 @@ class EmployeeDocument {
         const uniqueDepts = [...new Set(this.department.map(d =>
           (typeof d === 'object' && d !== null ? d._id : d).toString()
         ))];
-        const deptValues = uniqueDepts.map(d => [this.id, d]);
-        await pool.query('INSERT IGNORE INTO employee_departments (employee_id, department_id) VALUES ?', [deptValues]);
+
+        if (uniqueDepts.length > 0) {
+          let valuesClause = [];
+          let params = [];
+          uniqueDepts.forEach(deptId => {
+            valuesClause.push(`(?, ?)`);
+            params.push(this.id, deptId);
+          });
+          await pool.query(`INSERT INTO employee_departments (employee_id, department_id) VALUES ${valuesClause.join(', ')}`, params);
+        }
       }
     }
     return this;
@@ -364,8 +387,11 @@ class QueryBuilder {
     }
 
     if (this.opts.limit && !forUpdateFind) { // Only apply limit/skip if not just finding for update
-      sql += ` LIMIT ? OFFSET ?`;
-      params.push(this.opts.limit, this.opts.skip || 0);
+      if (!this.opts.sort) {
+        sql += " ORDER BY (SELECT NULL)"; // Required for OFFSET-FETCH
+      }
+      sql += ` OFFSET ? ROWS FETCH NEXT ? ROWS ONLY`;
+      params.push(parseInt(this.opts.skip || 0), parseInt(this.opts.limit));
     }
 
     return { sql, params };
@@ -382,11 +408,11 @@ const Employee = {
   find: (query) => new QueryBuilder(query),
 
   findOne: (query) => {
-    return new QueryBuilder(query, 'findOne');
+    return new QueryBuilder(query, 'findOne').limit(1);
   },
 
   findById: (id) => {
-    return new QueryBuilder({ id }, 'findOne');
+    return new QueryBuilder({ id }, 'findOne').limit(1);
   },
 
   findOneAndUpdate: (query, update, options) => {
