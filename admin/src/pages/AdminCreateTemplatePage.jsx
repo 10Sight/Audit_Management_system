@@ -269,30 +269,30 @@ export default function AdminCreateTemplatePage() {
 
   // Filter units and departments based on user's unit (for admins)
   const filteredUnits = currentUser?.role === "admin" && userUnitId
-    ? units.filter((u) => (u._id === userUnitId))
+    ? units.filter((u) => (u._id == userUnitId))
     : units;
 
   const availableDepartments = (departments || []).filter((d) => {
     const deptUnitId = typeof d.unit === "object" ? d.unit?._id : d.unit;
     const effectiveUnit = currentUser?.role === "admin" && userUnitId ? userUnitId : selectedUnit || "";
     if (!effectiveUnit) return true;
-    return deptUnitId && deptUnitId === effectiveUnit;
+    return deptUnitId && deptUnitId == effectiveUnit;
   });
 
   const availableLines = (lines || []).filter((line) => {
     if (!selectedDepartment) return false;
     const deptId = typeof line.department === "object" ? line.department?._id : line.department;
-    return deptId && deptId === selectedDepartment;
+    return deptId && deptId == selectedDepartment;
   });
 
   const availableMachines = (machines || []).filter((machine) => {
     if (!selectedDepartment) return false;
     const deptId = typeof machine.department === "object" ? machine.department?._id : machine.department;
-    if (!deptId || deptId !== selectedDepartment) return false;
+    if (!deptId || deptId != selectedDepartment) return false;
 
     if (selectedLine) {
       const lineId = typeof machine.line === "object" ? machine.line?._id : machine.line;
-      if (!lineId || lineId !== selectedLine) return false;
+      if (!lineId || lineId != selectedLine) return false;
     }
     return true;
   });
@@ -351,7 +351,7 @@ export default function AdminCreateTemplatePage() {
                     </SelectTrigger>
                     <SelectContent>
                       {availableDepartments.map((d) => (
-                        <SelectItem key={d._id} value={d._id}>{d.name}</SelectItem>
+                        <SelectItem key={d._id} value={String(d._id)}>{d.name}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -372,7 +372,7 @@ export default function AdminCreateTemplatePage() {
                       </SelectTrigger>
                       <SelectContent>
                         {filteredUnits.map((u) => (
-                          <SelectItem key={u._id} value={u._id}>{u.name}</SelectItem>
+                          <SelectItem key={u._id} value={String(u._id)}>{u.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -404,7 +404,7 @@ export default function AdminCreateTemplatePage() {
                       <SelectContent>
                         <SelectItem value="__all__">All {lineLabel.toLowerCase()}s in department</SelectItem>
                         {availableLines.map((line) => (
-                          <SelectItem key={line._id} value={line._id}>{line.name}</SelectItem>
+                          <SelectItem key={line._id} value={String(line._id)}>{line.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -434,7 +434,7 @@ export default function AdminCreateTemplatePage() {
                       <SelectContent>
                         <SelectItem value="__all__">All {machineLabel.toLowerCase()}s in scope</SelectItem>
                         {availableMachines.map((machine) => (
-                          <SelectItem key={machine._id} value={machine._id}>{machine.name}</SelectItem>
+                          <SelectItem key={machine._id} value={String(machine._id)}>{machine.name}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>

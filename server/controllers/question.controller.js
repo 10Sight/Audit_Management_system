@@ -1,10 +1,11 @@
-import mongoose from "mongoose";
 import Question from "../models/question.model.js";
 import QuestionCategory from "../models/questionCategory.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import logger from "../logger/winston.logger.js";
-import {asyncHandler} from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
+import mongoose from "mongoose"; // Still needed for QuestionCategory and Unit?
+// Remove mongoose dependency if possible, but QuestionCategory is Mongoose.
 
 export const createQuestion = asyncHandler(async (req, res) => {
   const questions = Array.isArray(req.body) ? req.body : req.body.questions;
@@ -19,7 +20,7 @@ export const createQuestion = asyncHandler(async (req, res) => {
 
     const isGlobal = !!q.isGlobal;
 
-    // Normalize question type and extra configuration fields
+    // Normalize question type
     const questionType = q.questionType || q.type || "yes_no";
     const allowedTypes = ["yes_no", "mcq", "short_text", "image", "dropdown"];
     if (!allowedTypes.includes(questionType)) {
@@ -30,7 +31,6 @@ export const createQuestion = asyncHandler(async (req, res) => {
       ? q.options.map((opt) => (typeof opt === "string" ? opt.trim() : "")).filter(Boolean)
       : [];
 
-    // Optional correct option index for MCQ/dropdown questions
     let correctOptionIndex;
     if (["mcq", "dropdown"].includes(questionType)) {
       if (q.correctOptionIndex !== undefined && q.correctOptionIndex !== null) {
@@ -49,28 +49,13 @@ export const createQuestion = asyncHandler(async (req, res) => {
       questionType,
       isGlobal,
       createdBy: req.user.id,
+      templateTitle: q.templateTitle && typeof q.templateTitle === "string" ? q.templateTitle.trim() : undefined,
+      department: q.department,
+      options: options.length && ["mcq", "dropdown"].includes(questionType) ? options : [],
+      correctOptionIndex,
+      imageUrl: imageUrl && questionType === "image" ? imageUrl : undefined
     };
 
-    if (q.templateTitle && typeof q.templateTitle === "string") {
-      base.templateTitle = q.templateTitle.trim();
-    }
-
-    if (q.department) {
-      base.department = q.department;
-    }
-
-    if (options.length && ["mcq", "dropdown"].includes(questionType)) {
-      base.options = options;
-      if (correctOptionIndex !== undefined) {
-        base.correctOptionIndex = correctOptionIndex;
-      }
-    }
-
-    if (imageUrl && questionType === "image") {
-      base.imageUrl = imageUrl;
-    }
-
-    // Only attach scoping fields when NOT global
     if (!isGlobal) {
       if (q.machine) base.machines = [q.machine];
       if (q.line) base.lines = [q.line];
@@ -84,210 +69,95 @@ export const createQuestion = asyncHandler(async (req, res) => {
 
   logger.info(`Created ${createdQuestions.length} questions by user ${req.user.id}`);
 
-  return res
-    .status(201)
-    .json(new ApiResponse(201, createdQuestions, "Questions created"));
+  return res.status(201).json(new ApiResponse(201, createdQuestions, "Questions created"));
 });
 
 export const getQuestions = asyncHandler(async (req, res) => {
-  // Accept both old and new query params
   const lineId = req.query.lineId || req.query.line;
   const machineId = req.query.machineId || req.query.machine;
   const processId = req.query.processId || req.query.process;
   const unitId = req.query.unitId || req.query.unit;
-  const includeGlobal = req.query.includeGlobal;
+  const includeGlobal = req.query.includeGlobal === "true" || req.query.includeGlobal === undefined;
   const fetchAll = req.query.fetchAll === "true";
   const departmentId = req.query.departmentId || req.query.department;
 
-  // Fast path: explicitly request all questions (global + scoped), ignoring filters
   if (fetchAll) {
-    const questions = await Question.find({})
-      .populate("lines machines processes units department", "name")
-      .lean();
-
+    const questions = await Question.find({});
     return res.json({ status: "success", data: questions });
   }
 
-  const orConditions = [];
-  const andConditions = [];
+  // Build the restrictive filter for scoped questions
+  const scopeFilter = {};
+  if (unitId) scopeFilter.units = unitId;
+  if (departmentId) scopeFilter.department = departmentId;
+  if (lineId) scopeFilter.lines = lineId;
+  if (machineId) scopeFilter.machines = machineId;
+  if (processId) scopeFilter.processes = processId;
 
-  // Line/Machine/Process/Unit filters
-  if (lineId) andConditions.push({ lines: lineId });
-  if (machineId) andConditions.push({ machines: machineId });
-  if (processId) andConditions.push({ processes: processId });
-  if (unitId) andConditions.push({ units: unitId });
-
-  // Include global questions only if explicitly true (default: true)
-  if (includeGlobal === undefined || includeGlobal === "true") {
-    orConditions.push({ isGlobal: true });
-  }
-
-  // Combine AND conditions if present
-  if (andConditions.length > 0) {
-    orConditions.push({ $and: andConditions });
-  }
-
-  // Base filter for scoped/global questions
-  const baseFilter = orConditions.length > 0 ? { $or: orConditions } : {};
-
-  let questions = await Question.find(baseFilter)
-    .populate("lines machines processes units department", "name")
-    .lean();
-
-  // Department-based categories: include any questions that belong to a category assigned to this department
-  if (departmentId && mongoose.Types.ObjectId.isValid(departmentId)) {
-    const categories = await QuestionCategory.find({ departments: departmentId })
-      .select("questions")
-      .lean();
-
-    const departmentQuestionIds = [
-      ...new Set(
-        categories.flatMap((cat) =>
-          Array.isArray(cat.questions) ? cat.questions.map((q) => q.toString()) : []
-        )
-      ),
-    ];
-
-    if (departmentQuestionIds.length > 0) {
-      const extraQuestions = await Question.find({ _id: { $in: departmentQuestionIds } })
-        .populate("lines machines processes units department", "name")
-        .lean();
-
-      const seen = new Set(questions.map((q) => q._id.toString()));
-      for (const q of extraQuestions) {
-        if (!seen.has(q._id.toString())) {
-          seen.add(q._id.toString());
-          questions.push(q);
-        }
-      }
+  let query;
+  if (Object.keys(scopeFilter).length > 0) {
+    if (includeGlobal) {
+      // Show questions that match the scope OR are global
+      query = {
+        $or: [
+          { isGlobal: true },
+          scopeFilter
+        ]
+      };
+    } else {
+      // Strictly matching the scope
+      query = scopeFilter;
     }
-
-    // Also include any questions scoped directly to this department.
-    // If a question has no specific line/machine, it should apply to *all* lines/machines
-    // in that department. If it is scoped to certain lines/machines, only include it when
-    // the requested context matches.
-    const deptQuestions = await Question.find({ department: departmentId })
-      .populate("lines machines processes units department", "name")
-      .lean();
-
-    if (deptQuestions.length) {
-      const seen = new Set(questions.map((q) => q._id.toString()));
-      const lineIdStr = lineId ? String(lineId) : null;
-      const machineIdStr = machineId ? String(machineId) : null;
-      const processIdStr = processId ? String(processId) : null;
-
-      for (const q of deptQuestions) {
-        if (seen.has(q._id.toString())) continue;
-
-        const lineIds = (q.lines || []).map((id) => id.toString());
-        const machineIds = (q.machines || []).map((id) => id.toString());
-        const processIds = (q.processes || []).map((id) => id.toString());
-
-        // Line match: if a line is requested and question has specific lines,
-        // require that the requested line is one of them. If question has no
-        // line restriction, it applies to all lines in the department.
-        if (lineIdStr && lineIds.length && !lineIds.includes(lineIdStr)) continue;
-
-        // Machine match: same idea as line.
-        if (machineIdStr && machineIds.length && !machineIds.includes(machineIdStr)) continue;
-
-        // Process match: same idea as line.
-        if (processIdStr && processIds.length && !processIds.includes(processIdStr)) continue;
-
-        seen.add(q._id.toString());
-        questions.push(q);
-      }
-    }
+  } else {
+    // No specific scope filters, show global questions by default or as requested
+    query = includeGlobal ? { $or: [{ isGlobal: true }, { isGlobal: false }] } : { isGlobal: true };
   }
+
+  const questions = await Question.find(query).populate("department units lines machines processes");
 
   return res.json({ status: "success", data: questions });
 });
 
 export const deleteQuestion = asyncHandler(async (req, res) => {
   const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid question id");
-  }
-
+  // ID is generic now
   const question = await Question.findByIdAndDelete(id);
   if (!question) throw new ApiError(404, "Question not found");
 
   logger.info(`Question deleted: ${id} by user ${req.user.id}`);
-
   return res.json(new ApiResponse(200, question, "Question deleted"));
 });
 
 export const updateQuestion = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    throw new ApiError(400, "Invalid question id");
-  }
-
   const updates = {};
-
-  // Allow updating basic fields for now. Extend as needed.
-  if (typeof req.body.questionText === "string") {
-    const text = req.body.questionText.trim();
-    if (!text) {
-      throw new ApiError(400, "Question text cannot be empty");
-    }
-    updates.questionText = text;
-  }
-
-  if (req.body.templateTitle !== undefined) {
-    if (req.body.templateTitle && typeof req.body.templateTitle === "string") {
-      updates.templateTitle = req.body.templateTitle.trim();
-    } else {
-      updates.templateTitle = undefined;
-    }
-  }
-
-  if (req.body.department !== undefined) {
-    updates.department = req.body.department || undefined;
-  }
+  if (req.body.questionText) updates.questionText = req.body.questionText.trim();
+  if (req.body.templateTitle !== undefined) updates.templateTitle = req.body.templateTitle;
+  if (req.body.department !== undefined) updates.department = req.body.department;
 
   if (Object.keys(updates).length === 0) {
     throw new ApiError(400, "No valid fields provided to update");
   }
 
-  const question = await Question.findByIdAndUpdate(id, updates, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!question) {
-    throw new ApiError(404, "Question not found");
-  }
+  const question = await Question.findByIdAndUpdate(id, updates, { new: true });
+  if (!question) throw new ApiError(404, "Question not found");
 
   logger.info(`Question updated: ${id} by user ${req.user.id}`);
-
   return res.json(new ApiResponse(200, question, "Question updated"));
 });
 
 export const deleteQuestionsByTemplateTitle = asyncHandler(async (req, res) => {
   const { title } = req.params;
-
   if (!title || typeof title !== "string") {
     throw new ApiError(400, "Template title is required");
   }
 
   const result = await Question.deleteMany({ templateTitle: title });
 
-  logger.info(
-    `Deleted ${result.deletedCount} questions for template "${title}" by user ${req.user.id}`
-  );
+  if (!result.deletedCount) throw new ApiError(404, "No questions found");
 
-  if (!result.deletedCount) {
-    throw new ApiError(404, "No questions found for this template");
-  }
+  logger.info(`Deleted ${result.deletedCount} questions for template "${title}" by user ${req.user.id}`);
 
-  return res.json(
-    new ApiResponse(
-      200,
-      { deletedCount: result.deletedCount },
-      "Template questions deleted"
-    )
-  );
+  return res.json(new ApiResponse(200, { deletedCount: result.deletedCount }, "Template questions deleted"));
 });

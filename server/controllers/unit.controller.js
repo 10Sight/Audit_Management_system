@@ -12,8 +12,10 @@ export const createUnit = asyncHandler(async (req, res) => {
   if (existing) throw new ApiError(409, "Unit already exists");
 
   // Determine next order value
-  const lastUnit = await Unit.findOne().sort({ order: -1 });
-  const order = lastUnit ? lastUnit.order + 1 : 1;
+  // Fetch all units to find max order. Optimized strategy would be MAX() query but this is fine for low volume.
+  const units = await Unit.find({});
+  const maxOrder = units.reduce((max, u) => Math.max(max, u.order || 0), 0);
+  const order = maxOrder + 1;
 
   const unit = await Unit.create({ name, description, order });
   logger.info(`Unit created: ${unit.name}`);
@@ -21,7 +23,12 @@ export const createUnit = asyncHandler(async (req, res) => {
 });
 
 export const getUnits = asyncHandler(async (req, res) => {
-  const units = await Unit.find({}).sort({ order: 1, createdAt: 1 });
+  const units = await Unit.find({});
+  // Memory sort
+  units.sort((a, b) => {
+    if (a.order !== b.order) return a.order - b.order;
+    return new Date(a.createdAt) - new Date(b.createdAt);
+  });
   return res.json(new ApiResponse(200, units, "Units fetched"));
 });
 
@@ -68,7 +75,9 @@ export const reorderUnits = asyncHandler(async (req, res) => {
 
   await Promise.all(updatePromises);
 
-  const units = await Unit.find({}).sort({ order: 1 });
+  const units = await Unit.find({});
+  units.sort((a, b) => a.order - b.order);
+
   logger.info(`Units reordered: ${unitIds.length} items`);
   return res.json(new ApiResponse(200, units, "Units reordered"));
 });

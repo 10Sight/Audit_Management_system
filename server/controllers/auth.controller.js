@@ -262,9 +262,21 @@ export const getEmployees = asyncHandler(async (req, res) => {
 export const getSingleEmployee = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  let employee = mongoose.Types.ObjectId.isValid(id)
-    ? await Employee.findById(id).select("-password").populate('department', 'name description').populate('unit', 'name description')
-    : await Employee.findOne({ employeeId: id }).select("-password").populate('department', 'name description').populate('unit', 'name description');
+  // Try to find by DB ID if numeric (new system)
+  let employee;
+  const numericId = Number(id);
+  if (!Number.isNaN(numericId)) {
+    employee = await Employee.findById(numericId)
+      .populate('department', 'name description')
+      .populate('unit', 'name description');
+  }
+
+  // If not found or ID not numeric, try by employeeId (business key)
+  if (!employee) {
+    employee = await Employee.findOne({ employeeId: id })
+      .populate('department', 'name description')
+      .populate('unit', 'name description');
+  }
 
   if (!employee) throw new ApiError(404, "Employee not found");
   return res.status(200).json(new ApiResponse(200, { employee }, "Employee fetched successfully"));
@@ -375,15 +387,18 @@ export const deleteEmployee = asyncHandler(async (req, res) => {
   }
 
   // If this employee belongs to a department, decrement that department's employee count
-  if (employee.department) {
-    try {
-      const dept = await Department.findById(employee.department);
-      if (dept) {
-        await dept.decrementEmployeeCount();
+  if (employee.department && employee.department.length > 0) {
+    for (const deptId of employee.department) {
+      try {
+        // Check if deptId is string or object (if population happened)
+        const dId = typeof deptId === 'object' ? deptId._id : deptId;
+        const dept = await Department.findById(dId);
+        if (dept) {
+          await dept.decrementEmployeeCount();
+        }
+      } catch (err) {
+        logger.error(`Failed to decrement employeeCount for department ${deptId}:`, err);
       }
-    } catch (err) {
-      // Log and continue deletion even if counter update fails
-      logger.error(`Failed to decrement employeeCount for department ${employee.department}:`, err);
     }
   }
 

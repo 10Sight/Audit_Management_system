@@ -95,9 +95,12 @@ export default function SuperAdminEmployeeDetailPage() {
             </Badge>
             {employee.department && (
               <Badge variant="outline" className="capitalize">
-                {typeof employee.department === "object"
-                  ? employee.department?.name || "N/A"
-                  : employee.department || "N/A"}
+                {Array.isArray(employee.department)
+                  ? employee.department.map(d => d.name || "Dept").join(", ")
+                  : (typeof employee.department === "object"
+                    ? employee.department?.name || "N/A"
+                    : employee.department || "N/A")
+                }
               </Badge>
             )}
             {employee.unit && (

@@ -8,9 +8,12 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
+import { useAuth } from "@/context/AuthContext";
+
 export default function EditEmployeePage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [employee, setEmployee] = useState({
     fullName: "",
@@ -25,7 +28,16 @@ export default function EditEmployeePage() {
   const [saving, setSaving] = useState(false);
 
   const { data: empRes, isLoading: empLoading } = useGetEmployeeByIdQuery(id, { skip: !id });
-  const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 });
+
+  const departmentQueryParams = React.useMemo(() => {
+    const params = { page: 1, limit: 1000 };
+    if (user?.role === "admin" && user?.unit) {
+      params.unit = user.unit._id || user.unit;
+    }
+    return params;
+  }, [user]);
+
+  const { data: deptRes } = useGetDepartmentsQuery(departmentQueryParams);
   const [updateEmployeeMutation] = useUpdateEmployeeByIdMutation();
   useEffect(() => {
     setLoading(empLoading);
@@ -38,7 +50,12 @@ export default function EditEmployeePage() {
         role: e.role || "",
         employeeId: e.employeeId || "",
       });
-      setDepartmentId(e.department?._id || e.department || "");
+      let deptVal = e.department;
+      if (Array.isArray(deptVal) && deptVal.length > 0) {
+        deptVal = deptVal[0];
+      }
+      const actualId = (typeof deptVal === "object" && deptVal?._id) ? deptVal._id : deptVal;
+      setDepartmentId(actualId ? String(actualId) : "");
     }
   }, [empRes, empLoading]);
 
@@ -109,13 +126,13 @@ export default function EditEmployeePage() {
             {/* Department */}
             <div className="space-y-1">
               <Label>Department</Label>
-              <Select value={departmentId} onValueChange={setDepartmentId}>
+              <Select value={departmentId} onValueChange={(val) => setDepartmentId(String(val))}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select Department" />
                 </SelectTrigger>
                 <SelectContent>
                   {(deptRes?.data?.departments || []).map((d) => (
-                    <SelectItem key={d._id} value={d._id}>{d.name}</SelectItem>
+                    <SelectItem key={d._id} value={String(d._id)}>{d.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -124,7 +141,7 @@ export default function EditEmployeePage() {
             {/* Role */}
             <div className="space-y-1">
               <Label>Role</Label>
-              <Select value={employee.role} onValueChange={(v) => setEmployee((prev) => ({ ...prev, role: v }))}>
+              <Select value={employee.role ? String(employee.role) : ""} onValueChange={(v) => setEmployee((prev) => ({ ...prev, role: String(v) }))}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select Role" />
                 </SelectTrigger>

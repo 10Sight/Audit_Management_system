@@ -14,6 +14,7 @@ import {
   useDeleteUploadMutation,
   useGetDepartmentByIdQuery,
   useGetEmployeeByIdQuery,
+  useGetDepartmentsQuery,
 } from "@/store/api";
 import Loader from "@/components/ui/Loader";
 import CameraCapture from "@/components/CameraCapture";
@@ -74,18 +75,26 @@ export default function EmployeeFillInspectionPage() {
   // New: Department Selection State
   const [selectedDepartment, setSelectedDepartment] = useState("");
 
+  // Fetch all departments for superadmin
+  const { data: allDeptsRes } = useGetDepartmentsQuery({ limit: 1000 }, { skip: currentUser?.role !== 'superadmin' && currentUser?.role !== 'admin' });
+
   const availableDepartments = useMemo(() => {
+    // If superadmin or admin, allow choosing from ALL departments
+    if ((currentUser?.role === 'superadmin' || currentUser?.role === 'admin') && allDeptsRes?.data?.departments) {
+      return allDeptsRes.data.departments;
+    }
+    // Otherwise limit to assigned departments
     if (!userForData?.department) return [];
     if (Array.isArray(userForData.department)) return userForData.department;
     return [userForData.department];
-  }, [userForData]);
+  }, [userForData, currentUser, allDeptsRes]);
 
   // Auto-select first department by default
   useEffect(() => {
     if (availableDepartments.length > 0 && !selectedDepartment) {
       const dept = availableDepartments[0];
       const dId = typeof dept === 'object' ? dept._id : dept;
-      if (dId) setSelectedDepartment(dId);
+      if (dId) setSelectedDepartment(String(dId));
     }
   }, [availableDepartments, selectedDepartment]);
 
@@ -258,16 +267,16 @@ export default function EmployeeFillInspectionPage() {
     setMachine("");
   }, [line]);
 
-  // Fetch questions when unit changes via RTK Query (line/machine do NOT affect which questions appear)
-  // Questions are scoped only by department (and optionally unit) on the server, and we also enforce
-  // department filtering on the client to avoid seeing questions from other departments.
+  // Fetch questions when unit OR department changes via RTK Query
+  // Questions are scoped only by department (and optionally unit) on the server.
   const questionParams = {
     ...(unit ? { unit } : {}),
+    ...(selectedDepartment ? { department: selectedDepartment } : {}),
     includeGlobal: 'true',
   };
 
-  // Only skip fetching questions until we at least know the auditor's unit.
-  const shouldSkipQuestions = !unit;
+  // Skip fetching only if neither unit nor department is selected.
+  const shouldSkipQuestions = !unit && !selectedDepartment;
 
   const { data: questionsRes, isLoading: questionsLoading } = useGetQuestionsQuery(questionParams, { skip: shouldSkipQuestions });
 
@@ -386,19 +395,20 @@ export default function EmployeeFillInspectionPage() {
     e.preventDefault();
     if (submitting) return; // prevent double submit
 
-    const lineRequired = lineFieldEnabled;
-    const machineRequired = machineFieldEnabled;
+    // Only require Line/Machine if the field is enabled AND there are options to choose from
+    const lineRequired = lineFieldEnabled && lines.length > 0;
+    const machineRequired = machineFieldEnabled && machines.length > 0;
 
     if (
       (lineRequired && !line) ||
       (machineRequired && !machine) ||
       !unit ||
       !selectedDepartment ||
-      !lineLeader ||
+      (lineRequired && !lineLeader) ||
       !shift ||
       !shiftIncharge ||
-      !lineRating ||
-      !machineRating ||
+      (lineRequired && !lineRating) ||
+      (machineRequired && !machineRating) ||
       !unitRating
     ) {
       toast.error("Please fill all required fields");
@@ -422,11 +432,12 @@ export default function EmployeeFillInspectionPage() {
     }
 
     // Validate rating values (1-10)
+    // Validate rating values (1-10)
     const ratingFields = [
-      { label: 'Line rating', value: lineRating },
-      { label: 'Machine rating', value: machineRating },
       { label: 'Unit rating', value: unitRating },
     ];
+    if (lineRequired) ratingFields.push({ label: 'Line rating', value: lineRating });
+    if (machineRequired) ratingFields.push({ label: 'Machine rating', value: machineRating });
 
     for (const field of ratingFields) {
       const num = Number(field.value);
@@ -568,7 +579,7 @@ export default function EmployeeFillInspectionPage() {
                       const dId = typeof dept === 'object' ? dept._id : dept;
                       const dName = typeof dept === 'object' ? dept.name : "Department"; // You might need to fetch names if they are IDs
                       return (
-                        <SelectItem key={dId} value={dId}>
+                        <SelectItem key={dId} value={String(dId)}>
                           {dName}
                         </SelectItem>
                       );
@@ -605,7 +616,7 @@ export default function EmployeeFillInspectionPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {lines.map((l) => (
-                      <SelectItem key={l._id} value={l._id}>
+                      <SelectItem key={l._id} value={String(l._id)}>
                         {l.name}
                       </SelectItem>
                     ))}
@@ -630,7 +641,7 @@ export default function EmployeeFillInspectionPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {machines.map((m) => (
-                      <SelectItem key={m._id} value={m._id}>
+                      <SelectItem key={m._id} value={String(m._id)}>
                         {m.name}
                       </SelectItem>
                     ))}

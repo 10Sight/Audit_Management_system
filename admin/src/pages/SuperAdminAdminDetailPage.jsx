@@ -219,9 +219,12 @@ export default function SuperAdminAdminDetailPage() {
             )}
             {employee.department && (
               <Badge variant="outline" className="capitalize">
-                {typeof employee.department === "object"
-                  ? employee.department?.name || "N/A"
-                  : employee.department || "N/A"}
+                {Array.isArray(employee.department)
+                  ? employee.department.map(d => d.name || "Dept").join(", ")
+                  : (typeof employee.department === "object"
+                    ? employee.department?.name || "N/A"
+                    : employee.department || "N/A")
+                }
               </Badge>
             )}
           </div>
@@ -364,9 +367,12 @@ export default function SuperAdminAdminDetailPage() {
                       <TableCell>{emp.employeeId}</TableCell>
                       <TableCell className="capitalize">{emp.role}</TableCell>
                       <TableCell>
-                        {typeof emp.department === "object"
-                          ? emp.department?.name || "N/A"
-                          : emp.department || "N/A"}
+                        {Array.isArray(emp.department)
+                          ? emp.department.map(d => d.name || "Dept").join(", ")
+                          : (typeof emp.department === "object"
+                            ? emp.department?.name || "N/A"
+                            : emp.department || "N/A")
+                        }
                       </TableCell>
                       <TableCell className="text-sm">
                         <div>{emp.emailId}</div>
@@ -685,7 +691,7 @@ export default function SuperAdminAdminDetailPage() {
                         </TableCell>
                         <TableCell className="text-right">
                           <Button
-    
+
                             size="sm"
                             variant="outline"
                             className="text-xs"

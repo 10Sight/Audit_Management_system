@@ -1,10 +1,12 @@
 import Audit from "../models/audit.model.js";
 import AuditEmailSetting from "../models/auditEmailSetting.model.js";
 import AuditFormSetting from "../models/auditFormSetting.model.js";
+import Line from "../models/line.model.js";
+import Machine from "../models/machine.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { ApiError } from "../utils/ApiError.js";
 import logger from "../logger/winston.logger.js";
-import {asyncHandler} from "../utils/asyncHandler.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 import { invalidateCache } from "../middlewares/cache.middleware.js";
 import sendMail from "../utils/mail.util.js";
 import EVN from "../config/env.config.js";
@@ -44,16 +46,63 @@ export const createAudit = asyncHandler(async (req, res) => {
   const machineEnabled = formSetting?.machineField?.enabled !== false; // default: true
 
   // Process is no longer required; keep it optional for backward compatibility.
-  // Line and machine requirement is driven by admin configuration.
-  if (
-    !date ||
-    (lineEnabled && !line) ||
-    (machineEnabled && !machine) ||
-    !lineLeader ||
-    !shift ||
-    !shiftIncharge
-  ) {
+  // Line and machine requirement is driven by admin configuration AND existence of options.
+
+  // 1. Basic required fields check
+  if (!date || !lineLeader || !shift || !shiftIncharge) {
     throw new ApiError(400, "All required fields must be filled");
+  }
+
+  // 2. Conditional Line Validation
+  if (lineEnabled && !line) {
+    // If enabled but missing, check if this department actually has lines.
+    // If it DOES have lines, then selection is mandatory.
+    // If it has NO lines, then we allow it to be skipped.
+    const effectiveDeptId = effectiveDepartment?._id || effectiveDepartment; // handle object or ID
+    if (effectiveDeptId) {
+      const lineCount = await Line.countDocuments({ department: effectiveDeptId, isActive: true });
+      if (lineCount > 0) {
+        throw new ApiError(400, "Line is required for this department");
+      }
+    }
+  }
+
+  // 3. Conditional Machine Validation
+  if (machineEnabled && !machine) {
+    // Similar logic for machines.
+    // Use effective department. If line is selected, we could refine checking machines for that line,
+    // but checking for ANY machine in the department is a safe baseline constraint to ensure we don't block empty depts.
+    const effectiveDeptId = effectiveDepartment?._id || effectiveDepartment;
+
+    // Check if department has ANY machines
+    // If a line is selected, ideally we check if THAT line has machines, but simplicity first:
+    // "If department has machines, you must pick one (filtered by line if applicable)"
+    if (effectiveDeptId) {
+      // If line is provided, check machines for that line?
+      // The frontend filters by line. Backend should be robust.
+      // Let's check: if there are ANY machines in this dept, we require selection (unless filtered line has none).
+      // Safest: Count machines in this department.
+      const machineCount = await Machine.countDocuments({ department: effectiveDeptId, isActive: true });
+      if (machineCount > 0) {
+        // If we have a line, does THAT line have machines?
+        if (line) {
+          const machinesInLine = await Machine.countDocuments({ line: line, isActive: true });
+          if (machinesInLine > 0) {
+            throw new ApiError(400, "Machine is required");
+          }
+          // If line has no machines, then OK to skip machine.
+        } else {
+          // No line selected (maybe not required), but machines exist in dept -> dubious?
+          // If line was not required (b/c no lines), but machines exist (unassigned to lines?), weird data.
+          // Assume if machines exist, one must be picked?
+          // Actually, if lines don't exist, machines probably don't either in hierarchical view.
+          // Let's stick to: "If machines exist for the context, pick one."
+          if (machineCount > 0) {
+            throw new ApiError(400, "Machine is required");
+          }
+        }
+      }
+    }
   }
 
   const allowedShifts = ["Shift 1", "Shift 2", "Shift 3"];
@@ -99,7 +148,7 @@ export const createAudit = asyncHandler(async (req, res) => {
   // Validate answers and attach photos if uploaded
   if (req.files && req.files.auditPhotos) {
     const uploadedPhotos = req.files.auditPhotos;
-    
+
     // Group photos by question ID (assuming filename contains question ID)
     const photosByQuestion = {};
     uploadedPhotos.forEach(file => {
@@ -139,13 +188,16 @@ export const createAudit = asyncHandler(async (req, res) => {
     });
   }
 
+  // ... inside createAudit
+
+  // Create audit using SQL model
   const audit = await Audit.create({
     date,
-    line,
-    machine,
-    process,
-    unit,
-    department: department || req.user.department || undefined,
+    line: line || null,
+    machine: machine || null,
+    process: process || null,
+    unit: unit || null,
+    department: department || req.user.department || null,
     lineLeader,
     shift,
     shiftIncharge,
@@ -153,21 +205,25 @@ export const createAudit = asyncHandler(async (req, res) => {
     machineRating: normalizedMachineRating,
     processRating: normalizedProcessRating,
     unitRating: normalizedUnitRating,
-    auditor: req.user.id,     
-    createdBy: req.user.id, 
+    auditor: req.user.id,
+    createdBy: req.user.id,
     answers: parsedAnswers,
   });
 
   // Invalidate related cache
   await invalidateCache('/api/audits');
-  
+
   // Load related docs to get human-readable names for notification
+  // The SQL Audit.findById returns a custom QueryBuilder-like object if we want chaining,
+  // OR the doc directly if awaited (depending on impl). 
+  // Checking model: findById return QueryBuilder({id}).
   const populatedAudit = await Audit.findById(audit._id)
     .populate('line', 'name')
     .populate('machine', 'name')
     .populate('process', 'name')
     .populate('unit', 'name')
-    .populate('auditor', 'fullName');
+    .populate('auditor', 'fullName')
+    .exec();
 
   const lineName = populatedAudit?.line?.name || line;
   const machineName = populatedAudit?.machine?.name || machine;
@@ -201,128 +257,73 @@ export const getAudits = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit;
 
   if (req.user.role === "employee") {
-    query = { auditor: req.user._id };
-  } 
+    query.auditor = req.user.id;
+  }
   else if (req.query.auditor) {
-    query = { auditor: req.query.auditor };
+    query.auditor = req.query.auditor;
   }
 
   // Add date range filter if provided (match either logical audit date or creation timestamp)
   if (req.query.startDate || req.query.endDate) {
-    const start = req.query.startDate ? new Date(req.query.startDate) : null;
-    const end = req.query.endDate ? new Date(req.query.endDate) : null;
+    const start = req.query.startDate ? new Date(req.query.startDate).toISOString().split('T')[0] : null;
+    const end = req.query.endDate ? new Date(req.query.endDate).toISOString().split('T')[0] : null;
 
-    const dateRange = {};
-    const createdAtRange = {};
-    if (start) { dateRange.$gte = start; createdAtRange.$gte = start; }
-    if (end) { dateRange.$lte = end; createdAtRange.$lte = end; }
-
-    // Combine with any existing query via $and
-    const base = Object.keys(query).length ? [query] : [];
-    query = {
-      $and: [
-        ...base,
-        { $or: [
-          Object.keys(dateRange).length ? { date: dateRange } : {},
-          Object.keys(createdAtRange).length ? { createdAt: createdAtRange } : {}
-        ]}
-      ]
-    };
+    // Simplified for SQL: check 'date' column
+    const range = {};
+    if (start) range.$gte = start;
+    if (end) range.$lte = end;
+    if (Object.keys(range).length) query.date = range;
   }
 
   // Optional filters: line, machine, unit, shift, department
+  // Ensure we handle Mongo ObjectIds as strings in SQL
   if (req.query.line) query.line = req.query.line;
   if (req.query.machine) query.machine = req.query.machine;
   if (req.query.unit) query.unit = req.query.unit;
   if (req.query.shift) query.shift = req.query.shift;
   if (req.query.department) query.department = req.query.department;
 
-  // Result filter
-  // Supported values:
-  // - allYes, allNo     (legacy)
-  // - pass, fail, na    (computed based on Pass/Fail/NA style answers)
-  if (req.query.result) {
-    const resultFilter = req.query.result;
-    const conditions = [];
+  // Result filter (In-memory filtering as SQL model doesn't support complex JSON 'answers' query)
+  const resultFilter = req.query.result;
 
-    // Legacy filters: treat Pass as Yes and Fail as No; NA is neutral
-    if (resultFilter === 'allYes') {
-      conditions.push({
-        answers: { $not: { $elemMatch: { answer: { $in: ['No', 'Fail'] } } } },
-      });
-    } else if (resultFilter === 'allNo') {
-      conditions.push({
-        answers: { $not: { $elemMatch: { answer: { $in: ['Yes', 'Pass'] } } } },
-      });
-    }
+  let audits = await Audit.find(query)
+    .select('date line machine process unit department lineLeader shift shiftIncharge lineRating machineRating processRating unitRating auditor createdBy createdAt answers')
+    .populate("line", "name")
+    .populate("machine", "name")
+    .populate("process", "name")
+    .populate("unit", "name")
+    .populate("department", "name")
+    .populate("auditor", "fullName emailId")
+    .populate("createdBy", "fullName employeeId")
+    .populate("answers.question", "questionText templateTitle questionType")
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .skip(skip)
+    .exec();
 
-    // New filters based on overall audit result
-    // pass: at least one Yes/Pass, no No/Fail
-    // fail: at least one No/Fail
-    // na:   no Yes/Pass/No/Fail, but at least one NA/Not Applicable
-    if (resultFilter === 'pass') {
-      conditions.push(
-        { answers: { $elemMatch: { answer: { $in: ['Yes', 'Pass'] } } } },
-        { answers: { $not: { $elemMatch: { answer: { $in: ['No', 'Fail'] } } } } },
-      );
-    } else if (resultFilter === 'fail') {
-      conditions.push({
-        answers: { $elemMatch: { answer: { $in: ['No', 'Fail'] } } },
-      });
-    } else if (resultFilter === 'na') {
-      conditions.push(
-        { answers: { $not: { $elemMatch: { answer: { $in: ['Yes', 'Pass', 'No', 'Fail'] } } } } },
-        { answers: { $elemMatch: { answer: { $in: ['NA', 'Not Applicable'] } } } },
-      );
-    }
-
-    if (conditions.length) {
-      if (Array.isArray(query.$and)) {
-        query.$and.push(...conditions);
-      } else {
-        query.$and = conditions;
+  if (resultFilter) {
+    // Logic for filtering audits array
+    audits = audits.filter(audit => {
+      const answers = audit.answers || [];
+      if (resultFilter === 'allYes') return !answers.some(a => ['No', 'Fail'].includes(a.answer));
+      if (resultFilter === 'allNo') return !answers.some(a => ['Yes', 'Pass'].includes(a.answer));
+      if (resultFilter === 'pass') {
+        const hasPass = answers.some(a => ['Yes', 'Pass'].includes(a.answer));
+        const hasFail = answers.some(a => ['No', 'Fail'].includes(a.answer));
+        return hasPass && !hasFail;
       }
-    }
+      if (resultFilter === 'fail') return answers.some(a => ['No', 'Fail'].includes(a.answer));
+      if (resultFilter === 'na') {
+        const hasStandard = answers.some(a => ['Yes', 'Pass', 'No', 'Fail'].includes(a.answer));
+        const hasNa = answers.some(a => ['NA', 'Not Applicable'].includes(a.answer));
+        return !hasStandard && hasNa;
+      }
+      return true;
+    });
   }
 
-  let audits;
-  try {
-    audits = await Audit.find(query)
-      .select('date line machine process unit department lineLeader shift shiftIncharge lineRating machineRating processRating unitRating auditor createdBy createdAt answers')
-      .populate("line", "name")
-      .populate("machine", "name")
-      .populate("process", "name")
-      .populate("unit", "name")
-      .populate("department", "name")
-      .populate("auditor", "fullName emailId")
-      .populate("createdBy", "fullName employeeId")
-      .populate({ path: "answers.question", select: "questionText templateTitle questionType", options: { lean: true } })
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip(skip)
-      .lean(); // Use lean for better performance
-  } catch (err) {
-    if (err?.name === 'CastError') {
-      // Fallback without populating nested answers if legacy data shape
-      audits = await Audit.find(query)
-        .select('date line machine process unit department lineLeader shift shiftIncharge lineRating machineRating processRating unitRating auditor createdBy createdAt answers')
-        .populate("line", "name")
-        .populate("machine", "name")
-        .populate("process", "name")
-        .populate("unit", "name")
-        .populate("department", "name")
-        .populate("auditor", "fullName emailId")
-        .populate("createdBy", "fullName employeeId")
-        .sort({ createdAt: -1 })
-        .limit(limit)
-        .skip(skip)
-        .lean();
-    } else {
-      throw err;
-    }
-  }
-
-  const total = await Audit.countDocuments(query);
+  const baseCountQuery = { ...query };
+  const total = await Audit.countDocuments(baseCountQuery);
 
   return res.json(new ApiResponse(200, {
     audits,
@@ -334,6 +335,7 @@ export const getAudits = asyncHandler(async (req, res) => {
     }
   }, "Audits fetched successfully"));
 });
+
 
 const buildAuditQueryForExport = (req) => {
   let query = {};
@@ -357,10 +359,12 @@ const buildAuditQueryForExport = (req) => {
     query = {
       $and: [
         ...base,
-        { $or: [
-          Object.keys(dateRange).length ? { date: dateRange } : {},
-          Object.keys(createdAtRange).length ? { createdAt: createdAtRange } : {}
-        ]}
+        {
+          $or: [
+            Object.keys(dateRange).length ? { date: dateRange } : {},
+            Object.keys(createdAtRange).length ? { createdAt: createdAtRange } : {}
+          ]
+        }
       ]
     };
   }
@@ -541,7 +545,7 @@ export const getAuditById = asyncHandler(async (req, res) => {
     .populate("department", "name")
     .populate("auditor", "fullName emailId")
     .populate("answers.question", "questionText")
-    .populate("createdBy", "fullName employeeId"); 
+    .populate("createdBy", "fullName employeeId");
 
   if (!audit) throw new ApiError(404, "Audit not found");
 
@@ -558,6 +562,7 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Audit email recipients are not configured. Please contact your administrator.");
   }
 
+  // Use SQL model
   const audit = await Audit.findById(id)
     .populate("line", "name")
     .populate("machine", "name")
@@ -566,7 +571,8 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
     .populate("department", "name")
     .populate("auditor", "fullName emailId")
     .populate({ path: "answers.question", select: "questionText questionType" })
-    .populate("createdBy", "fullName employeeId");
+    .populate("createdBy", "fullName employeeId")
+    .exec();
 
   if (!audit) {
     throw new ApiError(404, "Audit not found");
@@ -617,12 +623,12 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
   const auditorName = audit.auditor?.fullName || "N/A";
 
   const totalQuestions = Array.isArray(audit.answers) ? audit.answers.length : 0;
-    const yesNoAnswers = Array.isArray(audit.answers)
+  const yesNoAnswers = Array.isArray(audit.answers)
     ? audit.answers.filter((a) => {
-        const qType = a.question?.questionType;
-        // Treat undefined type as legacy yes/no style question
-        return !qType || qType === "yes_no" || qType === "image";
-      })
+      const qType = a.question?.questionType;
+      // Treat undefined type as legacy yes/no style question
+      return !qType || qType === "yes_no" || qType === "image";
+    })
     : [];
   const yesNoTotal = yesNoAnswers.length;
   const noCount = yesNoAnswers.filter((a) => a.answer === "No" || a.answer === "Fail").length;
@@ -684,13 +690,13 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
       const photos = Array.isArray(ans.photos) ? ans.photos : [];
       const photosHtml = photos.length
         ? photos
-            .map(
-              (p, photoIdx) =>
-                `<a href="${p.url}" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-right:4px;margin-bottom:4px;">
+          .map(
+            (p, photoIdx) =>
+              `<a href="${p.url}" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-right:4px;margin-bottom:4px;">
                   <img src="${p.url}" alt="Photo ${photoIdx + 1}" style="width:56px;height:56px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb;" />
                 </a>`
-            )
-            .join("")
+          )
+          .join("")
         : "-";
 
       return `<tr>
@@ -704,15 +710,14 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
     .join("");
 
   const extraNote = note
-    ? `<p style="margin:0 0 16px 0;font-size:13px;"><strong>Note from ${
-        auditorName || "auditor"
-      }:</strong> ${note}</p>`
+    ? `<p style="margin:0 0 16px 0;font-size:13px;"><strong>Note from ${auditorName || "auditor"
+    }:</strong> ${note}</p>`
     : "";
 
   const logoImgHtml = AUDIT_EMAIL_LOGO_URL
     ? '<img src="' +
-      AUDIT_EMAIL_LOGO_URL +
-      '" alt="Company Logo" style="max-width:220px;height:auto;margin-bottom:12px;" />'
+    AUDIT_EMAIL_LOGO_URL +
+    '" alt="Company Logo" style="max-width:220px;height:auto;margin-bottom:12px;" />'
     : "";
 
   const html = `
@@ -738,22 +743,20 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
                 <td style="padding:4px 8px;color:#6b7280;">Department</td>
                 <td style="padding:4px 8px;font-weight:500;">${departmentName}</td>
               </tr>
-              ${
-                lineFieldEnabled
-                  ? `<tr>
+              ${lineFieldEnabled
+      ? `<tr>
                       <td style="padding:4px 8px;color:#6b7280;">${lineLabel}</td>
                       <td style="padding:4px 8px;font-weight:500;">${lineName}</td>
                     </tr>`
-                  : ""
-              }
-              ${
-                machineFieldEnabled
-                  ? `<tr>
+      : ""
+    }
+              ${machineFieldEnabled
+      ? `<tr>
                       <td style="padding:4px 8px;color:#6b7280;">${machineLabel}</td>
                       <td style="padding:4px 8px;font-weight:500;">${machineName}</td>
                     </tr>`
-                  : ""
-              }
+      : ""
+    }
               <tr>
                 <td style="padding:4px 8px;color:#6b7280;">Process</td>
                 <td style="padding:4px 8px;font-weight:500;">${processName}</td>
@@ -800,24 +803,22 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
                   <div style="margin-top:2px;font-size:16px;font-weight:600;color:#dc2626;">${noCount}</div>
                 </td>
               </tr>
-              ${
-                otherCount > 0
-                  ? `<tr>
+              ${otherCount > 0
+      ? `<tr>
                       <td colspan="3" style="padding:8px 4px 0 4px;font-size:11px;color:#6b7280;">
                         Other question types (e.g. MCQ, text): <strong style="color:#111827;">${otherCount}</strong>
                       </td>
                     </tr>`
-                  : ""
-              }
+      : ""
+    }
             </tbody>
           </table>
         </div>
 
-        ${
-          extraNote
-            ? `<div style="padding:0 24px 16px 24px;">${extraNote}</div>`
-            : ""
-        }
+        ${extraNote
+      ? `<div style="padding:0 24px 16px 24px;">${extraNote}</div>`
+      : ""
+    }
 
         <div style="padding:16px 24px 24px 24px;border-top:1px solid #e5e7eb;">
           <h3 style="margin:0 0 8px 0;font-size:14px;color:#111827;">Question breakdown</h3>
@@ -859,6 +860,7 @@ export const shareAuditByEmail = asyncHandler(async (req, res) => {
 // ===== Audit Email Settings (Admin) =====
 
 export const getAuditEmailSettings = asyncHandler(async (req, res) => {
+  // SQL Model's findOne returns a QueryBuilder
   const setting = await AuditEmailSetting.findOne()
     .sort({ createdAt: -1 })
     .populate("departmentRecipients.department", "name")
@@ -888,6 +890,7 @@ export const updateAuditEmailSettings = asyncHandler(async (req, res) => {
       }));
   }
 
+  // The SQL shim findOneAndUpdate logic handles upsert internally
   const setting = await AuditEmailSetting.findOneAndUpdate(
     {},
     { to: normalizedTo, cc: normalizedCc, departmentRecipients: normalizedDepartmentRecipients },
@@ -906,18 +909,15 @@ export const getAuditFormSettings = asyncHandler(async (req, res) => {
 
   let setting = null;
   // Prefer a scoped configuration when department is provided
+  // SQL Model findOne handles { department } query internally
   if (department) {
     setting = await AuditFormSetting.findOne({ department })
       .sort({ createdAt: -1 })
       .lean();
   }
 
-  // Fallback to the latest global configuration if no scoped config exists
-  if (!setting) {
-    setting = await AuditFormSetting.findOne()
-      .sort({ createdAt: -1 })
-      .lean();
-  }
+  // Do NOT fallback to arbitrary latest setting if not found for specific department.
+  // This prevents Department B from inheriting Department A's settings.
 
   return res.json(new ApiResponse(200, setting, "Audit form settings fetched"));
 });
@@ -970,12 +970,12 @@ export const updateAuditFormSettings = asyncHandler(async (req, res) => {
 
   const filter = { department };
 
+  // SQL model handles find-or-create logic
   const setting = await AuditFormSetting.findOneAndUpdate(
     filter,
     payload,
     { new: true, upsert: true, setDefaultsOnInsert: true }
-  )
-    .lean();
+  );
 
   return res.json(new ApiResponse(200, setting, "Audit form settings updated"));
 });

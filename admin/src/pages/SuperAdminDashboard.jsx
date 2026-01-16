@@ -3,14 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   useGetUserStatsQuery,
   useGetAuditsQuery,
   useGetAllUsersQuery,
   useGetUnitsQuery,
 } from "@/store/api";
 import { useNavigate } from "react-router-dom";
-import { 
+import {
   Plus,
   Users,
   ShieldCheck,
@@ -213,9 +213,9 @@ export default function SuperAdminDashboard() {
       selectedUnit === "all"
         ? employeesOnly
         : employeesOnly.filter((u) => {
-            const unitId = u.unit?._id || u.unit;
-            return unitId && String(unitId) === String(selectedUnit);
-          });
+          const unitId = u.unit?._id || u.unit;
+          return unitId && String(unitId) === String(selectedUnit);
+        });
 
     return scoped.reduce((sum, emp) => {
       const total = emp.targetAudit?.total;
@@ -336,7 +336,7 @@ export default function SuperAdminDashboard() {
                 <SelectContent>
                   <SelectItem value="all">All Units</SelectItem>
                   {units.map((u) => (
-                    <SelectItem key={u._id} value={u._id}>
+                    <SelectItem key={u._id} value={String(u._id)}>
                       {u.name}
                     </SelectItem>
                   ))}
@@ -543,8 +543,8 @@ export default function SuperAdminDashboard() {
                           u.role === "admin"
                             ? "destructive"
                             : u.role === "superadmin"
-                            ? "outline"
-                            : "default"
+                              ? "outline"
+                              : "default"
                         }
                       >
                         {u.role}

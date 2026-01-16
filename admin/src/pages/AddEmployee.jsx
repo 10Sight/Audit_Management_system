@@ -264,7 +264,7 @@ export default function AddEmployeePage() {
                           <Building2 className="h-4 w-4" />
                           Department
                         </FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value ? String(field.value) : ""}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select department" />
@@ -273,7 +273,7 @@ export default function AddEmployeePage() {
                           <SelectContent>
                             {departments.length > 0 ? (
                               departments.map((department) => (
-                                <SelectItem key={department._id} value={department._id}>
+                                <SelectItem key={department._id} value={String(department._id)}>
                                   {department.name}{department.description ? ` - ${department.description}` : ''}
                                 </SelectItem>
                               ))
@@ -304,7 +304,7 @@ export default function AddEmployeePage() {
                           <Building2 className="h-4 w-4" />
                           Unit
                         </FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value ? String(field.value) : ""}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select unit" />
@@ -313,7 +313,7 @@ export default function AddEmployeePage() {
                           <SelectContent>
                             {units.length > 0 ? (
                               units.map((unit) => (
-                                <SelectItem key={unit._id} value={unit._id}>
+                                <SelectItem key={unit._id} value={String(unit._id)}>
                                   {unit.name}{unit.description ? ` - ${unit.description}` : ''}
                                 </SelectItem>
                               ))
@@ -344,7 +344,7 @@ export default function AddEmployeePage() {
                           <Shield className="h-4 w-4" />
                           Role
                         </FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value ? String(field.value) : ""}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select user role" />

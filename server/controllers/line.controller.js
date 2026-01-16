@@ -8,32 +8,38 @@ export const createLine = asyncHandler(async (req, res) => {
   const { name, description, department } = req.body;
   if (!name) throw new ApiError(400, "Line name is required");
 
-  // Enforce uniqueness per department (same name allowed in other departments)
+  // Enforce uniqueness per department
   const baseName = name.trim();
-  const query = { name: baseName };
-  if (department) {
-    query.department = department;
-  } else {
-    // Lines without a department are considered in a separate scope
-    query.department = { $exists: false };
-  }
+  const depFilter = department || null; // Map undefined/null to null
 
-  const existing = await Line.findOne(query);
+  const existing = await Line.findOne({ name: baseName, department: depFilter });
   if (existing) throw new ApiError(409, "Line already exists in this department");
 
   // Get the highest order number and add 1
-  const lastLine = await Line.findOne().sort({ order: -1 });
-  const order = lastLine ? lastLine.order + 1 : 1;
+  // We can't sort by 'order' easily with findOne() in simple shim if not built in?
+  // My Line model findOne uses _buildQuery limit 1.
+  // I need to provide sort option or manual query.
+  // SQL wrapper doesn't support custom sort in findOne params yet.
+  // I'll implement a static helper or use direct find() and sort.
+  const allLines = await Line.find({ department: depFilter });
+  // Sorting in memory for simplicity or update model. 
+  // lines table likely small per department.
+  allLines.sort((a, b) => b.order - a.order);
+  const lastOrder = allLines.length > 0 ? allLines[0].order : 0;
+  const order = lastOrder + 1;
 
-  const line = await Line.create({ name: baseName, description, order, department: department || undefined });
+  const line = await Line.create({ name: baseName, description, order, department: depFilter });
   logger.info(`Line created: ${line.name}`);
   return res.status(201).json(new ApiResponse(201, line, "Line created"));
 });
 
 export const getLines = asyncHandler(async (req, res) => {
   const { department } = req.query;
-  const query = department ? { department } : {};
-  const lines = await Line.find(query).sort({ order: 1, createdAt: 1 });
+  // If department is provided string, use it. If undefined, ignore.
+  const query = department !== undefined ? { department } : {};
+
+  const lines = await Line.find(query);
+  // Default sort in model is order ASC, name ASC.
   return res.json(new ApiResponse(200, lines, "Lines fetched"));
 });
 
@@ -45,15 +51,16 @@ export const updateLine = asyncHandler(async (req, res) => {
   if (!line) throw new ApiError(404, "Line not found");
 
   if (name && name !== line.name) {
-    const query = { name, _id: { $ne: id } };
-    if (line.department) {
-      query.department = line.department;
-    } else {
-      query.department = { $exists: false };
-    }
+    // Check duplicate
+    // Same department as current line
+    const depFilter = line.department;
 
-    const existing = await Line.findOne(query);
-    if (existing) throw new ApiError(409, "Line name already exists in this department");
+    // Manual check: fetch by name/dep, verify if it's NOT this line
+    const existing = await Line.findOne({ name, department: depFilter });
+
+    if (existing && existing._id != id) {
+      throw new ApiError(409, "Line name already exists in this department");
+    }
   }
 
   if (name) line.name = name;
@@ -67,30 +74,33 @@ export const updateLine = asyncHandler(async (req, res) => {
 
 export const reorderLines = asyncHandler(async (req, res) => {
   const { lineIds } = req.body;
-  
+
   if (!Array.isArray(lineIds)) {
     throw new ApiError(400, "lineIds must be an array");
   }
 
   // Update the order for each line
-  const updatePromises = lineIds.map((lineId, index) => 
+  const updatePromises = lineIds.map((lineId, index) =>
     Line.findByIdAndUpdate(lineId, { order: index + 1 }, { new: true })
   );
 
   await Promise.all(updatePromises);
-  
-  // Fetch updated lines (no department filter here; used by global lines page)
-  const lines = await Line.find({}).sort({ order: 1 });
-  
+
+  // Fetch updated lines (no department filter here; used by global lines page?)
+  // Actually usually reorder is context specific. If global list used, fetching all is fine.
+  const lines = await Line.find({}); // Sorts by default order ASC
+
   logger.info(`Lines reordered: ${lineIds.length} items`);
   return res.json(new ApiResponse(200, lines, "Lines reordered"));
 });
 
 export const deleteLine = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const line = await Line.findByIdAndDelete(id);
-  if (!line) throw new ApiError(404, "Line not found");
+  const exists = await Line.findById(id);
+  if (!exists) throw new ApiError(404, "Line not found");
+
+  await Line.findByIdAndDelete(id);
 
   logger.info(`Line deleted: ${id}`);
-  return res.json(new ApiResponse(200, line, "Line deleted"));
+  return res.json(new ApiResponse(200, exists, "Line deleted"));
 });

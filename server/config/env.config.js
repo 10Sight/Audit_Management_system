@@ -9,13 +9,13 @@ const EVN = {
     NODE_ENV: process.env.NODE_ENV || "development",
     JWT_ACCESS_SECRET: process.env.JWT_SECRET,
     JWT_EXPIRY: process.env.JWT_EXPIRY,
-    
+
     REDIS_URL: process.env.REDIS_URL || "redis://localhost:6379",
     REDIS_HOST: process.env.REDIS_HOST || "localhost",
     REDIS_PORT: process.env.REDIS_PORT || 6379,
     REDIS_PASSWORD: process.env.REDIS_PASSWORD || "",
     SESSION_SECRET: process.env.SESSION_SECRET || "your-secret-key-change-in-production",
-    
+
     CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
     CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
     CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
@@ -25,7 +25,14 @@ const EVN = {
 
     TWILIO_SID: process.env.TWILIO_SID,
     TWILIO_AUTH: process.env.TWILIO_AUTH,
+    TWILIO_AUTH: process.env.TWILIO_AUTH,
     TWILIO_NUMBER: process.env.TWILIO_NUMBER,
+
+    MYSQL_HOST: process.env.MYSQL_HOST,
+    MYSQL_USER: process.env.MYSQL_USER,
+    MYSQL_PASSWORD: process.env.MYSQL_PASSWORD,
+    MYSQL_DATABASE: process.env.MYSQL_DATABASE,
+    MYSQL_PORT: process.env.MYSQL_PORT,
 
     // Public client base URL for assets/links in emails (e.g. https://app.example.com)
     CLIENT_URL: process.env.CLIENT_URL,

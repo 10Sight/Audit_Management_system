@@ -27,12 +27,47 @@ export const getDepartments = asyncHandler(async (req, res) => {
   }
 
   const total = await Department.countDocuments(query);
-  const departments = await Department.find(query)
-    .populate("createdBy", "fullName employeeId")
-    .populate("unit", "name description")
-    .skip(skip)
-    .limit(limit)
-    .sort({ createdAt: -1 });
+
+  // SQL Model's find returns array of instances
+  // We need to handle pagination manually or add pagination support to find options
+  // Our shim: find(query) returns all.
+  // We should update find shim to support pagination or just slice here (inefficient but safe for now?)
+  // Actually, Department.model.js find() returns PROMISE of array. It does not support .skip().limit() chain on the promise result.
+  // The shim returns "rows.map(...)".
+  // We need to pass limit/skip to find().
+  // Let's modify the call:
+  // Department.find(query) in model uses `_buildQuery(query, options)`. 
+  // But wait, `find` in model: `static async find(query = {})`. It takes ONE arg.
+  // It does NOT accept options. 
+  // I should update the model or just accept that I need to fetch all and slice?
+  // Better: I can add `_buildQuery` support via a custom object passed as query?
+  // Or just update the model quickly?
+  // I'll update the Controller to assume I can't paginate efficiently yet OR I'll update the model in next step.
+  // Actually, `Department.find(query)` is what I wrote.
+  // Let's assume for this step I will just use `Department.find(query)` and slice in memory if needed, OR relies on model update.
+  // Re-reading my model: `static async find(query = {}) { const { sql, params } = Department._buildQuery(query); ... }`
+  // It does NOT support options.
+  // However, I can pass strict queries.
+  // For now, I will fetch all and slice in memory. Departments usually < 100.
+
+  const allDepts = await Department.find(query);
+  // Sort by createdAt desc (newest first)
+  allDepts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const departments = allDepts.slice(skip, skip + limit);
+
+  // Fetch employee stats to merge counts
+  const rawStats = await Employee.getStatsByDepartment();
+
+  // Populate and merge stats
+  for (const dept of departments) {
+    await dept.populate("createdBy", "fullName employeeId");
+    await dept.populate("unit", "name description");
+
+    // Calculate employeeCount from stats
+    const deptId = dept._id.toString();
+    const deptStats = rawStats.filter(s => s.department_id.toString() === deptId);
+    dept.employeeCount = deptStats.reduce((acc, curr) => acc + curr.count, 0);
+  }
 
   const actor = req.user
     ? `${req.user.fullName} (${req.user.employeeId})`
@@ -47,14 +82,32 @@ export const getDepartments = asyncHandler(async (req, res) => {
 export const getSingleDepartment = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  let department = mongoose.Types.ObjectId.isValid(id)
-    ? await Department.findById(id).populate("createdBy", "fullName employeeId")
-    : await Department.findOne({ name: new RegExp(id, "i") }).populate("createdBy", "fullName employeeId");
+  // ID is now INT. Or fallback to name search.
+  // Check if numeric
+  const isId = !isNaN(id);
+
+  let department = isId
+    ? await Department.findById(id)
+    : await Department.findOne({ name: id });
+
+  if (department) {
+    await department.populate("createdBy", "fullName employeeId");
+    // unit populates automatically if we want? No, explicit.
+    // The original code didn't populate unit here?
+    // Actually lines 51 says: .populate("createdBy", ...)
+    // It did NOT populate unit.
+  }
 
   if (!department) throw new ApiError(404, "Department not found");
 
   // Get employees in this department
-  const employees = await Employee.find({ department: department._id })
+  // CAUTION: Employee.find() returns shim builder.
+  // Employee.find({ department: department._id })
+  // Employee.department is ARRAY now in SQL (linked table).
+  // Does shim `find({ department: val })` handle JOIN?
+  // Auth model: `if (key === 'department') { hasDepartmentQuery = true; ... }`
+  // YES, it handles it!
+  const employees = await Employee.find({ department: department._id.toString() }) // Ensure string ID for match?
     .select("fullName employeeId emailId role")
     .sort({ fullName: 1 });
 
@@ -447,71 +500,49 @@ export const getDepartmentStats = asyncHandler(async (req, res) => {
     deptMatch.unit = unitFilter;
   }
 
-  // Aggregate per-department stats, optionally scoped to a unit
-  const stats = await Department.aggregate([
-    Object.keys(deptMatch).length ? { $match: deptMatch } : null,
-    {
-      $lookup: {
-        from: "employees",
-        localField: "_id",
-        foreignField: "department",
-        as: "employees",
-        pipeline: [
-          {
-            $project: {
-              role: 1,
-            },
-          },
-        ],
-      },
-    },
-    {
-      $project: {
-        name: 1,
-        description: 1,
-        isActive: 1,
-        employeeCount: { $size: "$employees" },
-        adminCount: {
-          $size: {
-            $filter: {
-              input: "$employees",
-              cond: { $eq: ["$$this.role", "admin"] },
-            },
-          },
-        },
-        employeeRoleCount: {
-          $size: {
-            $filter: {
-              input: "$employees",
-              cond: { $eq: ["$$this.role", "employee"] },
-            },
-          },
-        },
-        createdAt: 1,
-      },
-    },
-    {
-      $sort: { employeeCount: -1, name: 1 },
-    },
-  ].filter(Boolean));
+  // 1. Fetch relevant departments from MongoDB
+  const departments = await Department.find(deptMatch);
 
-  // Summary numbers, scoped to the same unit filter
-  const totalDepartments = await Department.countDocuments(deptMatch);
-  const activeDepartments = await Department.countDocuments({
-    ...deptMatch,
-    isActive: true,
+  if (departments.length === 0) {
+    return res.status(200).json(new ApiResponse(200, {
+      stats: [],
+      summary: { totalDepartments: 0, activeDepartments: 0, totalUsers: 0, totalEmployees: 0 }
+    }, "Department statistics fetched successfully"));
+  }
+
+  // 2. Fetch employee stats from MySQL (employees + employee_departments)
+  // We need counts per departmentId, broken down by role.
+  const rawStats = await Employee.getStatsByDepartment();
+  // rawStats: [{ department_id: '...', role: '...', count: 5 }]
+
+  // 3. Merge stats into departments
+  const stats = departments.map(dept => {
+    const deptId = dept._id.toString();
+    const deptStats = rawStats.filter(s => s.department_id === deptId);
+
+    const adminCount = deptStats.filter(s => s.role === 'admin').reduce((acc, curr) => acc + curr.count, 0);
+    const employeeRoleCount = deptStats.filter(s => s.role === 'employee').reduce((acc, curr) => acc + curr.count, 0);
+    const employeeCount = deptStats.reduce((acc, curr) => acc + curr.count, 0);
+
+    return {
+      name: dept.name,
+      description: dept.description,
+      isActive: dept.isActive,
+      employeeCount,
+      adminCount,
+      employeeRoleCount: employeeRoleCount, // Explicitly named to match existing API
+      createdAt: dept.createdAt
+    };
   });
 
-  // Derive user counts from aggregated stats so they respect the same unit scope
-  const totalUsers = stats.reduce(
-    (sum, dept) => sum + (dept.employeeCount || 0),
-    0
-  );
+  // Sort
+  stats.sort((a, b) => b.employeeCount - a.employeeCount || a.name.localeCompare(b.name));
 
-  const totalEmployees = stats.reduce(
-    (sum, dept) => sum + (dept.employeeRoleCount || 0),
-    0
-  );
+  // Summary numbers
+  const totalDepartments = departments.length;
+  const activeDepartments = departments.filter(d => d.isActive).length;
+  const totalUsers = stats.reduce((sum, dept) => sum + dept.employeeCount, 0);
+  const totalEmployees = stats.reduce((sum, dept) => sum + dept.employeeRoleCount, 0);
 
   logger.info(`Department statistics fetched by ${req.user.fullName} (${req.user.employeeId})`);
 

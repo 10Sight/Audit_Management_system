@@ -91,8 +91,34 @@ export default function AuditsPage() {
   // When no specific department is selected, line/machine dropdowns should not list
   // items from unrelated departments. We only allow selecting lines/machines when a
   // concrete department is chosen.
-  const lineOptions = selectedDepartment === 'all' ? [] : (linesRes?.data || []);
-  const machineOptions = selectedDepartment === 'all' ? [] : (machinesRes?.data || []);
+  const lineOptions = React.useMemo(() => {
+    if (selectedDepartment === 'all') return [];
+    return linesRes?.data || [];
+  }, [linesRes, selectedDepartment]);
+
+  const machineOptions = React.useMemo(() => {
+    if (selectedDepartment === 'all') return [];
+    let list = machinesRes?.data || [];
+    if (selectedLine !== 'all') {
+      list = list.filter(m => {
+        const lId = typeof m.line === 'object' ? m.line?._id : m.line;
+        return lId && String(lId) === String(selectedLine);
+      });
+    }
+    return list;
+  }, [machinesRes, selectedDepartment, selectedLine]);
+
+  // Reset child filters when parent changes
+  useEffect(() => {
+    setSelectedLine('all');
+    setSelectedMachine('all');
+    setCurrentPage(1);
+  }, [selectedDepartment]);
+
+  useEffect(() => {
+    setSelectedMachine('all');
+    setCurrentPage(1);
+  }, [selectedLine]);
 
   const { data: auditsRes, isLoading: auditsLoading } = useGetAuditsQuery({
     page: currentPage,
@@ -382,37 +408,43 @@ export default function AuditsPage() {
                         return du && String(du) === String(effectiveUnitId);
                       })
                       .map((d) => (
-                        <SelectItem key={d._id} value={d._id}>{d.name}</SelectItem>
+                        <SelectItem key={d._id} value={String(d._id)}>{d.name}</SelectItem>
                       ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-1">
-                <Label className="text-xs font-medium text-muted-foreground">Line</Label>
-                <Select value={selectedLine} onValueChange={(v) => { setSelectedLine(v); setCurrentPage(1); }}>
+                <Select
+                  value={selectedLine}
+                  onValueChange={(v) => { setSelectedLine(v); }}
+                  disabled={selectedDepartment === 'all'}
+                >
                   <SelectTrigger className="min-w-[160px] h-9 text-sm">
-                    <SelectValue placeholder="All Lines" />
+                    <SelectValue placeholder={selectedDepartment === 'all' ? "Select Dept" : "All Lines"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Lines</SelectItem>
                     {lineOptions.map((l) => (
-                      <SelectItem key={l._id} value={l._id}>{l.name}</SelectItem>
+                      <SelectItem key={l._id} value={String(l._id)}>{l.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-1">
-                <Label className="text-xs font-medium text-muted-foreground">Machine</Label>
-                <Select value={selectedMachine} onValueChange={(v) => { setSelectedMachine(v); setCurrentPage(1); }}>
+                <Select
+                  value={selectedMachine}
+                  onValueChange={(v) => { setSelectedMachine(v); }}
+                  disabled={selectedDepartment === 'all'}
+                >
                   <SelectTrigger className="min-w-[160px] h-9 text-sm">
-                    <SelectValue placeholder="All Machines" />
+                    <SelectValue placeholder={selectedDepartment === 'all' ? "Select Dept" : "All Machines"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Machines</SelectItem>
                     {machineOptions.map((m) => (
-                      <SelectItem key={m._id} value={m._id}>{m.name}</SelectItem>
+                      <SelectItem key={m._id} value={String(m._id)}>{m.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

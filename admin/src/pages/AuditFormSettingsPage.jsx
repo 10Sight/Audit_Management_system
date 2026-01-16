@@ -59,10 +59,10 @@ export default function AuditFormSettingsPage() {
 
     // If we already have a department in state, don't override it here
     if (!selectedDepartment) {
-      if (stored && filteredDepartments.some((d) => d._id === stored)) {
+      if (stored && filteredDepartments.some((d) => d._id == stored)) {
         setSelectedDepartment(stored);
       } else if (!stored && filteredDepartments.length > 0) {
-        setSelectedDepartment(filteredDepartments[0]._id);
+        setSelectedDepartment(String(filteredDepartments[0]._id));
       }
     }
   }, [filteredDepartments, selectedDepartment]);
@@ -290,7 +290,7 @@ export default function AuditFormSettingsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     {filteredDepartments.map((dept) => (
-                      <SelectItem key={dept._id} value={dept._id}>
+                      <SelectItem key={dept._id} value={String(dept._id)}>
                         {dept.name}
                       </SelectItem>
                     ))}

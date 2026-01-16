@@ -186,6 +186,20 @@ export default function EmployeesPage() {
 
   const getDepartmentName = (dept) => {
     if (!dept) return 'N/A';
+
+    // Handle array case (multiple departments)
+    if (Array.isArray(dept)) {
+      if (dept.length === 0) return 'N/A';
+      return dept
+        .map((d) => {
+          if (typeof d === 'object' && d?.name) return d.name;
+          if (typeof d === 'string') return departmentMap.get(d) || d;
+          return null;
+        })
+        .filter(Boolean)
+        .join(', ') || 'N/A';
+    }
+
     if (typeof dept === 'object' && dept?.name) return dept.name;
     if (typeof dept === 'string') return departmentMap.get(dept) || 'N/A';
     return 'N/A';
@@ -363,7 +377,7 @@ export default function EmployeesPage() {
                   <SelectContent>
                     <SelectItem value="all">All departments</SelectItem>
                     {departments.map((d) => (
-                      <SelectItem key={d._id} value={d._id}>
+                      <SelectItem key={d._id} value={String(d._id)}>
                         {d.name}
                       </SelectItem>
                     ))}

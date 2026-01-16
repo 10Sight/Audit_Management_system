@@ -5574,3 +5574,468 @@
 [01 Jan, 2026 - 12:41:24:4124] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
 [01 Jan, 2026 - 12:42:10:4210] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
 [01 Jan, 2026 - 12:42:10:4210] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:49:00:490] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[01 Jan, 2026 - 12:49:03:493] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-02.knfen.mongodb.net:27017/test[39m
+[01 Jan, 2026 - 12:51:11:5111] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[01 Jan, 2026 - 12:51:12:5112] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[01 Jan, 2026 - 12:53:18:5318] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[01 Jan, 2026 - 12:53:18:5318] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[01 Jan, 2026 - 12:53:47:5347] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:53:47:5347] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:53:50:5350] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:53:50:5350] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:53:50:5350] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:54:13:5413] [34minfo[39m: [34mEmployee test (TEST001) assigned to department testing by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:54:14:5414] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:54:14:5414] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:54:14:5414] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:54:17:5417] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:54:38:5438] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[01 Jan, 2026 - 12:55:51:5551] [34minfo[39m: [34mAttempting to connect to MongoDB (1/3): mongodb+srv://***@cluster0.knfen.mongodb.net/?appName=Cluster0[39m
+[01 Jan, 2026 - 12:55:52:5552] [34minfo[39m: [34m✅ MongoDB Connected Successfully: cluster0-shard-00-01.knfen.mongodb.net:27017/test[39m
+[05 Jan, 2026 - 22:53:07:537] [31merror[39m: [31mMySQL Database connection failed: Access denied for user ''@'localhost' (using password: YES)[39m
+[06 Jan, 2026 - 00:10:11:1011] [31merror[39m: [31mFailed to ensure SQL tables Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:10:11:1011] [31merror[39m: [31mTarget audit reminder job failed: Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:10:11:1011] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:10:22:1022] [31merror[39m: [31mFailed to ensure SQL tables Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:10:23:1023] [31merror[39m: [31mTarget audit reminder job failed: Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:10:23:1023] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:10:33:1033] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:10:43:1043] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:10:53:1053] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:11:03:113] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:11:13:1113] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:11:23:1123] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:11:33:1133] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:11:43:1143] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:11:53:1153] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:12:03:123] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:12:13:1213] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:12:23:1223] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:12:33:1233] [31merror[39m: [31mTarget audit reminder job failed: Table 'audit management system.employees' doesn't exist[39m
+[06 Jan, 2026 - 00:12:42:1242] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:14:08:148] [31merror[39m: [31mFailed to ensure SQL tables Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:14:08:148] [31merror[39m: [31mTarget audit reminder job failed: Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:14:08:148] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:14:19:1419] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:15:05:155] [31merror[39m: [31mFailed to ensure SQL tables Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:15:06:156] [31merror[39m: [31mTarget audit reminder job failed: Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:15:06:156] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:15:28:1528] [31merror[39m: [31mFailed to ensure SQL tables Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:15:29:1529] [31merror[39m: [31mTarget audit reminder job failed: Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:15:29:1529] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:15:39:1539] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:16:44:1644] [31merror[39m: [31mFailed to ensure SQL tables Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:16:44:1644] [31merror[39m: [31mTarget audit reminder job failed: Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:16:44:1644] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:17:27:1727] [31merror[39m: [31mFailed to ensure SQL tables Cannot read properties of undefined (reading 'query')[39m
+[06 Jan, 2026 - 00:17:27:1727] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:17:42:1742] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:18:24:1824] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:19:42:1942] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:20:01:201] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:21:59:2159] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:26:28:2628] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:27:58:2758] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:28:15:2815] [34minfo[39m: [34mAll users fetched by Super Admin (sa001)[39m
+[06 Jan, 2026 - 00:28:23:2823] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[06 Jan, 2026 - 00:28:54:2854] [34minfo[39m: [34mUnit created: Unit 1[39m
+[06 Jan, 2026 - 00:29:07:297] [34minfo[39m: [34mUnit created: Unit 2[39m
+[06 Jan, 2026 - 00:29:10:2910] [34minfo[39m: [34mAll users fetched by Super Admin (sa001)[39m
+[06 Jan, 2026 - 00:29:19:2919] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[06 Jan, 2026 - 00:29:19:2919] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[06 Jan, 2026 - 00:29:37:2937] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:29:37:2937] [34minfo[39m: [34mNew employee registered: Jatin (JA001)[39m
+[06 Jan, 2026 - 00:29:38:2938] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:29:38:2938] [34minfo[39m: [34mAll users fetched by Super Admin (sa001)[39m
+[06 Jan, 2026 - 00:29:45:2945] [34minfo[39m: [34mEmployee logged out[39m
+[06 Jan, 2026 - 00:29:47:2947] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:29:48:2948] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:29:48:2948] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:29:54:2954] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:29:54:2954] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:30:00:300] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:33:18:3318] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:33:53:3353] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:34:09:349] [34minfo[39m: [34mNew department created: Assembly by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:34:09:349] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:34:09:349] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:34:15:3415] [34minfo[39m: [34mNew department created: Moulding by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:34:15:3415] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:34:15:3415] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:34:22:3422] [34minfo[39m: [34mNew department created: Coating by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:34:22:3422] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:34:22:3422] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:34:25:3425] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:34:25:3425] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:34:57:3457] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 00:34:57:3457] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:34:57:3457] [34minfo[39m: [34mNew employee registered: test001 (TEST001)[39m
+[06 Jan, 2026 - 00:34:58:3458] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 00:34:58:3458] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:34:58:3458] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:35:08:358] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 00:35:08:358] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:35:08:358] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:35:08:358] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:35:48:3548] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:35:48:3548] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 00:35:48:3548] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:35:48:3548] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:35:49:3549] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:36:47:3647] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 00:36:47:3647] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:37:28:3728] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:39:18:3918] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:39:50:3950] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:40:54:4054] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:41:48:4148] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:42:50:4250] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:42:50:4250] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 00:42:50:4250] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:42:50:4250] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:42:50:4250] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:42:55:4255] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 00:45:32:4532] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:46:27:4627] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:47:55:4755] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:49:17:4917] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:51:12:5112] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:52:07:527] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:53:28:5328] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:53:41:5341] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:54:24:5424] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:54:38:5438] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:54:54:5454] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:56:31:5631] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:56:33:5633] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:57:03:573] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 00:58:03:583] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 00:58:03:583] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:00:40:040] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:00:40:040] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:00:49:049] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:00:50:050] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:03:45:345] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:03:45:345] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:04:04:44] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 01:04:04:44] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:04:04:44] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:04:04:44] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:04:07:47] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 01:04:07:47] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:06:56:656] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:07:44:744] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:07:44:744] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 01:07:44:744] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:07:44:744] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:09:36:936] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:09:36:936] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 01:09:36:936] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:09:36:936] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:09:40:940] [34minfo[39m: [34mEmployee updated: test001 (TEST001) by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:09:40:940] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 01:09:40:940] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:09:48:948] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 01:09:48:948] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:09:48:948] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:09:48:948] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:09:51:951] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:09:51:951] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 01:09:51:951] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:09:51:951] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:09:51:951] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:11:39:1139] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 01:12:12:1212] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 01:12:34:1234] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:12:34:1234] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:12:34:1234] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 01:12:34:1234] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:12:34:1234] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:16:34:1634] [33mwarn[39m: [33mFailed to populate departments Department.find(...).select is not a function[39m
+[06 Jan, 2026 - 01:16:34:1634] [33mwarn[39m: [33mFailed to populate unit Unit.findById(...).select is not a function[39m
+[06 Jan, 2026 - 01:18:53:1853] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 01:19:42:1942] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 01:21:13:2113] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:21:13:2113] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:21:56:2156] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:21:56:2156] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:22:03:223] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:22:35:2235] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 01:25:11:2511] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 01:26:09:269] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:27:21:2721] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:27:40:2740] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 01:28:06:286] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 09:22:50:2250] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 09:23:36:2336] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 22:59:09:599] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 22:59:44:5944] [34minfo[39m: [34mAll users fetched by Super Admin (sa001)[39m
+[06 Jan, 2026 - 22:59:55:5955] [34minfo[39m: [34mEmployee logged out[39m
+[06 Jan, 2026 - 23:00:02:02] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:00:02:02] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:00:13:013] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:00:13:013] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:01:54:154] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:02:20:220] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:02:34:234] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:02:46:246] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:02:54:254] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:03:10:310] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:03:28:328] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:03:51:351] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:04:10:410] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:04:21:421] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:04:28:428] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:04:57:457] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:04:57:457] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:05:15:515] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:05:15:515] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:05:48:548] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:05:58:558] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:06:22:622] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:07:04:74] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:07:13:713] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:07:13:713] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:07:31:731] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:08:04:84] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:08:30:830] [34minfo[39m: [34mNew employee registered: test002 (TEST002)[39m
+[06 Jan, 2026 - 23:08:31:831] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:08:39:839] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:08:39:839] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:08:45:845] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:08:45:845] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:08:45:845] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:11:04:114] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:11:12:1112] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:11:20:1120] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:11:33:1133] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:11:56:1156] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:29:59:2959] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:29:59:2959] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:29:59:2959] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:30:04:304] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:30:58:3058] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:30:58:3058] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:32:28:3228] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:32:35:3235] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:33:04:334] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:33:19:3319] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:33:23:3323] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:35:03:353] [34minfo[39m: [34mDepartment updated: Moulding by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:35:11:3511] [34minfo[39m: [34mDepartment updated: Moulding by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:35:18:3518] [34minfo[39m: [34mDepartment updated: Moulding by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:35:24:3524] [34minfo[39m: [34mDepartment updated: Moulding by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:35:37:3537] [34minfo[39m: [34mLine created: Line 1 (Moulding)[39m
+[06 Jan, 2026 - 23:35:40:3540] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:35:51:3551] [34minfo[39m: [34mMachine created: Machine 1[39m
+[06 Jan, 2026 - 23:36:07:367] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:36:07:367] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:36:07:367] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:36:29:3629] [33mwarn[39m: [33mAtomic update failed for employee 3, checking for legacy data repair... Error: Employee.findByIdAndUpdate(...).populate is not a function[39m
+[06 Jan, 2026 - 23:36:29:3629] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:36:29:3629] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:36:29:3629] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:38:09:389] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:38:17:3817] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:39:18:3918] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:39:29:3929] [33mwarn[39m: [33mAtomic update failed for employee 3, checking for legacy data repair... Error: Employee.findByIdAndUpdate(...).populate is not a function[39m
+[06 Jan, 2026 - 23:39:29:3929] [34minfo[39m: [34mLegacy data repaired for 3[39m
+[06 Jan, 2026 - 23:39:29:3929] [34minfo[39m: [34mEmployee test001 (TEST001) assigned to department Coating by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:39:29:3929] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:39:29:3929] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:39:29:3929] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:41:41:4141] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:41:49:4149] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:42:41:4241] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:42:54:4254] [34minfo[39m: [34mEmployee test001 (TEST001) removed from department Moulding by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:42:59:4259] [34minfo[39m: [34mEmployee test002 (TEST002) removed from department Moulding by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:43:02:432] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:43:02:432] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:43:02:432] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:43:28:4328] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:43:36:4336] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:46:25:4625] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:46:47:4647] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:46:57:4657] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:47:58:4758] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:48:23:4823] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:48:33:4833] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:49:37:4937] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:49:42:4942] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:50:25:5025] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:50:50:5050] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[06 Jan, 2026 - 23:54:04:544] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:54:09:549] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:59:36:5936] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[06 Jan, 2026 - 23:59:47:5947] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:00:31:031] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:00:39:039] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:01:31:131] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:01:51:151] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:02:42:242] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:02:52:252] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:03:01:31] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:07:27:727] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:08:10:810] [34minfo[39m: [34mCreated 2 questions by user 2[39m
+[07 Jan, 2026 - 00:09:07:97] [34minfo[39m: [34mCreated 1 questions by user 2[39m
+[07 Jan, 2026 - 00:09:19:919] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:19:57:1957] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:20:18:2018] [34minfo[39m: [34mCreated 1 questions by user 2[39m
+[07 Jan, 2026 - 00:21:54:2154] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:23:35:2335] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:24:02:242] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:24:38:2438] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:25:23:2523] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:26:31:2631] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:30:40:3040] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:31:10:3110] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:31:49:3149] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:32:23:3223] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:33:01:331] [34minfo[39m: [34mDeleted 2 questions for template "jhgfhg" by user 2[39m
+[07 Jan, 2026 - 00:35:44:3544] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:35:53:3553] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:36:02:362] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:36:13:3613] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:36:37:3637] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:36:44:3644] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:37:08:378] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:37:15:3715] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:37:35:3735] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:37:51:3751] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:38:04:384] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:38:12:3812] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:40:18:4018] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:40:27:4027] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:40:35:4035] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:40:47:4047] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:41:03:413] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:43:34:4334] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:43:42:4342] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:43:58:4358] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:44:06:446] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:45:02:452] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:45:29:4529] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:48:51:4851] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:49:14:4914] [34minfo[39m: [34mCreated 1 questions by user 2[39m
+[07 Jan, 2026 - 00:49:28:4928] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:49:28:4928] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:49:28:4928] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:49:55:4955] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:49:55:4955] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:50:06:506] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:50:20:5020] [34minfo[39m: [34mEmployee logged out[39m
+[07 Jan, 2026 - 00:50:42:5042] [34minfo[39m: [34mEmployee logged out[39m
+[07 Jan, 2026 - 00:51:02:512] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:02:512] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:02:512] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:22:5122] [34minfo[39m: [34mEmployee test001 (TEST001) assigned to department Assembly by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:22:5122] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:22:5122] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:22:5122] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:28:5128] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:28:5128] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:28:5128] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:54:5154] [34minfo[39m: [34mEmployee test001 (TEST001) assigned to department Moulding by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:54:5154] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:54:5154] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:51:54:5154] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:54:58:5458] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:55:17:5517] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:55:46:5546] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:56:16:5616] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:56:54:5654] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 00:58:01:581] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:58:01:581] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:58:01:581] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:58:18:5818] [34minfo[39m: [34mEmployee test001 (TEST001) assigned to department Moulding by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:58:18:5818] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:58:18:5818] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:58:18:5818] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:58:35:5835] [34minfo[39m: [34mEmployee test001 (TEST001) assigned to department Assembly by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:58:35:5835] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:58:35:5835] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:58:35:5835] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 00:59:59:5959] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:00:29:029] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:01:26:126] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:02:44:244] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:03:20:320] [34minfo[39m: [34mEmployee test001 (TEST001) assigned to department Moulding by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:03:20:320] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:03:21:321] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:03:21:321] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:03:34:334] [34minfo[39m: [34mEmployee logged out[39m
+[07 Jan, 2026 - 01:15:11:1511] [34minfo[39m: [34mAudit created by 3[39m
+[07 Jan, 2026 - 01:19:33:1933] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:20:34:2034] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:20:54:2054] [34minfo[39m: [34mAudit created by 3[39m
+[07 Jan, 2026 - 01:23:24:2324] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:24:49:2449] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:25:07:257] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:25:49:2549] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:27:04:274] [34minfo[39m: [34mAudit created by 3[39m
+[07 Jan, 2026 - 01:28:25:2825] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:28:34:2834] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:37:02:372] [34minfo[39m: [34mEmployee logged out[39m
+[07 Jan, 2026 - 01:37:09:379] [34minfo[39m: [34mAll users fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:37:17:3717] [34minfo[39m: [34mAll users fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:37:21:3721] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:37:21:3721] [34minfo[39m: [34mEmployees fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:37:24:3724] [34minfo[39m: [34mEmployees fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:37:26:3726] [34minfo[39m: [34mEmployees fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:37:48:3748] [34minfo[39m: [34mEmployees fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:37:58:3758] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:38:03:383] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:38:03:383] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:38:03:383] [34minfo[39m: [34mAll users fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:38:23:3823] [34minfo[39m: [34mAll users fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:38:24:3824] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:38:53:3853] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:41:09:419] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:41:39:4139] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:41:51:4151] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:44:22:4422] [34minfo[39m: [34mEmployee logged out[39m
+[07 Jan, 2026 - 01:44:31:4431] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:44:31:4431] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:44:41:4441] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:45:03:453] [34minfo[39m: [34mTarget audit updated for test001 (TEST001) by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:45:08:458] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:45:14:4514] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:45:26:4526] [34minfo[39m: [34mEmployee updated: test001 (TEST001) by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:45:34:4534] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:45:52:4552] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:46:27:4627] [34minfo[39m: [34mTarget audit updated for test001 (TEST001) by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:46:43:4643] [34minfo[39m: [34mTarget audit updated for test001 (TEST001) by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:47:19:4719] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com (CC: )[39m
+[07 Jan, 2026 - 01:47:35:4735] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:47:35:4735] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:48:01:481] [34minfo[39m: [34mEmployee logged out[39m
+[07 Jan, 2026 - 01:48:10:4810] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:48:15:4815] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:49:52:4952] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:50:33:5033] [34minfo[39m: [34mEmployee logged out[39m
+[07 Jan, 2026 - 01:50:46:5046] [34minfo[39m: [34mAll users fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:50:52:5052] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:50:54:5054] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:52:18:5218] [34minfo[39m: [34mAll users fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:52:24:5224] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:52:24:5224] [34minfo[39m: [34mEmployees fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:52:38:5238] [34minfo[39m: [34mDepartments fetched by Super Admin (sa001)[39m
+[07 Jan, 2026 - 01:52:49:5249] [34minfo[39m: [34mEmployee logged out[39m
+[07 Jan, 2026 - 01:54:35:5435] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:54:35:5435] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:54:35:5435] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:56:15:5615] [34minfo[39m: [34mDepartment statistics fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:56:15:5615] [34minfo[39m: [34mAll users fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:56:15:5615] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:56:18:5618] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:58:04:584] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 01:58:22:5822] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:58:33:5833] [34minfo[39m: [34mDepartments fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 01:59:02:592] [34minfo[39m: [34mEmployees fetched by Jatin (JA001)[39m
+[07 Jan, 2026 - 02:51:52:5152] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 02:52:42:5242] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 02:52:58:5258] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[07 Jan, 2026 - 02:53:05:535] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[12 Jan, 2026 - 22:20:47:2047] [34minfo[39m: [34mMySQL Database connected successfully.[39m
+[12 Jan, 2026 - 22:20:51:2051] [34minfo[39m: [34mTarget audit reminder email sent to jatinnagar563@gmail.com (CC: )[39m

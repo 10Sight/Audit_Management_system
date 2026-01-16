@@ -119,10 +119,21 @@ export default function AdminManageQuestionsPage() {
     if (Array.isArray(questionsRes?.data)) setQuestions(questionsRes.data);
   }, [questionsRes, questionsLoading]);
 
-  // Reset pagination when filters change
+  // Reset pagination and child filters when parent filters change
   useEffect(() => {
     setPage(1);
-  }, [selectedDepartment, selectedLine, selectedMachine]);
+    setSelectedLine("all");
+    setSelectedMachine("all");
+  }, [selectedDepartment]);
+
+  useEffect(() => {
+    setPage(1);
+    setSelectedMachine("all");
+  }, [selectedLine]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [selectedMachine]);
 
   const filteredQuestions = useMemo(() => {
     if (!searchTerm.trim()) return questions;
@@ -166,22 +177,29 @@ export default function AdminManageQuestionsPage() {
     return departments;
   }, [departments, effectiveUnitId]);
 
-  // Lines and machines filtered under the selected department
+  // Lines and machines filtered under the selected department (Hierarchical)
   const filteredLines = useMemo(() => {
-    if (!selectedDepartment || selectedDepartment === "all") return lines;
+    if (!selectedDepartment || selectedDepartment === "all") return [];
     return lines.filter((line) => {
       const deptId = typeof line.department === "object" ? line.department?._id : line.department;
-      return deptId && deptId === selectedDepartment;
+      return deptId && String(deptId) === String(selectedDepartment);
     });
   }, [lines, selectedDepartment]);
 
   const filteredMachines = useMemo(() => {
-    if (!selectedDepartment || selectedDepartment === "all") return machines;
+    if (!selectedDepartment || selectedDepartment === "all") return [];
     return machines.filter((machine) => {
       const deptId = typeof machine.department === "object" ? machine.department?._id : machine.department;
-      return deptId && deptId === selectedDepartment;
+      if (!deptId || String(deptId) !== String(selectedDepartment)) return false;
+
+      // If line is selected, filter by it too
+      if (selectedLine && selectedLine !== "all") {
+        const lineId = typeof machine.line === "object" ? machine.line?._id : machine.line;
+        return lineId && String(lineId) === String(selectedLine);
+      }
+      return true; // Show all machines of department if no line selected
     });
-  }, [machines, selectedDepartment]);
+  }, [machines, selectedDepartment, selectedLine]);
 
   const totalQuestions = filteredQuestions.length;
   const totalGlobal = useMemo(
@@ -384,7 +402,7 @@ export default function AdminManageQuestionsPage() {
                   <SelectContent>
                     <SelectItem value="all">All Departments</SelectItem>
                     {filteredDepartments.map((dept) => (
-                      <SelectItem key={dept._id} value={dept._id}>
+                      <SelectItem key={dept._id} value={String(dept._id)}>
                         {dept.name}
                       </SelectItem>
                     ))}
@@ -400,14 +418,15 @@ export default function AdminManageQuestionsPage() {
                 <Select
                   value={selectedLine}
                   onValueChange={setSelectedLine}
+                  disabled={selectedDepartment === "all"}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="All Lines" />
+                    <SelectValue placeholder={selectedDepartment === "all" ? "Select Department first" : "All Lines"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Lines</SelectItem>
                     {filteredLines.map((line) => (
-                      <SelectItem key={line._id} value={line._id}>
+                      <SelectItem key={line._id} value={String(line._id)}>
                         {line.name}
                       </SelectItem>
                     ))}
@@ -423,14 +442,15 @@ export default function AdminManageQuestionsPage() {
                 <Select
                   value={selectedMachine}
                   onValueChange={setSelectedMachine}
+                  disabled={selectedDepartment === "all"}
                 >
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="All Machines" />
+                    <SelectValue placeholder={selectedDepartment === "all" ? "Select Department first" : "All Machines"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Machines</SelectItem>
                     {filteredMachines.map((machine) => (
-                      <SelectItem key={machine._id} value={machine._id}>
+                      <SelectItem key={machine._id} value={String(machine._id)}>
                         {machine.name}
                       </SelectItem>
                     ))}

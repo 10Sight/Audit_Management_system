@@ -28,24 +28,35 @@ export const setupTargetAuditReminders = (app) => {
       // Employees with an active target whose window includes "now",
       // who have a reminderTime configured, and who have not yet
       // received a reminder today.
-      const employees = await Employee.find({
-        role: "employee",
-        "targetAudit.total": { $gt: 0 },
-        "targetAudit.startDate": { $lte: now },
-        "targetAudit.endDate": { $gte: now },
-        "targetAudit.reminderTime": { $exists: true, $ne: "" },
-        $or: [
-          { "targetAudit.lastReminderDate": { $exists: false } },
-          { "targetAudit.lastReminderDate": { $lt: startOfDay } },
-        ],
-      }).select("fullName emailId department targetAudit");
+      // Employees with an active target checks
+      // Since SQL shim has limited query support for JSON fields, we fetch all employees
+      // and filter in memory.
+      const allEmployees = await Employee.find({ role: "employee" });
+
+      const employees = allEmployees.filter(emp => {
+        const t = emp.targetAudit;
+        if (!t || !t.total || t.total <= 0) return false;
+        if (!t.startDate || !t.endDate || !t.reminderTime) return false;
+
+        const start = new Date(t.startDate);
+        const end = new Date(t.endDate);
+
+        if (start > now || end < now) return false;
+
+        // Check last reminder date
+        if (t.lastReminderDate) {
+          const last = new Date(t.lastReminderDate);
+          if (last >= startOfDay) return false; // Already sent today
+        }
+
+        return true;
+      });
 
       // Pre-fetch email settings if we need to escalate
       let emailSetting = null;
 
       for (const emp of employees) {
-        const { total, startDate, endDate, reminderTime, lastAuditCountAtReminder = 0, stagnantReminderCount = 0 } = emp.targetAudit || {};
-        if (!total || !startDate || !endDate || !reminderTime) continue;
+        const { total, startDate, endDate, reminderTime, lastAuditCountAtReminder = 0, stagnantReminderCount = 0 } = emp.targetAudit;
 
         const [h, m] = reminderTime.split(":").map((v) => parseInt(v, 10));
         if (Number.isNaN(h) || Number.isNaN(m)) continue;
@@ -62,7 +73,7 @@ export const setupTargetAuditReminders = (app) => {
         }
 
         const completed = await Audit.countDocuments({
-          auditor: emp._id,
+          auditor: emp._id || emp.id, // Handle both ID types
           date: { $gte: startDate, $lte: endDate },
         });
 
@@ -93,16 +104,20 @@ export const setupTargetAuditReminders = (app) => {
             emailSetting = await AuditEmailSetting.findOne().sort({ createdAt: -1 }).lean();
           }
 
-          if (emailSetting && emp.department) {
-            const deptId = emp.department.toString();
-            const deptConfig = emailSetting.departmentRecipients?.find((cfg) => {
-              const cfgDeptId = cfg.department?._id?.toString?.() || cfg.department?.toString?.();
-              return cfgDeptId === deptId;
-            });
+          if (emailSetting && emp.department && emp.department.length > 0) {
+            // Check each department
+            for (const empDeptId of emp.department) {
+              const deptIdStr = typeof empDeptId === 'object' ? empDeptId._id.toString() : empDeptId.toString();
 
-            if (deptConfig) {
-              if (deptConfig.to) toEmails.push(...deptConfig.to.split(",").map(e => e.trim()));
-              if (deptConfig.cc) ccEmails.push(...deptConfig.cc.split(",").map(e => e.trim()));
+              const deptConfig = emailSetting.departmentRecipients?.find((cfg) => {
+                const cfgDeptId = cfg.department?._id?.toString?.() || cfg.department?.toString?.();
+                return cfgDeptId === deptIdStr;
+              });
+
+              if (deptConfig) {
+                if (deptConfig.to) toEmails.push(...deptConfig.to.split(",").map(e => e.trim()));
+                if (deptConfig.cc) ccEmails.push(...deptConfig.cc.split(",").map(e => e.trim()));
+              }
             }
           }
         }
@@ -117,7 +132,7 @@ export const setupTargetAuditReminders = (app) => {
         if (io) {
           io.emit("audit-notification", {
             type: "target-audit-reminder",
-            employeeId: emp._id,
+            employeeId: emp._id || emp.id,
             message,
             timestamp: new Date().toISOString(),
           });
@@ -193,49 +208,29 @@ export const setupTargetAuditReminders = (app) => {
           `;
 
           try {
-            // sendMail supports (to, subject, html, cc)
-            // Assuming sendMail signature is (to, subject, html, cc) or similar. 
-            // If it only takes (to, subject, html), we might need to join emails or update utility.
-            // Based on typical usage, let's assume we send to primary and handle CC if supported, 
-            // or just add everyone to 'to' if 'cc' isn't supported by the util.
-            // Let's check mail.util.js usage in other files... 
-            // The file view of targetAuditReminder.service.js showed: await sendMail(emp.emailId, subject, html);
-            // I'll assume for now I can pass a comma-separated string or array. 
-            // Safest is to join them.
-
-            // NOTE: If sendMail doesn't support CC arg, we'll just put everyone in TO for now or check util.
-            // Since I can't check util right this second without a tool call, I'll assume standard nodemailer wrapper.
-            // I will try to pass CC as 4th arg if possible, or just combine.
-            // Let's just send to all in 'to' for simplicity if we are unsure, but ideally CC is better.
-
-            // Re-reading previous file view of auth.controller.js... it imports sendMail but doesn't show implementation.
-            // I'll stick to the existing pattern but try to pass CC.
-
             const toStr = toEmails.join(", ");
             const ccStr = ccEmails.join(", ");
-
-            // Assuming sendMail(to, subject, html, cc) - if not supported, JS just ignores extra arg.
             await sendMail(toStr, subject, html, ccStr);
-
             logger.info(`Target audit reminder email sent to ${toStr} (CC: ${ccStr})`);
           } catch (err) {
             logger.error(`Failed to send target audit reminder to ${emp.emailId}: ${err?.message || err}`);
           }
         }
 
-        // Mark that we've sent a reminder for this employee for today so we don't
-        // send duplicates if the job runs again later in the same day.
+        // Mark that we've sent a reminder for this employee for today
         try {
-          await Employee.updateOne(
-            { _id: emp._id },
-            {
-              "targetAudit.lastReminderDate": now,
-              "targetAudit.lastAuditCountAtReminder": newLastAuditCount,
-              "targetAudit.stagnantReminderCount": newStagnantCount
-            }
-          );
+          // Use save() logic from shim as updateOne is not implemented
+          // Or findByIdAndUpdate
+
+          emp.targetAudit.lastReminderDate = now;
+          emp.targetAudit.lastAuditCountAtReminder = newLastAuditCount;
+          emp.targetAudit.stagnantReminderCount = newStagnantCount;
+
+          // Since emp is an EmployeeDocument instance from our shim, it has save()
+          await emp.save();
+
         } catch (err) {
-          logger.error(`Failed to update lastReminderDate for ${emp._id}: ${err?.message || err}`);
+          logger.error(`Failed to update lastReminderDate for ${emp._id || emp.id}: ${err?.message || err}`);
         }
       }
     } catch (err) {

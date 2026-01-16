@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import {
-  useGetAllUsersQuery,
-  useGetDepartmentsQuery,
+  useGetDepartmentByIdQuery,
   useUpdateDepartmentMutation,
   useGetLinesQuery,
   useCreateLineMutation,
@@ -33,9 +32,7 @@ export default function DepartmentDetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
 
-  const { data: deptRes } = useGetDepartmentsQuery({ page: 1, limit: 1000 })
-  const { data: usersRes } = useGetAllUsersQuery({ page: 1, limit: 1000 })
-
+  const { data: deptDetailRes, isLoading: isDeptLoading } = useGetDepartmentByIdQuery(id)
   const [updateDepartment] = useUpdateDepartmentMutation()
   const [removeEmployeeMutation] = useRemoveEmployeeFromDepartmentMutation()
 
@@ -66,8 +63,8 @@ export default function DepartmentDetailPage() {
   const [deleteLine] = useDeleteLineMutation()
 
   const department = useMemo(() => {
-    return (deptRes?.data?.departments || []).find((d) => d._id === id)
-  }, [deptRes, id])
+    return deptDetailRes?.data?.department
+  }, [deptDetailRes])
 
   // Sync local staffByShift state from department when loaded (department-level only)
   React.useEffect(() => {
@@ -111,25 +108,8 @@ export default function DepartmentDetailPage() {
   }, [linesRes])
 
   const employees = useMemo(() => {
-    const list = Array.isArray(usersRes?.data?.users) ? usersRes.data.users : []
-    return list
-      .filter((u) => (u.role?.toLowerCase?.() || "") === "employee")
-      .filter((u) => {
-        if (!u.department) return false
-
-        // Handle array of departments (strings or objects)
-        if (Array.isArray(u.department)) {
-          return u.department.some(dept => {
-            const deptId = typeof dept === 'object' && dept !== null ? dept._id : dept;
-            return deptId === id;
-          });
-        }
-
-        // Handle single department (legacy)
-        if (typeof u.department === "string") return u.department === id
-        return u.department?._id === id
-      })
-  }, [usersRes, id])
+    return Array.isArray(deptDetailRes?.data?.employees) ? deptDetailRes.data.employees : []
+  }, [deptDetailRes])
 
   const getInitials = (name) =>
     name ? name.split(" ").map((n) => n[0]).join("").toUpperCase() : "?"
