@@ -274,3 +274,26 @@
 [16 Jan, 2026 - 18:28:26:2826] [31merror[39m: [31mMSSQL Database connection failed: getaddrinfo ENOTFOUND mmmpundbser[39m
 [16 Jan, 2026 - 18:29:22:2922] [31merror[39m: [31mMSSQL Database connection failed: getaddrinfo ENOTFOUND mmmpundbser[39m
 [16 Jan, 2026 - 18:29:33:2933] [31merror[39m: [31mMSSQL Database connection failed: getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:54:32:5432] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:54:34:5434] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:54:34:5434] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:56:24:5624] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:56:24:5624] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:57:03:573] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:57:03:573] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:57:35:5735] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:57:35:5735] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:58:17:5817] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 18:58:17:5817] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 19:00:27:027] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 19:11:13:1113] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 19:11:13:1113] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 19:11:27:1127] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 19:11:27:1127] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 19:12:10:1210] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 19:12:35:1235] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 19:12:35:1235] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 19:13:43:1343] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 19:13:43:1343] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 19:14:31:1431] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[16 Jan, 2026 - 19:14:31:1431] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m

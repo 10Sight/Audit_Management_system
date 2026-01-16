@@ -28,11 +28,11 @@ const EVN = {
     TWILIO_AUTH: process.env.TWILIO_AUTH,
     TWILIO_NUMBER: process.env.TWILIO_NUMBER,
 
-    MSSQL_HOST: process.env.MMSQL_HOST,
-    MSSQL_USER: process.env.MMSQL_USER,
-    MSSQL_PASSWORD: process.env.MMSQL_PASSWORD,
-    MSSQL_DATABASE: process.env.MMSQL_DATABASE,
-    MSSQL_PORT: process.env.MMSQL_PORT,
+    MSSQL_HOST: process.env.MSSQL_HOST || process.env.MYSQL_HOST || 'localhost',
+    MSSQL_USER: process.env.MSSQL_USER || process.env.MYSQL_USER || 'sa',
+    MSSQL_PASSWORD: process.env.MSSQL_PASSWORD || process.env.MYSQL_PASSWORD,
+    MSSQL_DATABASE: process.env.MSSQL_DATABASE || process.env.MYSQL_DATABASE || 'Audit Management System',
+    MSSQL_PORT: process.env.MSSQL_PORT || process.env.MYSQL_PORT || 1433,
 
     // Public client base URL for assets/links in emails (e.g. https://app.example.com)
     CLIENT_URL: process.env.CLIENT_URL,
