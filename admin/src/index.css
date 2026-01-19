@@ -125,8 +125,6 @@
   body {
     @apply bg-background text-foreground;
     /* Let the page grow with content instead of forcing 100vh and hiding scroll */
-    overflow-x: hidden;
-    overflow-y: auto;
     min-height: 100vh;
   }
   #root {

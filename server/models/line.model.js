@@ -25,13 +25,15 @@ class Line {
     // Use quotes for `order` or map from schema if changed to line_order
     // Schema used `order` with backticks.
     const sql = `
-        INSERT INTO \`lines\` (name, department_id, \`order\`, description, isActive)
+        INSERT INTO [lines] (name, department_id, [order], description, isActive)
+        OUTPUT INSERTED.id
         VALUES (?, ?, ?, ?, ?)
     `;
-    const [result] = await pool.query(sql, [name, department, order, description, isActive]);
+    const [rows] = await pool.query(sql, [name, department, order, description, isActive]);
+    const newId = (rows && rows.length > 0) ? rows[0].id : null;
 
     return new Line({
-      id: result.insertId,
+      id: newId,
       ...data,
       department_id: department
     });
@@ -45,7 +47,7 @@ class Line {
 
   static async findById(id) {
     if (!id) return null;
-    const [rows] = await pool.query("SELECT * FROM `lines` WHERE id = ?", [id]);
+    const [rows] = await pool.query("SELECT * FROM [lines] WHERE id = ?", [id]);
     if (rows.length === 0) return null;
     return new Line(rows[0]);
   }
@@ -66,20 +68,20 @@ class Line {
       setClause.push("department_id = ?");
       values.push(update.department ? (typeof update.department === 'object' ? update.department.id : update.department) : null);
     }
-    if (update.order !== undefined) { setClause.push("\`order\` = ?"); values.push(update.order); }
+    if (update.order !== undefined) { setClause.push("[order] = ?"); values.push(update.order); }
     if (update.description !== undefined) { setClause.push("description = ?"); values.push(update.description); }
     if (update.isActive !== undefined) { setClause.push("isActive = ?"); values.push(update.isActive); }
 
     if (setClause.length === 0) return Line.findById(id);
 
     values.push(id);
-    await pool.query(`UPDATE \`lines\` SET ${setClause.join(', ')} WHERE id = ?`, values);
+    await pool.query(`UPDATE [lines] SET ${setClause.join(', ')} WHERE id = ?`, values);
 
     return Line.findById(id);
   }
 
   static async findByIdAndDelete(id) {
-    await pool.query("DELETE FROM \`lines\` WHERE id = ?", [id]);
+    await pool.query("DELETE FROM [lines] WHERE id = ?", [id]);
     return true;
   }
 
@@ -93,8 +95,8 @@ class Line {
 
   async save() {
     const sql = `
-        UPDATE \`lines\` 
-        SET name = ?, department_id = ?, \`order\` = ?, description = ?, isActive = ?
+        UPDATE [lines] 
+        SET name = ?, department_id = ?, [order] = ?, description = ?, isActive = ?
         WHERE id = ?
       `;
     const deptId = this.department ? (typeof this.department === 'object' ? this.department.id : this.department) : null;
@@ -156,17 +158,25 @@ class Line {
       // For simplicity: query.name is assumed exact unless special logic exists.
     }
 
-    let sql = options.isCount ? "SELECT COUNT(*) as count FROM \`lines\`" : "SELECT * FROM \`lines\`";
+    let selectClause = "SELECT *";
+    if (options.limit && !options.skip && !options.isCount) {
+      selectClause = `SELECT TOP ${options.limit} *`;
+    }
+
+    let sql = options.isCount ? "SELECT COUNT(*) as count FROM [lines]" : `${selectClause} FROM [lines]`;
     if (where.length > 0) {
       sql += " WHERE " + where.join(" AND ");
     }
 
     if (!options.isCount) {
-      sql += " ORDER BY \`order\` ASC, name ASC"; // Default sort
+      sql += " ORDER BY [order] ASC, name ASC"; // Default sort
     }
 
-    if (options.limit) {
-      sql += ` OFFSET 0 ROWS FETCH NEXT ${options.limit} ROWS ONLY`;
+    if (options.skip) {
+      sql += ` OFFSET ${options.skip} ROWS`;
+      if (options.limit) {
+        sql += ` FETCH NEXT ${options.limit} ROWS ONLY`;
+      }
     }
 
     return { sql, params };

@@ -46,6 +46,13 @@ export const createMachine = asyncHandler(async (req, res) => {
     query.line = null; // Explicit null for SQL "IS NULL"
   }
 
+  if (departmentId) {
+    const deptDoc = await Department.findById(departmentId);
+    if (!deptDoc) {
+      throw new ApiError(404, "Department not found. It may have been deleted.");
+    }
+  }
+
   const existing = await Machine.findOne(query);
   if (existing) {
     const scope = lineId ? "this line" : "this department";

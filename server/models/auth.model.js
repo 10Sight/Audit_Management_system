@@ -111,12 +111,19 @@ class EmployeeDocument {
         }
       }
 
-      const [result] = await pool.query(
-        `INSERT INTO employees (${columns.join(', ')}) VALUES (${placeholders.join(', ')})`,
+      const [rows] = await pool.query(
+        `INSERT INTO employees (${columns.join(', ')}) OUTPUT INSERTED.id VALUES (${placeholders.join(', ')})`,
         values
       );
-      this.id = result.insertId;
-      this._id = result.insertId; // Alias for mongo compatibility
+
+      if (rows && rows.length > 0) {
+        this.id = rows[0].id;
+        this._id = rows[0].id; // Alias for mongo compatibility
+      } else {
+        // Fallback if OUTPUT didn't work for some reason?
+        // In MSSQL with OUTPUT, we expect a row.
+        // If it fails, pool.query probably threw.
+      }
 
       // Insert departments
       if (this.department && Array.isArray(this.department) && this.department.length > 0) {
@@ -284,11 +291,14 @@ class QueryBuilder {
     // Post-process: fetch departments for each user
     if (rows.length > 0) {
       const ids = rows.map(r => r.id);
-      const [deptRows] = await pool.query(`SELECT * FROM employee_departments WHERE employee_id IN (?)`, [ids]);
+      if (ids.length > 0) {
+        const placeholders = ids.map(() => '?').join(',');
+        const [deptRows] = await pool.query(`SELECT * FROM employee_departments WHERE employee_id IN (${placeholders})`, ids);
 
-      for (const row of rows) {
-        row.department = deptRows.filter(d => d.employee_id === row.id).map(d => d.department_id);
-        if (!row._id) row._id = row.id; // Compatibility
+        for (const row of rows) {
+          row.department = deptRows.filter(d => d.employee_id === row.id).map(d => d.department_id);
+          if (!row._id) row._id = row.id; // Compatibility
+        }
       }
     }
 

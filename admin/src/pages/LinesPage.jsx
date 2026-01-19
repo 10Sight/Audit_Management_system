@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { 
-  Trash2, 
-  Plus, 
-  Factory, 
-  Edit3, 
+import {
+  Trash2,
+  Plus,
+  Factory,
+  Edit3,
   GripVertical,
   AlertTriangle
-} from "lucide-react"; 
+} from "lucide-react";
 import { useGetLinesQuery, useCreateLineMutation, useUpdateLineMutation, useDeleteLineMutation, useReorderLinesMutation } from "@/store/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { 
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -22,7 +22,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { 
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -172,14 +172,13 @@ export default function LinesPage() {
               className="space-y-3"
             >
               {lines.map((line, index) => (
-                <Draggable key={line._id} draggableId={line._id} index={index}>
+                <Draggable key={line._id} draggableId={String(line._id)} index={index}>
                   {(provided, snapshot) => (
-                    <Card 
+                    <Card
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      className={`group transition-all duration-200 ${
-                        snapshot.isDragging ? 'shadow-lg rotate-2' : 'hover:shadow-md'
-                      }`}
+                      className={`group transition-all duration-200 ${snapshot.isDragging ? 'shadow-lg rotate-2' : 'hover:shadow-md'
+                        }`}
                     >
                       <CardContent className="p-4">
                         <div className="flex items-center space-x-4">
@@ -214,18 +213,18 @@ export default function LinesPage() {
 
                           {/* Actions */}
                           <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button 
-                              variant="ghost" 
-                              size="sm" 
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               onClick={() => openEditLine(line)}
                             >
                               <Edit3 className="h-4 w-4" />
                             </Button>
                             <AlertDialog>
                               <AlertDialogTrigger asChild>
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
                                   className="text-destructive hover:text-destructive"
                                 >
                                   <Trash2 className="h-4 w-4" />

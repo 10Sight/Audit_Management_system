@@ -31,13 +31,15 @@ class QuestionCategory {
     const isActive = data.isActive !== undefined ? data.isActive : true;
 
     const sql = `
-        INSERT INTO question_categories (name, description, questions, departments, created_by_id, isActive)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO question_categories(name, description, questions, departments, created_by_id, isActive)
+        OUTPUT INSERTED.id
+    VALUES(?, ?, ?, ?, ?, ?)
     `;
-    const [result] = await pool.query(sql, [name, description, questions, departments, createdBy, isActive]);
+    const [rows] = await pool.query(sql, [name, description, questions, departments, createdBy, isActive]);
+    const newId = (rows && rows.length > 0) ? rows[0].id : null;
 
     return new QuestionCategory({
-      id: result.insertId,
+      id: newId,
       ...data,
       questions: questions, // will be parsed in constructor if we pass object
       departments: departments,
@@ -78,7 +80,7 @@ class QuestionCategory {
     if (setClause.length === 0) return QuestionCategory.findById(id);
 
     values.push(id);
-    await pool.query(`UPDATE question_categories SET ${setClause.join(', ')} WHERE id = ?`, values);
+    await pool.query(`UPDATE question_categories SET ${setClause.join(', ')} WHERE id = ? `, values);
 
     return QuestionCategory.findById(id);
   }
@@ -100,8 +102,8 @@ class QuestionCategory {
     const sql = `
         UPDATE question_categories 
         SET name = ?, description = ?, questions = ?, departments = ?, isActive = ?
-        WHERE id = ?
-      `;
+      WHERE id = ?
+        `;
     await pool.query(sql, [
       this.name, this.description,
       JSON.stringify(this.questions), JSON.stringify(this.departments),
@@ -132,7 +134,12 @@ class QuestionCategory {
       params.push(JSON.stringify(safeVal));
     }
 
-    let sql = options.isCount ? "SELECT COUNT(*) as count FROM question_categories" : "SELECT * FROM question_categories";
+    let selectClause = "SELECT *";
+    if (options.limit && !options.skip && !options.isCount) {
+      selectClause = `SELECT TOP ${options.limit} *`;
+    }
+
+    let sql = options.isCount ? "SELECT COUNT(*) as count FROM question_categories" : `${selectClause} FROM question_categories`;
     if (where.length > 0) {
       sql += " WHERE " + where.join(" AND ");
     }
@@ -141,8 +148,11 @@ class QuestionCategory {
       sql += " ORDER BY createdAt DESC";
     }
 
-    if (options.limit) {
-      sql += ` OFFSET 0 ROWS FETCH NEXT ${options.limit} ROWS ONLY`;
+    if (options.skip) {
+      sql += ` OFFSET ${options.skip} ROWS`;
+      if (options.limit) {
+        sql += ` FETCH NEXT ${options.limit} ROWS ONLY`;
+      }
     }
 
     return { sql, params };

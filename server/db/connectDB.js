@@ -41,10 +41,15 @@ class MsSqlPoolWrapper {
             if (params.length > 0 && sqlParts.length > 1) {
                 // Determine parameter mapping
                 for (let i = 0; i < params.length; i++) {
-                    const checkout = params[i];
-                    // Simple input binding
-                    // mssql auto-detects types, usually safe for standard JS types
-                    request.input(`p${i}`, checkout);
+                    const param = params[i];
+
+                    if (param && typeof param === 'object' && param.sqlType && param.value !== undefined) {
+                        // Support explicit typing: { sqlType: sql.Int, value: 123 }
+                        request.input(`p${i}`, param.sqlType, param.value);
+                    } else {
+                        // Simple input binding
+                        request.input(`p${i}`, param);
+                    }
 
                     if (i < sqlParts.length - 1) {
                         finalSql += `@p${i}` + sqlParts[i + 1];
@@ -60,12 +65,19 @@ class MsSqlPoolWrapper {
             // Better to handle that in the Model layer, but we can do simple regex replacers here if really needed.
             // For now, assume models will be updated.
 
+            // For now, assume models will be updated.
+
+            // console.log('Executing SQL:', finalSql);
+            // console.log('Params:', params);
+
             const result = await request.query(finalSql);
 
             // Return [rows, fields] format to mimic mysql2
             // result.recordset is the array of rows
             return [result.recordset, result.recordsets];
         } catch (error) {
+            logger.error('SQL Execution Error: ' + error.message);
+            logger.error('Failed SQL: ' + queryString);
             throw error;
         }
     }

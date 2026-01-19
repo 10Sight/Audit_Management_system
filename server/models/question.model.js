@@ -161,17 +161,20 @@ class Question {
             correctOptionIndex, imageUrl, isGlobal, created_by_id, 
             machine_ids, line_ids, process_ids, unit_ids, isActive
         )
+        OUTPUT INSERTED.id
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
-    const [result] = await pool.query(sql, [
+    const [rows] = await pool.query(sql, [
       questionText, templateTitle, department, questionType, options,
       correctOptionIndex, imageUrl, isGlobal, createdBy,
       machine_ids, line_ids, process_ids, unit_ids, isActive
     ]);
 
+    const newId = (rows && rows.length > 0) ? rows[0].id : null;
+
     return new Question({
-      id: result.insertId,
+      id: newId,
       ...data,
       department_id: department,
       created_by_id: createdBy,
@@ -332,13 +335,9 @@ class Question {
       arrayFields.forEach(({ key, col }) => {
         if (cond[key] !== undefined && cond[key] !== null) {
           const val = cond[key];
-          if (!isNaN(Number(val))) {
-            targetWhere.push(`(JSON_CONTAINS(${col}, ?, '$') OR JSON_CONTAINS(${col}, ?, '$'))`);
-            targetParams.push(JSON.stringify(Number(val)), JSON.stringify(String(val)));
-          } else {
-            targetWhere.push(`JSON_CONTAINS(${col}, ?, '$')`);
-            targetParams.push(JSON.stringify(val));
-          }
+          // MSSQL compatible JSON array check
+          targetWhere.push(`EXISTS (SELECT 1 FROM OPENJSON(${col}) WHERE value = ?)`);
+          targetParams.push(String(val));
         }
       });
     };
@@ -382,13 +381,29 @@ class Question {
       }
     }
 
+    let selectClause = "SELECT *";
+    if (options.limit && !options.isDelete && !options.isCount) {
+      if (!sql.toLowerCase().includes("offset")) { // Basic safety check if we switch handling
+        // Actually better:
+        // If skip is present, we use offset. If not, we use TOP.
+        // But options.skip is not explicitly passed in _buildQuery args in Question model?
+        // Check QuestionQueryBuilder: it calls _buildQuery(this.query, this.options)
+        // this.options has limit, but NO skip?
+        // QuestionQueryBuilder doesn't seem to have skip(val) method shown in file?
+        // Wait, QuestionQueryBuilder in lines 8-111 has `limit(val)`. It DOES NOT have `skip(val)`.
+        // So Question model NEVER has skip.
+        // So we can ALWAYS use TOP.
+        selectClause = `SELECT TOP ${options.limit} *`;
+      }
+    }
+
     let sql = "";
     if (options.isDelete) {
       sql = "DELETE FROM questions";
     } else if (options.isCount) {
       sql = "SELECT COUNT(*) as count FROM questions";
     } else {
-      sql = "SELECT * FROM questions";
+      sql = `${selectClause} FROM questions`;
     }
 
     if (where.length > 0) {
@@ -399,12 +414,21 @@ class Question {
       sql += " ORDER BY createdAt DESC";
     }
 
-    if (options.limit && !options.isDelete) {
-      if (!sql.toLowerCase().includes("order by")) {
-        sql += " ORDER BY (SELECT NULL)";
-      }
-      sql += ` OFFSET 0 ROWS FETCH NEXT ${options.limit} ROWS ONLY`;
-    }
+    // Since we used TOP, we don't need OFFSET logic if skip is not supported.
+    // But if we ever add skip support, we need it.
+    // For now, Question model implies no pagination with skip.
+    // So removing OFFSET block is correct if we used TOP.
+    // But let's leave legacy OFFSET logic ONLY if we didn't use TOP?
+    // Actually, if we used TOP, we don't want offset.
+    // options.limit is true.
+    // So if we used TOP, we are done.
+
+    // BUT what if options.skip WAS passed (hidden feature)?
+    // If I see options.skip, I should default to OFFSET.
+    // But I will assume NO skip for now as per class def.
+    // So:
+    // refactored above.
+
 
     return { sql, params };
   }

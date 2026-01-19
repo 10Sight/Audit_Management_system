@@ -18,13 +18,15 @@ class Process {
     const isActive = data.isActive !== undefined ? data.isActive : true;
 
     const sql = `
-        INSERT INTO processes (name, description, isActive)
-        VALUES (?, ?, ?)
+        INSERT INTO processes(name, description, isActive)
+        OUTPUT INSERTED.id
+    VALUES(?, ?, ?)
     `;
-    const [result] = await pool.query(sql, [name, description, isActive]);
+    const [rows] = await pool.query(sql, [name, description, isActive]);
+    const newId = (rows && rows.length > 0) ? rows[0].id : null;
 
     return new Process({
-      id: result.insertId,
+      id: newId,
       ...data
     });
   }
@@ -60,7 +62,7 @@ class Process {
     if (setClause.length === 0) return Process.findById(id);
 
     values.push(id);
-    await pool.query(`UPDATE processes SET ${setClause.join(', ')} WHERE id = ?`, values);
+    await pool.query(`UPDATE processes SET ${setClause.join(', ')} WHERE id = ? `, values);
 
     return Process.findById(id);
   }
@@ -82,8 +84,8 @@ class Process {
     const sql = `
         UPDATE processes 
         SET name = ?, description = ?, isActive = ?
-        WHERE id = ?
-      `;
+      WHERE id = ?
+        `;
     await pool.query(sql, [this.name, this.description, this.isActive, this._id]);
     return this;
   }
@@ -106,7 +108,7 @@ class Process {
       if (typeof query._id === 'object' && query._id.$in) {
         const ids = query._id.$in;
         if (ids.length > 0) {
-          where.push(`id IN (${ids.map(() => '?').join(',')})`);
+          where.push(`id IN(${ids.map(() => '?').join(',')})`);
           params.push(...ids);
         } else {
           where.push("1=0");
@@ -118,7 +120,12 @@ class Process {
     }
     if (query.isActive !== undefined) { where.push("isActive = ?"); params.push(query.isActive); }
 
-    let sql = options.isCount ? "SELECT COUNT(*) as count FROM processes" : "SELECT * FROM processes";
+    let selectClause = "SELECT *";
+    if (options.limit && !options.skip && !options.isCount) {
+      selectClause = `SELECT TOP ${options.limit} *`;
+    }
+
+    let sql = options.isCount ? "SELECT COUNT(*) as count FROM processes" : `${selectClause} FROM processes`;
     if (where.length > 0) {
       sql += " WHERE " + where.join(" AND ");
     }
@@ -127,8 +134,11 @@ class Process {
       sql += " ORDER BY name ASC";
     }
 
-    if (options.limit) {
-      sql += ` OFFSET 0 ROWS FETCH NEXT ${options.limit} ROWS ONLY`;
+    if (options.skip) {
+      sql += ` OFFSET ${options.skip} ROWS`;
+      if (options.limit) {
+        sql += ` FETCH NEXT ${options.limit} ROWS ONLY`;
+      }
     }
 
     return { sql, params };

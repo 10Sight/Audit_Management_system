@@ -1,8 +1,11 @@
-CREATE TABLE IF NOT EXISTS audit_email_settings (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  primary_recipients TEXT, -- mapped from 'to'
-  cc_recipients TEXT,      -- mapped from 'cc'
-  department_recipients JSON, -- stores array of objects
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'audit_email_settings')
+BEGIN
+CREATE TABLE audit_email_settings (
+  id INT IDENTITY(1,1) PRIMARY KEY,
+  primary_recipients NVARCHAR(MAX), -- mapped from 'to'
+  cc_recipients NVARCHAR(MAX),      -- mapped from 'cc'
+  department_recipients NVARCHAR(MAX), -- stores array of objects
+  createdAt DATETIME2 DEFAULT GETDATE(),
+  updatedAt DATETIME2 DEFAULT GETDATE()
 );
+END

@@ -6088,3 +6088,311 @@
 [16 Jan, 2026 - 19:13:43:1343] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
 [16 Jan, 2026 - 19:14:31:1431] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
 [16 Jan, 2026 - 19:14:31:1431] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[18 Jan, 2026 - 15:01:59:159] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[18 Jan, 2026 - 15:03:54:354] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[18 Jan, 2026 - 15:06:34:634] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[18 Jan, 2026 - 15:06:39:639] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[18 Jan, 2026 - 15:08:37:837] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[18 Jan, 2026 - 15:08:40:840] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[18 Jan, 2026 - 15:30:39:3039] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:30:39:3039] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:30:41:3041] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:30:41:3041] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:30:42:3042] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:30:42:3042] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:30:49:3049] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:30:51:3051] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:30:51:3051] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:30:59:3059] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:01:311] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:01:311] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:09:319] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:11:3111] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:11:3111] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:19:3119] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:21:3121] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:21:3121] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:29:3129] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:31:3131] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:31:3131] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:39:3139] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:41:3141] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:41:3141] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:49:3149] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:51:3151] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:51:3151] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:59:3159] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:02:322] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:02:322] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:09:329] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:12:3212] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:12:3212] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:19:3219] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:22:3222] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:22:3222] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:29:3229] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:32:3232] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:32:3232] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:39:3239] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:42:3242] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:42:3242] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:49:3249] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:52:3252] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:52:3252] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:59:3259] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:02:332] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:02:332] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:09:339] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:12:3312] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:12:3312] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:19:3319] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:22:3322] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:22:3322] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:29:3329] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:32:3332] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:32:3332] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:37:3337] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:33:39:3339] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:42:3342] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:42:3342] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:49:3349] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:52:3352] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:52:3352] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:59:3359] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:02:342] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:02:342] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:09:349] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:12:3412] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:12:3412] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:19:3419] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:22:3422] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:22:3422] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:29:3429] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:32:3432] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:32:3432] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:36:3436] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:34:39:3439] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:42:3442] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:42:3442] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:49:3449] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:52:3452] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:52:3452] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:59:3459] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:35:01:351] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:35:01:351] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:35:01:351] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:35:01:351] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:35:03:353] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:35:04:354] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:35:06:356] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:35:29:3529] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:35:29:3529] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:35:31:3531] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:35:34:3534] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:35:54:3554] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:35:54:3554] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:35:56:3556] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:36:00:360] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:36:14:3614] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:36:14:3614] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:36:16:3616] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:36:18:3618] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:37:04:374] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:38:27:3827] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:38:29:3829] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:38:30:3830] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:38:47:3847] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:42:34:4234] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:42:56:4256] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:42:56:4256] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:42:58:4258] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:43:16:4316] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:43:46:4346] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:43:46:4346] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:43:48:4348] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:43:59:4359] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:44:16:4416] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:44:16:4416] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:44:18:4418] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:44:21:4421] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:44:36:4436] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:44:52:4452] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:45:47:4547] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:45:47:4547] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:45:48:4548] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:45:54:4554] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:46:31:4631] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:46:31:4631] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:46:34:4634] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:47:05:475] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 15:48:04:484] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:04:484] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:06:486] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:06:486] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:08:488] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:08:488] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:10:4810] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:10:4810] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:12:4812] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:12:4812] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:15:4815] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:27:4827] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:27:4827] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:29:4829] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:35:4835] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:35:4835] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:37:4837] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:37:4837] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:39:4839] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:39:4839] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:41:4841] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:41:4841] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:48:44:4844] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:49:08:498] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:49:08:498] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:49:10:4910] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:49:42:4942] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 15:50:57:5057] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:50:57:5057] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:50:59:5059] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:51:03:513] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:51:03:513] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:51:05:515] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:51:05:515] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:51:08:518] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:54:13:5413] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:54:13:5413] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:54:15:5415] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:55:09:559] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 15:55:47:5547] [34minfo[39m: [34mUnit created: Unit 2[39m
+[18 Jan, 2026 - 15:55:53:5553] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 15:55:55:5555] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 15:56:21:5621] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 15:56:33:5633] [34minfo[39m: [34mNew employee registered: Admin (JA001)[39m
+[18 Jan, 2026 - 15:56:34:5634] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 15:56:53:5653] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 15:56:57:5657] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 15:57:19:5719] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 15:57:19:5719] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 15:57:31:5731] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 15:59:17:5917] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:17:5917] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:20:5920] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:30:5930] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:30:5930] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:31:5931] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:31:5931] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:33:5933] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:33:5933] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:35:5935] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:35:5935] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:37:5937] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:37:5937] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 15:59:40:5940] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:00:11:011] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:00:11:011] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:00:13:013] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:00:13:013] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:00:15:015] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:00:44:044] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 16:01:38:138] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:01:38:138] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:01:41:141] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:02:05:25] [34minfo[39m: [34mNew department created: Assembly by Super Admin (SA001)[39m
+[18 Jan, 2026 - 16:02:05:25] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 16:02:05:25] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 16:02:30:230] [34minfo[39m: [34mNew department created: Coating by Super Admin (SA001)[39m
+[18 Jan, 2026 - 16:02:30:230] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 16:02:30:230] [34minfo[39m: [34mDepartment statistics fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 16:04:15:415] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 16:04:31:431] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 16:04:34:434] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 16:04:44:444] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 16:05:02:52] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 16:05:16:516] [34minfo[39m: [34mEmployee logged out[39m
+[18 Jan, 2026 - 16:05:26:526] [34minfo[39m: [34mEmployees fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 16:06:16:616] [34minfo[39m: [34mNew employee registered: test001 (TEST001)[39m
+[18 Jan, 2026 - 16:06:17:617] [34minfo[39m: [34mEmployees fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 16:07:00:70] [34minfo[39m: [34mTarget audit updated for test001 (TEST001) by Admin (JA001)[39m
+[18 Jan, 2026 - 16:07:22:722] [34minfo[39m: [34mTarget audit reminder email sent to test001@gmail.com (CC: )[39m
+[18 Jan, 2026 - 16:07:22:722] [34minfo[39m: [34mTarget audit reminder email sent to test001@gmail.com (CC: )[39m
+[18 Jan, 2026 - 16:07:24:724] [34minfo[39m: [34mTarget audit reminder email sent to test001@gmail.com (CC: )[39m
+[18 Jan, 2026 - 16:08:16:816] [34minfo[39m: [34mEmployees fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 16:08:16:816] [34minfo[39m: [34mDepartments fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 16:08:21:821] [34minfo[39m: [34mDepartments fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 16:08:36:836] [34minfo[39m: [34mDepartments fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 16:08:36:836] [34minfo[39m: [34mDepartment statistics fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 16:08:36:836] [34minfo[39m: [34mAll users fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 16:08:51:851] [34minfo[39m: [34mLine created: Line 1[39m
+[18 Jan, 2026 - 16:10:32:1032] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:10:32:1032] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:10:33:1033] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:11:41:1141] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:11:41:1141] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:11:43:1143] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:13:49:1349] [34minfo[39m: [34mMachine created: Machine 1[39m
+[18 Jan, 2026 - 16:15:39:1539] [34minfo[39m: [34mDepartment updated: Assembly by Admin (JA001)[39m
+[18 Jan, 2026 - 16:17:06:176] [34minfo[39m: [34mDepartments fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 16:17:16:1716] [34minfo[39m: [34mDepartments fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 16:18:12:1812] [34minfo[39m: [34mCreated 2 questions by user 2[39m
+[18 Jan, 2026 - 16:18:41:1841] [34minfo[39m: [34mCreated 1 questions by user 2[39m
+[18 Jan, 2026 - 16:33:24:3324] [34minfo[39m: [34mEmployee logged out[39m
+[18 Jan, 2026 - 16:36:32:3632] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:36:32:3632] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:36:35:3635] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:38:44:3844] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:38:44:3844] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:38:47:3847] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:39:31:3931] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:39:31:3931] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:39:35:3935] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:40:01:401] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:40:01:401] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:40:03:403] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:42:28:4228] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:42:28:4228] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:42:30:4230] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 16:42:41:4241] [31merror[39m: [31mSQL Execution Error: Validation failed for parameter 'p0'. Invalid string.[39m
+[18 Jan, 2026 - 16:42:41:4241] [31merror[39m: [31mFailed SQL: SELECT id, fullName, emailId, employeeId FROM employees WHERE id IN (?)[39m
+[18 Jan, 2026 - 19:36:33:3633] [31merror[39m: [31mSQL Execution Error: Validation failed for parameter 'p0'. Invalid string.[39m
+[18 Jan, 2026 - 19:36:33:3633] [31merror[39m: [31mFailed SQL: SELECT id, fullName, emailId, employeeId FROM employees WHERE id IN (?)[39m
+[18 Jan, 2026 - 19:39:25:3925] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 19:39:25:3925] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 19:39:26:3926] [34minfo[39m: [34mMSSQL Database connected successfully.[39m
+[18 Jan, 2026 - 19:39:41:3941] [34minfo[39m: [34mAudit created by 3[39m
+[18 Jan, 2026 - 19:40:21:4021] [34minfo[39m: [34mEmployee logged out[39m
+[18 Jan, 2026 - 19:40:26:4026] [34minfo[39m: [34mEmployees fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:40:26:4026] [34minfo[39m: [34mDepartments fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:41:14:4114] [34minfo[39m: [34mEmployees fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:41:34:4134] [34minfo[39m: [34mDepartments fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:41:34:4134] [34minfo[39m: [34mAll users fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:41:34:4134] [34minfo[39m: [34mDepartment statistics fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:41:55:4155] [34minfo[39m: [34mEmployee test001 (TEST001) assigned to department Coating by Admin (JA001)[39m
+[18 Jan, 2026 - 19:41:56:4156] [34minfo[39m: [34mDepartment statistics fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:41:56:4156] [34minfo[39m: [34mDepartments fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:41:56:4156] [34minfo[39m: [34mAll users fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:42:05:425] [34minfo[39m: [34mEmployee logged out[39m
+[18 Jan, 2026 - 19:42:29:4229] [34minfo[39m: [34mEmployee logged out[39m
+[18 Jan, 2026 - 19:42:32:4232] [34minfo[39m: [34mDepartments fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:42:32:4232] [34minfo[39m: [34mEmployees fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:43:19:4319] [34minfo[39m: [34mEmployees fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:43:20:4320] [34minfo[39m: [34mDepartments fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:45:47:4547] [34minfo[39m: [34mEmployees fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:45:47:4547] [34minfo[39m: [34mDepartments fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:48:02:482] [34minfo[39m: [34mEmployees fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:48:02:482] [34minfo[39m: [34mDepartments fetched by Admin (JA001)[39m
+[18 Jan, 2026 - 19:48:27:4827] [34minfo[39m: [34mEmployee logged out[39m
+[18 Jan, 2026 - 19:48:33:4833] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 19:50:39:5039] [34minfo[39m: [34mUnits reordered: 2 items[39m
+[18 Jan, 2026 - 19:50:41:5041] [34minfo[39m: [34mUnits reordered: 2 items[39m
+[18 Jan, 2026 - 19:51:30:5130] [34minfo[39m: [34mUnits reordered: 2 items[39m
+[18 Jan, 2026 - 19:51:32:5132] [34minfo[39m: [34mUnits reordered: 2 items[39m
+[18 Jan, 2026 - 19:51:37:5137] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 19:51:37:5137] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 19:51:43:5143] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 19:51:48:5148] [34minfo[39m: [34mEmployees fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 19:51:50:5150] [34minfo[39m: [34mAll users fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 19:51:51:5151] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 19:51:55:5155] [34minfo[39m: [34mDepartments fetched by Super Admin (SA001)[39m
+[18 Jan, 2026 - 19:52:05:525] [34minfo[39m: [34mEmployee logged out[39m
+[19 Jan, 2026 - 13:01:33:133] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m

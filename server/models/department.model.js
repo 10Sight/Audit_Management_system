@@ -30,13 +30,15 @@ class Department {
     const staffByShift = JSON.stringify(data.staffByShift || []);
 
     const sql = `
-        INSERT INTO departments (name, description, isActive, unit, created_by_id, staffByShift)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO departments(name, description, isActive, unit, created_by_id, staffByShift)
+        OUTPUT INSERTED.id
+    VALUES(?, ?, ?, ?, ?, ?)
     `;
-    const [result] = await pool.query(sql, [name, description, isActive, unit, createdBy, staffByShift]);
+    const [rows] = await pool.query(sql, [name, description, isActive, unit, createdBy, staffByShift]);
+    const newId = (rows && rows.length > 0) ? rows[0].id : null;
 
     return new Department({
-      id: result.insertId,
+      id: newId,
       ...data,
       staffByShift: data.staffByShift || []
     });
@@ -81,7 +83,7 @@ class Department {
     if (setClause.length === 0) return Department.findById(id);
 
     values.push(id);
-    await pool.query(`UPDATE departments SET ${setClause.join(', ')} WHERE id = ?`, values);
+    await pool.query(`UPDATE departments SET ${setClause.join(', ')} WHERE id = ? `, values);
 
     return Department.findById(id);
   }
@@ -107,8 +109,8 @@ class Department {
     const sql = `
         UPDATE departments 
         SET name = ?, description = ?, isActive = ?, unit = ?, employeeCount = ?, staffByShift = ?
-        WHERE id = ?
-      `;
+      WHERE id = ?
+        `;
     const staffByShiftJson = JSON.stringify(this.staffByShift);
     await pool.query(sql, [this.name, this.description, this.isActive, this.unit, this.employeeCount, staffByShiftJson, this._id]);
     return this;
@@ -171,8 +173,15 @@ class Department {
 
     if (query.name) {
       if (query.name instanceof RegExp) {
-        where.push("name REGEXP ?");
-        params.push(query.name.source);
+        // MSSQL does not support REGEXP. 
+        // We assume generic regex ^...$ provided by controller is for case-insensitive exact match.
+        // MSSQL is CI by default usually.
+        let val = query.name.source;
+        if (val.startsWith('^') && val.endsWith('$')) {
+          val = val.slice(1, -1);
+        }
+        where.push("name = ?");
+        params.push(val);
       } else {
         where.push("name = ?");
         params.push(query.name);
@@ -193,7 +202,7 @@ class Department {
         if (query._id.$in && Array.isArray(query._id.$in)) {
           const ids = query._id.$in;
           if (ids.length > 0) {
-            where.push(`id IN (${ids.map(() => '?').join(',')})`);
+            where.push(`id IN(${ids.map(() => '?').join(',')})`);
             params.push(...ids);
           } else {
             where.push("1=0");
@@ -208,7 +217,12 @@ class Department {
       }
     }
 
-    let sql = options.isCount ? "SELECT COUNT(*) as count FROM departments" : "SELECT * FROM departments";
+    let selectClause = "SELECT *";
+    if (options.limit && !options.skip && !options.isCount) {
+      selectClause = `SELECT TOP ${options.limit} *`;
+    }
+
+    let sql = options.isCount ? "SELECT COUNT(*) as count FROM departments" : `${selectClause} FROM departments`;
     if (where.length > 0) {
       sql += " WHERE " + where.join(" AND ");
     }
@@ -218,10 +232,11 @@ class Department {
       sql += " ORDER BY name ASC";
     }
 
-    if (options.limit) {
-      // MSSQL Offset-Fetch
-      // Ensure ORDER BY exists (it does above)
-      sql += ` OFFSET 0 ROWS FETCH NEXT ${options.limit} ROWS ONLY`;
+    if (options.skip) {
+      sql += ` OFFSET ${options.skip} ROWS`;
+      if (options.limit) {
+        sql += ` FETCH NEXT ${options.limit} ROWS ONLY`;
+      }
     }
 
     return { sql, params };

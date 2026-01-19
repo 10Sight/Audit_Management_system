@@ -20,13 +20,17 @@ class Unit {
     const isActive = data.isActive !== undefined ? data.isActive : true;
 
     const sql = `
-        INSERT INTO units (name, description, \`order\`, isActive)
+        INSERT INTO units (name, description, [order], isActive)
+        OUTPUT INSERTED.id
         VALUES (?, ?, ?, ?)
     `;
-    const [result] = await pool.query(sql, [name, description, order, isActive]);
+    const [rows] = await pool.query(sql, [name, description, order, isActive]);
+
+    // Safety check
+    const newId = (rows && rows.length > 0) ? rows[0].id : null;
 
     return new Unit({
-      id: result.insertId,
+      id: newId,
       ...data,
       order,
       isActive
@@ -59,7 +63,7 @@ class Unit {
 
     if (update.name !== undefined) { setClause.push("name = ?"); values.push(update.name); }
     if (update.description !== undefined) { setClause.push("description = ?"); values.push(update.description); }
-    if (update.order !== undefined) { setClause.push("`order` = ?"); values.push(update.order); }
+    if (update.order !== undefined) { setClause.push("[order] = ?"); values.push(update.order); }
     if (update.isActive !== undefined) { setClause.push("isActive = ?"); values.push(update.isActive); }
 
     if (setClause.length === 0) return Unit.findById(id);
@@ -86,7 +90,7 @@ class Unit {
   async save() {
     const sql = `
         UPDATE units 
-        SET name = ?, description = ?, \`order\` = ?, isActive = ?
+        SET name = ?, description = ?, [order] = ?, isActive = ?
         WHERE id = ?
       `;
     await pool.query(sql, [this.name, this.description, this.order, this.isActive, this._id]);
@@ -125,7 +129,12 @@ class Unit {
     }
     if (query.isActive !== undefined) { where.push("isActive = ?"); params.push(query.isActive); }
 
-    let sql = options.isCount ? "SELECT COUNT(*) as count FROM units" : "SELECT * FROM units";
+    let selectClause = "SELECT *";
+    if (options.limit && !options.skip && !options.isCount) {
+      selectClause = `SELECT TOP ${options.limit} *`;
+    }
+
+    let sql = options.isCount ? "SELECT COUNT(*) as count FROM units" : `${selectClause} FROM units`;
     if (where.length > 0) {
       sql += " WHERE " + where.join(" AND ");
     }
@@ -137,8 +146,6 @@ class Unit {
       // BUT, find() usually returns a Query object in Mongoose.
       // In my code, find returns Promise<Array>.
       // So .sort() on the RESULT array in controller is easiest.
-      // However, default sort in Mongoose model was likely insertion order or ID.
-      // The controller calls .sort({ order: 1 }) which is array sort on the result if I return array.
       // BUT wait, `await Unit.find({}).sort(...)` means `find` must return a thenable that has `sort`.
       // My `find` returns `Promise`. Promise does NOT have `.sort`. Array has `.sort` but that is synchronous.
       // I need to support sorting in `_buildQuery` OR controller refactor.
@@ -149,11 +156,14 @@ class Unit {
       // 2. Refactor controller to `(await Unit.find({})).sort(...)`.
       // Refactoring controller is standard approach here.
 
-      sql += " ORDER BY `order` ASC, createdAt ASC";
+      sql += " ORDER BY [order] ASC, createdAt ASC";
     }
 
-    if (options.limit) {
-      sql += ` OFFSET 0 ROWS FETCH NEXT ${options.limit} ROWS ONLY`;
+    if (options.skip) {
+      sql += ` OFFSET ${options.skip} ROWS`;
+      if (options.limit) {
+        sql += ` FETCH NEXT ${options.limit} ROWS ONLY`;
+      }
     }
 
     return { sql, params };

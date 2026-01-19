@@ -297,3 +297,96 @@
 [16 Jan, 2026 - 19:13:43:1343] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
 [16 Jan, 2026 - 19:14:31:1431] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
 [16 Jan, 2026 - 19:14:31:1431] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m
+[18 Jan, 2026 - 15:01:59:159] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[18 Jan, 2026 - 15:03:54:354] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[18 Jan, 2026 - 15:06:34:634] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[18 Jan, 2026 - 15:06:39:639] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[18 Jan, 2026 - 15:08:37:837] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[18 Jan, 2026 - 15:08:40:840] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to localhost:1433 - Could not connect (sequence)[39m
+[18 Jan, 2026 - 15:30:39:3039] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:30:42:3042] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:30:42:3042] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:30:49:3049] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:30:51:3051] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:30:51:3051] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:30:59:3059] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:01:311] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:01:311] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:09:319] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:11:3111] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:11:3111] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:19:3119] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:21:3121] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:21:3121] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:29:3129] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:31:3131] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:31:3131] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:39:3139] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:41:3141] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:41:3141] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:49:3149] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:51:3151] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:51:3151] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:31:59:3159] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:02:322] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:02:322] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:09:329] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:12:3212] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:12:3212] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:19:3219] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:22:3222] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:22:3222] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:29:3229] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:32:3232] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:32:3232] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:39:3239] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:42:3242] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:42:3242] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:49:3249] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:52:3252] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:52:3252] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:32:59:3259] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:02:332] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:02:332] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:09:339] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:12:3312] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:12:3312] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:19:3319] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:22:3322] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:22:3322] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:29:3329] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:32:3332] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:32:3332] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:39:3339] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:42:3342] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:42:3342] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:49:3349] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:52:3352] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:52:3352] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:33:59:3359] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:02:342] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:02:342] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:09:349] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:12:3412] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:12:3412] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:19:3419] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:22:3422] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:22:3422] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:29:3429] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:32:3432] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:32:3432] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:39:3439] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:42:3442] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:42:3442] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:49:3449] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:52:3452] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:52:3452] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:34:59:3459] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:35:01:351] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:35:01:351] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 15:35:04:354] [31merror[39m: [31mTarget audit reminder job failed: Invalid object name 'employees'.[39m
+[18 Jan, 2026 - 16:42:41:4241] [31merror[39m: [31mSQL Execution Error: Validation failed for parameter 'p0'. Invalid string.[39m
+[18 Jan, 2026 - 16:42:41:4241] [31merror[39m: [31mFailed SQL: SELECT id, fullName, emailId, employeeId FROM employees WHERE id IN (?)[39m
+[18 Jan, 2026 - 19:36:33:3633] [31merror[39m: [31mSQL Execution Error: Validation failed for parameter 'p0'. Invalid string.[39m
+[18 Jan, 2026 - 19:36:33:3633] [31merror[39m: [31mFailed SQL: SELECT id, fullName, emailId, employeeId FROM employees WHERE id IN (?)[39m
+[19 Jan, 2026 - 13:01:33:133] [31merror[39m: [31mMSSQL Database connection failed: Failed to connect to MMMPUNDBSER:1433 - getaddrinfo ENOTFOUND mmmpundbser[39m

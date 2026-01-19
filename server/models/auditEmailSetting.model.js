@@ -112,10 +112,11 @@ class SettingsUpdateBuilder {
     } else {
       const sql = `
                 INSERT INTO audit_email_settings (primary_recipients, cc_recipients, department_recipients)
+                OUTPUT INSERTED.id
                 VALUES (?, ?, ?)
             `;
-      const [result] = await pool.query(sql, [primaryRecipients, ccRecipients, deptRecipientsJson]);
-      recordId = result.insertId;
+      const [rows] = await pool.query(sql, [primaryRecipients, ccRecipients, deptRecipientsJson]);
+      recordId = (rows && rows.length > 0) ? rows[0].id : null;
     }
 
     // Return updated doc (re-using QueryBuilder logic for populating)

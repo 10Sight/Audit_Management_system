@@ -25,12 +25,14 @@ class Machine {
 
     const sql = `
         INSERT INTO machines (name, department_id, line_id, description, isActive)
+        OUTPUT INSERTED.id
         VALUES (?, ?, ?, ?, ?)
     `;
-    const [result] = await pool.query(sql, [name, department, line, description, isActive]);
+    const [rows] = await pool.query(sql, [name, department, line, description, isActive]);
+    const newId = (rows && rows.length > 0) ? rows[0].id : null;
 
     return new Machine({
-      id: result.insertId,
+      id: newId,
       ...data,
       department_id: department,
       line_id: line
@@ -172,7 +174,12 @@ class Machine {
     // Handle simple $not regex logic if possible or ignore
     // Controller logic might need adaptation.
 
-    let sql = options.isCount ? "SELECT COUNT(*) as count FROM machines" : "SELECT * FROM machines";
+    let selectClause = "SELECT *";
+    if (options.limit && !options.skip && !options.isCount) {
+      selectClause = `SELECT TOP ${options.limit} *`;
+    }
+
+    let sql = options.isCount ? "SELECT COUNT(*) as count FROM machines" : `${selectClause} FROM machines`;
     if (where.length > 0) {
       sql += " WHERE " + where.join(" AND ");
     }
@@ -181,8 +188,11 @@ class Machine {
       sql += " ORDER BY name ASC";
     }
 
-    if (options.limit) {
-      sql += ` OFFSET 0 ROWS FETCH NEXT ${options.limit} ROWS ONLY`;
+    if (options.skip) {
+      sql += ` OFFSET ${options.skip} ROWS`;
+      if (options.limit) {
+        sql += ` FETCH NEXT ${options.limit} ROWS ONLY`;
+      }
     }
 
     return { sql, params };

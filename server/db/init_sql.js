@@ -49,19 +49,23 @@ const setupTables = async () => {
 
         const sql = sql1 + "\n" + sql11 + "\n" + sql5 + "\n" + sql6 + "\n" + sql7 + "\n" + sql8 + "\n" + sql10 + "\n" + sql9 + "\n" + sql2 + "\n" + sql3 + "\n" + sql4;
 
-        // Split by semicolon to run multiple statements
-        // Filter out empty statements
-        const statements = sql.split(';').map(s => s.trim()).filter(s => s.length > 0);
+        console.log('Running SQL setup...');
 
-        console.log(`Running ${statements.length} SQL statements...`);
-
-        for (const statement of statements) {
-            try {
-                await pool.query(statement);
-            } catch (statementErr) {
-                console.warn(`Warning running statement: ${statementErr.message}`);
-                // Continue to next statement
+        try {
+            await pool.query(sql);
+            console.log('SQL setup completed successfully.');
+        } catch (err) {
+            console.error('Error running SQL setup:', err.message);
+            if (err.precedingErrors) {
+                err.precedingErrors.forEach((e, i) => {
+                    console.error(`Preceding error ${i}:`, e.message);
+                    console.error(`Line number:`, e.lineNumber);
+                });
             }
+            console.error('Error number:', err.number);
+            console.error('Error number:', err.number);
+            console.error('Line number:', err.lineNumber);
+            process.exit(1);
         }
 
         console.log('Tables created successfully.');

@@ -181,14 +181,13 @@ export default function UnitsPage() {
               className="space-y-3"
             >
               {units.map((unit, index) => (
-                <Draggable key={unit._id} draggableId={unit._id} index={index}>
+                <Draggable key={unit._id} draggableId={String(unit._id)} index={index}>
                   {(provided, snapshot) => (
                     <Card
                       ref={provided.innerRef}
                       {...provided.draggableProps}
-                      className={`group transition-all duration-200 ${
-                        snapshot.isDragging ? "shadow-lg rotate-2" : "hover:shadow-md"
-                      }`}
+                      className={`group transition-all duration-200 ${snapshot.isDragging ? "shadow-lg rotate-2" : "hover:shadow-md"
+                        }`}
                     >
                       <CardContent className="p-4">
                         <div className="flex items-center space-x-4">

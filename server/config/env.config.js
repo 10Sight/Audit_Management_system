@@ -31,7 +31,7 @@ const EVN = {
     MSSQL_HOST: process.env.MSSQL_HOST || process.env.MYSQL_HOST || 'localhost',
     MSSQL_USER: process.env.MSSQL_USER || process.env.MYSQL_USER || 'sa',
     MSSQL_PASSWORD: process.env.MSSQL_PASSWORD || process.env.MYSQL_PASSWORD,
-    MSSQL_DATABASE: process.env.MSSQL_DATABASE || process.env.MYSQL_DATABASE || 'Audit Management System',
+    MSSQL_DATABASE: process.env.MSSQL_DATABASE || process.env.MYSQL_DATABASE || 'CMS',
     MSSQL_PORT: process.env.MSSQL_PORT || process.env.MYSQL_PORT || 1433,
 
     // Public client base URL for assets/links in emails (e.g. https://app.example.com)

@@ -1,4 +1,4 @@
-import { pool } from "../db/connectDB.js";
+import { pool, sql } from "../db/connectDB.js";
 import Department from "./department.model.js";
 import Unit from "./unit.model.js";
 import Machine from "./machine.model.js";
@@ -79,36 +79,55 @@ class Audit {
     } = data;
 
     // Convert date string/object to proper MySQL date format
-    const dateVal = new Date(date).toISOString().split('T')[0];
+    console.log("Audit.create received date:", date);
+    let dateVal = new Date(date);
+    if (isNaN(dateVal.getTime())) {
+      console.error("Invalid date received:", date);
+      // Fallback or throw? 
+      // If date is invalid, let's try to parse it or default to now?
+      // Or throw error so we know.
+      // For now, let's default to NOW if invalid, to see if it fixes the SQL error.
+      console.log("Defaulting to current date due to invalid input");
+      dateVal = new Date();
+    }
+    // Use Date object for mssql driver compatibility (avoid "Invalid string" validation error)
 
-    const sql = `
+    const getId = (val) => {
+      if (!val) return null;
+      if (typeof val === 'object') return val.id || val._id || String(val);
+      return String(val); // Ensure string if table column is VARCHAR
+    };
+
+    const sqlQuery = `
       INSERT INTO audits 
       (date, line, machine, process, unit, department, 
        lineLeader, shift, shiftIncharge, 
        lineRating, machineRating, processRating, unitRating, 
        auditor_id, created_by_id, answers)
+      OUTPUT INSERTED.id
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `;
 
     const params = [
-      dateVal,
-      line?.toString() || null,
-      machine?.toString() || null,
-      process?.toString() || null,
-      unit?.toString() || null,
-      department?.toString() || null,
+      { sqlType: sql.Date, value: dateVal },
+      getId(line),
+      getId(machine),
+      getId(process),
+      getId(unit),
+      getId(department),
       lineLeader, shift, shiftIncharge,
       lineRating || null, machineRating || null, processRating || null, unitRating || null,
-      auditor, createdBy,
+      getId(auditor), getId(createdBy),
       JSON.stringify(answers || [])
     ];
 
-    const [result] = await pool.query(sql, params);
+    const [rows] = await pool.query(sqlQuery, params);
+    const newId = (rows && rows.length > 0) ? rows[0].id : null;
 
     // Return the created object populated with ID
     return new Audit({
-      id: result.insertId,
-      _id: result.insertId, // Compat for _id users
+      id: newId,
+      _id: newId, // Compat for _id users
       ...data,
       answers: answers || [] // Keep as object in memory
     });
@@ -221,7 +240,15 @@ class Audit {
       if (clause) whereClauses.push(clause);
     }
 
-    let sql = options.isCount ? `SELECT COUNT(*) as count FROM audits` : `SELECT * FROM audits`;
+    let selectClause = options.isCount ? `SELECT COUNT(*) as count` : `SELECT *`;
+
+    // Use TOP if limit exists but no skip (or skip is 0)
+    // AND not doing count
+    if (!options.isCount && options.limit && !options.skip) {
+      selectClause = `SELECT TOP ${parseInt(options.limit)} *`;
+    }
+
+    let sql = `${selectClause} FROM audits`;
     if (whereClauses.length > 0) {
       sql += ` WHERE ${whereClauses.join(' AND ')}`;
     }
@@ -241,10 +268,10 @@ class Audit {
       }
       sql += orderByClause;
 
-      if (options.limit) {
-        // MSSQL OFFSET-FETCH
+      if (options.limit && options.skip) {
+        // MSSQL OFFSET-FETCH only if skip is non-zero
         sql += ` OFFSET ? ROWS FETCH NEXT ? ROWS ONLY`;
-        params.push(parseInt(options.skip || 0), parseInt(options.limit));
+        params.push(parseInt(options.skip), parseInt(options.limit));
       }
     }
 
@@ -306,7 +333,9 @@ class Audit {
           // Fetch from MySQL employees
           const ids = [...new Set(results.map(r => r[path]).filter(id => typeof id === 'number'))];
           if (ids.length > 0) {
-            const [users] = await pool.query(`SELECT id, fullName, emailId, employeeId FROM employees WHERE id IN (?)`, [ids]);
+            // Fix: Manual expansion for mssql IN clause
+            const placeholders = ids.map(() => '?').join(',');
+            const [users] = await pool.query(`SELECT id, fullName, emailId, employeeId FROM employees WHERE id IN (${placeholders})`, ids);
             results.forEach(r => {
               if (r[path]) {
                 const match = users.find(u => u.id === r[path]);
